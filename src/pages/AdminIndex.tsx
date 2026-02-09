@@ -9,6 +9,7 @@ import { MessagingPage } from './MessagingPage';
 import { ReportsPage } from './ReportsPage';
 import { UserManagementPage } from './UserManagementPage';
 import { PlaceholderPage } from './PlaceholderPage';
+import '../admin.css';
 
 type AdminRole = 'meter_reader' | 'payment_handler' | 'admin' | 'superadmin';
 
@@ -76,9 +77,11 @@ const DashboardContent: React.FC = () => {
   };
 
   return (
-    <AdminLayout activeSection={activeSection} onSectionChange={setActiveSection}>
-      {renderSection()}
-    </AdminLayout>
+    <div className="admin-wrapper">
+      <AdminLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+        {renderSection()}
+      </AdminLayout>
+    </div>
   );
 };
 
