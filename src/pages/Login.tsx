@@ -1,0 +1,208 @@
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Droplets, Eye, EyeOff, ArrowRight, Shield, Zap, Bell } from "lucide-react";
+
+const features = [
+  { icon: Shield, text: "Secure & encrypted" },
+  { icon: Zap, text: "Instant payments" },
+  { icon: Bell, text: "Smart alerts" },
+];
+
+const Login = () => {
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    rememberMe: false,
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Route based on email
+    if (formData.email === "superAdmin@gmail.com") {
+      navigate("/admin");
+    } else if (formData.email === "customer@gmail.com") {
+      navigate("/customer/dashboard");
+    } else {
+      // Default to customer dashboard for any other email
+      navigate("/customer/dashboard");
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex">
+      {/* Left Panel - Form */}
+      <motion.div 
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="flex-1 flex items-center justify-center p-8 relative"
+      >
+        <div className="absolute inset-0 gradient-mesh opacity-30" />
+        
+        <div className="w-full max-w-md relative">
+          {/* Logo */}
+          <Link to="/" className="flex items-center gap-3 mb-10">
+            <motion.div 
+              whileHover={{ scale: 1.05, rotate: 5 }}
+              className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-soft"
+            >
+              <Droplets className="w-6 h-6 text-primary-foreground" />
+            </motion.div>
+            <span className="text-2xl font-bold text-gradient">WaterFlow</span>
+          </Link>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mb-8"
+          >
+            <h1 className="text-4xl font-bold mb-3">Welcome back</h1>
+            <p className="text-muted-foreground text-lg">Sign in to your account to continue</p>
+          </motion.div>
+
+          <motion.form 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            onSubmit={handleSubmit} 
+            className="space-y-6"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-sm font-medium">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter your email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="h-14 rounded-xl input-premium text-base"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  className="h-14 rounded-xl pr-14 input-premium text-base"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <Checkbox
+                  id="rememberMe"
+                  checked={formData.rememberMe}
+                  onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: checked as boolean })}
+                  className="rounded-md"
+                />
+                <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
+                  Remember me
+                </Label>
+              </div>
+              <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">
+                Forgot password?
+              </Link>
+            </div>
+
+            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+              <Button type="submit" className="w-full h-14 gradient-primary shadow-soft rounded-xl text-base gap-2 btn-shine">
+                Sign In
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </motion.div>
+          </motion.form>
+
+          <motion.p 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.3 }}
+            className="text-center mt-8 text-muted-foreground"
+          >
+            Don't have an account?{" "}
+            <Link to="/signup" className="text-primary font-semibold hover:underline">
+              Create one
+            </Link>
+          </motion.p>
+        </div>
+      </motion.div>
+
+      {/* Right Panel - Visual */}
+      <motion.div 
+        initial={{ opacity: 0, x: 50 }}
+        animate={{ opacity: 1, x: 0 }}
+        className="hidden lg:flex flex-1 gradient-dark items-center justify-center p-12 relative overflow-hidden"
+      >
+        <div className="absolute inset-0 gradient-mesh opacity-30" />
+        
+        {/* Animated blobs */}
+        <motion.div 
+          animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute top-20 right-20 w-64 h-64 rounded-full bg-primary/20 blur-3xl"
+        />
+        <motion.div 
+          animate={{ x: [0, -20, 0], y: [0, 30, 0], scale: [1, 1.2, 1] }}
+          transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-20 left-20 w-80 h-80 rounded-full bg-accent/20 blur-3xl"
+        />
+        
+        <div className="relative text-center text-white max-w-md">
+          <motion.div 
+            animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            className="w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-xl flex items-center justify-center mx-auto mb-10 shadow-glow"
+          >
+            <Droplets className="w-14 h-14" />
+          </motion.div>
+          
+          <h2 className="text-4xl font-bold mb-4">Manage Your Water Bills</h2>
+          <p className="text-white/70 text-lg mb-10 leading-relaxed">
+            Track consumption, pay instantly, and get smart insights all in one place.
+          </p>
+
+          <div className="space-y-4">
+            {features.map((feature, index) => (
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.5 + index * 0.1 }}
+                className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4"
+              >
+                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                  <feature.icon className="w-5 h-5" />
+                </div>
+                <span className="font-medium">{feature.text}</span>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+export default Login;
