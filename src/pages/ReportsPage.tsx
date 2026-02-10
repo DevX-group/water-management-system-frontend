@@ -59,15 +59,56 @@ const monthlyDataByYear = {
   ],
 };
 
-// Mock data for customer-wise usage and revenue
-const customerWiseData = [
-  { month: 'Jan', customer1: 45000, customer2: 38000, customer3: 52000 },
-  { month: 'Feb', customer1: 48000, customer2: 42000, customer3: 50000 },
-  { month: 'Mar', customer1: 50000, customer2: 45000, customer3: 58000 },
-  { month: 'Apr', customer1: 52000, customer2: 48000, customer3: 62000 },
-  { month: 'May', customer1: 55000, customer2: 50000, customer3: 65000 },
-  { month: 'Jun', customer1: 58000, customer2: 52000, customer3: 68000 },
-];
+// Mock data for customer-wise usage and revenue, keyed by year
+const customerWiseDataByYear: Record<string, { month: string; customer1: number; customer2: number; customer3: number }[]> = {
+  '2023': [
+    { month: 'Jan', customer1: 40000, customer2: 35000, customer3: 48000 },
+    { month: 'Feb', customer1: 42000, customer2: 37000, customer3: 49000 },
+    { month: 'Mar', customer1: 44000, customer2: 39000, customer3: 51000 },
+    { month: 'Apr', customer1: 46000, customer2: 41000, customer3: 54000 },
+    { month: 'May', customer1: 48000, customer2: 43000, customer3: 56000 },
+    { month: 'Jun', customer1: 50000, customer2: 45000, customer3: 59000 },
+    { month: 'Jul', customer1: 52000, customer2: 47000, customer3: 61000 },
+    { month: 'Aug', customer1: 51000, customer2: 46000, customer3: 60000 },
+    { month: 'Sep', customer1: 49000, customer2: 44000, customer3: 58000 },
+    { month: 'Oct', customer1: 47000, customer2: 42000, customer3: 56000 },
+    { month: 'Nov', customer1: 45000, customer2: 40000, customer3: 54000 },
+    { month: 'Dec', customer1: 48000, customer2: 43000, customer3: 56000 },
+  ],
+  '2024': [
+    { month: 'Jan', customer1: 43000, customer2: 37000, customer3: 51000 },
+    { month: 'Feb', customer1: 45000, customer2: 39000, customer3: 52000 },
+    { month: 'Mar', customer1: 47000, customer2: 41000, customer3: 54000 },
+    { month: 'Apr', customer1: 49000, customer2: 43000, customer3: 56000 },
+    { month: 'May', customer1: 51000, customer2: 45000, customer3: 58000 },
+    { month: 'Jun', customer1: 53000, customer2: 47000, customer3: 60000 },
+    { month: 'Jul', customer1: 55000, customer2: 49000, customer3: 62000 },
+    { month: 'Aug', customer1: 54000, customer2: 48000, customer3: 61000 },
+    { month: 'Sep', customer1: 52000, customer2: 46000, customer3: 59000 },
+    { month: 'Oct', customer1: 50000, customer2: 44000, customer3: 57000 },
+    { month: 'Nov', customer1: 48000, customer2: 42000, customer3: 55000 },
+    { month: 'Dec', customer1: 51000, customer2: 45000, customer3: 58000 },
+  ],
+  '2025': [
+    { month: 'Jan', customer1: 45000, customer2: 38000, customer3: 52000 },
+    { month: 'Feb', customer1: 48000, customer2: 42000, customer3: 50000 },
+    { month: 'Mar', customer1: 50000, customer2: 45000, customer3: 58000 },
+    { month: 'Apr', customer1: 52000, customer2: 48000, customer3: 62000 },
+    { month: 'May', customer1: 55000, customer2: 50000, customer3: 65000 },
+    { month: 'Jun', customer1: 58000, customer2: 52000, customer3: 68000 },
+    { month: 'Jul', customer1: 61000, customer2: 54000, customer3: 71000 },
+    { month: 'Aug', customer1: 59000, customer2: 52000, customer3: 69000 },
+    { month: 'Sep', customer1: 57000, customer2: 50000, customer3: 67000 },
+    { month: 'Oct', customer1: 53000, customer2: 48000, customer3: 63000 },
+    { month: 'Nov', customer1: 51000, customer2: 46000, customer3: 61000 },
+    { month: 'Dec', customer1: 55000, customer2: 50000, customer3: 65000 },
+  ],
+  '2026': [
+    { month: 'Jan', customer1: 48000, customer2: 42000, customer3: 54000 },
+    { month: 'Feb', customer1: 46000, customer2: 40000, customer3: 52000 },
+    { month: 'Mar', customer1: 49000, customer2: 43000, customer3: 55000 },
+  ],
+};
 
 // Mock data for area-wise usage and revenue
 const areaWiseData = [
@@ -105,6 +146,7 @@ const overdueTableData = [
 export const ReportsPage = () => {
   const [selectedYear, setSelectedYear] = useState('2025');
   const [customerSearch, setCustomerSearch] = useState('C001');
+  const [customerYear, setCustomerYear] = useState('2025');
   const [selectedArea, setSelectedArea] = useState('all');
 
   const totalOverdueAmount = overdueTableData.reduce((sum, item) => sum + item.amount, 0);
@@ -137,7 +179,9 @@ export const ReportsPage = () => {
   // For customers we only have usage in mock data; derive revenue using a per-unit rate
   const CUSTOMER_UNIT_RATE = 15; // LKR per unit (mock)
 
-  const customerChartData = customerWiseData.map((m) => {
+  const customerDataForYear = customerWiseDataByYear[customerYear] || customerWiseDataByYear['2025'];
+
+  const customerChartData = customerDataForYear.map((m) => {
     const usage = selectedCustomer === 'customer2' ? m.customer2 : selectedCustomer === 'customer3' ? m.customer3 : m.customer1;
     return {
       month: m.month,
@@ -247,6 +291,17 @@ export const ReportsPage = () => {
                     onChange={(e) => setCustomerSearch(e.target.value.toUpperCase())}
                     className="w-48"
                   />
+                  <Select value={customerYear} onValueChange={setCustomerYear}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2023">2023</SelectItem>
+                      <SelectItem value="2024">2024</SelectItem>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
