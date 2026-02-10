@@ -120,6 +120,57 @@ const areaWiseData = [
   { month: 'Jun', area1: 145000, area2: 335000, area3: 405000 },
 ];
 
+// Per-year area-wise mock data
+const areaWiseDataByYear: Record<string, { month: string; area1: number; area2: number; area3: number }[]> = {
+  '2023': [
+    { month: 'Jan', area1: 110000, area2: 260000, area3: 310000 },
+    { month: 'Feb', area1: 115000, area2: 255000, area3: 295000 },
+    { month: 'Mar', area1: 120000, area2: 270000, area3: 320000 },
+    { month: 'Apr', area1: 125000, area2: 285000, area3: 345000 },
+    { month: 'May', area1: 130000, area2: 300000, area3: 370000 },
+    { month: 'Jun', area1: 135000, area2: 315000, area3: 385000 },
+    { month: 'Jul', area1: 140000, area2: 330000, area3: 400000 },
+    { month: 'Aug', area1: 138000, area2: 325000, area3: 395000 },
+    { month: 'Sep', area1: 136000, area2: 320000, area3: 390000 },
+    { month: 'Oct', area1: 132000, area2: 310000, area3: 380000 },
+    { month: 'Nov', area1: 128000, area2: 300000, area3: 370000 },
+    { month: 'Dec', area1: 130000, area2: 305000, area3: 375000 },
+  ],
+  '2024': [
+    { month: 'Jan', area1: 115000, area2: 270000, area3: 320000 },
+    { month: 'Feb', area1: 120000, area2: 275000, area3: 310000 },
+    { month: 'Mar', area1: 125000, area2: 285000, area3: 330000 },
+    { month: 'Apr', area1: 130000, area2: 300000, area3: 355000 },
+    { month: 'May', area1: 135000, area2: 315000, area3: 380000 },
+    { month: 'Jun', area1: 140000, area2: 330000, area3: 395000 },
+    { month: 'Jul', area1: 145000, area2: 345000, area3: 410000 },
+    { month: 'Aug', area1: 143000, area2: 340000, area3: 405000 },
+    { month: 'Sep', area1: 141000, area2: 335000, area3: 400000 },
+    { month: 'Oct', area1: 137000, area2: 325000, area3: 390000 },
+    { month: 'Nov', area1: 133000, area2: 315000, area3: 380000 },
+    { month: 'Dec', area1: 136000, area2: 320000, area3: 385000 },
+  ],
+  '2025': [
+    { month: 'Jan', area1: 120000, area2: 280000, area3: 335000 },
+    { month: 'Feb', area1: 125000, area2: 275000, area3: 296000 },
+    { month: 'Mar', area1: 130000, area2: 290000, area3: 333000 },
+    { month: 'Apr', area1: 135000, area2: 305000, area3: 364000 },
+    { month: 'May', area1: 140000, area2: 320000, area3: 389000 },
+    { month: 'Jun', area1: 145000, area2: 335000, area3: 405000 },
+    { month: 'Jul', area1: 150000, area2: 350000, area3: 420000 },
+    { month: 'Aug', area1: 148000, area2: 345000, area3: 415000 },
+    { month: 'Sep', area1: 146000, area2: 340000, area3: 410000 },
+    { month: 'Oct', area1: 142000, area2: 330000, area3: 400000 },
+    { month: 'Nov', area1: 138000, area2: 320000, area3: 390000 },
+    { month: 'Dec', area1: 140000, area2: 325000, area3: 395000 },
+  ],
+  '2026': [
+    { month: 'Jan', area1: 125000, area2: 305000, area3: 360000 },
+    { month: 'Feb', area1: 128000, area2: 300000, area3: 350000 },
+    { month: 'Mar', area1: 130000, area2: 310000, area3: 355000 },
+  ],
+};
+
 // Mock data for paid vs unpaid bills
 const billsData = [
   { status: 'Paid', count: 856 },
@@ -148,6 +199,7 @@ export const ReportsPage = () => {
   const [customerSearch, setCustomerSearch] = useState('C001');
   const [customerYear, setCustomerYear] = useState('2025');
   const [selectedArea, setSelectedArea] = useState('all');
+  const [areaYear, setAreaYear] = useState('2025');
 
   const totalOverdueAmount = overdueTableData.reduce((sum, item) => sum + item.amount, 0);
 
@@ -189,6 +241,8 @@ export const ReportsPage = () => {
       revenue: usage * CUSTOMER_UNIT_RATE,
     };
   });
+
+  const areaDataForYear = areaWiseDataByYear[areaYear] || areaWiseData;
 
   return (
     <div className="space-y-6">
@@ -369,13 +423,24 @@ export const ReportsPage = () => {
                       <SelectItem value="area3">Area 3</SelectItem>
                     </SelectContent>
                   </Select>
+                  <Select value={areaYear} onValueChange={setAreaYear}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2023">2023</SelectItem>
+                      <SelectItem value="2024">2024</SelectItem>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={areaWiseData}>
+                  <BarChart data={areaDataForYear}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
                     <YAxis stroke="hsl(var(--muted-foreground))" />
