@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 
 // Mock data for monthly usage and revenue - different data for each year
 const monthlyDataByYear = {
@@ -103,10 +104,22 @@ const overdueTableData = [
 
 export const ReportsPage = () => {
   const [selectedYear, setSelectedYear] = useState('2025');
-  const [selectedCustomer, setSelectedCustomer] = useState('customer1');
+  const [customerSearch, setCustomerSearch] = useState('C001');
   const [selectedArea, setSelectedArea] = useState('all');
 
   const totalOverdueAmount = overdueTableData.reduce((sum, item) => sum + item.amount, 0);
+
+  // Map customer ID to internal customer reference
+  const getCustomerKeyFromId = (customerId: string): string => {
+    const idMap: Record<string, string> = {
+      'C001': 'customer1',
+      'C002': 'customer2',
+      'C003': 'customer3',
+    };
+    return idMap[customerId.toUpperCase()] || 'customer1';
+  };
+
+  const selectedCustomer = getCustomerKeyFromId(customerSearch);
 
   // Prepare customer-specific chart data (only the selected customer)
   const customerNames: Record<string, string> = {
@@ -228,17 +241,12 @@ export const ReportsPage = () => {
                   <CardDescription>Individual customer consumption and billing trends for a selected year</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Filter className="w-4 h-4 text-muted-foreground" />
-                  <Select value={selectedCustomer} onValueChange={setSelectedCustomer}>
-                    <SelectTrigger className="w-40">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="customer1">Customer 1</SelectItem>
-                      <SelectItem value="customer2">Customer 2</SelectItem>
-                      <SelectItem value="customer3">Customer 3</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Input
+                    placeholder="Search Customer ID (C001, C002, C003)"
+                    value={customerSearch}
+                    onChange={(e) => setCustomerSearch(e.target.value.toUpperCase())}
+                    className="w-48"
+                  />
                 </div>
               </div>
             </CardHeader>
