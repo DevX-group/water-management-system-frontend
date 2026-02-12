@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Download, Filter, Calendar } from 'lucide-react';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, BarChart, Bar, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -112,62 +112,62 @@ const customerWiseDataByYear: Record<string, { month: string; customer1: number;
 
 // Mock data for area-wise usage and revenue
 const areaWiseData = [
-  { month: 'Jan', area1: 120000, area2: 280000, area3: 335000 },
-  { month: 'Feb', area1: 125000, area2: 275000, area3: 296000 },
-  { month: 'Mar', area1: 130000, area2: 290000, area3: 333000 },
-  { month: 'Apr', area1: 135000, area2: 305000, area3: 364000 },
-  { month: 'May', area1: 140000, area2: 320000, area3: 389000 },
-  { month: 'Jun', area1: 145000, area2: 335000, area3: 405000 },
+  { month: 'Jan', area1Revenue: 120000, area1Usage: 45000, area2Revenue: 280000, area2Usage: 95000, area3Revenue: 335000, area3Usage: 115000 },
+  { month: 'Feb', area1Revenue: 125000, area1Usage: 48000, area2Revenue: 275000, area2Usage: 92000, area3Revenue: 296000, area3Usage: 105000 },
+  { month: 'Mar', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 290000, area2Usage: 98000, area3Revenue: 333000, area3Usage: 112000 },
+  { month: 'Apr', area1Revenue: 135000, area1Usage: 52000, area2Revenue: 305000, area2Usage: 103000, area3Revenue: 364000, area3Usage: 125000 },
+  { month: 'May', area1Revenue: 140000, area1Usage: 54000, area2Revenue: 320000, area2Usage: 108000, area3Revenue: 389000, area3Usage: 133000 },
+  { month: 'Jun', area1Revenue: 145000, area1Usage: 56000, area2Revenue: 335000, area2Usage: 113000, area3Revenue: 405000, area3Usage: 138000 },
 ];
 
-// Per-year area-wise mock data
-const areaWiseDataByYear: Record<string, { month: string; area1: number; area2: number; area3: number }[]> = {
+// Per-year area-wise mock data (with both revenue and usage)
+const areaWiseDataByYear: Record<string, { month: string; area1Revenue: number; area1Usage: number; area2Revenue: number; area2Usage: number; area3Revenue: number; area3Usage: number }[]> = {
   '2023': [
-    { month: 'Jan', area1: 110000, area2: 260000, area3: 310000 },
-    { month: 'Feb', area1: 115000, area2: 255000, area3: 295000 },
-    { month: 'Mar', area1: 120000, area2: 270000, area3: 320000 },
-    { month: 'Apr', area1: 125000, area2: 285000, area3: 345000 },
-    { month: 'May', area1: 130000, area2: 300000, area3: 370000 },
-    { month: 'Jun', area1: 135000, area2: 315000, area3: 385000 },
-    { month: 'Jul', area1: 140000, area2: 330000, area3: 400000 },
-    { month: 'Aug', area1: 138000, area2: 325000, area3: 395000 },
-    { month: 'Sep', area1: 136000, area2: 320000, area3: 390000 },
-    { month: 'Oct', area1: 132000, area2: 310000, area3: 380000 },
-    { month: 'Nov', area1: 128000, area2: 300000, area3: 370000 },
-    { month: 'Dec', area1: 130000, area2: 305000, area3: 375000 },
+    { month: 'Jan', area1Revenue: 110000, area1Usage: 42000, area2Revenue: 260000, area2Usage: 88000, area3Revenue: 310000, area3Usage: 105000 },
+    { month: 'Feb', area1Revenue: 115000, area1Usage: 44000, area2Revenue: 255000, area2Usage: 86000, area3Revenue: 295000, area3Usage: 100000 },
+    { month: 'Mar', area1Revenue: 120000, area1Usage: 46000, area2Revenue: 270000, area2Usage: 91000, area3Revenue: 320000, area3Usage: 108000 },
+    { month: 'Apr', area1Revenue: 125000, area1Usage: 48000, area2Revenue: 285000, area2Usage: 96000, area3Revenue: 345000, area3Usage: 116000 },
+    { month: 'May', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 300000, area2Usage: 101000, area3Revenue: 370000, area3Usage: 125000 },
+    { month: 'Jun', area1Revenue: 135000, area1Usage: 52000, area2Revenue: 315000, area2Usage: 106000, area3Revenue: 385000, area3Usage: 130000 },
+    { month: 'Jul', area1Revenue: 140000, area1Usage: 54000, area2Revenue: 330000, area2Usage: 111000, area3Revenue: 400000, area3Usage: 135000 },
+    { month: 'Aug', area1Revenue: 138000, area1Usage: 53000, area2Revenue: 325000, area2Usage: 109000, area3Revenue: 395000, area3Usage: 133000 },
+    { month: 'Sep', area1Revenue: 136000, area1Usage: 52000, area2Revenue: 320000, area2Usage: 107000, area3Revenue: 390000, area3Usage: 131000 },
+    { month: 'Oct', area1Revenue: 132000, area1Usage: 50000, area2Revenue: 310000, area2Usage: 104000, area3Revenue: 380000, area3Usage: 128000 },
+    { month: 'Nov', area1Revenue: 128000, area1Usage: 49000, area2Revenue: 300000, area2Usage: 101000, area3Revenue: 370000, area3Usage: 125000 },
+    { month: 'Dec', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 305000, area2Usage: 103000, area3Revenue: 375000, area3Usage: 127000 },
   ],
   '2024': [
-    { month: 'Jan', area1: 115000, area2: 270000, area3: 320000 },
-    { month: 'Feb', area1: 120000, area2: 275000, area3: 310000 },
-    { month: 'Mar', area1: 125000, area2: 285000, area3: 330000 },
-    { month: 'Apr', area1: 130000, area2: 300000, area3: 355000 },
-    { month: 'May', area1: 135000, area2: 315000, area3: 380000 },
-    { month: 'Jun', area1: 140000, area2: 330000, area3: 395000 },
-    { month: 'Jul', area1: 145000, area2: 345000, area3: 410000 },
-    { month: 'Aug', area1: 143000, area2: 340000, area3: 405000 },
-    { month: 'Sep', area1: 141000, area2: 335000, area3: 400000 },
-    { month: 'Oct', area1: 137000, area2: 325000, area3: 390000 },
-    { month: 'Nov', area1: 133000, area2: 315000, area3: 380000 },
-    { month: 'Dec', area1: 136000, area2: 320000, area3: 385000 },
+    { month: 'Jan', area1Revenue: 115000, area1Usage: 44000, area2Revenue: 270000, area2Usage: 91000, area3Revenue: 320000, area3Usage: 108000 },
+    { month: 'Feb', area1Revenue: 120000, area1Usage: 46000, area2Revenue: 275000, area2Usage: 93000, area3Revenue: 310000, area3Usage: 105000 },
+    { month: 'Mar', area1Revenue: 125000, area1Usage: 48000, area2Revenue: 285000, area2Usage: 96000, area3Revenue: 330000, area3Usage: 112000 },
+    { month: 'Apr', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 300000, area2Usage: 101000, area3Revenue: 355000, area3Usage: 120000 },
+    { month: 'May', area1Revenue: 135000, area1Usage: 52000, area2Revenue: 315000, area2Usage: 106000, area3Revenue: 380000, area3Usage: 129000 },
+    { month: 'Jun', area1Revenue: 140000, area1Usage: 54000, area2Revenue: 330000, area2Usage: 111000, area3Revenue: 395000, area3Usage: 134000 },
+    { month: 'Jul', area1Revenue: 145000, area1Usage: 56000, area2Revenue: 345000, area2Usage: 116000, area3Revenue: 410000, area3Usage: 139000 },
+    { month: 'Aug', area1Revenue: 143000, area1Usage: 55000, area2Revenue: 340000, area2Usage: 114000, area3Revenue: 405000, area3Usage: 137000 },
+    { month: 'Sep', area1Revenue: 141000, area1Usage: 54000, area2Revenue: 335000, area2Usage: 113000, area3Revenue: 400000, area3Usage: 135000 },
+    { month: 'Oct', area1Revenue: 137000, area1Usage: 52000, area2Revenue: 325000, area2Usage: 109000, area3Revenue: 390000, area3Usage: 132000 },
+    { month: 'Nov', area1Revenue: 133000, area1Usage: 51000, area2Revenue: 315000, area2Usage: 106000, area3Revenue: 380000, area3Usage: 129000 },
+    { month: 'Dec', area1Revenue: 136000, area1Usage: 52000, area2Revenue: 320000, area2Usage: 108000, area3Revenue: 385000, area3Usage: 130000 },
   ],
   '2025': [
-    { month: 'Jan', area1: 120000, area2: 280000, area3: 335000 },
-    { month: 'Feb', area1: 125000, area2: 275000, area3: 296000 },
-    { month: 'Mar', area1: 130000, area2: 290000, area3: 333000 },
-    { month: 'Apr', area1: 135000, area2: 305000, area3: 364000 },
-    { month: 'May', area1: 140000, area2: 320000, area3: 389000 },
-    { month: 'Jun', area1: 145000, area2: 335000, area3: 405000 },
-    { month: 'Jul', area1: 150000, area2: 350000, area3: 420000 },
-    { month: 'Aug', area1: 148000, area2: 345000, area3: 415000 },
-    { month: 'Sep', area1: 146000, area2: 340000, area3: 410000 },
-    { month: 'Oct', area1: 142000, area2: 330000, area3: 400000 },
-    { month: 'Nov', area1: 138000, area2: 320000, area3: 390000 },
-    { month: 'Dec', area1: 140000, area2: 325000, area3: 395000 },
+    { month: 'Jan', area1Revenue: 120000, area1Usage: 45000, area2Revenue: 280000, area2Usage: 95000, area3Revenue: 335000, area3Usage: 115000 },
+    { month: 'Feb', area1Revenue: 125000, area1Usage: 48000, area2Revenue: 275000, area2Usage: 92000, area3Revenue: 296000, area3Usage: 105000 },
+    { month: 'Mar', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 290000, area2Usage: 98000, area3Revenue: 333000, area3Usage: 112000 },
+    { month: 'Apr', area1Revenue: 135000, area1Usage: 52000, area2Revenue: 305000, area2Usage: 103000, area3Revenue: 364000, area3Usage: 125000 },
+    { month: 'May', area1Revenue: 140000, area1Usage: 54000, area2Revenue: 320000, area2Usage: 108000, area3Revenue: 389000, area3Usage: 133000 },
+    { month: 'Jun', area1Revenue: 145000, area1Usage: 56000, area2Revenue: 335000, area2Usage: 113000, area3Revenue: 405000, area3Usage: 138000 },
+    { month: 'Jul', area1Revenue: 150000, area1Usage: 58000, area2Revenue: 350000, area2Usage: 118000, area3Revenue: 420000, area3Usage: 143000 },
+    { month: 'Aug', area1Revenue: 148000, area1Usage: 57000, area2Revenue: 345000, area2Usage: 116000, area3Revenue: 415000, area3Usage: 141000 },
+    { month: 'Sep', area1Revenue: 146000, area1Usage: 56000, area2Revenue: 340000, area2Usage: 114000, area3Revenue: 410000, area3Usage: 139000 },
+    { month: 'Oct', area1Revenue: 142000, area1Usage: 54000, area2Revenue: 330000, area2Usage: 111000, area3Revenue: 400000, area3Usage: 136000 },
+    { month: 'Nov', area1Revenue: 138000, area1Usage: 53000, area2Revenue: 320000, area2Usage: 108000, area3Revenue: 390000, area3Usage: 133000 },
+    { month: 'Dec', area1Revenue: 140000, area1Usage: 54000, area2Revenue: 325000, area2Usage: 110000, area3Revenue: 395000, area3Usage: 134000 },
   ],
   '2026': [
-    { month: 'Jan', area1: 125000, area2: 305000, area3: 360000 },
-    { month: 'Feb', area1: 128000, area2: 300000, area3: 350000 },
-    { month: 'Mar', area1: 130000, area2: 310000, area3: 355000 },
+    { month: 'Jan', area1Revenue: 125000, area1Usage: 48000, area2Revenue: 305000, area2Usage: 103000, area3Revenue: 360000, area3Usage: 122000 },
+    { month: 'Feb', area1Revenue: 128000, area1Usage: 49000, area2Revenue: 300000, area2Usage: 101000, area3Revenue: 350000, area3Usage: 118000 },
+    { month: 'Mar', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 310000, area2Usage: 105000, area3Revenue: 355000, area3Usage: 120000 },
   ],
 };
 
@@ -178,11 +178,9 @@ const billsData = [
 ];
 
 const billsTableData = [
-  { id: 'BL001', customer: 'John Doe', amount: 5500, dueDate: '2025-12-31', status: 'Paid' },
-  { id: 'BL002', customer: 'Jane Smith', amount: 6200, dueDate: '2026-01-15', status: 'Paid' },
-  { id: 'BL003', customer: 'Mike Johnson', amount: 4800, dueDate: '2026-01-20', status: 'Unpaid' },
-  { id: 'BL004', customer: 'Sarah Williams', amount: 7100, dueDate: '2026-01-25', status: 'Paid' },
-  { id: 'BL005', customer: 'Robert Brown', amount: 5900, dueDate: '2026-02-05', status: 'Unpaid' },
+  { id: 'BL101', customerid: 'C001', customer: 'John Doe', amount: 5500, dueDate: '2025-12-31', status: 'Paid' },
+  { id: 'BL112', customerid: 'C002', customer: 'Jane Smith', amount: 6200, dueDate: '2026-01-15', status: 'Unpaid' },
+  { id: 'BL213', customerid: 'C003', customer: 'Mike Johnson', amount: 4800, dueDate: '2026-01-20', status: 'Paid' },
 ];
 
 // Mock data for overdue payments
@@ -196,10 +194,14 @@ const overdueTableData = [
 
 export const ReportsPage = () => {
   const [selectedYear, setSelectedYear] = useState('2025');
+
   const [customerSearch, setCustomerSearch] = useState('C001');
   const [customerYear, setCustomerYear] = useState('2025');
+
   const [selectedArea, setSelectedArea] = useState('all');
   const [areaYear, setAreaYear] = useState('2025');
+
+  const [customerSearchBill, setCustomerSearchBill] = useState("");
 
   const totalOverdueAmount = overdueTableData.reduce((sum, item) => sum + item.amount, 0);
 
@@ -243,6 +245,14 @@ export const ReportsPage = () => {
   });
 
   const areaDataForYear = areaWiseDataByYear[areaYear] || areaWiseData;
+
+  //Seach Bar for bills report + default shows all bills  
+  const filteredBills = customerSearchBill
+    ? billsTableData.filter((bill) =>
+        bill.customerid.toUpperCase().includes(customerSearchBill)
+      )
+    : billsTableData;
+
 
   return (
     <div className="space-y-6">
@@ -440,23 +450,56 @@ export const ReportsPage = () => {
             <CardContent>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={areaDataForYear}>
+                  <ComposedChart data={areaDataForYear}>
                     <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
                     <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" />
-                    <YAxis stroke="hsl(var(--muted-foreground))" />
+                    <YAxis yAxisId="left" stroke="hsl(var(--muted-foreground))" label={{ value: '(L)', angle: -90, position: 'insideBottom' }} />
+                    <YAxis yAxisId="right" orientation="right" stroke="hsl(var(--muted-foreground))" label={{ value: '(LKR)', angle: 90, position: 'insideBottom' }} />
                     <Tooltip 
                       contentStyle={{ 
                         backgroundColor: 'hsl(var(--card))', 
                         border: '1px solid hsl(var(--border))',
                         borderRadius: '8px',
                       }}
-                      formatter={(value: number) => [`LKR ${value.toLocaleString()}`, '']}
+                      content={({ active, payload }) => {
+                        if (active && payload && payload.length) {
+                          const data = payload[0]?.payload;
+                          if (data) {
+                            return (
+                              <div className="bg-card border border-border rounded-lg p-2 text-sm">
+                                {(selectedArea === 'all' || selectedArea === 'area1') && (
+                                  <>
+                                    <p className="text-foreground">{`Area 1 Usage: ${Number(data.area1Usage).toLocaleString()} L`}</p>
+                                    <p className="text-foreground">{`Area 1 Revenue: LKR ${Number(data.area1Revenue).toLocaleString()}`}</p>
+                                  </>
+                                )}
+                                {(selectedArea === 'all' || selectedArea === 'area2') && (
+                                  <>
+                                    <p className="text-foreground">{`Area 2 Usage: ${Number(data.area2Usage).toLocaleString()} L`}</p>
+                                    <p className="text-foreground">{`Area 2 Revenue: LKR ${Number(data.area2Revenue).toLocaleString()}`}</p>
+                                  </>
+                                )}
+                                {(selectedArea === 'all' || selectedArea === 'area3') && (
+                                  <>
+                                    <p className="text-foreground">{`Area 3 Usage: ${Number(data.area3Usage).toLocaleString()} L`}</p>
+                                    <p className="text-foreground">{`Area 3 Revenue: LKR ${Number(data.area3Revenue).toLocaleString()}`}</p>
+                                  </>
+                                )}
+                              </div>
+                            );
+                          }
+                        }
+                        return null;
+                      }}
                     />
                     <Legend />
-                    <Bar dataKey="area1" name="Area 1" fill="hsl(187, 75%, 35%)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="area2" name="Area 2" fill="hsl(152, 70%, 40%)" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="area3" name="Area 3" fill="hsl(38, 92%, 55%)" radius={[4, 4, 0, 0]} />
-                  </BarChart>
+                    {(selectedArea === 'all' || selectedArea === 'area1') && <Bar yAxisId="left" dataKey="area1Usage" name="Area 1 Usage (L)" fill="hsl(187, 75%, 35%)" radius={[4, 4, 0, 0]} />}
+                    {(selectedArea === 'all' || selectedArea === 'area2') && <Bar yAxisId="left" dataKey="area2Usage" name="Area 2 Usage (L)" fill="hsl(152, 70%, 40%)" radius={[4, 4, 0, 0]} />}
+                    {(selectedArea === 'all' || selectedArea === 'area3') && <Bar yAxisId="left" dataKey="area3Usage" name="Area 3 Usage (L)" fill="hsl(38, 92%, 55%)" radius={[4, 4, 0, 0]} />}
+                    {(selectedArea === 'all' || selectedArea === 'area1') && <Line yAxisId="right" type="monotone" dataKey="area1Revenue" name="Area 1 Revenue (LKR)" stroke="hsl(187, 75%, 55%)" strokeWidth={2} />}
+                    {(selectedArea === 'all' || selectedArea === 'area2') && <Line yAxisId="right" type="monotone" dataKey="area2Revenue" name="Area 2 Revenue (LKR)" stroke="hsl(152, 70%, 60%)" strokeWidth={2} />}
+                    {(selectedArea === 'all' || selectedArea === 'area3') && <Line yAxisId="right" type="monotone" dataKey="area3Revenue" name="Area 3 Revenue (LKR)" stroke="hsl(38, 92%, 75%)" strokeWidth={2} />}
+                  </ComposedChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
@@ -488,11 +531,20 @@ export const ReportsPage = () => {
                   </BarChart>
                 </ResponsiveContainer>
               </div>
+              <div className="flex justify-end">
+                  <Input 
+                    placeholder="Search Customer ID (C001, C002, C003)"
+                    value={customerSearchBill}
+                    onChange={(e) => setCustomerSearchBill(e.target.value.toUpperCase())}
+                    className="w-48"
+                  />
+              </div>
               <div className="rounded-lg border">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Bill ID</TableHead>
+                      <TableHead>Customer ID</TableHead>
                       <TableHead>Customer</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Due Date</TableHead>
@@ -500,9 +552,11 @@ export const ReportsPage = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {billsTableData.map((bill) => (
+                    {filteredBills.length > 0 ? (
+                      filteredBills.map((bill) => (
                       <TableRow key={bill.id}>
                         <TableCell className="font-medium">{bill.id}</TableCell>
+                        <TableCell>{bill.customerid}</TableCell>
                         <TableCell>{bill.customer}</TableCell>
                         <TableCell>LKR {bill.amount.toLocaleString()}</TableCell>
                         <TableCell>{bill.dueDate}</TableCell>
@@ -516,7 +570,14 @@ export const ReportsPage = () => {
                           </span>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ))
+                    ) : (     //condition ? valueIfTrue : valueIfFalse in jsx
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">
+                    No results found
+                  </TableCell>
+                </TableRow>
+              )}
                   </TableBody>
                 </Table>
               </div>
