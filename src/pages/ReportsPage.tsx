@@ -185,11 +185,11 @@ const billsTableData = [
 
 // Mock data for overdue payments
 const overdueTableData = [
-  { id: 'BL006', customer: 'Alice Davis', amount: 6500, dueDate: '2025-11-30', daysOverdue: 71 },
-  { id: 'BL007', customer: 'Tom Wilson', amount: 5200, dueDate: '2025-12-15', daysOverdue: 55 },
-  { id: 'BL008', customer: 'Emma Garcia', amount: 7800, dueDate: '2025-12-20', daysOverdue: 50 },
-  { id: 'BL009', customer: 'David Martinez', amount: 4900, dueDate: '2026-01-05', daysOverdue: 35 },
-  { id: 'BL010', customer: 'Lisa Anderson', amount: 6100, dueDate: '2026-01-10', daysOverdue: 30 },
+  { id: 'BL006', customerid: 'C001', customer: 'Alice Davis', amount: 6500, dueDate: '2025-11-30', daysOverdue: 71 },
+  { id: 'BL007', customerid: 'C002', customer: 'Tom Wilson', amount: 5200, dueDate: '2025-12-15', daysOverdue: 55 },
+  { id: 'BL008', customerid: 'C003', customer: 'Emma Garcia', amount: 7800, dueDate: '2025-12-20', daysOverdue: 50 },
+  { id: 'BL009', customerid: 'C004', customer: 'David Martinez', amount: 4900, dueDate: '2026-01-05', daysOverdue: 35 },
+  { id: 'BL010', customerid: 'C005', customer: 'Lisa Anderson', amount: 6100, dueDate: '2026-01-10', daysOverdue: 30 },
 ];
 
 export const ReportsPage = () => {
@@ -203,7 +203,7 @@ export const ReportsPage = () => {
 
   const [customerSearchBill, setCustomerSearchBill] = useState("");
 
-  const totalOverdueAmount = overdueTableData.reduce((sum, item) => sum + item.amount, 0);
+  const [overdueBill, setoverdueBill] = useState("");
 
   // Map customer ID to internal customer reference
   const getCustomerKeyFromId = (customerId: string): string => {
@@ -253,6 +253,14 @@ export const ReportsPage = () => {
       )
     : billsTableData;
 
+  //Serach bar for Overdue report + default shows all overdue bills
+  const filteredOverdue = overdueBill
+    ? overdueTableData.filter((overdue) =>
+        overdue.customerid.toUpperCase().includes(overdueBill)
+    )
+    : overdueTableData;
+
+  const totalOverdueAmount = overdueTableData.reduce((sum, item) => sum + item.amount, 0);  
 
   return (
     <div className="space-y-6">
@@ -605,12 +613,22 @@ export const ReportsPage = () => {
                 </div>
               </div>
 
+              <div className="flex justify-end">
+                <Input 
+                  placeholder="Search Customer ID (C001, C002, C003)"
+                  value={overdueBill}
+                  onChange={(e) => setoverdueBill(e.target.value.toUpperCase())}
+                  className="w-48"
+                />
+              </div>
+
               {/* Overdue Bills Table */}
               <div className="rounded-lg border">
                 <Table>
                   <TableHeader>
                     <TableRow>
                       <TableHead>Bill ID</TableHead>
+                      <TableHead>Customer ID</TableHead>
                       <TableHead>Customer</TableHead>
                       <TableHead>Amount</TableHead>
                       <TableHead>Due Date</TableHead>
@@ -618,19 +636,28 @@ export const ReportsPage = () => {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {overdueTableData.map((bill) => (
-                      <TableRow key={bill.id}>
-                        <TableCell className="font-medium">{bill.id}</TableCell>
-                        <TableCell>{bill.customer}</TableCell>
-                        <TableCell>LKR {bill.amount.toLocaleString()}</TableCell>
-                        <TableCell>{bill.dueDate}</TableCell>
+                    {filteredOverdue.length > 0 ? (
+                    filteredOverdue.map((overdue) => (
+                      <TableRow key={overdue.id}>
+                        <TableCell className="font-medium">{overdue.id}</TableCell>
+                        <TableCell>{overdue.customerid}</TableCell>
+                        <TableCell>{overdue.customer}</TableCell>
+                        <TableCell>LKR {overdue.amount.toLocaleString()}</TableCell>
+                        <TableCell>{overdue.dueDate}</TableCell>
                         <TableCell>
                           <span className="px-3 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
-                            {bill.daysOverdue} days
+                            {overdue.daysOverdue} days
                           </span>
                         </TableCell>
                       </TableRow>
-                    ))}
+                    ))
+                  ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">
+                    No results found
+                  </TableCell>
+                </TableRow>
+                  )}
                   </TableBody>
                 </Table>
               </div>
