@@ -55,7 +55,6 @@ const monthlyDataByYear = {
   2026: [
     { month: 'Jan', usage: 25800, revenue: 774000 },
     { month: 'Feb', usage: 23200, revenue: 696000 },
-    { month: 'Mar', usage: 25100, revenue: 753000 },
   ],
 };
 
@@ -106,7 +105,6 @@ const customerWiseDataByYear: Record<string, { month: string; customer1: number;
   '2026': [
     { month: 'Jan', customer1: 48000, customer2: 42000, customer3: 54000 },
     { month: 'Feb', customer1: 46000, customer2: 40000, customer3: 52000 },
-    { month: 'Mar', customer1: 49000, customer2: 43000, customer3: 55000 },
   ],
 };
 
@@ -167,7 +165,6 @@ const areaWiseDataByYear: Record<string, { month: string; area1Revenue: number; 
   '2026': [
     { month: 'Jan', area1Revenue: 125000, area1Usage: 48000, area2Revenue: 305000, area2Usage: 103000, area3Revenue: 360000, area3Usage: 122000 },
     { month: 'Feb', area1Revenue: 128000, area1Usage: 49000, area2Revenue: 300000, area2Usage: 101000, area3Revenue: 350000, area3Usage: 118000 },
-    { month: 'Mar', area1Revenue: 130000, area1Usage: 50000, area2Revenue: 310000, area2Usage: 105000, area3Revenue: 355000, area3Usage: 120000 },
   ],
 };
 
@@ -193,15 +190,15 @@ const overdueTableData = [
 ];
 
 export const ReportsPage = () => {
-  const [selectedYear, setSelectedYear] = useState('2025');
+  const [selectedYear, setSelectedYear] = useState('2026');
 
   const [customerSearch, setCustomerSearch] = useState('C001');
-  const [customerYear, setCustomerYear] = useState('2025');
+  const [customerYear, setCustomerYear] = useState('2026');
 
   const [selectedArea, setSelectedArea] = useState('all');
-  const [areaYear, setAreaYear] = useState('2025');
+  const [areaYear, setAreaYear] = useState('2026');
 
-  const [customerSearchBill, setCustomerSearchBill] = useState("");
+  const [customerSearchBill, setCustomerSearchBill] = useState(""); 
 
   const [overdueBill, setoverdueBill] = useState("");
 
@@ -233,7 +230,7 @@ export const ReportsPage = () => {
   // For customers we only have usage in mock data; derive revenue using a per-unit rate
   const CUSTOMER_UNIT_RATE = 15; // LKR per unit (mock)
 
-  const customerDataForYear = customerWiseDataByYear[customerYear] || customerWiseDataByYear['2025'];
+  const customerDataForYear = customerWiseDataByYear[customerYear] || customerWiseDataByYear['2026'];
 
   const customerChartData = customerDataForYear.map((m) => {
     const usage = selectedCustomer === 'customer2' ? m.customer2 : selectedCustomer === 'customer3' ? m.customer3 : m.customer1;
@@ -266,14 +263,8 @@ export const ReportsPage = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
           <h1 className="text-2xl font-bold text-foreground">Reports</h1>
           <p className="text-sm text-muted-foreground">Summarized and detailed views of system data for monitoring and analysis</p>
-        </div>
-        <Button>
-          <Download className="w-4 h-4 mr-2" />
-          Export as PDF
-        </Button>
       </div>
 
       {/* Tabs for different report types */}
@@ -342,6 +333,12 @@ export const ReportsPage = () => {
                     <Line type="monotone" dataKey="usage" name="Usage (L)" stroke="hsl(187, 75%, 35%)" strokeWidth={2} />
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="flex justify-end">
+                <Button>
+                <Download className="w-4 h-4 mr-2" />
+                 Export as PDF
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -414,6 +411,12 @@ export const ReportsPage = () => {
                     />
                   </LineChart>
                 </ResponsiveContainer>
+              </div>
+              <div className="flex justify-end">
+                <Button>
+                <Download className="w-4 h-4 mr-2" />
+                 Export as PDF
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -510,6 +513,12 @@ export const ReportsPage = () => {
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
+              <div className="flex justify-end">
+                <Button>
+                <Download className="w-4 h-4 mr-2" />
+                 Export as PDF
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -589,6 +598,12 @@ export const ReportsPage = () => {
                   </TableBody>
                 </Table>
               </div>
+              <div className="flex justify-end">
+                <Button>
+                <Download className="w-4 h-4 mr-2" />
+                 Export as PDF
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </TabsContent>
@@ -660,6 +675,12 @@ export const ReportsPage = () => {
                   )}
                   </TableBody>
                 </Table>
+              </div>
+              <div className="flex justify-end">
+                <Button>
+                <Download className="w-4 h-4 mr-2" />
+                 Export as PDF
+                </Button>
               </div>
             </CardContent>
           </Card>
