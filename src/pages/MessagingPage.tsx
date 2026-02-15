@@ -66,7 +66,7 @@ import {
 } from '../types/messaging';
 import { mockMessages, defaultRecurringSmsTemplate } from '../data/messagingData';
 
-import { MessageHistoryPage } from './MessageHistoryPage';
+import { MessageHistoryPage } from './messageHistoryPage';
 
 export const MessagingPage = () => {
   return (
