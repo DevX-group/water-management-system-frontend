@@ -63,6 +63,89 @@ const Bills = () => {
     },
   ];
 
-  
+  return (
+    <MainLayout isAuthenticated={true}>
+      <div className="container mx-auto px-4 py-8">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants} className="mb-8">
+            <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              Billing <span className="text-gradient">History</span>
+            </h1>
+            <p className="text-muted-foreground text-lg">View and manage all your water bills</p>
+          </motion.div>
+
+          {/* Bills Table */}
+          <motion.div variants={itemVariants}>
+            <Card className="shadow-card border-none overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-secondary/50">
+                    <tr>
+                      <th className="text-left p-5 font-semibold text-sm">Billing Period</th>
+                      <th className="text-left p-5 font-semibold text-sm">Amount</th>
+                      <th className="text-left p-5 font-semibold text-sm">Usage</th>
+                      <th className="text-left p-5 font-semibold text-sm">Status</th>
+                      <th className="text-left p-5 font-semibold text-sm">Due Date</th>
+                      <th className="text-right p-5 font-semibold text-sm">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredBills.map((bill, i) => (
+                      <motion.tr 
+                        key={i} 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.05 }}
+                        className="border-t border-border hover:bg-secondary/30 transition-colors group"
+                      >
+                        <td className="p-5">
+                          <span className="font-semibold">{bill.period}</span>
+                        </td>
+                        <td className="p-5">
+                          <span className="font-bold text-lg">LKR {bill.amount.toLocaleString()}</span>
+                        </td>
+                        <td className="p-5">
+                          <span className="text-muted-foreground">{bill.usage} units</span>
+                        </td>
+                        <td className="p-5">
+                          <Badge 
+                            variant="secondary"
+                            className={`rounded-full px-3 py-1 ${
+                              bill.status === "paid" 
+                                ? "bg-success/10 text-success border-success/20" 
+                                : "bg-warning/10 text-warning border-warning/20"
+                            }`}
+                          >
+                            {bill.status === "paid" ? "✓ Paid" : "• Pending"}
+                          </Badge>
+                        </td>
+                        <td className="p-5 text-muted-foreground">{bill.dueDate}</td>
+                        <td className="p-5 text-right">
+                          <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </td>
+                      </motion.tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </Card>
+          </motion.div>
+        </motion.div>
+      </div>
+    </MainLayout>
+  );
+};
+
 
 export default Bills;
