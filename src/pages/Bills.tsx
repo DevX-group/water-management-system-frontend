@@ -78,6 +78,27 @@ const Bills = () => {
             <p className="text-muted-foreground text-lg">View and manage all your water bills</p>
           </motion.div>
 
+           {/* Summary Cards */}
+          <motion.div variants={itemVariants} className="grid sm:grid-cols-3 gap-4 mb-8">
+            {summaryStats.map((stat, index) => (
+              <motion.div 
+                key={index}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="stat-card"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`w-14 h-14 rounded-2xl ${stat.bgColor} flex items-center justify-center`}>
+                    <stat.icon className={`w-7 h-7 ${stat.color}`} />
+                  </div>
+                  <div>
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-2xl font-bold">{stat.value}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
           {/* Bills Table */}
           <motion.div variants={itemVariants}>
             <Card className="shadow-card border-none overflow-hidden">
