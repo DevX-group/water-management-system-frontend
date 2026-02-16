@@ -99,6 +99,43 @@ const Bills = () => {
             ))}
           </motion.div>
 
+          {/* Filters */}
+          <motion.div variants={itemVariants}>
+            <Card className="shadow-card border-none mb-6">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+                    <FileText className="w-4 h-4 text-white" />
+                  </div>
+                  Filter Bills
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input 
+                      placeholder="Search by month..." 
+                      value={searchTerm} 
+                      onChange={(e) => setSearchTerm(e.target.value)} 
+                      className="pl-11 h-12 rounded-xl input-premium"
+                    />
+                  </div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-full sm:w-48 h-12 rounded-xl">
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl">
+                      <SelectItem value="all" className="rounded-lg">All Status</SelectItem>
+                      <SelectItem value="paid" className="rounded-lg">Paid</SelectItem>
+                      <SelectItem value="unpaid" className="rounded-lg">Unpaid</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Bills Table */}
           <motion.div variants={itemVariants}>
             <Card className="shadow-card border-none overflow-hidden">
