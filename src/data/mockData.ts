@@ -104,6 +104,17 @@ export interface CustomerBilling {
   totalDue: number;
 }
 
+export interface BankSlip {
+  id: string;
+  customerId: string;
+  customerName: string;
+  subscriptionNo: string;
+  amount: number;
+  refNo: string;
+  uploadedAt: string;
+  slipImageUrl: string;
+}
+
 export const mockAdmins: Admin[] = [
   { id: '1', name: 'Samantha Fernando', role: 'main_admin', email: 'samantha@pradeshiyasabha.lk' },
   { id: '2', name: 'Kasun Wijesinghe', role: 'meter_reader', email: 'kasun@pradeshiyasabha.lk' },
@@ -125,6 +136,14 @@ export const mockPayments: Payment[] = [
   { id: '4', date: '2025-12-09', subscriptionNo: 'RJ-1234', customerName: 'Ruwan Jayawardena', amount: 2100, status: 'paid' },
   { id: '5', date: '2025-12-08', subscriptionNo: 'PD-5678', customerName: 'Priyantha De Silva', amount: 1850, status: 'overdue' },
 ];
+
+export const mockBankSlips: BankSlip[] = [
+  { id: 'BS-001', customerId: '002', customerName: 'Supun Perera', subscriptionNo: 'SP-4589', amount: 2800, refNo: 'BANK-84321', uploadedAt: '2026-02-16 09:12 AM', slipImageUrl: 'https://via.placeholder.com/800x1000?text=Bank+Slip+1'},
+  { id: 'BS-002', customerId: '001', customerName: 'Sanjeewa Kumara', subscriptionNo: 'SK-2341', amount: 1500, refNo: 'BANK-77109', uploadedAt: '2026-02-16 08:40 AM', slipImageUrl: 'https://via.placeholder.com/800x1000?text=Bank+Slip+2'},
+  { id: 'BS-003', customerId: '003', customerName: 'Kamani Silva', subscriptionNo: 'KS-7892', amount: 3200, refNo: 'BANK-12345', uploadedAt: '2026-02-15 11:30 AM', slipImageUrl: 'https://via.placeholder.com/800x1000?text=Bank+Slip+3'},
+  { id: 'BS-004', customerId: '004', customerName: 'Ruwan Jayawardena', subscriptionNo: 'RJ-1234', amount: 2100, refNo: 'BANK-56789', uploadedAt: '2026-02-15 14:45 PM', slipImageUrl: 'https://via.placeholder.com/800x1000?text=Bank+Slip+4'},
+];
+
 
 export const mockInvoices: Invoice[] = [
   { id: 'INV-001', customerId: '1', customerName: 'Supun Perera', amount: 2380, date: '2025-03-05', status: 'paid', overdueAmount: 0 },
