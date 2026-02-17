@@ -1,14 +1,17 @@
 import React, { useState, useEffect, ReactNode } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminProvider, useAdmin } from '@/contexts/AdminContext';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardPage } from './DashboardPage';
 import { MeterReadingPage } from './MeterReadingPage';
 import { PaymentsPage } from './PaymentsPage';
+import { PaymentsAddingPage } from './PaymentsAddingPage';
 import { BillingPage } from './BillingPage';
 import { MessagingPage } from './MessagingPage';
 import { ReportsPage } from './ReportsPage';
 import { UserManagementPage } from './UserManagementPage';
 import { PlaceholderPage } from './PlaceholderPage';
+import NotFound from './NotFound';
 import '../admin.css';
 
 type AdminRole = 'meter_reader' | 'payment_handler' | 'admin' | 'superadmin';
@@ -28,7 +31,7 @@ interface AdminContextType {
 
 const DashboardContent: React.FC = () => {
   const { currentAdmin } = useAdmin() as AdminContextType;
-  
+
   const [activeSection, setActiveSection] = useState<Section>(() => {
     switch (currentAdmin.role) {
       case 'meter_reader':
@@ -62,7 +65,13 @@ const DashboardContent: React.FC = () => {
       case 'meter':
         return <MeterReadingPage />;
       case 'payments':
-        return <PaymentsPage />;
+        return (
+          <Routes>
+            <Route path="payments" element={<PaymentsPage />} />
+            <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        );
       case 'billing':
         return <BillingPage />;
       case 'messaging':

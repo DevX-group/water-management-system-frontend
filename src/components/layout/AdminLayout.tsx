@@ -22,7 +22,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeSectio
           onSectionChange={onSectionChange} 
         />
       </div>
-      <div className="mx-auto px-8 py-6" style={{ maxWidth: 'calc(100% - 16rem)' }}>
+      <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-6" >
         <main>
           {children}
         </main>

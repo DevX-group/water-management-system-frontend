@@ -14,6 +14,7 @@ import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
+import { PaymentsPage } from "./pages/PaymentsPage";
 
 const queryClient = new QueryClient();
 
@@ -43,7 +44,7 @@ const App = () => (
           {/* Legacy Routes for backwards compatibility */}
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/bills" element={<Bills />} />
-          <Route path="/payments" element={<Payments />} />
+          <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/usage" element={<Usage />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="/profile" element={<Profile />} />
