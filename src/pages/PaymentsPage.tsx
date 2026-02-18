@@ -54,9 +54,9 @@ export const PaymentsPage = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* LEFT: Search (top) + Recently Added (bottom) */}
+        {/* Search bar and Recently Added section */}
         <div className="lg:w-[40%] space-y-6">
-          {/* Search (UNCHANGED) */}
+          {/* Search */}
           <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up">
             <h3 className="text-lg font-semibold text-foreground mb-4">Find Customer</h3>
             <div className="relative">
@@ -184,7 +184,7 @@ export const PaymentsPage = () => {
           </div>
         </div>
 
-        {/* RIGHT: Pending Bank Slip Table (from mockData) */}
+        {/* Pending Bank Slip Table */}
         <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up lg:w-[60%]">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-semibold text-foreground">
@@ -236,7 +236,7 @@ export const PaymentsPage = () => {
 
                   {/* Action */}
                   <div className="col-span-3 flex justify-center">
-                    <Button size="sm" className="px-5">
+                    <Button size="sm" className="px-5" onClick={() => navigate(`/admin/payments/slip/${slip.id}`)}>
                       Review
                     </Button>
                   </div>

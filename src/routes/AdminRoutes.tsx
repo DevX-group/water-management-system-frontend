@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';
 import { PaymentsAddingPage } from '@/pages/PaymentsAddingPage';
 import { PaymentsPage } from '@/pages/PaymentsPage';
-import { BillingPage } from '@/pages/BillingPage';
+import { BankSlipReviewPage } from '@/pages/BankSlipReviewPage';
 
 export const AdminRoutes: React.FC = () => {
   return (
@@ -11,8 +11,7 @@ export const AdminRoutes: React.FC = () => {
       <Route path="*" element={<NotFound />} />
       <Route path="payments" element={<PaymentsPage />} />
       <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
-      <Route path="billing" element={<BillingPage />} />
-      
+      <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
     </Routes>
   );
 };
