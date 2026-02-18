@@ -71,9 +71,13 @@ const DashboardContent: React.FC = () => {
             <Route path="payments" element={<PaymentsPage />} />
             <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
 <<<<<<< HEAD
+<<<<<<< HEAD
             <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
 =======
 >>>>>>> ae927e1 (Update payments page structure and routing)
+=======
+            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
+>>>>>>> 3514924 (Add initial bank slip review page)
             <Route path="*" element={<NotFound />} />
           </Routes>
         );
