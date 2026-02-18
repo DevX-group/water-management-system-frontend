@@ -71,7 +71,7 @@ export const PaymentsAddingPage = () => {
 
   const currentMonthLabel = new Date().toLocaleString('en-US', { month: 'long', year: 'numeric' });
 
-  // Demo values (UI only)
+  
   const monthlyBill = 1850;
   const alreadyPaid = 500;
   const monthlyDue = Math.max(monthlyBill - alreadyPaid, 0);
@@ -98,7 +98,7 @@ export const PaymentsAddingPage = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* LEFT: Tabs section */}
+        {/* Tabs section */}
         <div className="lg:w-[65%] space-y-6">
           <div className="bg-card rounded-2xl p-6 shadow-md">
             {/* Tabs header */}
@@ -194,9 +194,7 @@ export const PaymentsAddingPage = () => {
                       </Button>
                     </div>
 
-                    <p className="text-xs text-muted-foreground mt-2">
-                      This will be recorded as a payment for the current month.
-                    </p>
+                    
                   </div>
                 </div>
               ) : (
@@ -261,9 +259,7 @@ export const PaymentsAddingPage = () => {
                       </Button>
                     </div>
 
-                    <p className="text-xs text-muted-foreground mt-2">
-                      This will be recorded as a payment for outstanding balance.
-                    </p>
+                    
                   </div>
                 </div>
               )}
