@@ -13,6 +13,7 @@ import { UserManagementPage } from './UserManagementPage';
 import { PlaceholderPage } from './PlaceholderPage';
 import NotFound from './NotFound';
 import '../admin.css';
+import { BankSlipReviewPage } from './BankSlipReviewPage';
 
 type AdminRole = 'meter_reader' | 'payment_handler' | 'admin' | 'superadmin';
 
@@ -69,11 +70,12 @@ const DashboardContent: React.FC = () => {
           <Routes>
             <Route path="payments" element={<PaymentsPage />} />
             <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
+            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         );
       case 'billing':
-        return <BillingPage />;
+        return;
       case 'messaging':
         return <MessagingPage />;
       case 'reports':
