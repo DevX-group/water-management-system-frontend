@@ -98,20 +98,17 @@ export const BankSlipReviewPage: React.FC = () => {
                     </p>
                 </div>
 
-                <Button variant="secondary" onClick={() => navigate("/admin/payments")}>
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back
-                </Button>
-            </div>
+                    <Button variant="secondary" onClick={() => navigate("/admin/payments")}>
+                        <ArrowLeft className="w-4 h-4 mr-2" />
+                        Back
+                    </Button>
+                </div>
 
-            {/* Main layout */}
-            <div className="flex flex-col lg:flex-row gap-6">
-                {/* Slip image */}
-                <div className="lg:w-[60%] bg-card rounded-2xl shadow-md overflow-hidden">
-                    <div className="px-6 py-4 border-b border-border flex items-center justify-between">
-                        <h3 className="text-lg font-semibold text-foreground">Slip Image</h3>
-
-                        <div className="flex items-center gap-2">
+                {/* Main layout */}
+                <div className="flex flex-col lg:flex-row gap-6">
+                    {/* Slip image */}
+                    <div className="lg:w-[60%] bg-card rounded-2xl shadow-md overflow-hidden bg-primary/5">
+                        <div className="px-4 py-1 border-b border-border flex items-center justify-end gap-2">
                             <Button
                                 variant="secondary"
                                 size="sm"
@@ -194,57 +191,86 @@ export const BankSlipReviewPage: React.FC = () => {
                                 {Math.round(zoom * 100)}%
                             </span>
                         </div>
-                    </div>
 
-                    <div className="p-6 bg-secondary/20">
-                        {imageUrl ? (
-                            <div className="w-full overflow-auto rounded-xl border border-border bg-background">
-                                <div className="flex justify-center p-4">
-                                    <img
-                                        src={imageUrl}
-                                        alt="Bank slip"
-                                        style={{ transform: `scale(${zoom})`, transformOrigin: "top center" }}
-                                        className="max-w-full h-auto rounded-lg shadow-sm"
-                                    />
+                        <div className="p-3 bg-secondary/20">
+                            {imageUrl ? (
+                                <div className="w-full overflow-auto rounded-xl border border-border bg-background">
+                                    <div className="flex justify-center p-2">
+                                        <img
+                                            src={imageUrl}
+                                            alt="Bank slip"
+                                            style={{ transform: `scale(${zoom})`, transformOrigin: "top center" }}
+                                            className="max-w-full h-auto rounded-lg shadow-sm"
+                                        />
+                                    </div>
                                 </div>
+                            ) : (
+                                <div className="p-6 rounded-xl bg-secondary/40 text-sm text-muted-foreground">
+                                    No image URL available for this slip. Add{" "}
+                                    <span className="font-medium text-foreground">slipImageUrl</span> to mock data.
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Actions */}
+                        <div className="p-5 border-t border-border bg-card">
+                            <div className="flex flex-col sm:flex-row justify-center gap-4">
+                                <Button
+                                    onClick={() => {
+                                        toast.success("Payment approved!", {
+                                            style: {
+                                                background: "#0f766e",
+                                                color: "#ffffff",
+                                                border: "1px solid #0d9488",
+                                            },
+                                        });
+                                    }}
+                                    className="sm:w-[220px]"
+                                >
+                                    <CheckCircle className="w-4 h-4 mr-2" />
+                                    Approve
+                                </Button>
+
+                                <Button
+                                    variant="destructive"
+                                    onClick={() => setRejectOpen(true)}
+                                    className="sm:w-[220px]"
+                                >
+                                    <XCircle className="w-4 h-4 mr-2" />
+                                    Reject
+                                </Button>
                             </div>
-                        ) : (
-                            <div className="p-6 rounded-xl bg-secondary/40 text-sm text-muted-foreground">
-                                No image URL available for this slip. Add <span className="font-medium text-foreground">slipImageUrl</span>{" "}
-                                to mock data.
-                            </div>
-                        )}
+                        </div>
                     </div>
-                </div>
 
-                {/* Details and actions */}
-                <div className="lg:w-[40%] space-y-6">
-                    {/* Slip details */}
-                    <div className="bg-card rounded-2xl p-6 shadow-md">
-                        <h3 className="text-lg font-semibold text-foreground mb-4">Slip Details</h3>
+                    {/* Details and actions */}
+                    <div className="lg:w-[40%] space-y-6">
+                        {/* Slip details */}
+                        <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
+                            <h3 className="text-lg font-semibold text-foreground mb-4">Slip Details</h3>
 
-                        <div className="space-y-3 text-sm">
-                            <div className="flex justify-between gap-4">
-                                <span className="text-muted-foreground">Customer</span>
-                                <span className="font-medium text-foreground text-right">{slip.customerName}</span>
-                            </div>
+                            <div className="space-y-3 text-sm">
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Customer</span>
+                                    <span className="font-medium text-foreground text-right">{slip.customerName}</span>
+                                </div>
 
-                            <div className="flex justify-between gap-4">
-                                <span className="text-muted-foreground">Subscription No.</span>
-                                <span className="font-medium text-foreground text-right">{slip.subscriptionNo}</span>
-                            </div>
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Subscription No.</span>
+                                    <span className="font-medium text-foreground text-right">{slip.subscriptionNo}</span>
+                                </div>
 
-                            <div className="flex justify-between gap-4">
-                                <span className="text-muted-foreground">Reference No.</span>
-                                <span className="font-medium text-foreground text-right">{slip.refNo}</span>
-                            </div>
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Reference No.</span>
+                                    <span className="font-medium text-foreground text-right">{slip.refNo}</span>
+                                </div>
 
-                            <div className="flex justify-between gap-4">
-                                <span className="text-muted-foreground">Amount</span>
-                                <span className="font-bold text-foreground text-right">
-                                    Rs. {slip.amount.toLocaleString()}
-                                </span>
-                            </div>
+                                <div className="flex justify-between gap-4">
+                                    <span className="text-muted-foreground">Amount</span>
+                                    <span className="font-bold text-foreground text-right">
+                                        Rs. {slip.amount.toLocaleString()}
+                                    </span>
+                                </div>
 
                             <div className="flex justify-between gap-4">
                                 <span className="text-muted-foreground">Uploaded At</span>
