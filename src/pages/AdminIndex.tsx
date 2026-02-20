@@ -71,6 +71,7 @@ const DashboardContent: React.FC = () => {
             <Route path="payments" element={<PaymentsPage />} />
             <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
             <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
+            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         );
