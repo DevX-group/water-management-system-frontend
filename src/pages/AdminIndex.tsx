@@ -76,7 +76,7 @@ const DashboardContent: React.FC = () => {
           </Routes>
         );
       case 'billing':
-        return;
+        return <BillingPage />;
       case 'messaging':
         return <MessagingPage />;
       case 'reports':
