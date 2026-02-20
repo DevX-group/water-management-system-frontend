@@ -20,8 +20,14 @@ export const BillingPage = () => {
   const [usage, setUsage] = useState(150);
   const [isEditingRates, setIsEditingRates] = useState(false);
   const [editRates, setEditRates] = useState<RateEditState>({});
+  const [searchQuery, setSearchQuery] = useState('');
 
   const rate = mockBillRates.find(r => r.meterType === meterType)!;
+
+  // Filter invoices based on search query
+  const filteredInvoices = mockInvoices.filter(invoice =>
+    invoice.id.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Calculate bill
   const calculateBill = () => {
@@ -70,6 +76,8 @@ export const BillingPage = () => {
         <h1 className="text-2xl font-bold text-foreground">Billing</h1>
         <p className="text-muted-foreground">Calculate bills and manage invoices</p>
       </div>
+
+     
 
       {/* Toggle Tabs */}
       <div className="flex gap-3">
@@ -299,23 +307,39 @@ export const BillingPage = () => {
         </div>
       )}
 
-      {/* View Bills Tab */}
+               {/* View Bills Tab */}
+
+                  
+
       {activeTab === 'view_bills' && (
         <div className="animate-fade-in">
+           {/* Search Bar */}
+                  <div className="animate-fade-in">
+                  <Input
+                     type="text"
+                     placeholder="Search by prescription number..."
+                     value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-max md:w-80 mb-6 mt-50"
+                    />
+                    </div>
+
           <div className="bg-card rounded-2xl p-6 shadow-md">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-2">
                 <FileText className="w-5 h-5 text-primary" />
+
                 <div>
                   <h3 className="text-lg font-semibold text-foreground">All Invoices</h3>
-                  <p className="text-sm text-muted-foreground">Total: {mockInvoices.length} invoices</p>
+
+                  <p className="text-sm text-muted-foreground">Total: {filteredInvoices.length} invoices</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              {mockInvoices.length > 0 ? (
-                mockInvoices.map((invoice) => (
+              {filteredInvoices.length > 0 ? (
+                filteredInvoices.map((invoice) => (
                   <div
                     key={invoice.id}
                     className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors border border-border/50"
@@ -355,7 +379,9 @@ export const BillingPage = () => {
               ) : (
                 <div className="text-center py-8">
                   <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-                  <p className="text-muted-foreground">No invoices found</p>
+                  <p className="text-muted-foreground">
+                    {searchQuery ? 'No invoices found matching your search' : 'No invoices found'}
+                  </p>
                 </div>
               )}
             </div>
