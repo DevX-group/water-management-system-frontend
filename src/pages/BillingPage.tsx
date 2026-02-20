@@ -86,24 +86,7 @@ export const BillingPage = () => {
             </div>
           </div>
 
-          {/* Usage Slider */}
-          {meterType !== 'no_meter' && (
-            <div className="space-y-3 mb-6">
-              <div className="flex items-center justify-between">
-                <Label>Water Usage (units)</Label>
-                <span className="text-2xl font-bold text-primary">{usage}</span>
-              </div>
-              <Slider
-                value={[usage]}
-                onValueChange={([value]) => setUsage(value)}
-                min={0}
-                max={500}
-                step={5}
-                className="w-full"
-              />
-              <p className="text-xs text-muted-foreground">Adjust the slider or enter a value</p>
-            </div>
-          )}
+          
 
           {/* Rate Structure */}
           <div className="bg-secondary/50 rounded-xl p-4 mb-6">
@@ -134,23 +117,17 @@ export const BillingPage = () => {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Usage charge</span>
-                <span className="font-medium text-foreground">LKR {bill.usageCharge.toFixed(0)}</span>
+                <span className="font-medium text-foreground">LKR ----</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax ({(rate.taxRate * 100).toFixed(0)}%)</span>
                 <span className="font-medium text-foreground">LKR {bill.tax.toFixed(0)}</span>
               </div>
-              <div className="flex justify-between pt-2 border-t border-primary/20">
-                <span className="font-semibold text-foreground">Total Bill</span>
-                <span className="text-xl font-bold text-primary">LKR {bill.total.toFixed(0)}</span>
-              </div>
+
             </div>
           </div>
 
-          <Button className="w-full mt-4">
-            <FileText className="w-4 h-4 mr-2" />
-            Generate Invoice
-          </Button>
+         
         </div>
 
         {/* Invoices */}
