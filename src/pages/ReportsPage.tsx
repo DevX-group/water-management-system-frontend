@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { exportPDF } from '@/util/exportPDF'; 
 
 // Mock data for monthly usage and revenue - different data for each year
 const monthlyDataByYear = {
@@ -265,6 +266,7 @@ export const ReportsPage = () => {
       <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold text-foreground">Reports</h1>
           <p className="text-sm text-muted-foreground">Summarized and detailed views of system data for monitoring and analysis</p>
+
       </div>
 
       {/* Tabs for different report types */}
@@ -279,7 +281,7 @@ export const ReportsPage = () => {
 
         {/* Monthly Usage and Revenue Report */}
         <TabsContent value="monthly" className="space-y-6">
-          <Card>
+          <Card id="monthly-report">                          
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div>
@@ -287,7 +289,6 @@ export const ReportsPage = () => {
                   <CardDescription>Usage and revenue trends across months for a selected year</CardDescription>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-muted-foreground" />
                   <Select value={selectedYear} onValueChange={setSelectedYear}>
                     <SelectTrigger className="w-32">
                       <SelectValue />
@@ -334,14 +335,19 @@ export const ReportsPage = () => {
                   </LineChart>
                 </ResponsiveContainer>
               </div>
-              <div className="flex justify-end">
-                <Button>
+              
+
+            </CardContent>
+          </Card>
+
+           {/* Export as pdf */}
+          <div className="flex justify-end">               
+                <Button onClick={() => exportPDF(monthlyDataByYear, `MonthlyReport-${selectedYear}.pdf`)}>
                 <Download className="w-4 h-4 mr-2" />
                  Export as PDF
                 </Button>
               </div>
-            </CardContent>
-          </Card>
+
         </TabsContent>
 
         {/* Customer-wise Usage and Revenue Report */}
