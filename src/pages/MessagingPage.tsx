@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -64,7 +64,7 @@ import {
   TemplateSection,
   RecipientType 
 } from '../types/messaging';
-import { mockMessages, defaultRecurringSmsTemplate } from '../data/messagingData';
+import * as messageApi from '../services/messageService';
 
 import { MessageHistoryPage } from './messageHistoryPage';
 
@@ -95,32 +95,42 @@ export const MessagingPage = () => {
 };
 
 const MessagingList = () => {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
   const { toast } = useToast();
 
-  const handleDelete = (id: string) => {
-    setMessages(messages.filter(m => m.id !== id));
-    toast({
-      title: "Message deleted",
-      description: "The message has been successfully deleted.",
-    });
+  useEffect(() => {
+    messageApi.getAllMessages()
+      .then(setMessages)
+      .catch(() => toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' }))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await messageApi.deleteMessage(id);
+      setMessages(prev => prev.filter(m => m.id !== id));
+      toast({ title: 'Message deleted', description: 'The message has been successfully deleted.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete message.', variant: 'destructive' });
+    }
   };
 
-  const handleSave = (message: Message) => {
-    if (editingMessage) {
-      setMessages(messages.map(m => m.id === message.id ? message : m));
-      toast({
-        title: "Message updated",
-        description: "Your changes have been saved.",
-      });
-    } else {
-      setMessages([...messages, { ...message, id: Date.now().toString() }]);
-      toast({
-        title: "Message created",
-        description: "New message has been created.",
-      });
+  const handleSave = async (message: Message) => {
+    try {
+      if (editingMessage) {
+        const updated = await messageApi.updateMessage(message.id, message);
+        setMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
+        toast({ title: 'Message updated', description: 'Your changes have been saved.' });
+      } else {
+        const created = await messageApi.createMessage(message);
+        setMessages(prev => [...prev, created]);
+        toast({ title: 'Message created', description: 'New message has been created.' });
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Failed to save message.', variant: 'destructive' });
     }
     setIsDialogOpen(false);
     setEditingMessage(null);
@@ -144,24 +154,30 @@ const MessagingList = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {messages.map((message) => (
-          <MessageCard 
-            key={message.id} 
-            message={message} 
-            onEdit={() => openEditMessage(message)} 
-            onDelete={() => handleDelete(message.id)} 
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+      ) : (
+        <>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {messages.map((message) => (
+              <MessageCard 
+                key={message.id} 
+                message={message} 
+                onEdit={() => openEditMessage(message)} 
+                onDelete={() => handleDelete(message.id)} 
+              />
+            ))}
+          </div>
 
-      {isDialogOpen && (
-        <MessageDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          initialData={editingMessage}
-          onSave={handleSave}
-        />
+          {isDialogOpen && (
+            <MessageDialog
+              isOpen={isDialogOpen}
+              onClose={() => setIsDialogOpen(false)}
+              initialData={editingMessage}
+              onSave={handleSave}
+            />
+          )}
+        </>
       )}
     </div>
   );
