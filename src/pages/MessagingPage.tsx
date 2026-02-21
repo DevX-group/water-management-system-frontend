@@ -592,17 +592,6 @@ const MessageDialog = ({
                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-white flex-1 overflow-y-auto">
                    {/* Editor Area */}
                    <div className="space-y-4">
-                     {activeTab === 'Email' && (
-                       <div className="space-y-2">
-                         <Label htmlFor="email-subject" className="text-xs font-medium">Subject</Label>
-                         <Input
-                           id="email-subject"
-                           placeholder="e.g. Your Monthly Water Bill"
-                           value={formData.templates.email?.subject || ''}
-                           onChange={(e) => updateTemplate('email', { subject: e.target.value })}
-                         />
-                       </div>
-                     )}
                      <div className="space-y-2">
                        <Label className="text-xs text-muted-foreground">Placeholders (Click to copy/insert)</Label>
                        <div className="flex flex-wrap gap-2">
@@ -619,6 +608,17 @@ const MessageDialog = ({
                          ))}
                        </div>
                      </div>
+                     {activeTab === 'Email' && (
+                       <div className="space-y-2">
+                         <Label htmlFor="email-subject" className="text-xs font-medium">Subject</Label>
+                         <Input
+                           id="email-subject"
+                           placeholder="e.g. Your Monthly Water Bill"
+                           value={formData.templates.email?.subject || ''}
+                           onChange={(e) => updateTemplate('email', { subject: e.target.value })}
+                         />
+                       </div>
+                     )}
 
                      <div className="h-[300px] border rounded-md p-2">
                        <TabsContent value="SMS" className="mt-0 h-full">
