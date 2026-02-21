@@ -412,13 +412,31 @@ const MessageDialog = ({
     };
 
     if (t.isCustom) {
-      return <div className="whitespace-pre-wrap">{replacePlaceholders(t.content || '')}</div>;
+      return (
+        <div>
+          {type === 'email' && t.subject && (
+            <div className="mb-3 pb-2 border-b">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
+              <span className="font-semibold text-sm">{replacePlaceholders(t.subject)}</span>
+            </div>
+          )}
+          <div className="whitespace-pre-wrap">{replacePlaceholders(t.content || '')}</div>
+        </div>
+      );
     } else {
       return (
-        <div className="whitespace-pre-wrap space-y-2">
-          {t.sections?.map(s => (
-            <div key={s.id}>{replacePlaceholders(s.content)}</div>
-          ))}
+        <div>
+          {type === 'email' && t.subject && (
+            <div className="mb-3 pb-2 border-b">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
+              <span className="font-semibold text-sm">{replacePlaceholders(t.subject)}</span>
+            </div>
+          )}
+          <div className="whitespace-pre-wrap space-y-2">
+            {t.sections?.map(s => (
+              <div key={s.id}>{replacePlaceholders(s.content)}</div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -574,6 +592,17 @@ const MessageDialog = ({
                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-white flex-1 overflow-y-auto">
                    {/* Editor Area */}
                    <div className="space-y-4">
+                     {activeTab === 'Email' && (
+                       <div className="space-y-2">
+                         <Label htmlFor="email-subject" className="text-xs font-medium">Subject</Label>
+                         <Input
+                           id="email-subject"
+                           placeholder="e.g. Your Monthly Water Bill"
+                           value={formData.templates.email?.subject || ''}
+                           onChange={(e) => updateTemplate('email', { subject: e.target.value })}
+                         />
+                       </div>
+                     )}
                      <div className="space-y-2">
                        <Label className="text-xs text-muted-foreground">Placeholders (Click to copy/insert)</Label>
                        <div className="flex flex-wrap gap-2">
