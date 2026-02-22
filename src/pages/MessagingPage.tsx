@@ -80,8 +80,8 @@ export const MessagingPage = () => {
 
        <Tabs defaultValue="messages" className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="messages" className="data-[state=active]:bg-[#088395] data-[state=active]:text-white">Messages</TabsTrigger>
-          <TabsTrigger value="history" className="data-[state=active]:bg-[#088395] data-[state=active]:text-white">History</TabsTrigger>
+          <TabsTrigger value="messages" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Messages</TabsTrigger>
+          <TabsTrigger value="history" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">History</TabsTrigger>
         </TabsList>
         <TabsContent value="messages" className="mt-6">
           <MessagingList />
