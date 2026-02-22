@@ -19,13 +19,43 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+// Region configuration with unique codes
+const REGION_CONFIG = {
+  north: { code: 'NOR', label: 'North' },
+  south: { code: 'SOU', label: 'South' },
+  east: { code: 'EAS', label: 'East' },
+  west: { code: 'WES', label: 'West' },
+  center: { code: 'CEN', label: 'Center' },
+  // Future regions can be easily added without conflicts
+  // northeast: { code: 'NOE', label: 'North East' },
+};
+
 export const UserManagementPage = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [formData, setFormData] = useState({
-    name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '',
+    name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '', subscriptionNumber: '',
   });
+
+  // Generate subscription number based on region
+  const generateSubscriptionNumber = (region: string) => {
+    if (!region) return '';
+    
+    const regionConfig = REGION_CONFIG[region as keyof typeof REGION_CONFIG];
+    if (!regionConfig) return '';
+    
+    const prefix = regionConfig.code;
+    // Generate a 6-digit number for better uniqueness and security
+    const numPart = Math.floor(Math.random() * 900000) + 100000;
+    
+    return `${prefix}${numPart}`;
+  };
+
+  const handleRegionChange = (value: string) => {
+    const subscriptionNumber = generateSubscriptionNumber(value);
+    setFormData({...formData, region: value, subscriptionNumber});
+  };
 
   const filteredCustomers = mockCustomers.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -35,7 +65,7 @@ export const UserManagementPage = () => {
   const handleAddCustomer = () => {
     toast({ title: "Customer Added", description: `${formData.name} has been registered.` });
     setShowAddDialog(false);
-    setFormData({ name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '' });
+    setFormData({ name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '', subscriptionNumber: '' });
   };
 
   return (
@@ -100,8 +130,9 @@ export const UserManagementPage = () => {
             <div className="space-y-2"><Label>Address *</Label><Input placeholder="Enter Address" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
             <div className="space-y-2"><Label>Mobile Number *</Label><Input placeholder="Enter Mobile Number" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} /></div>
             <div className="space-y-2"><Label>Email (Optional)</Label><Input placeholder="Enter Email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} /></div>
-            <div className="space-y-2"><Label>Region *</Label><Select value={formData.region} onValueChange={(v) => setFormData({...formData, region: v})}><SelectTrigger><SelectValue placeholder="Select Region" /></SelectTrigger><SelectContent><SelectItem value="north">North</SelectItem><SelectItem value="south">South</SelectItem><SelectItem value="east">East</SelectItem><SelectItem value="west">West</SelectItem></SelectContent></Select></div>
-            <div className="space-y-2"><Label>Connection Type *</Label><Select value={formData.connectionType} onValueChange={(v) => setFormData({...formData, connectionType: v})}><SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger><SelectContent><SelectItem value="residential">Residential</SelectItem><SelectItem value="commercial">Commercial</SelectItem><SelectItem value="industrial">Industrial</SelectItem></SelectContent></Select></div>
+            <div className="space-y-2"><Label>Connection Type *</Label><Select value={formData.connectionType} onValueChange={(v) => setFormData({...formData, connectionType: v})}><SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger><SelectContent><SelectItem value="metered">Metered Customer</SelectItem><SelectItem value="non-metered">Non Metered Customer</SelectItem></SelectContent></Select></div>
+            <div className="space-y-2"><Label>Region *</Label><Select value={formData.region} onValueChange={handleRegionChange}><SelectTrigger><SelectValue placeholder="Select Region" /></SelectTrigger><SelectContent>{Object.entries(REGION_CONFIG).map(([key, value]) => (<SelectItem key={key} value={key}>{value.label}</SelectItem>))}</SelectContent></Select></div>
+            <div className="space-y-2"><Label>Subscription Number</Label><Input placeholder="Auto-generated" value={formData.subscriptionNumber} disabled className="bg-accent/30 cursor-not-allowed" /></div>
             <p className="text-xs text-muted-foreground">Subscription number generated automatically</p>
           </div>
           <Button className="w-full mt-4" onClick={handleAddCustomer}>Register Customer</Button>
