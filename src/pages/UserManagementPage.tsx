@@ -92,9 +92,9 @@ export const UserManagementPage = () => {
       </div>
 
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
           <DialogHeader><DialogTitle>Register Customer</DialogTitle></DialogHeader>
-          <div className="space-y-4 pt-4">
+          <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
             <div className="space-y-2"><Label>Customer Name *</Label><Input placeholder="Enter Customer Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} /></div>
             <div className="space-y-2"><Label>NIC Number *</Label><Input placeholder="Enter Customer NIC Number" value={formData.nic} onChange={(e) => setFormData({...formData, nic: e.target.value})} /></div>
             <div className="space-y-2"><Label>Address *</Label><Input placeholder="Enter Address" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
@@ -103,8 +103,8 @@ export const UserManagementPage = () => {
             <div className="space-y-2"><Label>Region *</Label><Select value={formData.region} onValueChange={(v) => setFormData({...formData, region: v})}><SelectTrigger><SelectValue placeholder="Select Region" /></SelectTrigger><SelectContent><SelectItem value="north">North</SelectItem><SelectItem value="south">South</SelectItem><SelectItem value="east">East</SelectItem><SelectItem value="west">West</SelectItem></SelectContent></Select></div>
             <div className="space-y-2"><Label>Connection Type *</Label><Select value={formData.connectionType} onValueChange={(v) => setFormData({...formData, connectionType: v})}><SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger><SelectContent><SelectItem value="residential">Residential</SelectItem><SelectItem value="commercial">Commercial</SelectItem><SelectItem value="industrial">Industrial</SelectItem></SelectContent></Select></div>
             <p className="text-xs text-muted-foreground">Subscription number generated automatically</p>
-            <Button className="w-full" onClick={handleAddCustomer}>Register Customer</Button>
           </div>
+          <Button className="w-full mt-4" onClick={handleAddCustomer}>Register Customer</Button>
         </DialogContent>
       </Dialog>
     </div>
