@@ -37,6 +37,7 @@ export const UserManagementPage = () => {
   const [formData, setFormData] = useState({
     name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '', subscriptionNumber: '',
   });
+  const [errors, setErrors] = useState<{[key: string]: boolean}>({});
 
   // Generate subscription number based on region
   const generateSubscriptionNumber = (region: string) => {
@@ -46,7 +47,7 @@ export const UserManagementPage = () => {
     if (!regionConfig) return '';
     
     const prefix = regionConfig.code;
-    // Generate a 6-digit number for better uniqueness and security
+    // Generate a 6-digit number
     const numPart = Math.floor(Math.random() * 900000) + 100000;
     
     return `${prefix}${numPart}`;
@@ -63,9 +64,61 @@ export const UserManagementPage = () => {
   );
 
   const handleAddCustomer = () => {
+    const newErrors: {[key: string]: boolean} = {};
+
+    // Validate required fields
+    if (!validateName(formData.name)) newErrors.name = true;
+    if (!validateNIC(formData.nic)) newErrors.nic = true;
+    if (!validateAddress(formData.address)) newErrors.address = true;
+    if (!validatePhone(formData.phone)) newErrors.phone = true;
+    if (formData.email && !validateEmail(formData.email)) newErrors.email = true;
+    if (!formData.region) newErrors.region = true;
+    if (!formData.connectionType) newErrors.connectionType = true;
+
+    // If there are errors, highlight them and return
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    // All validations passed
     toast({ title: "Customer Added", description: `${formData.name} has been registered.` });
     setShowAddDialog(false);
+    setErrors({});
     setFormData({ name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '', subscriptionNumber: '' });
+  };
+
+  const handleFieldChange = (fieldName: string, value: string) => {
+    // Remove error highlighting when user starts typing
+    if (errors[fieldName]) {
+      setErrors({...errors, [fieldName]: false});
+    }
+  };
+
+  // Validation functions
+  const validateEmail = (email: string): boolean => {
+    if (!email.trim()) return true; // Email is optional
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePhone = (phone: string): boolean => {
+    const phoneRegex = /^[0-9]{10}$/; // Expects 10 digits
+    return phoneRegex.test(phone.replace(/\s+/g, ''));
+  };
+
+  const validateNIC = (nic: string): boolean => {
+    // Sri Lanka NIC: Either 9 digits + letter or 12 digits
+    const nicRegex = /^([0-9]{9}[vVxX]|[0-9]{12})$/;
+    return nicRegex.test(nic.trim());
+  };
+
+  const validateName = (name: string): boolean => {
+    return name.trim().length >= 2;
+  };
+
+  const validateAddress = (address: string): boolean => {
+    return address.trim().length >= 5;
   };
 
   return (
@@ -125,13 +178,13 @@ export const UserManagementPage = () => {
         <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
           <DialogHeader><DialogTitle>Register Customer</DialogTitle></DialogHeader>
           <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
-            <div className="space-y-2"><Label>Customer Name *</Label><Input placeholder="Enter Customer Name" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} /></div>
-            <div className="space-y-2"><Label>NIC Number *</Label><Input placeholder="Enter Customer NIC Number" value={formData.nic} onChange={(e) => setFormData({...formData, nic: e.target.value})} /></div>
-            <div className="space-y-2"><Label>Address *</Label><Input placeholder="Enter Address" value={formData.address} onChange={(e) => setFormData({...formData, address: e.target.value})} /></div>
-            <div className="space-y-2"><Label>Mobile Number *</Label><Input placeholder="Enter Mobile Number" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} /></div>
-            <div className="space-y-2"><Label>Email (Optional)</Label><Input placeholder="Enter Email" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} /></div>
-            <div className="space-y-2"><Label>Connection Type *</Label><Select value={formData.connectionType} onValueChange={(v) => setFormData({...formData, connectionType: v})}><SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger><SelectContent><SelectItem value="metered">Metered Customer</SelectItem><SelectItem value="non-metered">Non Metered Customer</SelectItem></SelectContent></Select></div>
-            <div className="space-y-2"><Label>Region *</Label><Select value={formData.region} onValueChange={handleRegionChange}><SelectTrigger><SelectValue placeholder="Select Region" /></SelectTrigger><SelectContent>{Object.entries(REGION_CONFIG).map(([key, value]) => (<SelectItem key={key} value={key}>{value.label}</SelectItem>))}</SelectContent></Select></div>
+            <div className="space-y-2"><Label>Customer Name *</Label><Input placeholder="Enter Customer Name" value={formData.name} onChange={(e) => {setFormData({...formData, name: e.target.value}); handleFieldChange('name', e.target.value);}} className={errors.name ? 'border-red-500 border-2' : ''} /></div>
+            <div className="space-y-2"><Label>NIC Number *</Label><Input placeholder="Enter Customer NIC Number" value={formData.nic} onChange={(e) => {setFormData({...formData, nic: e.target.value}); handleFieldChange('nic', e.target.value);}} className={errors.nic ? 'border-red-500 border-2' : ''} /></div>
+            <div className="space-y-2"><Label>Address *</Label><Input placeholder="Enter Address" value={formData.address} onChange={(e) => {setFormData({...formData, address: e.target.value}); handleFieldChange('address', e.target.value);}} className={errors.address ? 'border-red-500 border-2' : ''} /></div>
+            <div className="space-y-2"><Label>Mobile Number *</Label><Input placeholder="Enter Mobile Number" value={formData.phone} onChange={(e) => {setFormData({...formData, phone: e.target.value}); handleFieldChange('phone', e.target.value);}} className={errors.phone ? 'border-red-500 border-2' : ''} /></div>
+            <div className="space-y-2"><Label>Email (Optional)</Label><Input placeholder="Enter Email" value={formData.email} onChange={(e) => {setFormData({...formData, email: e.target.value}); handleFieldChange('email', e.target.value);}} className={errors.email ? 'border-red-500 border-2' : ''} /></div>
+            <div className="space-y-2"><Label>Connection Type *</Label><Select value={formData.connectionType} onValueChange={(v) => {setFormData({...formData, connectionType: v}); handleFieldChange('connectionType', v);}}><SelectTrigger className={errors.connectionType ? 'border-red-500' : ''}><SelectValue placeholder="Select Type" /></SelectTrigger><SelectContent><SelectItem value="metered">Metered Customer</SelectItem><SelectItem value="non-metered">Non Metered Customer</SelectItem></SelectContent></Select></div>
+            <div className="space-y-2"><Label>Region *</Label><Select value={formData.region} onValueChange={(v) => {handleRegionChange(v); handleFieldChange('region', v);}}><SelectTrigger className={errors.region ? 'border-red-500' : ''}><SelectValue placeholder="Select Region" /></SelectTrigger><SelectContent>{Object.entries(REGION_CONFIG).map(([key, value]) => (<SelectItem key={key} value={key}>{value.label}</SelectItem>))}</SelectContent></Select></div>
             <div className="space-y-2"><Label>Subscription Number</Label><Input placeholder="Auto-generated" value={formData.subscriptionNumber} disabled className="bg-accent/30 cursor-not-allowed" /></div>
             <p className="text-xs text-muted-foreground">Subscription number generated automatically</p>
           </div>
