@@ -9,6 +9,7 @@ import { MessagingPage } from './MessagingPage';
 import { ReportsPage } from './ReportsPage';
 import { UserManagementPage } from './UserManagementPage';
 import { PlaceholderPage } from './PlaceholderPage';
+import { PredictionsPage } from './PredictionsPage';
 import '../admin.css';
 
 type AdminRole = 'meter_reader' | 'payment_handler' | 'admin' | 'superadmin';
@@ -70,7 +71,7 @@ const DashboardContent: React.FC = () => {
       case 'reports':
         return <ReportsPage />;
       case 'predictions':
-        return <PlaceholderPage title="Water Predictions" />;
+        return <PredictionsPage />;
       default:
         return <DashboardPage />;
     }
@@ -78,7 +79,10 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div className="admin-wrapper">
-      <AdminLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+      <AdminLayout
+        activeSection={activeSection as string}
+        onSectionChange={(section: string) => setActiveSection(section as Section)}
+      >
         {renderSection()}
       </AdminLayout>
     </div>
