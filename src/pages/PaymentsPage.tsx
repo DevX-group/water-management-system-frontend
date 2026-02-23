@@ -141,7 +141,7 @@ export const PaymentsPage = () => {
               </div>
 
               {/* Navigate to full payment page */}
-              <Button className="w-full" onClick={() => navigate(`/admin/payments/customer/${selectedCustomer.id}`)}>
+              <Button className="w-full" onClick={() => navigate(`/admin/payments/customer/${selectedCustomer.subscriptionNo}`)}>
                 Add Payment
               </Button>
             </div>

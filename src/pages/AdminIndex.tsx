@@ -68,10 +68,10 @@ const DashboardContent: React.FC = () => {
       case 'payments':
         return (
           <Routes>
-            <Route path="payments" element={<PaymentsPage />} />
-            <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
-            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
-            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
+            <Route path="/payments" element={<PaymentsPage />} />
+            <Route path="/payments/customer/:subscriptionNo" element={<PaymentsAddingPage />} />
+            <Route path="/payments/slip/:slipId" element={<BankSlipReviewPage />} />
+
             <Route path="*" element={<NotFound />} />
           </Routes>
         );
