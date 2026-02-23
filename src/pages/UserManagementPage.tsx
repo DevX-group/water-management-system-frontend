@@ -121,6 +121,11 @@ export const UserManagementPage = () => {
     return address.trim().length >= 5;
   };
 
+  const handleResetForm = () => {
+    setFormData({ name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '', subscriptionNumber: '' });
+    setErrors({});
+  };
+
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
@@ -188,7 +193,10 @@ export const UserManagementPage = () => {
             <div className="space-y-2"><Label>Subscription Number</Label><Input placeholder="Auto-generated" value={formData.subscriptionNumber} disabled className="bg-accent/30 cursor-not-allowed" /></div>
             <p className="text-xs text-muted-foreground">Subscription number generated automatically</p>
           </div>
-          <Button className="w-full mt-4" onClick={handleAddCustomer}>Register Customer</Button>
+          <div className="flex gap-3 mt-4">
+            <Button className="flex-1" onClick={handleAddCustomer}>Register Customer</Button>
+            <Button variant="outline" className="flex-1" onClick={handleResetForm}>Clear</Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
