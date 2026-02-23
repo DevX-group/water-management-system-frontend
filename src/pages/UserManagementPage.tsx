@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Plus, Search, Phone, MapPin } from 'lucide-react';
+import { Users, Plus, Search, Phone, MapPin, Eye, Edit, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -34,6 +34,9 @@ export const UserManagementPage = () => {
   const { toast } = useToast();
   const [searchQuery, setSearchQuery] = useState('');
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [viewingCustomer, setViewingCustomer] = useState<any>(null);
+  const [editingCustomer, setEditingCustomer] = useState<any>(null);
+  const [editFormData, setEditFormData] = useState<any>(null);
   const [formData, setFormData] = useState({
     name: '', nic: '', address: '', phone: '', email: '', region: '', connectionType: '', subscriptionNumber: '',
   });
@@ -50,7 +53,7 @@ export const UserManagementPage = () => {
     // Generate a 6-digit number
     const numPart = Math.floor(Math.random() * 900000) + 100000;
     
-    return `${prefix}${numPart}`;
+    return `${prefix}-${numPart}`;
   };
 
   const handleRegionChange = (value: string) => {
@@ -60,7 +63,8 @@ export const UserManagementPage = () => {
 
   const filteredCustomers = mockCustomers.filter(c =>
     c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.id.includes(searchQuery)
+    c.nic.includes(searchQuery) ||
+    c.subscriptionNo.includes(searchQuery)
   );
 
   const handleAddCustomer = () => {
@@ -126,6 +130,47 @@ export const UserManagementPage = () => {
     setErrors({});
   };
 
+  // Handle view customer
+  const handleViewCustomer = (customer: any) => {
+    setViewingCustomer(customer);
+  };
+
+  // Handle edit customer
+  const handleEditCustomer = (customer: any) => {
+    setEditingCustomer(customer);
+    setEditFormData({...customer});
+  };
+
+  // Handle save edit
+  const handleSaveEdit = () => {
+    // Validation
+    if (!validateName(editFormData.name)) {
+      toast({ title: "Error", description: "Customer Name must be at least 2 characters" });
+      return;
+    }
+    if (!validateNIC(editFormData.nic)) {
+      toast({ title: "Error", description: "Please enter a valid NIC number (9 digits + letter or 12 digits)" });
+      return;
+    }
+    if (!validatePhone(editFormData.phone)) {
+      toast({ title: "Error", description: "Please enter a valid phone number (10 digits)" });
+      return;
+    }
+    if (editFormData.email && !validateEmail(editFormData.email)) {
+      toast({ title: "Error", description: "Please enter a valid email address" });
+      return;
+    }
+    toast({ title: "Success", description: `${editFormData.name} has been updated.` });
+    setEditingCustomer(null);
+    setEditFormData(null);
+  };
+
+  // Handle delete customer (soft delete)
+  const handleDeleteCustomer = (customerId: string, customerName: string) => {
+    toast({ title: "Deleted", description: `${customerName} has been marked as deleted.` });
+    // In actual implementation, this would call the API to mark as deleted
+  };
+
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
@@ -146,31 +191,47 @@ export const UserManagementPage = () => {
 
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search by name, ID..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-accent/30" />
+          <Input placeholder="Search by name, NIC, or subscription number..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-accent/30" />
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="text-left border-b border-border">
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Customer ID</th>
                 <th className="pb-3 text-sm font-medium text-muted-foreground">Name</th>
+                <th className="pb-3 text-sm font-medium text-muted-foreground">NIC</th>
+                <th className="pb-3 text-sm font-medium text-muted-foreground">Subscription No</th>
                 <th className="pb-3 text-sm font-medium text-muted-foreground">Phone</th>
                 <th className="pb-3 text-sm font-medium text-muted-foreground">Region</th>
                 <th className="pb-3 text-sm font-medium text-muted-foreground">Status</th>
+                <th className="pb-3 text-sm font-medium text-muted-foreground">Actions</th>
               </tr>
             </thead>
             <tbody>
               {filteredCustomers.map((customer) => (
-                <tr key={customer.id} className="border-b border-border/50 last:border-0">
-                  <td className="py-4 text-sm font-medium text-foreground">{customer.id}</td>
+                <tr key={customer.id} className={`border-b border-border/50 last:border-0 ${customer.isDeleted ? 'opacity-50' : ''}`}>
                   <td className="py-4 text-sm text-foreground">{customer.name}</td>
+                  <td className="py-4 text-sm text-muted-foreground">{customer.nic}</td>
+                  <td className="py-4 text-sm text-muted-foreground">{customer.subscriptionNo}</td>
                   <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
                   <td className="py-4 text-sm text-muted-foreground capitalize">{customer.region}</td>
                   <td className="py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'active' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
                       {customer.status}
                     </span>
+                  </td>
+                  <td className="py-4">
+                    <div className="flex gap-2">
+                      <button onClick={() => handleViewCustomer(customer)} className="p-1 hover:bg-accent rounded" title="View">
+                        <Eye className="w-4 h-4 text-blue-600" />
+                      </button>
+                      <button onClick={() => handleEditCustomer(customer)} disabled={customer.isDeleted} className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Edit">
+                        <Edit className="w-4 h-4 text-green-600" />
+                      </button>
+                      <button onClick={() => handleDeleteCustomer(customer.id, customer.name)} disabled={customer.isDeleted} className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Delete">
+                        <Trash2 className="w-4 h-4 text-red-600" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -196,6 +257,77 @@ export const UserManagementPage = () => {
           <div className="flex gap-3 mt-4">
             <Button className="flex-1" onClick={handleAddCustomer}>Register Customer</Button>
             <Button variant="outline" className="flex-1" onClick={handleResetForm}>Clear</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* View Customer Dialog */}
+      <Dialog open={!!viewingCustomer} onOpenChange={() => setViewingCustomer(null)}>
+        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+          <DialogHeader><DialogTitle>Customer Profile</DialogTitle></DialogHeader>
+          {viewingCustomer && (
+            <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Name</Label>
+                <p className="text-sm font-medium">{viewingCustomer.name}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">NIC</Label>
+                <p className="text-sm font-medium">{viewingCustomer.nic}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Subscription Number</Label>
+                <p className="text-sm font-medium">{viewingCustomer.subscriptionNo}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Phone</Label>
+                <p className="text-sm font-medium">{viewingCustomer.phone}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Email</Label>
+                <p className="text-sm font-medium">{viewingCustomer.email || 'N/A'}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Address</Label>
+                <p className="text-sm font-medium">{viewingCustomer.address}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Region</Label>
+                <p className="text-sm font-medium capitalize">{viewingCustomer.region}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Connection Type</Label>
+                <p className="text-sm font-medium capitalize">{viewingCustomer.connectionType}</p>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-xs text-muted-foreground">Status</Label>
+                <p className="text-sm font-medium capitalize">{viewingCustomer.status}</p>
+              </div>
+            </div>
+          )}
+          <div className="flex gap-3 mt-4">
+            <Button className="flex-1" onClick={() => {handleEditCustomer(viewingCustomer); setViewingCustomer(null);}}>Edit Details</Button>
+            <Button variant="outline" className="flex-1" onClick={() => setViewingCustomer(null)}>Go to Profile</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Customer Dialog */}
+      <Dialog open={!!editingCustomer} onOpenChange={() => setEditingCustomer(null)}>
+        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+          <DialogHeader><DialogTitle>Edit Customer</DialogTitle></DialogHeader>
+          {editFormData && (
+            <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
+              <div className="space-y-2"><Label>Customer Name *</Label><Input value={editFormData.name} onChange={(e) => setEditFormData({...editFormData, name: e.target.value})} /></div>
+              <div className="space-y-2"><Label>NIC Number *</Label><Input value={editFormData.nic} onChange={(e) => setEditFormData({...editFormData, nic: e.target.value})} /></div>
+              <div className="space-y-2"><Label>Mobile Number *</Label><Input value={editFormData.phone} onChange={(e) => setEditFormData({...editFormData, phone: e.target.value})} /></div>
+              <div className="space-y-2"><Label>Email</Label><Input value={editFormData.email} onChange={(e) => setEditFormData({...editFormData, email: e.target.value})} /></div>
+              <div className="space-y-2"><Label>Connection Type</Label><Select value={editFormData.connectionType} onValueChange={(v) => setEditFormData({...editFormData, connectionType: v})}><SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger><SelectContent><SelectItem value="metered">Metered Customer</SelectItem><SelectItem value="non-metered">Non Metered Customer</SelectItem></SelectContent></Select></div>
+            </div>
+          )}
+          <div className="flex gap-3 mt-4">
+            <Button className="flex-1" onClick={handleSaveEdit}>Save Changes</Button>
+            <Button variant="outline" className="flex-1" onClick={() => setEditingCustomer(null)}>Cancel</Button>
           </div>
         </DialogContent>
       </Dialog>

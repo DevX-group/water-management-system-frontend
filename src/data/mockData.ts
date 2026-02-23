@@ -17,6 +17,8 @@ export interface Customer {
   connectionType: 'residential' | 'commercial' | 'industrial';
   email: string;
   address: string;
+  isDeleted?: boolean;
+  deletedAt?: string;
 }
 
 export interface Payment {
@@ -122,27 +124,27 @@ export const mockAdmins: Admin[] = [
 ];
 
 export const mockCustomers: Customer[] = [
-  { id: '001', name: 'Sanjeewa Kumara', subscriptionNo: 'SK-2341', nic: '198756432108', region: 'north', customerType: 'with_meter', phone: '0778682365', status: 'active', connectionType: 'residential', email: 'sanjeewa@email.com', address: '123 Main St, Beliatta' },
-  { id: '002', name: 'Supun Perera', subscriptionNo: 'SP-4589', nic: '200123456789', region: 'south', customerType: 'with_meter', phone: '077-1234567', status: 'active', connectionType: 'residential', email: '', address: '45 Lake Road, Tangalle' },
-  { id: '003', name: 'Kamani Silva', subscriptionNo: 'KS-7892', nic: '197234567890', region: 'north', customerType: 'no_meter', phone: '076-5432109', status: 'inactive', connectionType: 'commercial', email: 'kamani@email.com', address: '78 Beach Road, Hambantota' },
-  { id: '004', name: 'Ruwan Jayawardena', subscriptionNo: 'RJ-1234', nic: '199087654321', region: 'east', customerType: 'with_meter', phone: '078-2345678', status: 'active', connectionType: 'industrial', email: '', address: '12 Industrial Zone, Beliatta' },
-  { id: '005', name: 'Priyantha De Silva', subscriptionNo: 'PD-5678', nic: '196543210987', region: 'west', customerType: 'with_meter', phone: '077-8765432', status: 'active', connectionType: 'residential', email: 'priyantha@email.com', address: '56 Hill Road, Tangalle' },
+  { id: '001', name: 'Sanjeewa Kumara', subscriptionNo: 'NOR-234123', nic: '198756432108', region: 'north', customerType: 'with_meter', phone: '0778682365', status: 'active', connectionType: 'residential', email: 'sanjeewa@email.com', address: '123 Main St, Beliatta' },
+  { id: '002', name: 'Supun Perera', subscriptionNo: 'SOU-458945', nic: '200123456789', region: 'south', customerType: 'with_meter', phone: '077-1234567', status: 'active', connectionType: 'residential', email: '', address: '45 Lake Road, Tangalle' },
+  { id: '003', name: 'Kamani Silva', subscriptionNo: 'NOR-789267', nic: '197234567890', region: 'north', customerType: 'no_meter', phone: '076-5432109', status: 'inactive', connectionType: 'commercial', email: 'kamani@email.com', address: '78 Beach Road, Hambantota' },
+  { id: '004', name: 'Ruwan Jayawardena', subscriptionNo: 'EAS-123459', nic: '199087654321', region: 'east', customerType: 'with_meter', phone: '078-2345678', status: 'active', connectionType: 'industrial', email: '', address: '12 Industrial Zone, Beliatta' },
+  { id: '005', name: 'Priyantha De Silva', subscriptionNo: 'WES-567845', nic: '196543210987', region: 'west', customerType: 'with_meter', phone: '077-8765432', status: 'active', connectionType: 'residential', email: 'priyantha@email.com', address: '56 Hill Road, Tangalle' },
 ];
 
 export const mockPayments: Payment[] = [
-  { id: '1', date: '2025-12-10', subscriptionNo: 'SP-4589', customerName: 'Sunil Gamage', amount: 2800, status: 'paid' },
-  { id: '2', date: '2025-12-10', subscriptionNo: 'SK-2341', customerName: 'Sanjeewa Kumara', amount: 1500, status: 'paid' },
-  { id: '3', date: '2025-12-09', subscriptionNo: 'KS-7892', customerName: 'Kamani Silva', amount: 3200, status: 'partial' },
-  { id: '4', date: '2025-12-09', subscriptionNo: 'RJ-1234', customerName: 'Ruwan Jayawardena', amount: 2100, status: 'paid' },
-  { id: '5', date: '2025-12-08', subscriptionNo: 'PD-5678', customerName: 'Priyantha De Silva', amount: 1850, status: 'overdue' },
+  { id: '1', date: '2025-12-10', subscriptionNo: 'SOU-458945', customerName: 'Sunil Gamage', amount: 2800, status: 'paid' },
+  { id: '2', date: '2025-12-10', subscriptionNo: 'NOR-234123', customerName: 'Sanjeewa Kumara', amount: 1500, status: 'paid' },
+  { id: '3', date: '2025-12-09', subscriptionNo: 'NOR-789267', customerName: 'Kamani Silva', amount: 3200, status: 'partial' },
+  { id: '4', date: '2025-12-09', subscriptionNo: 'EAS-123459', customerName: 'Ruwan Jayawardena', amount: 2100, status: 'paid' },
+  { id: '5', date: '2025-12-08', subscriptionNo: 'WES-567845', customerName: 'Priyantha De Silva', amount: 1850, status: 'overdue' },
 ];
 
 export const mockBankSlips: BankSlip[] = [
 
-  { id: 'BS-001', customerId: '002', customerName: 'Supun Perera', subscriptionNo: 'SP-4589', amount: 2800, refNo: 'BANK-84321', uploadedAt: '2026-02-16 09:12 AM', slipImageUrl:"/mock-bank-slip.jpg"},
-  { id: 'BS-002', customerId: '001', customerName: 'Sanjeewa Kumara', subscriptionNo: 'SK-2341', amount: 1500, refNo: 'BANK-77109', uploadedAt: '2026-02-16 08:40 AM', slipImageUrl: "/mock-bank-slip.jpg"},
-  { id: 'BS-003', customerId: '003', customerName: 'Kamani Silva', subscriptionNo: 'KS-7892', amount: 3200, refNo: 'BANK-12345', uploadedAt: '2026-02-15 11:30 AM', slipImageUrl: "/mock-bank-slip.jpg"},
-  { id: 'BS-004', customerId: '004', customerName: 'Ruwan Jayawardena', subscriptionNo: 'RJ-1234', amount: 2100, refNo: 'BANK-56789', uploadedAt: '2026-02-15 14:45 PM', slipImageUrl: "/mock-bank-slip.jpg"},
+  { id: 'BS-001', customerId: '002', customerName: 'Supun Perera', subscriptionNo: 'SOU-458945', amount: 2800, refNo: 'BANK-84321', uploadedAt: '2026-02-16 09:12 AM', slipImageUrl:"/mock-bank-slip.jpg"},
+  { id: 'BS-002', customerId: '001', customerName: 'Sanjeewa Kumara', subscriptionNo: 'NOR-234123', amount: 1500, refNo: 'BANK-77109', uploadedAt: '2026-02-16 08:40 AM', slipImageUrl: "/mock-bank-slip.jpg"},
+  { id: 'BS-003', customerId: '003', customerName: 'Kamani Silva', subscriptionNo: 'NOR-789267', amount: 3200, refNo: 'BANK-12345', uploadedAt: '2026-02-15 11:30 AM', slipImageUrl: "/mock-bank-slip.jpg"},
+  { id: 'BS-004', customerId: '004', customerName: 'Ruwan Jayawardena', subscriptionNo: 'EAS-123459', amount: 2100, refNo: 'BANK-56789', uploadedAt: '2026-02-15 14:45 PM', slipImageUrl: "/mock-bank-slip.jpg"},
 
 ];
 
