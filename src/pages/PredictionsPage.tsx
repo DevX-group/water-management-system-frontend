@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';  
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';  
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ComposedChart, Bar } from 'recharts';  
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';    
+import { Download, Filter } from 'lucide-react';    
 import { ReferenceLine } from 'recharts';    
 
 
@@ -44,6 +44,21 @@ const customerPredictionData = [
   { customerId: "C002", month: "Sep", usage: null, revenue: null, predictedUsage: 420, predictedRevenue: 8400 },
 ];
 
+const areaWiseData2026 = [
+  // ACTUAL (Jan–Jun)
+  { month: "Jan", area1Usage: 48000, area1Revenue: 125000, area2Usage: 103000, area2Revenue: 305000, area3Usage: 122000, area3Revenue: 360000 },
+  { month: "Feb", area1Usage: 49000, area1Revenue: 128000, area2Usage: 101000, area2Revenue: 300000, area3Usage: 118000, area3Revenue: 350000 },
+  { month: "Mar", area1Usage: 50000, area1Revenue: 130000, area2Usage: 104000, area2Revenue: 310000, area3Usage: 120000, area3Revenue: 355000 },
+  { month: "Apr", area1Usage: 51000, area1Revenue: 133000, area2Usage: 106000, area2Revenue: 320000, area3Usage: 123000, area3Revenue: 365000 },
+  { month: "May", area1Usage: 52000, area1Revenue: 135000, area2Usage: 108000, area2Revenue: 330000, area3Usage: 125000, area3Revenue: 375000 },
+  { month: "Jun", area1Usage: 53000, area1Revenue: 138000, area2Usage: 110000, area2Revenue: 340000, area3Usage: 128000, area3Revenue: 385000 },
+
+  // 🔮 PREDICTED (Jul–Sep)
+  { month: "Jul", predictedArea1Usage: 55000, predictedArea1Revenue: 142000, predictedArea2Usage: 115000, predictedArea2Revenue: 355000, predictedArea3Usage: 132000, predictedArea3Revenue: 400000 },
+  { month: "Aug", predictedArea1Usage: 57000, predictedArea1Revenue: 147000, predictedArea2Usage: 120000, predictedArea2Revenue: 370000, predictedArea3Usage: 136000, predictedArea3Revenue: 415000 },
+  { month: "Sep", predictedArea1Usage: 59000, predictedArea1Revenue: 152000, predictedArea2Usage: 125000, predictedArea2Revenue: 385000, predictedArea3Usage: 140000, predictedArea3Revenue: 430000 },
+];
+
 
 export const PredictionsPage = () => {
 
@@ -53,6 +68,12 @@ export const PredictionsPage = () => {
     const filteredData = customerPredictionData.filter(
         (item) => item.customerId === searchId
     );
+
+    const [selectedArea, setSelectedArea] = useState("all");
+    const [areaYear, setAreaYear] = useState("2026");
+
+    // For simplicity, using only 2026 data
+    const areaDataForYear = areaWiseData2026;
 
     return (
     <div className="space-y-6">
@@ -130,32 +151,32 @@ export const PredictionsPage = () => {
 
 
 
-                    {/* Actual Line */}
-                    <Line
-                        type="monotone"
-                        dataKey="usage"
-                        stroke="#2563eb"
-                        strokeWidth={2}
-                        name="Actual Usage"
-                        connectNulls
-                    />
+                                {/* Actual Line */}
+                                <Line
+                                    type="monotone"
+                                    dataKey="usage"
+                                    stroke="#2563eb"
+                                    strokeWidth={2}
+                                    name="Actual Usage"
+                                    connectNulls
+                                />
 
-                    {/* Predicted Line */}
-                    <Line
-                        type="monotone"
-                        dataKey="predictedUsage"
-                        stroke="#f97316"
-                        strokeWidth={2}
-                        strokeDasharray="5 5"
-                        name="Predicted Usage"
-                        connectNulls
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-            </div>
-            </CardContent>
-        </Card>
-    </TabsContent>
+                                {/* Predicted Line */}
+                                <Line
+                                    type="monotone"
+                                    dataKey="predictedUsage"
+                                    stroke="#f97316"
+                                    strokeWidth={2}
+                                    strokeDasharray="5 5"
+                                    name="Predicted Usage"
+                                    connectNulls
+                                />
+                            </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
 
 
 {/* Customer Prediction Tab */}
@@ -244,6 +265,94 @@ export const PredictionsPage = () => {
     </CardContent>
   </Card>
 </TabsContent>
+
+{/* Area Report Prediction */}
+<TabsContent value="area" className="space-y-6">
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Area-wise Usage and Revenue Report Prediction - {areaYear}</CardTitle>
+              <CardDescription>Predicted trends for each area in 2026</CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+              <Filter className="w-4 h-4 text-muted-foreground" />
+              <Select value={selectedArea} onValueChange={setSelectedArea}>
+                <SelectTrigger className="w-40">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Areas</SelectItem>
+                  <SelectItem value="area1">Area 1</SelectItem>
+                  <SelectItem value="area2">Area 2</SelectItem>
+                  <SelectItem value="area3">Area 3</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="h-80">
+            <ResponsiveContainer width="100%" height="100%">
+            <ComposedChart data={areaWiseData2026}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis yAxisId="left" label={{ value: '(L)', angle: -90, position: 'insideBottomLeft' }} />
+                <YAxis yAxisId="right" orientation="right" label={{ value: '(LKR)', angle: 90, position: 'insideBottomRight' }} />
+                <Tooltip />
+                <Legend />
+
+                {/* ================= ACTUAL BARS ================= */}
+
+                {(selectedArea === "all" || selectedArea === "area1") && (
+                    <>
+                    <Bar yAxisId="left" dataKey="area1Usage" name="Area 1 Usage" fill="#0ea5e9" />
+                    <Bar yAxisId="right" dataKey="area1Revenue" name="Area 1 Revenue" fill="#0369a1" />
+                    </>
+                )}
+
+                {(selectedArea === "all" || selectedArea === "area2") && (
+                    <>
+                    <Bar yAxisId="left" dataKey="area2Usage" name="Area 2 Usage" fill="#22c55e" />
+                    <Bar yAxisId="right" dataKey="area2Revenue" name="Area 2 Revenue" fill="#15803d" />
+                    </>
+                )}
+
+                {(selectedArea === "all" || selectedArea === "area3") && (
+                    <>
+                    <Bar yAxisId="left" dataKey="area3Usage" name="Area 3 Usage" fill="#f59e0b" />
+                    <Bar yAxisId="right" dataKey="area3Revenue" name="Area 3 Revenue" fill="#b45309" />
+                    </>
+                )}
+
+                {/* ================= PREDICTED BARS (DIFFERENT COLOR) ================= */}
+
+                {(selectedArea === "all" || selectedArea === "area1") && (
+                    <>
+                    <Bar yAxisId="left" dataKey="predictedArea1Usage" name="Predicted Area 1 Usage" fill="#93c5fd" />
+                    <Bar yAxisId="right" dataKey="predictedArea1Revenue" name="Predicted Area 1 Revenue" fill="#60a5fa" />
+                    </>
+                )}
+
+                {(selectedArea === "all" || selectedArea === "area2") && (
+                    <>
+                    <Bar yAxisId="left" dataKey="predictedArea2Usage" name="Predicted Area 2 Usage" fill="#86efac" />
+                    <Bar yAxisId="right" dataKey="predictedArea2Revenue" name="Predicted Area 2 Revenue" fill="#4ade80" />
+                    </>
+                )}
+
+                {(selectedArea === "all" || selectedArea === "area3") && (
+                    <>
+                    <Bar yAxisId="left" dataKey="predictedArea3Usage" name="Predicted Area 3 Usage" fill="#fde68a" />
+                    <Bar yAxisId="right" dataKey="predictedArea3Revenue" name="Predicted Area 3 Revenue" fill="#facc15" />
+                    </>
+                )}
+                </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </CardContent>
+      </Card>
+    </TabsContent>
 </Tabs>
 </div>
 )}
