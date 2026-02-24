@@ -17,6 +17,7 @@ export interface Customer {
   connectionType: 'residential' | 'commercial' | 'industrial';
   email: string;
   address: string;
+  registeredDate: string;
   isDeleted?: boolean;
   deletedAt?: string;
 }
@@ -124,11 +125,11 @@ export const mockAdmins: Admin[] = [
 ];
 
 export const mockCustomers: Customer[] = [
-  { id: '001', name: 'Sanjeewa Kumara', subscriptionNo: 'NOR-234123', nic: '198756432108', region: 'north', customerType: 'with_meter', phone: '0778682365', status: 'active', connectionType: 'residential', email: 'sanjeewa@email.com', address: '123 Main St, Beliatta' },
-  { id: '002', name: 'Supun Perera', subscriptionNo: 'SOU-458945', nic: '200123456789', region: 'south', customerType: 'with_meter', phone: '077-1234567', status: 'active', connectionType: 'residential', email: '', address: '45 Lake Road, Tangalle' },
-  { id: '003', name: 'Kamani Silva', subscriptionNo: 'NOR-789267', nic: '197234567890', region: 'north', customerType: 'no_meter', phone: '076-5432109', status: 'inactive', connectionType: 'commercial', email: 'kamani@email.com', address: '78 Beach Road, Hambantota' },
-  { id: '004', name: 'Ruwan Jayawardena', subscriptionNo: 'EAS-123459', nic: '199087654321', region: 'east', customerType: 'with_meter', phone: '078-2345678', status: 'active', connectionType: 'industrial', email: '', address: '12 Industrial Zone, Beliatta' },
-  { id: '005', name: 'Priyantha De Silva', subscriptionNo: 'WES-567845', nic: '196543210987', region: 'west', customerType: 'with_meter', phone: '077-8765432', status: 'active', connectionType: 'residential', email: 'priyantha@email.com', address: '56 Hill Road, Tangalle' },
+  { id: '001', name: 'Sanjeewa Kumara', subscriptionNo: 'NOR-234123', nic: '198756432108', region: 'north', customerType: 'with_meter', phone: '0778682365', status: 'active', connectionType: 'residential', email: 'sanjeewa@email.com', address: '123 Main St, Beliatta', registeredDate: '2024-03-15' },
+  { id: '002', name: 'Supun Perera', subscriptionNo: 'SOU-458945', nic: '200123456789', region: 'south', customerType: 'with_meter', phone: '077-1234567', status: 'active', connectionType: 'residential', email: '', address: '45 Lake Road, Tangalle', registeredDate: '2024-06-22' },
+  { id: '003', name: 'Kamani Silva', subscriptionNo: 'NOR-789267', nic: '197234567890', region: 'north', customerType: 'no_meter', phone: '076-5432109', status: 'inactive', connectionType: 'commercial', email: 'kamani@email.com', address: '78 Beach Road, Hambantota', registeredDate: '2023-11-08' },
+  { id: '004', name: 'Ruwan Jayawardena', subscriptionNo: 'EAS-123459', nic: '199087654321', region: 'east', customerType: 'with_meter', phone: '078-2345678', status: 'active', connectionType: 'industrial', email: '', address: '12 Industrial Zone, Beliatta', registeredDate: '2025-01-10' },
+  { id: '005', name: 'Priyantha De Silva', subscriptionNo: 'WES-567845', nic: '196543210987', region: 'west', customerType: 'with_meter', phone: '077-8765432', status: 'active', connectionType: 'residential', email: 'priyantha@email.com', address: '56 Hill Road, Tangalle', registeredDate: '2025-07-30' },
 ];
 
 export const mockPayments: Payment[] = [

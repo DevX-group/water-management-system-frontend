@@ -42,6 +42,13 @@ export const UserManagementPage = () => {
   });
   const [errors, setErrors] = useState<{[key: string]: boolean}>({});
 
+  // Sorting and filtering state
+  const [sortBy, setSortBy] = useState<string>('name');
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [filterStatus, setFilterStatus] = useState<string>('');
+  const [filterRegion, setFilterRegion] = useState<string>('');
+  const [filterConnectionType, setFilterConnectionType] = useState<string>('');
+
   // Generate subscription number based on region
   const generateSubscriptionNumber = (region: string) => {
     if (!region) return '';
@@ -61,11 +68,37 @@ export const UserManagementPage = () => {
     setFormData({...formData, region: value, subscriptionNumber});
   };
 
-  const filteredCustomers = mockCustomers.filter(c =>
-    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    c.nic.includes(searchQuery) ||
-    c.subscriptionNo.includes(searchQuery)
-  );
+  // Sorting handler
+  const handleSort = (column: string) => {
+    if (sortBy === column) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(column);
+      setSortOrder('asc');
+    }
+  };
+
+  // Data processing: search -> filter -> sort
+  const processedCustomers = mockCustomers
+    .filter(c =>
+      c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.nic.includes(searchQuery) ||
+      c.subscriptionNo.includes(searchQuery)
+    )
+    .filter(c => !filterStatus || filterStatus === 'all' || c.status === filterStatus)
+    .filter(c => !filterRegion || filterRegion === 'all' || c.region === filterRegion)
+    .filter(c => !filterConnectionType || filterConnectionType === 'all' || c.connectionType === filterConnectionType)
+    .sort((a, b) => {
+      const aVal = a[sortBy as keyof typeof a];
+      const bVal = b[sortBy as keyof typeof b];
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+      const aStr = String(aVal).toLowerCase();
+      const bStr = String(bVal).toLowerCase();
+      if (aStr < bStr) return sortOrder === 'asc' ? -1 : 1;
+      if (aStr > bStr) return sortOrder === 'asc' ? 1 : -1;
+      return 0;
+    });
 
   const handleAddCustomer = () => {
     const newErrors: {[key: string]: boolean} = {};
@@ -182,7 +215,7 @@ export const UserManagementPage = () => {
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="text-lg font-semibold text-foreground">All Customers</h3>
-            <p className="text-sm text-muted-foreground">Total customers: {mockCustomers.length}</p>
+            <p className="text-sm text-muted-foreground">Showing {processedCustomers.length} of {mockCustomers.length} customers</p>
           </div>
           <Button onClick={() => setShowAddDialog(true)}>
             <Plus className="w-4 h-4 mr-2" />Add Customer
@@ -194,27 +227,75 @@ export const UserManagementPage = () => {
           <Input placeholder="Search by name, NIC, or subscription number..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-accent/30" />
         </div>
 
+        {/* Filters */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold">Filter by Status</Label>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">Inactive</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold">Filter by Region</Label>
+            <Select value={filterRegion} onValueChange={setFilterRegion}>
+              <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Regions" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Regions</SelectItem>
+                {Object.entries(REGION_CONFIG).map(([key, val]) => (
+                  <SelectItem key={key} value={key}>{val.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="space-y-1">
+            <Label className="text-xs font-semibold">Filter by Connection Type</Label>
+            <Select value={filterConnectionType} onValueChange={setFilterConnectionType}>
+              <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Types" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="metered">Metered</SelectItem>
+                <SelectItem value="non-metered">Non Metered</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {(filterStatus || filterRegion || filterConnectionType || searchQuery) && (
+          <div className="mb-4">
+            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground" onClick={() => { setFilterStatus(''); setFilterRegion(''); setFilterConnectionType(''); setSearchQuery(''); }}>
+              Clear all filters
+            </Button>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
               <tr className="text-left border-b border-border">
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Name</th>
-                <th className="pb-3 text-sm font-medium text-muted-foreground">NIC</th>
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Subscription No</th>
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Phone</th>
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Region</th>
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Status</th>
-                <th className="pb-3 text-sm font-medium text-muted-foreground">Actions</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors" onClick={() => handleSort('name')}>Name {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">NIC</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Subscription No</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Phone</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Region</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors" onClick={() => handleSort('registeredDate')}>Registered {sortBy === 'registeredDate' && (sortOrder === 'asc' ? '▲' : '▼')}</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Status</th>
+                <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Actions</th>
               </tr>
             </thead>
             <tbody>
-              {filteredCustomers.map((customer) => (
+              {processedCustomers.map((customer) => (
                 <tr key={customer.id} className={`border-b border-border/50 last:border-0 ${customer.isDeleted ? 'opacity-50' : ''}`}>
                   <td className="py-4 text-sm text-foreground">{customer.name}</td>
                   <td className="py-4 text-sm text-muted-foreground">{customer.nic}</td>
                   <td className="py-4 text-sm text-muted-foreground">{customer.subscriptionNo}</td>
                   <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
                   <td className="py-4 text-sm text-muted-foreground capitalize">{customer.region}</td>
+                  <td className="py-4 text-sm text-muted-foreground">{new Date(customer.registeredDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                   <td className="py-4">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'active' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
                       {customer.status}
