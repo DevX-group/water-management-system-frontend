@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Plus, Search, Phone, MapPin, Eye, Edit, Trash2 } from 'lucide-react';
+import { Users, Plus, Search, Phone, MapPin, Eye, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -48,6 +48,10 @@ export const UserManagementPage = () => {
   const [filterStatus, setFilterStatus] = useState<string>('');
   const [filterRegion, setFilterRegion] = useState<string>('');
   const [filterConnectionType, setFilterConnectionType] = useState<string>('');
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 10;
 
   // Generate subscription number based on region
   const generateSubscriptionNumber = (region: string) => {
@@ -99,6 +103,13 @@ export const UserManagementPage = () => {
       if (aStr > bStr) return sortOrder === 'asc' ? 1 : -1;
       return 0;
     });
+
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(processedCustomers.length / rowsPerPage));
+  const paginatedCustomers = processedCustomers.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
 
   const handleAddCustomer = () => {
     const newErrors: {[key: string]: boolean} = {};
@@ -224,14 +235,14 @@ export const UserManagementPage = () => {
 
         <div className="relative mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search by name, NIC, or subscription number..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-10 bg-accent/30" />
+          <Input placeholder="Search by name, NIC, or subscription number..." value={searchQuery} onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }} className="pl-10 bg-accent/30" />
         </div>
 
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="space-y-1">
             <Label className="text-xs font-semibold">Filter by Status</Label>
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setCurrentPage(1); }}>
               <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Status" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Status</SelectItem>
@@ -242,7 +253,7 @@ export const UserManagementPage = () => {
           </div>
           <div className="space-y-1">
             <Label className="text-xs font-semibold">Filter by Region</Label>
-            <Select value={filterRegion} onValueChange={setFilterRegion}>
+            <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setCurrentPage(1); }}>
               <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Regions" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Regions</SelectItem>
@@ -254,7 +265,7 @@ export const UserManagementPage = () => {
           </div>
           <div className="space-y-1">
             <Label className="text-xs font-semibold">Filter by Connection Type</Label>
-            <Select value={filterConnectionType} onValueChange={setFilterConnectionType}>
+            <Select value={filterConnectionType} onValueChange={(v) => { setFilterConnectionType(v); setCurrentPage(1); }}>
               <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Types" /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
@@ -267,7 +278,7 @@ export const UserManagementPage = () => {
 
         {(filterStatus || filterRegion || filterConnectionType || searchQuery) && (
           <div className="mb-4">
-            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground" onClick={() => { setFilterStatus(''); setFilterRegion(''); setFilterConnectionType(''); setSearchQuery(''); }}>
+            <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground" onClick={() => { setFilterStatus(''); setFilterRegion(''); setFilterConnectionType(''); setSearchQuery(''); setCurrentPage(1); }}>
               Clear all filters
             </Button>
           </div>
@@ -288,7 +299,7 @@ export const UserManagementPage = () => {
               </tr>
             </thead>
             <tbody>
-              {processedCustomers.map((customer) => (
+              {paginatedCustomers.map((customer) => (
                 <tr key={customer.id} className={`border-b border-border/50 last:border-0 ${customer.isDeleted ? 'opacity-50' : ''}`}>
                   <td className="py-4 text-sm text-foreground">{customer.name}</td>
                   <td className="py-4 text-sm text-muted-foreground">{customer.nic}</td>
@@ -319,6 +330,26 @@ export const UserManagementPage = () => {
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
+            <p className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</p>
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" disabled={currentPage === 1} onClick={() => setCurrentPage(currentPage - 1)}>
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
+                <Button key={page} variant={page === currentPage ? 'default' : 'outline'} size="sm" className="w-8 h-8 p-0" onClick={() => setCurrentPage(page)}>
+                  {page}
+                </Button>
+              ))}
+              <Button variant="outline" size="sm" disabled={currentPage === totalPages} onClick={() => setCurrentPage(currentPage + 1)}>
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
