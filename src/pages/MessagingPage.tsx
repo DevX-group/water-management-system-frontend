@@ -666,8 +666,8 @@ const MessageDialog = ({
 
         <div className="flex-none p-6 pt-2 border-t mt-auto">
           <DialogFooter>
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={() => onSave(formData)}>Save Message</Button>
+            <Button variant="outline" onClick={onClose} className="border-[#168D9C] text-[#168D9C] hover:bg-[#168D9C] hover:text-white">Cancel</Button>
+            <Button onClick={() => onSave(formData)} className="bg-[#168D9C] hover:bg-[#127a87] text-white">Save Message</Button>
           </DialogFooter>
         </div>
       </DialogContent>
