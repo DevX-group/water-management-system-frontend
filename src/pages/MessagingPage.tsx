@@ -470,8 +470,8 @@ const MessageDialog = ({
         <div className="flex-1 overflow-y-auto min-h-0 p-6">
           <Tabs defaultValue="details" className="w-full h-full flex flex-col">
             <TabsList className="grid w-full grid-cols-2 flex-none">
-              <TabsTrigger value="details">Message Details</TabsTrigger>
-              <TabsTrigger value="template">Template Editor</TabsTrigger>
+              <TabsTrigger value="details" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Message Details</TabsTrigger>
+              <TabsTrigger value="template" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Template Editor</TabsTrigger>
             </TabsList>
             
             <TabsContent value="details" className="py-4 flex-none">
