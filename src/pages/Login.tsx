@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Droplets, Eye, EyeOff, ArrowRight, Shield, Zap, Bell } from "lucide-react";
+import { Droplets, Eye, EyeOff, ArrowRight, Shield, Zap, Bell, Mail, Lock } from "lucide-react";
 
 const features = [
   { icon: Shield, text: "Secure & encrypted" },
@@ -56,122 +56,128 @@ const Login = () => {
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         
         <div className="w-full max-w-md relative">
-          {/* Logo */}
-          <Link to="/" className="flex items-center gap-3 mb-10">
+
+          {/* Glassmorphism Card - subtle addition */}
+          <div className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
+
+            {/* Logo */}
+            <Link to="/" className="flex items-center gap-3 mb-10">
+              <motion.div 
+                whileHover={{ scale: 1.05, rotate: 5 }}
+                className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-soft"
+              >
+                <Droplets className="w-6 h-6 text-primary-foreground" />
+              </motion.div>
+              <span className="text-2xl font-bold text-gradient">Hydro Pay</span>
+            </Link>
+
             <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-soft"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="mb-8"
             >
-              <Droplets className="w-6 h-6 text-primary-foreground" />
+              <h1 className="text-4xl font-bold mb-3">Welcome back</h1>
+              <p className="text-muted-foreground text-lg">Sign in to your account to continue</p>
             </motion.div>
-            <span className="text-2xl font-bold text-gradient">HYDROPAY</span>
-          </Link>
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="mb-8"
-          >
-            <h1 className="text-4xl font-bold mb-3">Welcome back</h1>
-            <p className="text-muted-foreground text-lg">Sign in to your account to continue</p>
-          </motion.div>
-
-          <motion.form 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            onSubmit={handleSubmit} 
-            className="space-y-6"
-          >
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={(e) => {
-                  setFormData({ ...formData, email: e.target.value });
-                  setLoginError("");
-                }}
-                className="h-14 rounded-xl input-premium text-base"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">Password</Label>
-              <div className="relative">
+            <motion.form 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              onSubmit={handleSubmit} 
+              className="space-y-6"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-sm font-medium">
+                  Email
+                </Label>
                 <Input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Enter your password"
-                  value={formData.password}
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={formData.email}
                   onChange={(e) => {
-                    setFormData({ ...formData, password: e.target.value });
+                    setFormData({ ...formData, email: e.target.value });
                     setLoginError("");
                   }}
-                  className="h-14 rounded-xl pr-14 input-premium text-base"
+                  className="h-14 rounded-xl input-premium text-base bg-white/70 backdrop-blur-sm border-white/80"
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      setLoginError("");
+                    }}
+                    className="h-14 rounded-xl pr-14 input-premium text-base bg-white/70 backdrop-blur-sm border-white/80"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Login Error Message */}
+              {loginError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3 backdrop-blur-sm"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
+                  <span>⚠️ {loginError}</span>
+                </motion.div>
+              )}
 
-            {/* Login Error Message */}
-            {loginError && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3"
-              >
-                <span>⚠️ {loginError}</span>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <Checkbox
+                    id="rememberMe"
+                    checked={formData.rememberMe}
+                    onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: checked as boolean })}
+                    className="rounded-md"
+                  />
+                  <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
+                    Remember me
+                  </Label>
+                </div>
+                <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
+
+              <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
+                <Button type="submit" className="w-full h-14 gradient-primary shadow-soft rounded-xl text-base gap-2 btn-shine">
+                  Sign In
+                  <ArrowRight className="w-5 h-5" />
+                </Button>
               </motion.div>
-            )}
+            </motion.form>
 
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <Checkbox
-                  id="rememberMe"
-                  checked={formData.rememberMe}
-                  onCheckedChange={(checked) => setFormData({ ...formData, rememberMe: checked as boolean })}
-                  className="rounded-md"
-                />
-                <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">
-                  Remember me
-                </Label>
-              </div>
-              <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">
-                Forgot password?
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-center mt-8 text-muted-foreground"
+            >
+              Don't have an account?{" "}
+              <Link to="/signup" className="text-primary font-semibold hover:underline">
+                Create one
               </Link>
-            </div>
+            </motion.p>
 
-            <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
-              <Button type="submit" className="w-full h-14 gradient-primary shadow-soft rounded-xl text-base gap-2 btn-shine">
-                Sign In
-                <ArrowRight className="w-5 h-5" />
-              </Button>
-            </motion.div>
-          </motion.form>
-
-          <motion.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-center mt-8 text-muted-foreground"
-          >
-            Don't have an account?{" "}
-            <Link to="/signup" className="text-primary font-semibold hover:underline">
-              Create one
-            </Link>
-          </motion.p>
+          </div>
         </div>
       </motion.div>
 
@@ -183,7 +189,6 @@ const Login = () => {
       >
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         
-        {/* Animated blobs */}
         <motion.div 
           animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
@@ -216,12 +221,12 @@ const Login = () => {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.5 + index * 0.1 }}
-                className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4"
+                className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/10"
               >
-                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
-                  <feature.icon className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/40 to-cyan-500/40 backdrop-blur flex items-center justify-center border border-white/20">
+                  <feature.icon className="w-5 h-5 text-cyan-300" />
                 </div>
-                <span className="font-medium">{feature.text}</span>
+                <span className="font-medium text-white/80">{feature.text}</span>
               </motion.div>
             ))}
           </div>
