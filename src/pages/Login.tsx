@@ -63,17 +63,15 @@ const Login = () => {
 
   return (
     <div className="min-h-screen flex">
-      {/* Left Panel - Form */}
+      {/* Left Panel - Scrollable Form */}
       <motion.div 
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
-        className="flex-1 flex items-center justify-center p-8 relative"
+        className="flex-1 flex items-center justify-center p-8 relative overflow-y-auto min-h-screen"
       >
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         
         <div className="w-full max-w-md relative">
-
-          {/* Glassmorphism Card - subtle addition */}
           <div className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
 
             {/* Logo */}
@@ -104,26 +102,33 @@ const Login = () => {
               onSubmit={handleSubmit} 
               className="space-y-6"
             >
+              {/* Email Field with Icon */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium">
                   Email
                 </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={(e) => {
-                    setFormData({ ...formData, email: e.target.value });
-                    setLoginError("");
-                  }}
-                  className="h-14 rounded-xl input-premium text-base bg-white/70 backdrop-blur-sm border-white/80"
-                />
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={(e) => {
+                      setFormData({ ...formData, email: e.target.value });
+                      setLoginError("");
+                    }}
+                    style={{ caretColor: "black" }}
+                    className="h-14 rounded-xl pl-12 input-premium text-base bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
+                  />
+                </div>
               </div>
 
+              {/* Password Field with Icon */}
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                 <div className="relative">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
@@ -133,7 +138,8 @@ const Login = () => {
                       setFormData({ ...formData, password: e.target.value });
                       setLoginError("");
                     }}
-                    className="h-14 rounded-xl pr-14 input-premium text-base bg-white/70 backdrop-blur-sm border-white/80"
+                    style={{ caretColor: "black" }}
+                    className="h-14 rounded-xl pl-12 pr-14 input-premium text-base bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
                   />
                   <button
                     type="button"
@@ -197,11 +203,11 @@ const Login = () => {
         </div>
       </motion.div>
 
-      {/* Right Panel - Visual */}
+      {/* Right Panel - Fixed */}
       <motion.div 
         initial={{ opacity: 0, x: 50 }}
         animate={{ opacity: 1, x: 0 }}
-        className="hidden lg:flex flex-1 gradient-dark items-center justify-center p-12 relative overflow-hidden"
+        className="hidden lg:flex w-[45%] fixed right-0 top-0 h-screen gradient-dark items-center justify-center p-12 overflow-hidden"
       >
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         
@@ -248,6 +254,10 @@ const Login = () => {
           </div>
         </div>
       </motion.div>
+
+      {/* Spacer to prevent left panel content going under fixed right panel */}
+      <div className="hidden lg:block w-[45%] shrink-0" />
+
     </div>
   );
 };
