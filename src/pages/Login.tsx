@@ -32,6 +32,22 @@ const Login = () => {
     e.preventDefault();
     setLoginError("");
 
+    // Empty field validation
+    if (!formData.email && !formData.password) {
+      setLoginError("Please enter your email and password.");
+      return;
+    }
+
+    if (!formData.email) {
+      setLoginError("Please enter your email.");
+      return;
+    }
+
+    if (!formData.password) {
+      setLoginError("Please enter your password.");
+      return;
+    }
+
     const matchedUser = VALID_CREDENTIALS.find(
       (cred) =>
         cred.email === formData.email.toLowerCase() &&
