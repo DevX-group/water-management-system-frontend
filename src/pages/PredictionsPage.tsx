@@ -186,7 +186,7 @@ export const PredictionsPage = () => {
     <CardHeader>
       <div className="flex items-center justify-between">
       <div>
-      <CardTitle>Customer Usage Prediction</CardTitle>
+      <CardTitle>Customer Usage Prediction - 2026</CardTitle>
       <CardDescription>Forecasted usage for selected customer up to 3 months </CardDescription>
       </div>
       <div className="flex items-center gap-2">
@@ -274,7 +274,7 @@ export const PredictionsPage = () => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>Area-wise Usage and Revenue Report Prediction - {areaYear}</CardTitle>
-              <CardDescription>Predicted trends for each area in 2026</CardDescription>
+              <CardDescription>Predicted trends up to 3 months</CardDescription>
             </div>
             <div className="flex items-center gap-2">
               <Filter className="w-4 h-4 text-muted-foreground" />
