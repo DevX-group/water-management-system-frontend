@@ -91,7 +91,7 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div className="admin-wrapper">
-      <AdminLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+      <AdminLayout activeSection={activeSection} onSectionChange={(section) => setActiveSection(section as Section)}>
         {renderSection()}
       </AdminLayout>
     </div>
