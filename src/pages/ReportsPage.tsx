@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
-import { exportPDF } from '@/util/exportPDF'; 
+import { exportPDF } from '@/util/exportPDF';
 
 // Mock data for monthly usage and revenue - different data for each year
 const monthlyDataByYear = {
