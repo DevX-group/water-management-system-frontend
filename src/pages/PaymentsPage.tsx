@@ -62,7 +62,7 @@ export const PaymentsPage = () => {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Enter NIC / Subscription Number"
+                placeholder="Enter Name / Subscription Number"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"

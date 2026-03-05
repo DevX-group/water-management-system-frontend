@@ -247,12 +247,7 @@ export const PaymentsAddingPage = () => {
                         <CalendarDays className="w-4 h-4 text-muted-foreground" />
                         <h4 className="font-medium text-foreground">Current Month Summary</h4>
                       </div>
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[monthlyStatus]}`}
-                      >
-                        <MonthlyIcon className="w-3 h-3" />
-                        {monthlyStatus}
-                      </span>
+                      
                     </div>
 
                     <div className="mt-3 space-y-2 text-sm">
