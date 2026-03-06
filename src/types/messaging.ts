@@ -12,6 +12,7 @@ export interface MessageTemplate {
   isCustom: boolean;
   sections: TemplateSection[];
   content: string; // for custom mode
+  subject?: string; // for email templates
 }
 
 export interface MessageSchedule {

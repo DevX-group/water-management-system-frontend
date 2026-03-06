@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Plus, 
   Trash2, 
@@ -64,13 +64,13 @@ import {
   TemplateSection,
   RecipientType 
 } from '../types/messaging';
-import { mockMessages, defaultRecurringSmsTemplate } from '../data/messagingData';
+import * as messageApi from '../services/messageService';
 
 import { MessageHistoryPage } from './messageHistoryPage';
 
 export const MessagingPage = () => {
   return (
-    <div className="space-y-6 p-6 pb-24">
+    <div className="space-y-6 p-6 pb-24 px-24">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Messaging</h1>
@@ -80,8 +80,8 @@ export const MessagingPage = () => {
 
        <Tabs defaultValue="messages" className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="messages">Messages</TabsTrigger>
-          <TabsTrigger value="history">History</TabsTrigger>
+          <TabsTrigger value="messages" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Messages</TabsTrigger>
+          <TabsTrigger value="history" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">History</TabsTrigger>
         </TabsList>
         <TabsContent value="messages" className="mt-6">
           <MessagingList />
@@ -95,32 +95,42 @@ export const MessagingPage = () => {
 };
 
 const MessagingList = () => {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
   const { toast } = useToast();
 
-  const handleDelete = (id: string) => {
-    setMessages(messages.filter(m => m.id !== id));
-    toast({
-      title: "Message deleted",
-      description: "The message has been successfully deleted.",
-    });
+  useEffect(() => {
+    messageApi.getAllMessages()
+      .then(setMessages)
+      .catch(() => toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' }))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await messageApi.deleteMessage(id);
+      setMessages(prev => prev.filter(m => m.id !== id));
+      toast({ title: 'Message deleted', description: 'The message has been successfully deleted.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete message.', variant: 'destructive' });
+    }
   };
 
-  const handleSave = (message: Message) => {
-    if (editingMessage) {
-      setMessages(messages.map(m => m.id === message.id ? message : m));
-      toast({
-        title: "Message updated",
-        description: "Your changes have been saved.",
-      });
-    } else {
-      setMessages([...messages, { ...message, id: Date.now().toString() }]);
-      toast({
-        title: "Message created",
-        description: "New message has been created.",
-      });
+  const handleSave = async (message: Message) => {
+    try {
+      if (editingMessage) {
+        const updated = await messageApi.updateMessage(message.id, message);
+        setMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
+        toast({ title: 'Message updated', description: 'Your changes have been saved.' });
+      } else {
+        const created = await messageApi.createMessage(message);
+        setMessages(prev => [...prev, created]);
+        toast({ title: 'Message created', description: 'New message has been created.' });
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Failed to save message.', variant: 'destructive' });
     }
     setIsDialogOpen(false);
     setEditingMessage(null);
@@ -144,24 +154,30 @@ const MessagingList = () => {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {messages.map((message) => (
-          <MessageCard 
-            key={message.id} 
-            message={message} 
-            onEdit={() => openEditMessage(message)} 
-            onDelete={() => handleDelete(message.id)} 
-          />
-        ))}
-      </div>
+      {isLoading ? (
+        <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+      ) : (
+        <>
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {messages.map((message) => (
+              <MessageCard 
+                key={message.id} 
+                message={message} 
+                onEdit={() => openEditMessage(message)} 
+                onDelete={() => handleDelete(message.id)} 
+              />
+            ))}
+          </div>
 
-      {isDialogOpen && (
-        <MessageDialog
-          isOpen={isDialogOpen}
-          onClose={() => setIsDialogOpen(false)}
-          initialData={editingMessage}
-          onSave={handleSave}
-        />
+          {isDialogOpen && (
+            <MessageDialog
+              isOpen={isDialogOpen}
+              onClose={() => setIsDialogOpen(false)}
+              initialData={editingMessage}
+              onSave={handleSave}
+            />
+          )}
+        </>
       )}
     </div>
   );
@@ -412,13 +428,31 @@ const MessageDialog = ({
     };
 
     if (t.isCustom) {
-      return <div className="whitespace-pre-wrap">{replacePlaceholders(t.content || '')}</div>;
+      return (
+        <div>
+          {type === 'email' && t.subject && (
+            <div className="mb-3 pb-2 border-b">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
+              <span className="font-semibold text-sm">{replacePlaceholders(t.subject)}</span>
+            </div>
+          )}
+          <div className="whitespace-pre-wrap">{replacePlaceholders(t.content || '')}</div>
+        </div>
+      );
     } else {
       return (
-        <div className="whitespace-pre-wrap space-y-2">
-          {t.sections?.map(s => (
-            <div key={s.id}>{replacePlaceholders(s.content)}</div>
-          ))}
+        <div>
+          {type === 'email' && t.subject && (
+            <div className="mb-3 pb-2 border-b">
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
+              <span className="font-semibold text-sm">{replacePlaceholders(t.subject)}</span>
+            </div>
+          )}
+          <div className="whitespace-pre-wrap space-y-2">
+            {t.sections?.map(s => (
+              <div key={s.id}>{replacePlaceholders(s.content)}</div>
+            ))}
+          </div>
         </div>
       );
     }
@@ -436,8 +470,8 @@ const MessageDialog = ({
         <div className="flex-1 overflow-y-auto min-h-0 p-6">
           <Tabs defaultValue="details" className="w-full h-full flex flex-col">
             <TabsList className="grid w-full grid-cols-2 flex-none">
-              <TabsTrigger value="details">Message Details</TabsTrigger>
-              <TabsTrigger value="template">Template Editor</TabsTrigger>
+              <TabsTrigger value="details" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Message Details</TabsTrigger>
+              <TabsTrigger value="template" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Template Editor</TabsTrigger>
             </TabsList>
             
             <TabsContent value="details" className="py-4 flex-none">
@@ -590,6 +624,17 @@ const MessageDialog = ({
                          ))}
                        </div>
                      </div>
+                     {activeTab === 'Email' && (
+                       <div className="space-y-2">
+                         <Label htmlFor="email-subject" className="text-xs font-medium">Subject</Label>
+                         <Input
+                           id="email-subject"
+                           placeholder="e.g. Your Monthly Water Bill"
+                           value={formData.templates.email?.subject || ''}
+                           onChange={(e) => updateTemplate('email', { subject: e.target.value })}
+                         />
+                       </div>
+                     )}
 
                      <div className="h-[300px] border rounded-md p-2">
                        <TabsContent value="SMS" className="mt-0 h-full">
@@ -621,8 +666,8 @@ const MessageDialog = ({
 
         <div className="flex-none p-6 pt-2 border-t mt-auto">
           <DialogFooter>
-            <Button variant="outline" onClick={onClose}>Cancel</Button>
-            <Button onClick={() => onSave(formData)}>Save Message</Button>
+            <Button variant="outline" onClick={onClose} className="border-[#168D9C] text-[#168D9C] hover:bg-[#168D9C] hover:text-white">Cancel</Button>
+            <Button onClick={() => onSave(formData)} className="bg-[#168D9C] hover:bg-[#127a87] text-white">Save Message</Button>
           </DialogFooter>
         </div>
       </DialogContent>
