@@ -1,42 +1,90 @@
-import { mockPayments, Payment } from '@/data/mockData';
+import axios from 'axios';
 
-interface PaymentInput {
-  subscriptionNo: string;
-  customerName: string;
+const api = axios.create({
+  baseURL: "http://localhost:8080/api",
+  headers: { "Content-Type": "application/json" },
+});
+
+export type PaymentStatus = "FULL" | "PARTIAL";
+export type PaymentType = "MONTHLY" | "OUTSTANDING";
+
+export interface AddPaymentRequest {
+  subscriptionNumber: string;
   amount: number;
-  date?: string;
-  status?: string;
+  status: PaymentStatus;
+  paymentType: PaymentType;
 }
 
-interface PaymentResponse extends Payment {
-  id: string;
-  date: string;
-  subscriptionNo: string;
-  customerName: string;
-  amount: number;
-  status: 'paid' | 'partial' | 'overdue';
+export interface AddPaymentResponse {
+  message: string;
+  subscriptionNumber: string;
+  oldBalance: number;
+  newBalance: number;
+  paymentId: string;
+  status: PaymentStatus;
+  paymentType: PaymentType;
+  createdAt: string;
 }
 
-export const getPayments = (): Payment[] => {
-  return mockPayments;
+export interface CustomerPaymentSummaryResponse {
+  subscriptionNumber: string;
+  monthlyDue: number;
+  outstandingBalance: number;
+  totalDue: number;
+  billStatus: string;
+}
+
+export interface CurrentBillResponse {
+  billId: number;
+  billingPeriod: string;
+  billDate: string;
+  totalAmount: number;
+  balanceDue: number;
+  status: string;
+}
+
+export interface OutstandingBillItemResponse {
+  billId: number;
+  billingPeriod: string;
+  billDate: string;
+  balanceDue: number;
+  status: string;
+}
+
+export interface PaymentHistoryItemResponse {
+  paymentId: string;
+  subscriptionNumber: string;
+  amount: number;
+  status: string;        
+  paymentType: string;   
+  createdAt: string;     
+}
+
+export const getCustomerPaymentSummary = async (
+  subscriptionNumber: string
+): Promise<CustomerPaymentSummaryResponse> => {
+  const res = await api.get(`/payments/customer/${subscriptionNumber}`);
+  return res.data;
 };
 
-export const getPaymentsByDate = (date: string): Payment[] => {
-  return mockPayments.filter(p => p.date === date);
+export const addPayment = async (
+  payload: AddPaymentRequest
+): Promise<AddPaymentResponse> => {
+  const res = await api.post("/payments", payload);
+  return res.data;
 };
 
-export const getPaymentsByStatus = (status: 'paid' | 'partial' | 'overdue' | 'pending'): Payment[] => {
-  return mockPayments.filter(p => p.status === status);
+export const getCurrentBill = async (subscriptionNumber: string) => {
+  const res = await api.get(`/bills/current/${subscriptionNumber}`);
+  return res.data as CurrentBillResponse | null;
 };
 
-export const addPayment = (paymentData: PaymentInput): PaymentResponse => {
-  const newPayment: PaymentResponse = {
-    id: Date.now().toString(),
-    date: new Date().toISOString().split('T')[0],
-    subscriptionNo: paymentData.subscriptionNo,
-    customerName: paymentData.customerName,
-    amount: paymentData.amount,
-    status: 'paid',
-  };
-  return newPayment;
+export const getOutstandingBills = async (subscriptionNumber: string) => {
+  const res = await api.get(`/bills/outstanding/${subscriptionNumber}`);
+  return res.data as OutstandingBillItemResponse[];
+};
+
+export const getPaymentHistory = async (subscriptionNumber: string) => {
+  const res = await api.get(`/payments/history/${subscriptionNumber}`);
+  return res.data as PaymentHistoryItemResponse[];
 };
