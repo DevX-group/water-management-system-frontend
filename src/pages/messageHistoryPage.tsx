@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -16,10 +16,24 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockHistory } from "../data/messagingData";
+import { getMessageHistory } from "../services/messageService";
+import { MessageHistoryRow } from "../types/messaging";
 
 export const MessageHistoryPage = () => {
-  const rows = mockHistory;
+  const [rows, setRows] = useState<MessageHistoryRow[]>([]);
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const data = await getMessageHistory();
+        setRows(data);
+      } catch (error) {
+        console.error("Failed to load message history", error);
+      }
+    };
+
+    load();
+  }, []);
 
   return (
     <div className="space-y-6 p-6 pb-24 px-0">
@@ -104,9 +118,7 @@ export const MessageHistoryPage = () => {
                               </div>
                               <div className="rounded-md border p-3">
                                 <div className="text-muted-foreground">Delivered</div>
-                                <div className="text-lg font-semibold">
-                                  {Math.max(row.totalSent - row.totalFailed, 0)}
-                                </div>
+                                <div className="text-lg font-semibold">{row.totalDelivered}</div>
                               </div>
                             </div>
                           </div>

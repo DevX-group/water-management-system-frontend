@@ -44,6 +44,7 @@ export interface MessageHistoryRow {
   successRate: number;
   totalSent: number;
   totalFailed: number;
+  totalDelivered: number;
   recipients: string;
 }
 
