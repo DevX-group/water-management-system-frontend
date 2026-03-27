@@ -60,6 +60,13 @@ export interface PaymentHistoryItemResponse {
   createdAt: string;     
 }
 
+export interface PaymentCustomerInfoResponse{
+  subscriptionNumber: string;
+  accountHolderName: string;
+  nic: string;
+  region: string;
+}
+
 export const getCustomerPaymentSummary = async (
   subscriptionNumber: string
 ): Promise<CustomerPaymentSummaryResponse> => {
@@ -88,3 +95,8 @@ export const getPaymentHistory = async (subscriptionNumber: string) => {
   const res = await api.get(`/payments/history/${subscriptionNumber}`);
   return res.data as PaymentHistoryItemResponse[];
 };
+
+export const getPaymentCustomerInfo = async (subscriptionNumber: string) =>{
+  const res = await api.get(`/payments/customerInfo/${subscriptionNumber}`);
+  return res.data;
+}

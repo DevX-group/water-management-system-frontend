@@ -1,31 +1,19 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { Search, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockPayments, mockCustomers, mockBankSlips } from '@/data/mockData';
+import { mockPayments, mockBankSlips } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';
+import { searchCustomersApi } from '@/services/customerService';
+import { useEffect } from 'react';
+import { getPaymentCustomerInfo } from '@/services/paymentService';
 
 export const PaymentsPage = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState<typeof mockCustomers[0] | null>(null);
-
-  const filteredCustomers = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase();
-    if (!q) return [];
-    return mockCustomers.filter(
-      (c) =>
-        c.name.toLowerCase().includes(q) ||
-        c.subscriptionNo.toLowerCase().includes(q) ||
-        c.nic.includes(searchQuery.trim())
-    );
-  }, [searchQuery]);
-
-  const handleCustomerSelect = (customer: typeof mockCustomers[0]) => {
-    setSelectedCustomer(customer);
-    setSearchQuery('');
-  };
+  const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
 
   const statusStyles = {
     paid: 'bg-success/10 text-success',
@@ -44,6 +32,35 @@ export const PaymentsPage = () => {
   const handleReviewSlip = (slipId: string) => {
     navigate(`/payments/slips/${slipId}`);
   };
+
+  useEffect(() => {
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    const fetchCustomers = async () => {
+      try {
+        const data = await searchCustomersApi(searchQuery);
+        setSearchResults(data);
+      } catch (err) {
+        console.error("Error searching customers:", err);
+      }
+    }
+
+    fetchCustomers();
+  }, [searchQuery]);
+
+  const handleCustomerSelect = async (customer: any) => {
+    try {
+      const fullCustomer = await getPaymentCustomerInfo(customer.subscriptionNumber);
+      setSelectedCustomer(fullCustomer);
+      setSearchQuery('');
+      setSearchResults([]);
+    } catch (err) {
+      console.error("Error fetching customer details:", err);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -69,21 +86,27 @@ export const PaymentsPage = () => {
               />
             </div>
 
-            {searchQuery && filteredCustomers.length > 0 && (
+            {searchQuery && searchResults.length > 0 && (
               <div className="mt-2 border border-border rounded-lg overflow-hidden">
-                {filteredCustomers.slice(0, 5).map((customer) => (
+                {searchResults.slice(0, 5).map((customer) => (
                   <button
-                    key={customer.id}
+                    key={customer.subscriptionNumber}
                     onClick={() => handleCustomerSelect(customer)}
                     className="w-full px-4 py-3 text-left hover:bg-secondary transition-colors border-b border-border last:border-0"
                   >
-                    <p className="font-medium text-foreground">{customer.name}</p>
+                    <p className="font-medium text-foreground">{customer.accountHolderName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {customer.subscriptionNo} • {customer.region}
+                      {customer.subscriptionNumber} 
                     </p>
                   </button>
                 ))}
               </div>
+            )}
+
+            {searchQuery && searchResults.length === 0 && (
+              <p className="mt-2 text-sm text-muted-foreground">
+                No customers found
+              </p>
             )}
           </div>
 
@@ -111,7 +134,7 @@ export const PaymentsPage = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Name</p>
                   <p className="font-medium text-foreground">
-                    {selectedCustomer.name}
+                    {selectedCustomer.accountHolderName}
                   </p>
                 </div>
 
@@ -120,7 +143,7 @@ export const PaymentsPage = () => {
                     Subscription No.
                   </p>
                   <p className="font-medium text-foreground">
-                    {selectedCustomer.subscriptionNo}
+                    {selectedCustomer.subscriptionNumber}
                   </p>
                 </div>
 
@@ -141,7 +164,7 @@ export const PaymentsPage = () => {
               </div>
 
               {/* Navigate to full payment page */}
-              <Button className="w-full" onClick={() => navigate(`/admin/payments/customer/${selectedCustomer.subscriptionNo}`)}>
+              <Button className="w-full" onClick={() => navigate(`/admin/payments/customer/${selectedCustomer.subscriptionNumber}`)}>
                 Add Payment
               </Button>
             </div>
