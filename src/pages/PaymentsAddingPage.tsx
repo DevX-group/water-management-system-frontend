@@ -1,9 +1,8 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CheckCircle, Clock, AlertCircle, Wallet, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockCustomers } from '@/data/mockData';
 import { toast } from 'sonner';
 
 import {
@@ -15,6 +14,8 @@ import {
   type OutstandingBillItemResponse,
   PaymentHistoryItemResponse,
   getPaymentHistory,
+  getPaymentCustomerInfo,
+  type PaymentCustomerInfoResponse,
 } from '@/services/paymentService';
 
 type TabKey = 'monthly' | 'outstanding';
@@ -23,18 +24,15 @@ type UiStatus = 'paid' | 'partial' | 'overdue';
 
 export const PaymentsAddingPage = () => {
   const navigate = useNavigate();
-  const { subscriptionNo } = useParams<{ subscriptionNo: string }>();
-  console.log("subscriptionNo param =", subscriptionNo);
-
-  const customer = useMemo(() => {
-    return mockCustomers.find((c) => c.subscriptionNo === subscriptionNo) || null;
-  }, [subscriptionNo]);
+  const { subscriptionNumber } = useParams<{ subscriptionNumber: string }>();
+  console.log("subscriptionNumber param =", subscriptionNumber);
 
   const [activeTab, setActiveTab] = useState<TabKey>('monthly');
 
   const [monthlyAmount, setMonthlyAmount] = useState('');
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
+  const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
 
   const [summary, setSummary] = useState<null | {
     subscriptionNumber: string;
@@ -59,31 +57,34 @@ export const PaymentsAddingPage = () => {
     overdue: AlertCircle,
   } as const;
 
-  const loadAll = async (subscriptionNo: string) => {
+  const loadAll = async (subscriptionNumber: string) => {
     try {
-      const [sum, bill, outs, history] = await Promise.all([
-        getCustomerPaymentSummary(subscriptionNo),
-        getCurrentBill(subscriptionNo),
-        getOutstandingBills(subscriptionNo),
-        getPaymentHistory(subscriptionNo),
+      const [sum, bill, outs, history, customerInfo] = await Promise.all([
+        getCustomerPaymentSummary(subscriptionNumber),
+        getCurrentBill(subscriptionNumber),
+        getOutstandingBills(subscriptionNumber),
+        getPaymentHistory(subscriptionNumber),
+        getPaymentCustomerInfo(subscriptionNumber),
       ]);
 
       setSummary(sum);
       setCurrentBill(bill);
       setOutstandingBills(outs);
       setPaymentHistory(history);
+      setCustomerInfo(customerInfo);
+
     } catch (e) {
       toast.error('Failed to load payment data');
     }
   };
 
   useEffect(() => {
-    if (!subscriptionNo) return;
-    loadAll(subscriptionNo);
-  }, [subscriptionNo]);
+    if (!subscriptionNumber) return;
+    loadAll(subscriptionNumber);
+  }, [subscriptionNumber]);
 
   const handleAddMonthly = async () => {
-    if (!customer) return;
+    if (!customerInfo) return;
 
     const amount = Number(monthlyAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -98,7 +99,7 @@ export const PaymentsAddingPage = () => {
 
     try {
       const res = await addPayment({
-        subscriptionNumber: customer.subscriptionNo,
+        subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
         status,
         paymentType: 'MONTHLY',
@@ -107,7 +108,7 @@ export const PaymentsAddingPage = () => {
       toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
       setMonthlyAmount('');
 
-      await loadAll(customer.subscriptionNo);
+      await loadAll(customerInfo.subscriptionNumber);
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
@@ -118,7 +119,7 @@ export const PaymentsAddingPage = () => {
   };
 
   const handleAddOutstanding = async () => {
-    if (!customer) return;
+    if (!customerInfo) return;
 
     const amount = Number(outstandingAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
@@ -133,7 +134,7 @@ export const PaymentsAddingPage = () => {
 
     try {
       const res = await addPayment({
-        subscriptionNumber: customer.subscriptionNo,
+        subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
         status,
         paymentType: 'OUTSTANDING',
@@ -142,7 +143,7 @@ export const PaymentsAddingPage = () => {
       toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
       setOutstandingAmount('');
 
-      await loadAll(customer.subscriptionNo);
+      await loadAll(customerInfo.subscriptionNumber);
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
@@ -152,7 +153,7 @@ export const PaymentsAddingPage = () => {
     }
   };
 
-  if (!customer) {
+  if (!customerInfo) {
     return (
       <div className="p-6">
         <div className="bg-card rounded-2xl p-6 shadow-md">
@@ -201,7 +202,7 @@ export const PaymentsAddingPage = () => {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Add Payment</h1>
             <p className="text-muted-foreground">
-              {customer?.name ?? "Customer"} • {subscriptionNo}
+              {customerInfo?.accountHolderName ?? "Customer"} • {customerInfo?.subscriptionNumber}
             </p>
           </div>
           <Button variant="secondary" onClick={() => navigate(-1)}>
@@ -370,37 +371,37 @@ export const PaymentsAddingPage = () => {
           <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-semibold text-foreground">Customer Details</h3>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${customer.customerType === 'with_meter'
+              {/*<span
+                className={`px-3 py-1 rounded-full text-xs font-medium ${paymentCustomerInfo.customerType === 'with_meter'
                   ? 'bg-success/10 text-success'
                   : 'bg-warning/10 text-warning'
                   }`}
               >
                 {customer.customerType === 'with_meter' ? 'With Meter' : 'No Meter'}
-              </span>
+              </span>*/}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <p className="text-sm text-muted-foreground">Name</p>
-                <p className="font-medium text-foreground">{customer.name}</p>
+                <p className="font-medium text-foreground">{customerInfo?.accountHolderName}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Subscription No.</p>
-                <p className="font-medium text-foreground">{customer.subscriptionNo}</p>
+                <p className="font-medium text-foreground">{customerInfo?.subscriptionNumber}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">NIC</p>
-                <p className="font-medium text-foreground">{customer.nic}</p>
+                <p className="font-medium text-foreground">{customerInfo?.nic}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Region</p>
-                <p className="font-medium text-foreground capitalize">{customer.region}</p>
+                <p className="font-medium text-foreground capitalize">{customerInfo?.region}</p>
               </div>
             </div>
           </div>
 
-
+          {/* Payment History */}
           <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-semibold text-foreground">Payment History</h3>
