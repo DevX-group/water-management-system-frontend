@@ -1,4 +1,5 @@
 import { Message } from '../types/messaging';
+import { MessageHistoryRow } from '../types/messaging';
 
 const API_BASE = 'http://localhost:8080/api/messages';
 
@@ -39,4 +40,45 @@ export const updateMessage = async (id: string, message: Message): Promise<Messa
 export const deleteMessage = async (id: string): Promise<void> => {
   const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
   if (!res.ok) throw new Error('Failed to delete message');
+};
+
+type SentMessageHistoryApi = {
+  id: number;
+  name: string;
+  channels: string;
+  recipients: string;
+  sentDate: string;
+  sentTime: string;
+  emailSuccessRate: number | null;
+  totalEmailsSent: number | null;
+  totalEmailsFailed: number | null;
+  totalEmailsDelivered: number | null;
+};
+
+const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
+  const channels = (item.channels ?? '').toLowerCase();
+  let type = 'Message';
+  if (channels.includes('sms') && channels.includes('email')) type = 'SMS & Email';
+  else if (channels.includes('email')) type = 'Email';
+  else if (channels.includes('sms')) type = 'SMS';
+
+  return {
+    id: String(item.id),
+    messageName: item.name ?? '',
+    type,
+    date: item.sentDate ?? '-',
+    time: item.sentTime ?? '-',
+    successRate: item.emailSuccessRate ?? 0,
+    totalSent: item.totalEmailsSent ?? 0,
+    totalFailed: item.totalEmailsFailed ?? 0,
+    totalDelivered: item.totalEmailsDelivered ?? 0,
+    recipients: item.recipients ?? '-',
+  };
+};
+
+export const getMessageHistory = async (): Promise<MessageHistoryRow[]> => {
+  const res = await fetch(`${API_BASE}/history`);
+  if (!res.ok) throw new Error('Failed to fetch message history');
+  const data: SentMessageHistoryApi[] = await res.json();
+  return data.map(toHistoryRow);
 };
