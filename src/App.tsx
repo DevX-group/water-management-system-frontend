@@ -15,6 +15,7 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
 import { PaymentsPage } from "./pages/PaymentsPage";
+import {CustomerInquiryPage} from "./pages/CustomerInquiryPage";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/customer/payments" element={<Payments />} />
           <Route path="/customer/usage" element={<Usage />} />
           <Route path="/customer/notifications" element={<Notifications />} />
+          <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
           <Route path="/customer/profile" element={<Profile />} />
           
           {/* Admin Routes */}
@@ -47,6 +49,7 @@ const App = () => (
           <Route path="/payments" element={<PaymentsPage />} />
           <Route path="/usage" element={<Usage />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
           <Route path="/profile" element={<Profile />} />
           
           <Route path="*" element={<NotFound />} />
