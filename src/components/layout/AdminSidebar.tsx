@@ -28,6 +28,7 @@ const navItems: NavItem[] = [
   { icon: CreditCard, label: 'Add Payment', id: 'payments', roles: ['payment_handler'] },
   { icon: CreditCard, label: 'Payments', id: 'payments', roles: ['main_admin'] },
   { icon: MessageSquare, label: 'Messaging', id: 'messaging', roles: ['main_admin'] },
+  { icon: MessageSquare, label: 'Inquiry', id: 'Inquiry', roles: ['main_admin'] },
   { icon: BarChart3, label: 'Reports', id: 'reports', roles: ['main_admin'] },
   { icon: TrendingUp, label: 'Predictions', id: 'predictions', roles: ['main_admin'] },
 ];

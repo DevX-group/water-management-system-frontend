@@ -36,7 +36,7 @@ const navLinks = [
   { name: "Payments", path: "/customer/payments", icon: CreditCard },
   { name: "Usage", path: "/customer/usage", icon: BarChart3 },
   { name: "Alerts", path: "/customer/notifications", icon: Bell },
-   { name: "Inquiry", path: "/customer/inquiry", icon: Bell },
+  { name: "Inquiry", path: "/customer/inquiry", icon: Bell },
 ];
 
 const languages = [
