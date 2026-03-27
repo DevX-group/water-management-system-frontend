@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Users, FileText, Settings, Gauge, Receipt, CreditCard, MessageSquare, BarChart3, TrendingUp, Droplets } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';
 import { cn } from '@/lib/utils';
@@ -36,6 +37,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
   onSectionChange
 }) => {
   const { currentAdmin } = useAdmin();
+  const navigate = useNavigate();
 
   const filteredNavItems = navItems.filter(item => item.roles.includes(currentAdmin.role));
 
@@ -50,7 +52,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
             return (
               <button
                 key={item.id + item.label}
-                onClick={() => onSectionChange(item.id)}
+                onClick={() => {
+                  onSectionChange(item.id);
+                  if (item.id === 'payments'){
+                    navigate('/admin/payments');
+                  } 
+                }}
                 className={cn(
                   "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative",
                   isActive 

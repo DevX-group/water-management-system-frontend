@@ -353,7 +353,7 @@ export const UserManagementPage = () => {
       </div>
 
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+        <DialogContent className="admin-wrapper max-w-md max-h-[90vh] flex flex-col">
           <DialogHeader><DialogTitle>Register Customer</DialogTitle></DialogHeader>
           <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
             <div className="space-y-2"><Label>Customer Name *</Label><Input placeholder="Enter Customer Name" value={formData.name} onChange={(e) => {setFormData({...formData, name: e.target.value}); handleFieldChange('name', e.target.value);}} className={errors.name ? 'border-red-500 border-2' : ''} /></div>
@@ -375,7 +375,7 @@ export const UserManagementPage = () => {
 
       {/* View Customer Dialog */}
       <Dialog open={!!viewingCustomer} onOpenChange={() => setViewingCustomer(null)}>
-        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+        <DialogContent className="admin-wrapper max-w-md max-h-[90vh] flex flex-col">
           <DialogHeader><DialogTitle>Customer Profile</DialogTitle></DialogHeader>
           {viewingCustomer && (
             <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
@@ -426,7 +426,7 @@ export const UserManagementPage = () => {
 
       {/* Edit Customer Dialog */}
       <Dialog open={!!editingCustomer} onOpenChange={() => setEditingCustomer(null)}>
-        <DialogContent className="max-w-md max-h-[90vh] flex flex-col">
+        <DialogContent className="admin-wrapper max-w-md max-h-[90vh] flex flex-col">
           <DialogHeader><DialogTitle>Edit Customer</DialogTitle></DialogHeader>
           {editFormData && (
             <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">

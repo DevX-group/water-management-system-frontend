@@ -49,7 +49,7 @@ export interface TierRate {
 
 export interface BillRate {
   id: string;
-  meterType: 'residential' | 'commercial' | 'industrial' | 'no_meter';
+  meterType: 'Residential Metered' | 'Residential Non-Metered' | 'Commercial Metered' | 'Commercial Non-Metered';
   baseCharge: number;
   tierRates: TierRate[];
   taxRate: number;
@@ -169,7 +169,7 @@ export const mockInvoices: Invoice[] = [
 export const mockBillRates: BillRate[] = [
   {
     id: '1',
-    meterType: 'residential',
+    meterType: 'Residential Metered',
     baseCharge: 50,
     tierRates: [
       { min: 0, max: 100, rate: 5 },
@@ -180,18 +180,14 @@ export const mockBillRates: BillRate[] = [
   },
   {
     id: '2',
-    meterType: 'commercial',
-    baseCharge: 100,
-    tierRates: [
-      { min: 0, max: 200, rate: 10 },
-      { min: 200, max: 500, rate: 20 },
-      { min: 500, max: null, rate: 30 },
-    ],
-    taxRate: 0.05,
+    meterType: 'Residential Non-Metered',
+    baseCharge: 800,
+    tierRates: [],
+    taxRate: 0.02,
   },
   {
     id: '3',
-    meterType: 'industrial',
+    meterType: 'Commercial Metered',
     baseCharge: 200,
     tierRates: [
       { min: 0, max: 500, rate: 15 },
@@ -202,8 +198,8 @@ export const mockBillRates: BillRate[] = [
   },
   {
     id: '4',
-    meterType: 'no_meter',
-    baseCharge: 300,
+    meterType: 'Commercial Non-Metered',
+    baseCharge: 1000,
     tierRates: [],
     taxRate: 0.02,
   },
