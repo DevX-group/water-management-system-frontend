@@ -27,7 +27,8 @@ import {
   LogOut,
   Settings,
   ChevronRight,
-  Sparkles
+  Sparkles,
+  
 } from "lucide-react";
 
 const navLinks = [
@@ -36,6 +37,7 @@ const navLinks = [
   { name: "Payments", path: "/customer/payments", icon: CreditCard },
   { name: "Usage", path: "/customer/usage", icon: BarChart3 },
   { name: "Alerts", path: "/customer/notifications", icon: Bell },
+   { name: "Inquiries", path: "/customer/inquiry", icon: Bell },
 ];
 
 const languages = [
