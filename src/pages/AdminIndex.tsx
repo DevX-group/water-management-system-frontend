@@ -8,6 +8,7 @@ import { PaymentsPage } from './PaymentsPage';
 import { PaymentsAddingPage } from './PaymentsAddingPage';
 import { BillingPage } from './BillingPage';
 import { MessagingPage } from './MessagingPage';
+import { AdminInquiriesPage } from './AdminInquiriesPage';
 import { ReportsPage } from './ReportsPage';
 import { PredictionsPage } from './PredictionsPage';  
 import { UserManagementPage } from './UserManagementPage';
@@ -18,7 +19,7 @@ import { BankSlipReviewPage } from './BankSlipReviewPage';
 
 type AdminRole = 'meter_reader' | 'payment_handler' | 'admin' | 'superadmin';
 
-type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'reports' | 'predictions';
+type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'Inquiry' | 'reports' | 'predictions';
 
 interface Admin {
   id: string;
@@ -80,6 +81,8 @@ const DashboardContent: React.FC = () => {
         return <BillingPage />;
       case 'messaging':
         return <MessagingPage />;
+      case 'Inquiry':
+        return <AdminInquiriesPage />;
       case 'reports':
         return <ReportsPage />;
       case 'predictions':

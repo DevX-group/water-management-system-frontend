@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import {
   Send, ChevronDown, Loader2, MessageCircle,
@@ -6,6 +5,7 @@ import {
 } from 'lucide-react';
 import clsx from 'clsx';
 import type { Inquiry, InquiryCategory, InquiryFormData, InquiryMessage } from '../types/inquiry';
+import { MainLayout } from "@/components/layout/MainLayout";
 import { InquiryChatMessage } from '../components/ui/InquiryChatMessage';
 import { InquiryTypingIndicator } from '../components/ui/InquiryTypingIndicator';
 import { InquiryAvatar } from '../components/ui/InquiryAvatar';
@@ -179,6 +179,7 @@ export const CustomerInquiryPage: React.FC = () => {
 
   // ── INQUIRY FORM ───────────────────────────────────────────────────────────
   return (
+    <MainLayout isAuthenticated={true}>
     <div className="min-h-screen bg-gray-100 flex flex-col">
   
       
@@ -316,5 +317,6 @@ export const CustomerInquiryPage: React.FC = () => {
         </div>
       </main>
     </div>
+    </MainLayout>
   );
 };
