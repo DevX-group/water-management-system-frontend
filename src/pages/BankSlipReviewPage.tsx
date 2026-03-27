@@ -54,7 +54,6 @@ export const BankSlipReviewPage: React.FC = () => {
                     </div>
 
                     <Button variant="secondary" onClick={() => navigate("/admin/payments")}>
-                        <ArrowLeft className="w-4 h-4 mr-2" />
                         Back
                     </Button>
                 </div>
@@ -112,13 +111,7 @@ export const BankSlipReviewPage: React.FC = () => {
                             <div className="flex flex-col sm:flex-row justify-center gap-4">
                                 <Button
                                     onClick={() => {
-                                        toast.success("Payment approved!", {
-                                            style: {
-                                                background: "#0f766e",
-                                                color: "#ffffff",
-                                                border: "1px solid #0d9488",
-                                            },
-                                        });
+                                        toast.success("Payment approved!", {className: "toast-success"});
                                     }}
                                     className="sm:w-[220px]"
                                 >
@@ -214,23 +207,11 @@ export const BankSlipReviewPage: React.FC = () => {
                             variant="destructive"
                             onClick={() => {
                                 if (!comment.trim()) {
-                                    toast.error("Please add a rejection reason.", {
-                                        style: {
-                                            background: "#7f1d1d",
-                                            color: "#ffffff",
-                                            border: "1px solid #b91c1c",
-                                        },
-                                    });
+                                    toast.error("Please add a rejection reason.", {className: "toast-error"});
                                     return;
                                 }
 
-                                toast.success("Slip rejected", {
-                                    style: {
-                                        background: "#7f1d1d",
-                                        color: "#ffffff",
-                                        border: "1px solid #b91c1c",
-                                    },
-                                });
+                                toast.success("Slip rejected", {className: "toast-error"});
                                 setRejectOpen(false);
                                 setComment("");
                             }}

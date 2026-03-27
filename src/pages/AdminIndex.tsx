@@ -9,6 +9,7 @@ import { PaymentsAddingPage } from './PaymentsAddingPage';
 import { BillingPage } from './BillingPage';
 import { MessagingPage } from './MessagingPage';
 import { ReportsPage } from './ReportsPage';
+import { PredictionsPage } from './PredictionsPage';  
 import { UserManagementPage } from './UserManagementPage';
 import { PlaceholderPage } from './PlaceholderPage';
 import NotFound from './NotFound';
@@ -69,7 +70,7 @@ const DashboardContent: React.FC = () => {
         return (
           <Routes>
             <Route path="payments" element={<PaymentsPage />} />
-            <Route path="payments/customer/:customerId" element={<PaymentsAddingPage />} />
+            <Route path="payments/customer/:subscriptionNo" element={<PaymentsAddingPage />} />
             <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
             <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
             <Route path="*" element={<NotFound />} />
@@ -82,7 +83,7 @@ const DashboardContent: React.FC = () => {
       case 'reports':
         return <ReportsPage />;
       case 'predictions':
-        return <PlaceholderPage title="Water Predictions" />;
+        return <PredictionsPage  />;
       default:
         return <DashboardPage />;
     }
@@ -90,7 +91,7 @@ const DashboardContent: React.FC = () => {
 
   return (
     <div className="admin-wrapper">
-      <AdminLayout activeSection={activeSection} onSectionChange={setActiveSection}>
+      <AdminLayout activeSection={activeSection} onSectionChange={(section) => setActiveSection(section as Section)}>
         {renderSection()}
       </AdminLayout>
     </div>
