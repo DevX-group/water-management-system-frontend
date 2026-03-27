@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockPayments, mockBankSlips } from '@/data/mockData';
+import { mockBankSlips } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';
 import { searchCustomersApi } from '@/services/customerService';
-import { useEffect } from 'react';
-import { getPaymentCustomerInfo } from '@/services/paymentService';
+import { getPaymentCustomerInfo, getRecentPayments, RecentPaymentResponse } from '@/services/paymentService';
+import { toast } from '@/components/ui/sonner';
+import { stat } from 'fs';
+
+console.log({ Search, AlertCircle, CheckCircle, Clock });
+console.log({ Button, Input, toast });
 
 export const PaymentsPage = () => {
   const navigate = useNavigate();
@@ -14,19 +18,16 @@ export const PaymentsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [recentPayments, setRecentPayments] = useState<RecentPaymentResponse[]>([]);
 
   const statusStyles = {
-    paid: 'bg-success/10 text-success',
+    full: 'bg-success/10 text-success',
     partial: 'bg-warning/10 text-warning',
-    pending: 'bg-muted text-muted-foreground',
-    overdue: 'bg-destructive/10 text-destructive',
   } as const;
 
   const statusIcons = {
-    paid: CheckCircle,
+    full: CheckCircle,
     partial: Clock,
-    pending: Clock,
-    overdue: AlertCircle,
   } as const;
 
   const handleReviewSlip = (slipId: string) => {
@@ -50,6 +51,19 @@ export const PaymentsPage = () => {
 
     fetchCustomers();
   }, [searchQuery]);
+
+  useEffect(() => {
+    const loadRecent = async () => {
+      try {
+        const data = await getRecentPayments(5);
+        setRecentPayments(data);
+      } catch (err) {
+        toast.error("Failed to load recent payments");
+      }
+    }
+
+    loadRecent();
+  }, []);
 
   const handleCustomerSelect = async (customer: any) => {
     try {
@@ -96,7 +110,7 @@ export const PaymentsPage = () => {
                   >
                     <p className="font-medium text-foreground">{customer.accountHolderName}</p>
                     <p className="text-sm text-muted-foreground">
-                      {customer.subscriptionNumber} 
+                      {customer.subscriptionNumber}
                     </p>
                   </button>
                 ))}
@@ -175,31 +189,35 @@ export const PaymentsPage = () => {
           <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up bg-primary/5">
             <h3 className="text-lg font-semibold text-foreground mb-4">Recently Added</h3>
             <div className="space-y-3">
-              {mockPayments.slice(0, 5).map((payment) => {
-                const StatusIcon = statusIcons[payment.status];
+              {recentPayments.map((payment) => {
+                const statusKey = payment.status.toLowerCase();
+                const StatusIcon = statusIcons[statusKey] || Clock;
+                const statusClass = statusStyles[statusKey] || 'bg-muted text-muted-foreground';
+                const formattedStatus = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+                
                 return (
                   <div
-                    key={payment.id}
+                    key={payment.paymentId}
                     className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all"
                   >
                     <div className="flex items-start justify-between mb-1">
-                      <p className="font-medium text-foreground text-sm">{payment.customerName}</p>
+                      <p className="font-medium text-foreground text-sm">{payment.accountHolderName}</p>
                       <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[payment.status]}`}
+                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}
                       >
                         <StatusIcon className="w-3 h-3" />
-                        {payment.status}
+                        {formattedStatus}
                       </span>
                     </div>
 
                     <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{payment.subscriptionNo}</span>
+                      <span>{payment.subscriptionNumber}</span>
                       <span className="font-medium text-foreground">
-                        Rs. {payment.amount.toLocaleString()}
+                        Rs. {payment.amountPaid.toLocaleString()}
                       </span>
                     </div>
 
-                    <p className="text-xs text-muted-foreground mt-1">{payment.date}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{payment.createdAt}</p>
                   </div>
                 );
               })}
