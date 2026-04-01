@@ -12,7 +12,9 @@ import {
   Smartphone,
   Copy,
   PlusCircle,
-  X
+  X,
+  ChevronUp,
+  ChevronDown
 } from 'lucide-react';
 import {
   Dialog,
@@ -258,6 +260,8 @@ const MessageDialog = ({
   initialData: Message | null, 
   onSave: (m: Message) => void 
 }) => {
+  const { toast } = useToast();
+
   // Defaults for new message
   const defaultMessage: Message = {
     id: '',
@@ -309,6 +313,15 @@ const MessageDialog = ({
         [type]: { ...formData.templates[type], ...updates } as MessageTemplate
       }
     });
+  };
+
+  const moveSection = (type: 'sms' | 'email', fromIndex: number, toIndex: number) => {
+    const sections = [...(formData.templates[type]?.sections || [])];
+    if (toIndex < 0 || toIndex >= sections.length) return;
+
+    const [moved] = sections.splice(fromIndex, 1);
+    sections.splice(toIndex, 0, moved);
+    updateTemplate(type, { sections });
   };
 
   const insertPlaceholder = (placeholder: string) => {
@@ -366,17 +379,40 @@ const MessageDialog = ({
                      updateTemplate(type, { sections: newSections });
                   }}
                 />
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="h-6 w-6 text-red-400 opacity-0 group-hover:opacity-100"
-                  onClick={() => {
-                     const newSections = t.sections?.filter(s => s.id !== section.id);
-                     updateTemplate(type, { sections: newSections });
-                  }}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
+                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => moveSection(type, idx, idx - 1)}
+                    disabled={idx === 0}
+                    title="Move up"
+                  >
+                    <ChevronUp className="h-3 w-3" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-6 w-6"
+                    onClick={() => moveSection(type, idx, idx + 1)}
+                    disabled={idx === (t.sections?.length || 0) - 1}
+                    title="Move down"
+                  >
+                    <ChevronDown className="h-3 w-3" />
+                  </Button>
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-6 w-6 text-red-400"
+                    onClick={() => {
+                      const newSections = t.sections?.filter(s => s.id !== section.id);
+                      updateTemplate(type, { sections: newSections });
+                    }}
+                    title="Delete section"
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
               </div>
               <Textarea
                 value={section.content}
