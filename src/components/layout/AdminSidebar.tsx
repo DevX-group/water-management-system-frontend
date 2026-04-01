@@ -28,10 +28,22 @@ const navItems: NavItem[] = [
   { icon: CreditCard, label: 'Add Payment', id: 'payments', roles: ['payment_handler'] },
   { icon: CreditCard, label: 'Payments', id: 'payments', roles: ['main_admin'] },
   { icon: MessageSquare, label: 'Messaging', id: 'messaging', roles: ['main_admin'] },
-  { icon: MessageSquare, label: 'Inquiry', id: 'Inquiry', roles: ['main_admin'] },
+  { icon: MessageSquare, label: 'Inquiry', id: 'inquiry', roles: ['main_admin'] },
   { icon: BarChart3, label: 'Reports', id: 'reports', roles: ['main_admin'] },
   { icon: TrendingUp, label: 'Predictions', id: 'predictions', roles: ['main_admin'] },
 ];
+
+const sectionPathMap: Record<string, string> = {
+  dashboard: '/admin/dashboard',
+  users: '/admin/users',
+  meter: '/admin/meter',
+  payments: '/admin/payments',
+  billing: '/admin/billing',
+  messaging: '/admin/messaging',
+  inquiry: '/admin/inquiry',
+  reports: '/admin/reports',
+  predictions: '/admin/predictions',
+};
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ 
   activeSection, 
@@ -55,9 +67,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 key={item.id + item.label}
                 onClick={() => {
                   onSectionChange(item.id);
-                  if (item.id === 'payments'){
-                    navigate('/admin/payments');
-                  } 
+                  navigate(sectionPathMap[item.id] ?? '/admin/dashboard');
                 }}
                 className={cn(
                   "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative",
