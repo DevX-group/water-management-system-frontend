@@ -17,7 +17,6 @@ interface NavItem {
 
 interface AdminSidebarProps {
   activeSection: string;
-  onSectionChange: (section: string) => void;
 }
 
 const navItems: NavItem[] = [
@@ -46,8 +45,7 @@ const sectionPathMap: Record<string, string> = {
 };
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ 
-  activeSection, 
-  onSectionChange
+  activeSection
 }) => {
   const { currentAdmin } = useAdmin();
   const navigate = useNavigate();
@@ -66,7 +64,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               <button
                 key={item.id + item.label}
                 onClick={() => {
-                  onSectionChange(item.id);
                   navigate(sectionPathMap[item.id] ?? '/admin/dashboard');
                 }}
                 className={cn(

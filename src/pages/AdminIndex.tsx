@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AdminProvider, useAdmin } from '@/contexts/AdminContext';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardPage } from './DashboardPage';
@@ -52,7 +52,6 @@ const getSectionFromPath = (pathname: string): Section => {
 
 const DashboardContent: React.FC = () => {
   const { currentAdmin } = useAdmin();
-  const navigate = useNavigate();
   const location = useLocation();
 
   const activeSection = getSectionFromPath(location.pathname);
@@ -61,7 +60,6 @@ const DashboardContent: React.FC = () => {
     <div className="admin-wrapper">
       <AdminLayout
         activeSection={activeSection}
-        onSectionChange={(section) => navigate(sectionPathMap[section as Section] ?? sectionPathMap.dashboard)}
       >
         <Routes>
           <Route index element={<Navigate to={getDefaultAdminPath(currentAdmin.role)} replace />} />
