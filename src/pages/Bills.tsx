@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -6,15 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Search, TrendingUp, AlertCircle, CheckCircle2, Download, Eye } from "lucide-react";
-
-const bills = [
-  { period: "2025 November", amount: 3200, usage: 112, status: "unpaid", dueDate: "Dec 15, 2025" },
-  { period: "2025 October", amount: 2800, usage: 98, status: "paid", dueDate: "Nov 15, 2025" },
-  { period: "2025 September", amount: 3100, usage: 108, status: "paid", dueDate: "Oct 15, 2025" },
-  { period: "2025 August", amount: 2600, usage: 91, status: "paid", dueDate: "Sep 15, 2025" },
-  { period: "2025 July", amount: 2900, usage: 102, status: "paid", dueDate: "Aug 15, 2025" },
-];
+import { FileText, Search, TrendingUp, AlertCircle, CheckCircle2, Download, Eye, Loader2 } from "lucide-react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -25,52 +17,75 @@ const containerVariants = {
 };
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 20 },  
   visible: { opacity: 1, y: 0 }
 };
 
 const Bills = () => {
+  const [bills, setBills] = useState([]);
+  const [summary, setSummary] = useState({ totalPaid: 0, outstanding: 0, avgMonthly: 0 });
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
+
+  // 1. Fetch data from the backend
+  const fetchBillingData = async () => {
+    setLoading(true);
+    try {
+      // Matches the 'SUB-001' seen in your network tab
+      const subscriptionNumber = "SK-2341"; 
+      
+      // Ensure port matches 8080 from your application.yml
+      const response = await fetch(`http://localhost:8081/api/bills/customer/${subscriptionNumber}`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setBills(data);
+        
+        // Calculate summary using exact fields from your backend response
+        const totalPaid = data
+          .filter(b => b.status === "PAID") // Backend uses uppercase
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+          
+        const outstanding = data
+          .filter(b => b.status === "PENDING") // Backend uses uppercase
+          .reduce((sum, b) => sum + (b.totalAmount || 0), 0);
+          
+        const avg = data.length > 0 
+          ? data.reduce((sum, b) => sum + (b.totalAmount || 0), 0) / data.length 
+          : 0;
+
+        setSummary({ totalPaid, outstanding, avgMonthly: avg });
+      }
+    } catch (error) {
+      console.error("Error fetching billing data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBillingData();
+  }, []);
 
   const filteredBills = bills.filter(bill => {
-    const matchesSearch = bill.period.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesStatus = statusFilter === "all" || bill.status === statusFilter;
+    // Matches 'billingPeriod' field (e.g., "2026-02")
+    const matchesSearch = bill.billingPeriod?.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesStatus = statusFilter === "all" || bill.status === statusFilter.toUpperCase();
     return matchesSearch && matchesStatus;
   });
 
   const summaryStats = [
-    { 
-      label: "Total Paid", 
-      value: "LKR 23,790", 
-      icon: CheckCircle2, 
-      color: "text-success",
-      bgColor: "bg-success/10"
-    },
-    { 
-      label: "Outstanding", 
-      value: "LKR 2,390", 
-      icon: AlertCircle, 
-      color: "text-warning",
-      bgColor: "bg-warning/10"
-    },
-    { 
-      label: "Avg Monthly", 
-      value: "LKR 2,100", 
-      icon: TrendingUp, 
-      color: "text-primary",
-      bgColor: "bg-primary/10"
-    },
+    { label: "Total Paid", value: `LKR ${summary.totalPaid.toLocaleString()}`, icon: CheckCircle2, color: "text-success", bgColor: "bg-success/10" },
+    { label: "Outstanding", value: `LKR ${summary.outstanding.toLocaleString()}`, icon: AlertCircle, color: "text-warning", bgColor: "bg-warning/10" },
+    { label: "Avg Monthly", value: `LKR ${Math.round(summary.avgMonthly).toLocaleString()}`, icon: TrendingUp, color: "text-primary", bgColor: "bg-primary/10" },
   ];
 
   return (
     <MainLayout isAuthenticated={true}>
       <div className="container mx-auto px-4 py-8">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
+        <motion.div variants={containerVariants} initial="hidden" animate="visible">
+          
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
               Billing <span className="text-gradient">History</span>
@@ -78,14 +93,10 @@ const Bills = () => {
             <p className="text-muted-foreground text-lg">View and manage all your water bills</p>
           </motion.div>
 
-           {/* Summary Cards */}
+          {/* Summary Cards */}
           <motion.div variants={itemVariants} className="grid sm:grid-cols-3 gap-4 mb-8">
             {summaryStats.map((stat, index) => (
-              <motion.div 
-                key={index}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className="stat-card"
-              >
+              <motion.div key={index} whileHover={{ y: -4, scale: 1.02 }} className="stat-card">
                 <div className="flex items-center gap-4">
                   <div className={`w-14 h-14 rounded-2xl ${stat.bgColor} flex items-center justify-center`}>
                     <stat.icon className={`w-7 h-7 ${stat.color}`} />
@@ -115,7 +126,7 @@ const Bills = () => {
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input 
-                      placeholder="Search by month..." 
+                      placeholder="Search by period..." 
                       value={searchTerm} 
                       onChange={(e) => setSearchTerm(e.target.value)} 
                       className="pl-11 h-12 rounded-xl input-premium"
@@ -126,9 +137,9 @@ const Bills = () => {
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
-                      <SelectItem value="all" className="rounded-lg">All Status</SelectItem>
-                      <SelectItem value="paid" className="rounded-lg">Paid</SelectItem>
-                      <SelectItem value="unpaid" className="rounded-lg">Unpaid</SelectItem>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="PAID">Paid</SelectItem>
+                      <SelectItem value="PENDING">Pending</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -152,50 +163,46 @@ const Bills = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredBills.map((bill, i) => (
+                    {loading ? (
+                      <tr>
+                        <td colSpan={6} className="p-10 text-center">
+                          <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+                        </td>
+                      </tr>
+                    ) : filteredBills.map((bill) => (
                       <motion.tr 
-                        key={i} 
+                        key={bill.billId} 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: i * 0.05 }}
                         className="border-t border-border hover:bg-secondary/30 transition-colors group"
                       >
-                        <td className="p-5">
-                          <span className="font-semibold">{bill.period}</span>
-                        </td>
-                        <td className="p-5">
-                          <span className="font-bold text-lg">LKR {bill.amount.toLocaleString()}</span>
-                        </td>
-                        <td className="p-5">
-                          <span className="text-muted-foreground">{bill.usage} units</span>
-                        </td>
+                        <td className="p-5 font-semibold">{bill.billingPeriod}</td>
+                        <td className="p-5 font-bold text-lg">LKR {bill.totalAmount?.toLocaleString()}</td>
+                        <td className="p-5 text-muted-foreground">{bill.usageUnits} units</td>
                         <td className="p-5">
                           <Badge 
                             variant="secondary"
                             className={`rounded-full px-3 py-1 ${
-                              bill.status === "paid" 
-                                ? "bg-success/10 text-success border-success/20" 
-                                : "bg-warning/10 text-warning border-warning/20"
+                              bill.status === "PAID" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
                             }`}
                           >
-                            {bill.status === "paid" ? "✓ Paid" : "• Pending"}
+                            {bill.status === "PAID" ? "✓ Paid" : "• Pending"}
                           </Badge>
                         </td>
                         <td className="p-5 text-muted-foreground">{bill.dueDate}</td>
                         <td className="p-5 text-right">
                           <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
-                              <Eye className="w-4 h-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg">
-                              <Download className="w-4 h-4" />
-                            </Button>
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Eye className="w-4 h-4" /></Button>
+                            <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg"><Download className="w-4 h-4" /></Button>
                           </div>
                         </td>
                       </motion.tr>
                     ))}
                   </tbody>
                 </table>
+                {!loading && filteredBills.length === 0 && (
+                   <div className="p-10 text-center text-muted-foreground">No bills found.</div>
+                )}
               </div>
             </Card>
           </motion.div>
@@ -204,6 +211,5 @@ const Bills = () => {
     </MainLayout>
   );
 };
-
 
 export default Bills;
