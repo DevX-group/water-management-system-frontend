@@ -92,7 +92,7 @@ export const CustomerInquiryPage: React.FC = () => {
     inquiryService.addMessage(id, {
       id: inquiryService.genMsgId(),
       from: 'admin',
-      text: `Hi **${form.name.split(' ')[0]}**, thanks for reaching out! Your ticket ID is **${id}**. Our team will assist you shortly.`,
+      text: `Hi ${form.name.split(' ')[0]}, thanks for reaching out! Our team will assist you shortly.`,
       time: inquiryService.formatTime(),
     });
   };
@@ -141,7 +141,7 @@ export const CustomerInquiryPage: React.FC = () => {
                     </div>
                     <Badge variant="secondary" className="ml-auto">ID: {activeId}</Badge>
                   </CardHeader>
-                  <CardContent className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+                  <CardContent className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 ">
                     {inquiry.messages.map((msg) => (
                       <InquiryChatMessage key={msg.id} message={msg} customerName={inquiry.name} />
                     ))}
@@ -154,7 +154,7 @@ export const CustomerInquiryPage: React.FC = () => {
                         value={chatInput}
                         onChange={(e) => setChatInput(e.target.value)}
                         placeholder="Type your message..."
-                        className="flex-1 bg-background border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner"
+                        className="flex-1 bg-black border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner"
                       />
                       <Button onClick={sendMessage} disabled={!chatInput.trim()} className="h-auto px-6 rounded-xl">
                         <Send size={18} />
