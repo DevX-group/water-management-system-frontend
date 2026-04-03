@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, ChevronDown, Loader2, MessageCircle,
   CheckCircle, ArrowRight, HeadphonesIcon,
@@ -6,11 +7,13 @@ import {
 import clsx from 'clsx';
 import type { Inquiry, InquiryCategory, InquiryFormData, InquiryMessage } from '../types/inquiry';
 import { MainLayout } from "@/components/layout/MainLayout";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { InquiryChatMessage } from '../components/ui/InquiryChatMessage';
 import { InquiryTypingIndicator } from '../components/ui/InquiryTypingIndicator';
 import { InquiryAvatar } from '../components/ui/InquiryAvatar';
-import { InquiryStatusBadge } from '../components/ui/InquiryStatusBadge';
-import { InquiryCategoryBadge } from '../components/ui/InquiryCategoryBadge';
 import { inquiryService } from '../services/inquiryService';
 import { useInquiry } from '../hooks/useInquiries';
 
@@ -18,106 +21,86 @@ const CATEGORIES: { value: InquiryCategory; label: string; icon: string }[] = [
   { value: 'Billing',   label: 'Billing & Payments',   icon: '💳' },
   { value: 'Technical', label: 'Technical Issue',       icon: '🔧' },
   { value: 'Account',   label: 'Account & Access',      icon: '👤' },
-  { value: 'Refund',    label: 'Refunds & Returns',     icon: '↩️' },
   { value: 'General',   label: 'General Inquiry',       icon: '💬' },
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { staggerChildren: 0.1 } }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+};
+
 type FormErrors = Partial<Record<keyof InquiryFormData, string>>;
-
-const FIELD_CLS = (err?: string) =>
-  clsx(
-    'w-full bg-white/5 border text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 text-sm outline-none transition-all',
-    err
-      ? 'border-red-500/60 focus:border-red-400 focus:ring-2 focus:ring-red-400/20'
-      : 'border-white/10 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20'
-  );
-
-
 
 export const CustomerInquiryPage: React.FC = () => {
   const [form, setForm] = useState<InquiryFormData>({ name: '', email: '', category: '', message: '' });
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitting, setSubmitting] = useState(false);
-  const [shakeBtn, setShakeBtn] = useState(false);
-
-  // After submission
   const [activeId, setActiveId] = useState<string | null>(null);
   const [chatInput, setChatInput] = useState('');
   const [showTyping, setShowTyping] = useState(false);
 
   const { inquiry } = useInquiry(activeId, 1500);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const chatInputRef   = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [inquiry?.messages.length, showTyping]);
 
-  // ── Validation ─────────────────────────────────────────────────────────────
   const validate = (): boolean => {
     const e: FormErrors = {};
-    if (!form.name.trim())    e.name    = 'Name is required';
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email))
-                               e.email   = 'A valid email is required';
+    if (!form.name.trim()) e.name = 'Name is required';
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Valid email required';
     if (!form.message.trim()) e.message = 'Please describe your issue';
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const setField = (field: keyof InquiryFormData, value: string) => {
-    setForm((f) => ({ ...f, [field]: value }));
-    setErrors((e) => ({ ...e, [field]: undefined }));
-  };
-
-  // ── Submit inquiry ─────────────────────────────────────────────────────────
   const handleSubmit = async () => {
-    if (!validate()) {
-      setShakeBtn(true);
-      setTimeout(() => setShakeBtn(false), 500);
-      return;
-    }
+    if (!validate()) return;
     setSubmitting(true);
-
-    await new Promise((r) => setTimeout(r, 500)); // UX delay
+    await new Promise((r) => setTimeout(r, 800));
 
     const id = inquiryService.genId();
     const firstMsg: InquiryMessage = {
-      id:   inquiryService.genMsgId(),
+      id: inquiryService.genMsgId(),
       from: 'user',
       text: form.message.trim(),
       time: inquiryService.formatTime(),
     };
-    const newInquiry: Inquiry = {
+    
+    inquiryService.create({
       id,
-      name:      form.name.trim(),
-      email:     form.email.trim(),
-      category:  (form.category || 'General') as InquiryCategory,
-      messages:  [firstMsg],
-      status:    'open',
+      name: form.name.trim(),
+      email: form.email.trim(),
+      category: (form.category || 'General') as InquiryCategory,
+      messages: [firstMsg],
+      status: 'open',
       createdAt: new Date().toISOString(),
-    };
-    inquiryService.create(newInquiry);
+    });
+
     setActiveId(id);
     setSubmitting(false);
 
-    // Auto-reply from support
     setShowTyping(true);
     await new Promise((r) => setTimeout(r, 2000));
     setShowTyping(false);
     inquiryService.addMessage(id, {
-      id:     inquiryService.genMsgId(),
-      from:   'admin',
-      text:   `Hi <strong>${form.name.split(' ')[0]}</strong> 👋 — thanks for reaching out! Your inquiry has been logged under <strong style="color:#93c5fd">${id}</strong>. Our water management support team will review this and get back to you shortly.`,
-      time:   inquiryService.formatTime(),
-      isHtml: true,
+      id: inquiryService.genMsgId(),
+      from: 'admin',
+      text: `Hi **${form.name.split(' ')[0]}**, thanks for reaching out! Your ticket ID is **${id}**. Our team will assist you shortly.`,
+      time: inquiryService.formatTime(),
     });
   };
 
-  // ── Send chat message ──────────────────────────────────────────────────────
   const sendMessage = () => {
     if (!chatInput.trim() || !activeId) return;
     inquiryService.addMessage(activeId, {
-      id:   inquiryService.genMsgId(),
+      id: inquiryService.genMsgId(),
       from: 'user',
       text: chatInput.trim(),
       time: inquiryService.formatTime(),
@@ -125,198 +108,140 @@ export const CustomerInquiryPage: React.FC = () => {
     setChatInput('');
   };
 
-  const handleChatKey = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
-  };
-
-  // ── CHAT VIEW (after submission) ───────────────────────────────────────────
-  if (activeId && inquiry) {
-    return (
-      <div className="min-h-screen bg-[#0a0f1e] flex flex-col">
-       
-        {/* Chat window */}
-        <div className="relative z-10 flex-1 flex justify-center px-4 py-6">
-          <div
-            className="w-full max-w-2xl flex flex-col bg-white-600 border border-white/10 rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.5)]"
-            style={{ maxHeight: 'calc(100vh - 130px)' }}
-             >
-
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-5 py-5 flex flex-col gap-3">
-              {inquiry.messages.map((msg) => (
-                <InquiryChatMessage key={msg.id} message={msg} customerName={inquiry.name} />
-              ))}
-              {showTyping && <InquiryTypingIndicator />}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="flex-shrink-0 border-t border-white/8 bg-white/3 px-4 py-3">
-              <div className="flex items-end gap-2">
-                <textarea
-                  ref={chatInputRef}
-                  value={chatInput}
-                  onChange={(e) => setChatInput(e.target.value)}
-                  onKeyDown={handleChatKey}
-                  rows={1}
-                  placeholder="Type a message… (Enter to send)"
-                  className="flex-1 bg-white/5 border border-white/10 text-slate-100 placeholder-slate-500 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none min-h-[46px] max-h-[120px]"
-                />
-                <button
-                  onClick={sendMessage}
-                  disabled={!chatInput.trim()}
-                  className="w-11 h-11 rounded-xl bg-blue-600 hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed text-white flex items-center justify-center transition-all hover:scale-105 active:scale-95 flex-shrink-0"
-                >
-                  <Send size={15} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ── INQUIRY FORM ───────────────────────────────────────────────────────────
   return (
     <MainLayout isAuthenticated={true}>
-    <div className="min-h-screen bg-gray-100 flex flex-col">
-  
-      
-
-      <main className="relative z-10 flex-1 flex flex-col items-center px-4 py-12">
-        {/* Hero */}
-        <div className="text-center mb-5">
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <motion.div variants={containerVariants} initial="hidden" animate="visible">
           
-          <h1 className="text-4xl sm:text-5xl font-bold text-white tracking-tight leading-tight mb-4">
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
-             How can we help you?
-            </span>
-          </h1>
+          <motion.div variants={itemVariants} className="text-center mb-10">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Support <span className="text-gradient">Center</span>
+            </h1>
+            <p className="text-muted-foreground text-lg">We're here to help with your water management needs</p>
+          </motion.div>
 
-          <div className="inline-flex items-center gap-2 text-xs font-semibold text-blue-400 border border-blue-500/30 bg-blue-500/8 px-3.5 py-1.5 rounded-full mb-1">
-            <MessageCircle size={11} />
-            Submit an Inquiry
-          </div>
-          
-        </div>
+          <AnimatePresence mode="wait">
+            {activeId && inquiry ? (
+              /* --- Chat View --- */
+              <motion.div 
+                key="chat"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <Card className="shadow-card border-none overflow-hidden h-[600px] flex flex-col">
+                  <CardHeader className="bg-secondary/20 border-b flex flex-row items-center gap-4 py-4">
+                    <InquiryAvatar name="S" size="sm" variant="admin" />
+                    <div>
+                      <CardTitle className="text-base">Live Support Session</CardTitle>
+                      <p className="text-xs text-emerald-500 font-medium flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        Connected with Support Team
+                      </p>
+                    </div>
+                    <Badge variant="secondary" className="ml-auto">ID: {activeId}</Badge>
+                  </CardHeader>
+                  <CardContent className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
+                    {inquiry.messages.map((msg) => (
+                      <InquiryChatMessage key={msg.id} message={msg} customerName={inquiry.name} />
+                    ))}
+                    {showTyping && <InquiryTypingIndicator />}
+                    <div ref={messagesEndRef} />
+                  </CardContent>
+                  <div className="p-4 bg-secondary/10 border-t">
+                    <div className="flex gap-2">
+                      <textarea
+                        value={chatInput}
+                        onChange={(e) => setChatInput(e.target.value)}
+                        placeholder="Type your message..."
+                        className="flex-1 bg-background border-none rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner"
+                      />
+                      <Button onClick={sendMessage} disabled={!chatInput.trim()} className="h-auto px-6 rounded-xl">
+                        <Send size={18} />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              </motion.div>
+            ) : (
+              /* --- Form View --- */
+              <motion.div 
+                key="form"
+                variants={itemVariants}
+                className="max-w-2xl mx-auto"
+              >
+                <Card className="shadow-card border-none overflow-hidden">
+                  <div className="p-6 bg-primary/5 border-b flex items-center gap-4 text-primary font-semibold">
+                    <HeadphonesIcon size={20} />
+                    Submit a Support Inquiry
+                  </div>
+                  <CardContent className="p-8 space-y-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Full Name</label>
+                        <Input 
+                          placeholder="John Doe" 
+                          value={form.name} 
+                          onChange={(e) => setForm({...form, name: e.target.value})}
+                          className={errors.name ? "border-destructive/50" : ""}
+                        />
+                        {errors.name && <p className="text-[10px] text-destructive font-medium">{errors.name}</p>}
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Email Address</label>
+                        <Input 
+                          type="email"
+                          placeholder="john@example.com" 
+                          value={form.email} 
+                          onChange={(e) => setForm({...form, email: e.target.value})}
+                          className={errors.email ? "border-destructive/50" : ""}
+                        />
+                        {errors.email && <p className="text-[10px] text-destructive font-medium">{errors.email}</p>}
+                      </div>
+                    </div>
 
-        {/* Features strip */}
-        <div className="flex items-center gap-6 mb-10 text-[12px] text-slate-500">
-          {[
-            { icon: <CheckCircle size={12} className="text-emerald-400" />, label: 'Fast response' },
-            { icon: <CheckCircle size={12} className="text-emerald-400" />, label: 'Live chat' },
-            { icon: <CheckCircle size={12} className="text-emerald-400" />, label: '24/7 support' },
-          ].map((f) => (
-            <div key={f.label} className="flex items-center gap-1.5">{f.icon}{f.label}</div>
-          ))}
-        </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Issue Category</label>
+                      <select
+                        value={form.category}
+                        onChange={(e) => setForm({...form, category: e.target.value})}
+                        className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer appearance-none"
+                      >
+                        <option value="">Select a category...</option>
+                        {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.icon} {c.label}</option>)}
+                      </select>
+                    </div>
 
-        {/* Form card */}
-        <div
-          className={clsx(
-            'w-full max-w-xl bg-[#111827]/90 border border-white/10 rounded-2xl overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.5)] transition-transform duration-75',
-            shakeBtn && 'animate-[shake_0.4s_ease]'
-          )}
-        >
-          {/* Card header */}
-          <div className="flex items-center gap-3 px-6 py-4 border-b border-white/8 bg-white/3">
-            <InquiryAvatar name="S" size="md" variant="admin" />
-            <div>
-              <p className="text-sm font-semibold text-slate-100">Water Management Support</p>
-              <p className="flex items-center gap-1.5 text-[11px] text-emerald-400">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />
-                Online — typically replies in minutes
-              </p>
-            </div>
-          </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Message Details</label>
+                      <textarea
+                        value={form.message}
+                        onChange={(e) => setForm({...form, message: e.target.value})}
+                        rows={4}
+                        placeholder="Please provide details about the issue..."
+                        className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none"
+                      />
+                      {errors.message && <p className="text-[10px] text-destructive font-medium">{errors.message}</p>}
+                    </div>
 
-          <div className="px-6 py-6 flex flex-col gap-5">
-            {/* Name + Email */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  value={form.name}
-                  onChange={(e) => setField('name', e.target.value)}
-                  placeholder="Jane Cooper"
-                  className={FIELD_CLS(errors.name)}
-                />
-                {errors.name && <p className="text-[11px] text-red-400">{errors.name}</p>}
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setField('email', e.target.value)}
-                  placeholder="jane@company.com"
-                  className={FIELD_CLS(errors.email)}
-                />
-                {errors.email && <p className="text-[11px] text-red-400">{errors.email}</p>}
-              </div>
-            </div>
-
-            {/* Category */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                Issue Category
-              </label>
-              <div className="relative">
-                <select
-                  value={form.category}
-                  onChange={(e) => setField('category', e.target.value)}
-                  className="w-full appearance-none bg-white/5 border border-white/10 text-slate-100 rounded-xl px-4 py-3 text-sm outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all cursor-pointer"
-                >
-                  <option value="" style={{ background: '#111827' }}>Select a category…</option>
-                  {CATEGORIES.map((c) => (
-                    <option key={c.value} value={c.value} style={{ background: '#111827' }}>
-                      {c.icon} {c.label}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Message */}
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-semibold text-slate-400 uppercase tracking-widest">
-                Describe Your Issue
-              </label>
-              <textarea
-                value={form.message}
-                onChange={(e) => setField('message', e.target.value)}
-                rows={4}
-                placeholder="Please provide as much detail as possible about the issue you're experiencing…"
-                className={clsx(FIELD_CLS(errors.message), 'resize-none')}
-              />
-              {errors.message && <p className="text-[11px] text-red-400">{errors.message}</p>}
-            </div>
-
-            {/* Submit */}
-            <button
-              onClick={handleSubmit}
-              disabled={submitting}
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-semibold text-sm tracking-wide transition-all hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(59,130,246,0.4)] active:translate-y-0 disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
-            >
-              {submitting
-                ? <><Loader2 size={15} className="animate-spin" /> Submitting…</>
-                : <><Send size={14} /> Submit Inquiry <ArrowRight size={13} /></>}
-            </button>
-
-            <p className="text-center text-[11px] text-slate-600">
-              By submitting you agree to our support terms. Your ticket ID will be provided instantly.
-            </p>
-          </div>
-        </div>
-      </main>
-    </div>
+                    <Button 
+                      onClick={handleSubmit} 
+                      disabled={submitting}
+                      className="w-full h-14 text-base font-bold rounded-xl gradient-primary transition-transform active:scale-[0.98]"
+                    >
+                      {submitting ? <Loader2 className="animate-spin mr-2" /> : <Send size={18} className="mr-2" />}
+                      {submitting ? "Sending Inquiry..." : "Submit Support Request"}
+                    </Button>
+                  </CardContent>
+                </Card>
+                <p className="text-center text-xs text-muted-foreground mt-6 italic">
+                  Average response time: 5-10 minutes during business hours.
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      </div>
     </MainLayout>
   );
 };
