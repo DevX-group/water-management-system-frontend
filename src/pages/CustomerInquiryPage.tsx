@@ -180,7 +180,7 @@ export const CustomerInquiryPage: React.FC = () => {
                       <div className="space-y-2">
                         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Full Name</label>
                         <Input 
-                          placeholder="John Doe" 
+                          placeholder="kaweesha weerasinghe" 
                           value={form.name} 
                           onChange={(e) => setForm({...form, name: e.target.value})}
                           className={errors.name ? "border-destructive/50" : ""}
@@ -191,7 +191,7 @@ export const CustomerInquiryPage: React.FC = () => {
                         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Email Address</label>
                         <Input 
                           type="email"
-                          placeholder="john@example.com" 
+                          placeholder="kaweesha@example.com" 
                           value={form.email} 
                           onChange={(e) => setForm({...form, email: e.target.value})}
                           className={errors.email ? "border-destructive/50" : ""}
