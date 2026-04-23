@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { searchCustomersApi } from '@/services/customerService';
 import { getPaymentCustomerInfo, getRecentPayments, RecentPaymentResponse } from '@/services/paymentService';
 import { toast } from '@/components/ui/sonner';
-import { stat } from 'fs';
 
 console.log({ Search, AlertCircle, CheckCircle, Clock });
 console.log({ Button, Input, toast });
@@ -75,6 +74,22 @@ export const PaymentsPage = () => {
       console.error("Error fetching customer details:", err);
     }
   }
+
+  const formatDateTime = (dateString) => {
+  const date = new Date(dateString.replace(" ", "T"));
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  let hours = date.getHours();
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  const ampm = hours >= 12 ? "PM" : "AM";
+  hours = hours % 12 || 12; // convert 0 → 12
+
+  return `${year}-${month}-${day} ${hours}:${minutes} ${ampm}`;
+};
 
   return (
     <div className="space-y-6">
@@ -188,40 +203,47 @@ export const PaymentsPage = () => {
           {/* Recently Added */}
           <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up bg-primary/5">
             <h3 className="text-lg font-semibold text-foreground mb-4">Recently Added</h3>
-            <div className="space-y-3">
-              {recentPayments.map((payment) => {
-                const statusKey = payment.status.toLowerCase();
-                const StatusIcon = statusIcons[statusKey] || Clock;
-                const statusClass = statusStyles[statusKey] || 'bg-muted text-muted-foreground';
-                const formattedStatus = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
-                
-                return (
-                  <div
-                    key={payment.paymentId}
-                    className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all"
-                  >
-                    <div className="flex items-start justify-between mb-1">
-                      <p className="font-medium text-foreground text-sm">{payment.accountHolderName}</p>
-                      <span
-                        className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}
-                      >
-                        <StatusIcon className="w-3 h-3" />
-                        {formattedStatus}
-                      </span>
-                    </div>
+            {recentPayments.length === 0 ? (
+              <p className="text-sm text-muted-foreground">
+                No recent payments.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentPayments.map((payment) => {
+                  const statusKey = payment.status.toLowerCase();
+                  const StatusIcon = statusIcons[statusKey] || Clock;
+                  const statusClass = statusStyles[statusKey] || 'bg-muted text-muted-foreground';
+                  const formattedStatus = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
 
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>{payment.subscriptionNumber}</span>
-                      <span className="font-medium text-foreground">
-                        Rs. {payment.amountPaid.toLocaleString()}
-                      </span>
-                    </div>
+                  return (
+                    <div
+                      key={payment.paymentId}
+                      className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all"
+                    >
+                      <div className="flex items-start justify-between mb-1">
+                        <p className="font-medium text-foreground text-sm">{payment.accountHolderName}</p>
+                        <span
+                          className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}
+                        >
+                          <StatusIcon className="w-3 h-3" />
+                          {formattedStatus}
+                        </span>
+                      </div>
 
-                    <p className="text-xs text-muted-foreground mt-1">{payment.createdAt}</p>
-                  </div>
-                );
-              })}
-            </div>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>{payment.subscriptionNumber}</span>
+                        <span className="font-medium text-foreground">
+                          Rs. {payment.amountPaid.toLocaleString()}
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {formatDateTime(payment.createdAt)}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>)}
           </div>
         </div>
 
