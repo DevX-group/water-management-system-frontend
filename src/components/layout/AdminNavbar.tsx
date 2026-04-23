@@ -1,6 +1,7 @@
 import { useAdmin } from '@/contexts/AdminContext';
 import React from 'react';
 import { Search, Globe, User, ChevronDown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,9 +26,16 @@ const ROLE_COLORS: Record<string, string> = {
   payment_handler: 'bg-green-100 text-green-700',
 };
 
+const ROLE_DEFAULT_PATHS: Record<string, string> = {
+  main_admin: '/admin/dashboard',
+  meter_reader: '/admin/meter',
+  payment_handler: '/admin/payments',
+};
+
 
 export const AdminNavbar: React.FC = () => {
   const { currentAdmin, setCurrentRole, admins } = useAdmin();
+  const navigate = useNavigate();
 
   return (
     <header className="h-16 bg-card border-b border-border px-32 flex items-center justify-between">
@@ -82,7 +90,10 @@ export const AdminNavbar: React.FC = () => {
             {admins.map((admin) => (
               <DropdownMenuItem
                 key={admin.id}
-                onClick={() => setCurrentRole(admin.role)}
+                onClick={() => {
+                  setCurrentRole(admin.role);
+                  navigate(ROLE_DEFAULT_PATHS[admin.role] ?? '/admin/dashboard');
+                }}
                 className={currentAdmin.role === admin.role ? 'bg-secondary' : ''}
               >
                 <div className="flex items-center gap-3 w-full">
