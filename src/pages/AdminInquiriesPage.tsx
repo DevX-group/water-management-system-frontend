@@ -122,7 +122,7 @@ export const AdminInquiriesPage: React.FC = () => {
   });
 
   return (
-    <AdminLayout>
+    
       <div className="container mx-auto px-4 py-8">
         <motion.div variants={containerVariants} initial="hidden" animate="visible">
           
@@ -266,6 +266,6 @@ export const AdminInquiriesPage: React.FC = () => {
           </div>
         </motion.div>
       </div>
-    </AdminLayout>
+    
   );
 };

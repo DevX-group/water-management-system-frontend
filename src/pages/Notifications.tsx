@@ -1,29 +1,52 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Info, AlertOctagon, CheckCircle2 } from "lucide-react";
-
-// Mock Data
-const alerts = [
-  { id: 1, severity: "critical", title: "Pipe Burst Detected", description: "Major leak detected in Main Zone A. Immediate action required.", usage: "450 units", time: "10 mins ago" },
-  { id: 2, severity: "critical", title: "Sensor Malfunction", description: "Master meter is not responding.", usage: null, time: "30 mins ago" },
-  { id: 3, severity: "high", title: "Unusual Night Usage", description: "High water consumption detected during sleeping hours (2-5 AM)", usage: "85 units", time: "4 hours ago" },
-  { id: 4, severity: "high", title: "Usage Spike Detected", description: "Water usage 40% higher than average", usage: "120 units", time: "1 day ago" },
-  { id: 5, severity: "medium", title: "Pressure Drop", description: "Slight pressure drop observed in garden line.", usage: null, time: "6 hours ago" },
-  { id: 6, severity: "medium", title: "Continuous Flow", description: "Water flow detected for 4 hours continuously.", usage: "45 units", time: "8 hours ago" },
-  { id: 7, severity: "info", title: "Bill Due Reminder", description: "Your water bill is due in 5 days", usage: null, time: "2 days ago" },
-  { id: 8, severity: "info", title: "System Update", description: "Maintenance scheduled for next Tuesday.", usage: null, time: "3 days ago" },
-];
+import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2 } from "lucide-react";
 
 const Notifications = () => {
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [filter, setFilter] = useState("all");
+  const [loading, setLoading] = useState(true);
 
-  // Helper: Return styles for the Card Background & Text
+  // Use the subscription number currently in your database
+  const subNum = "SK-2341"; 
+
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch(`http://localhost:8081/api/alert/customer/${subNum}`);
+      if (res.ok) {
+        const data = await res.json();
+        setAlerts(data);
+      }
+    } catch (err) {
+      console.error("Failed to fetch alerts", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDismiss = async (id: number) => {
+    try {
+      const res = await fetch(`http://localhost:8081/api/alert/${id}/dismiss`, { 
+        method: 'PUT' 
+      });
+      if (res.ok) {
+        setAlerts(prev => prev.filter(a => a.id !== id));
+      }
+    } catch (err) {
+      console.error("Failed to dismiss alert", err);
+    }
+  };
+
+  useEffect(() => { 
+    fetchAlerts(); 
+  }, []);
+
   const getSeverityStyles = (severity: string) => {
-    switch (severity) {
+    switch (severity.toLowerCase()) {
       case "critical": return { 
-        cardBg: "bg-red-100/80", // Darker pastel for visibility
+        cardBg: "bg-red-100/80", 
         borderColor: "border-red-200",
         textColor: "text-red-900",
         icon: AlertOctagon, 
@@ -58,13 +81,13 @@ const Notifications = () => {
   };
 
   const counts = {
-    critical: alerts.filter(a => a.severity === "critical").length,
-    high: alerts.filter(a => a.severity === "high").length,
-    medium: alerts.filter(a => a.severity === "medium").length,
-    info: alerts.filter(a => a.severity === "info").length,
+    critical: alerts.filter(a => a.severity.toLowerCase() === "critical").length,
+    high: alerts.filter(a => a.severity.toLowerCase() === "high").length,
+    medium: alerts.filter(a => a.severity.toLowerCase() === "medium").length,
+    info: alerts.filter(a => a.severity.toLowerCase() === "info").length,
   };
 
-  const filteredAlerts = filter === "all" ? alerts : alerts.filter(a => a.severity === filter);
+  const filteredAlerts = filter === "all" ? alerts : alerts.filter(a => a.severity.toLowerCase() === filter);
 
   return (
     <MainLayout isAuthenticated={true}>
@@ -75,7 +98,6 @@ const Notifications = () => {
             <h1 className="text-3xl font-serif font-bold mb-2 text-slate-800">Anomaly Alerts</h1>
           </div>
 
-          {/* Top Summary Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {[
               { label: "Critical", count: counts.critical, color: "text-red-600" },
@@ -83,7 +105,7 @@ const Notifications = () => {
               { label: "Medium", count: counts.medium, color: "text-amber-600" },
               { label: "Info", count: counts.info, color: "text-blue-600" },
             ].map((stat, i) => (
-              <Card key={i} className="rounded-3xl border-none shadow-sm hover:shadow-md transition-shadow bg-white">
+              <Card key={i} className="rounded-3xl border-none shadow-sm bg-white">
                 <CardContent className="flex flex-col items-center justify-center py-6">
                   <span className="capitalize text-slate-500 font-medium mb-1 text-sm">{stat.label}</span>
                   <span className={`text-3xl font-bold ${stat.color}`}>{stat.count}</span>
@@ -92,55 +114,34 @@ const Notifications = () => {
             ))}
           </div>
 
-          {/* Filter Bar */}
           <Card className="rounded-full border-none shadow-sm mb-8 bg-white mx-auto max-w-4xl">
             <CardContent className="p-2">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
                 <span className="font-semibold px-6 text-slate-700 hidden sm:block">Filter by severity:</span>
                 <div className="flex flex-wrap justify-center gap-1 w-full sm:w-auto">
-                  <Button 
-                    onClick={() => setFilter("all")}
-                    size="sm"
-                    className={`rounded-full px-6 transition-colors ${filter === "all" ? "bg-slate-800 text-white" : "bg-transparent text-slate-600 hover:bg-slate-100"}`}
-                  >
-                    All
-                  </Button>
-                  <Button 
-                    onClick={() => setFilter("critical")}
-                    size="sm"
-                    className={`rounded-full px-6 transition-colors ${filter === "critical" ? "bg-red-500 text-white hover:bg-red-600" : "bg-transparent text-slate-600 hover:bg-red-50"}`}
-                  >
-                    Critical
-                  </Button>
-                  <Button 
-                    onClick={() => setFilter("high")}
-                    size="sm"
-                    className={`rounded-full px-6 transition-colors ${filter === "high" ? "bg-orange-500 text-white hover:bg-orange-600" : "bg-transparent text-slate-600 hover:bg-orange-50"}`}
-                  >
-                    High
-                  </Button>
-                  <Button 
-                    onClick={() => setFilter("medium")}
-                    size="sm"
-                    className={`rounded-full px-6 transition-colors ${filter === "medium" ? "bg-amber-500 text-white hover:bg-amber-600" : "bg-transparent text-slate-600 hover:bg-amber-50"}`}
-                  >
-                    Medium
-                  </Button>
-                  <Button 
-                    onClick={() => setFilter("info")}
-                    size="sm"
-                    className={`rounded-full px-6 transition-colors ${filter === "info" ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-transparent text-slate-600 hover:bg-blue-50"}`}
-                  >
-                    Info
-                  </Button>
+                  {["all", "critical", "high", "medium", "info"].map((lvl) => (
+                    <Button 
+                      key={lvl}
+                      onClick={() => setFilter(lvl)}
+                      size="sm"
+                      className={`rounded-full px-6 capitalize transition-colors ${
+                        filter === lvl 
+                        ? (lvl === 'all' ? 'bg-slate-800 text-white' : `bg-${lvl === 'critical' ? 'red' : lvl === 'high' ? 'orange' : lvl === 'medium' ? 'amber' : 'blue'}-500 text-white`) 
+                        : "bg-transparent text-slate-600 hover:bg-slate-100"
+                      }`}
+                    >
+                      {lvl}
+                    </Button>
+                  ))}
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          {/* Alert List */}
           <div className="space-y-3 max-w-4xl mx-auto">
-            {filteredAlerts.map((alert) => {
+            {loading ? (
+              <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary w-8 h-8" /></div>
+            ) : filteredAlerts.map((alert) => {
               const styles = getSeverityStyles(alert.severity);
               const Icon = styles.icon;
               
@@ -150,47 +151,38 @@ const Notifications = () => {
                   className={`rounded-3xl border-none shadow-sm transition-all ${styles.cardBg}`}
                 >
                   <CardContent className="p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                    
-                    {/* Left Side: Icon & Text */}
                     <div className="flex items-start gap-4">
                       <div className={`p-3 rounded-2xl bg-white/60 backdrop-blur-sm ${styles.iconColor}`}>
                         <Icon className="w-6 h-6" />
                       </div>
-                      
                       <div>
-                        <h3 className={`font-bold text-lg ${styles.textColor}`}>
-                          {alert.title}
-                        </h3>
+                        <h3 className={`font-bold text-lg ${styles.textColor}`}>{alert.title}</h3>
                         <p className={`${styles.textColor} opacity-80 text-sm mb-1`}>{alert.description}</p>
-                        
                         <div className={`flex items-center gap-4 text-xs font-medium ${styles.textColor} opacity-70`}>
-                          {alert.usage && <span>Usage: {alert.usage}</span>}
-                          <span>{alert.time}</span>
+                          {alert.usageAmount && <span>Usage: {alert.usageAmount}</span>}
+                          <span>{new Date(alert.createdAt).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
-
-                    {/* Right Side: Action */}
                     <Button 
+                      onClick={() => handleDismiss(alert.id)}
                       size="sm"
                       className={`rounded-full px-5 h-8 font-medium shadow-none ${styles.dismissBtn}`}
                     >
                       Dismiss
                     </Button>
-
                   </CardContent>
                 </Card>
               );
             })}
             
-            {filteredAlerts.length === 0 && (
+            {!loading && filteredAlerts.length === 0 && (
               <div className="text-center py-12 text-slate-400">
                 <CheckCircle2 className="w-12 h-12 mx-auto mb-2 opacity-20" />
                 <p>No alerts found</p>
               </div>
             )}
           </div>
-          
         </div>
       </div>
     </MainLayout>
