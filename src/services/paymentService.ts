@@ -49,6 +49,8 @@ export interface OutstandingBillItemResponse {
   billDate: string;
   balanceDue: number;
   status: string;
+  totalAmount: number;
+  paidAmount: number;
 }
 
 export interface PaymentHistoryItemResponse {
@@ -113,4 +115,9 @@ export const getPaymentCustomerInfo = async (subscriptionNumber: string) =>{
 export const getRecentPayments = async (limit = 5) => {
   const res = await api.get(`/payments/recent?limit=${limit}`);
   return res.data as RecentPaymentResponse[];
+}
+
+export const updatePayment = async (paymentId: string, amount: number) => {
+  const res = await api.patch(`/payments/${paymentId}`, { amount });
+  return res.data;
 }

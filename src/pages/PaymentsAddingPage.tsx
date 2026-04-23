@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle, Clock, AlertCircle, Wallet, CalendarDays } from 'lucide-react';
+import { CheckCircle, Clock, AlertCircle, Wallet, CalendarDays, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -16,7 +16,10 @@ import {
   getPaymentHistory,
   getPaymentCustomerInfo,
   type PaymentCustomerInfoResponse,
+  updatePayment,
 } from '@/services/paymentService';
+import { Label } from 'recharts';
+import { motion } from 'framer-motion';
 
 type TabKey = 'monthly' | 'outstanding';
 
@@ -33,6 +36,21 @@ export const PaymentsAddingPage = () => {
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
   const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
+
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [updatedAmount, setUpdatedAmount] = useState("");
+
+  const [amountError, setAmountError] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
+
+  const [outstandingPage, setOutstandingPage] = useState(1);
+  const billsPerPage = 6;
+
+  const [historyPage, setHistoryPage] = useState(1);
+  const historyPerPage = 6;
+
+
 
   const [summary, setSummary] = useState<null | {
     subscriptionNumber: string;
@@ -75,6 +93,96 @@ export const PaymentsAddingPage = () => {
 
     } catch (e) {
       toast.error('Failed to load payment data');
+    }
+  };
+
+  const handleEdit = (payment) => {
+    setSelectedPayment(payment);
+    setUpdatedAmount(payment.amount.toString());
+    setIsEditOpen(true);
+  }
+
+  const handleUpdate = async () => {
+    setIsTouched(true);
+    if (!updatedAmount) return;
+
+    validateAmount(updatedAmount);
+
+    if (amountError) return;
+
+    try {
+      await updatePayment(
+        selectedPayment.paymentId,
+        Number(updatedAmount)
+      );
+
+      // Fetch fresh data
+      const payments = await getPaymentHistory(subscriptionNumber);
+      setPaymentHistory(payments);
+
+      const summaryData = await getCustomerPaymentSummary(subscriptionNumber);
+      setSummary(summaryData);
+
+      const current = await getCurrentBill(subscriptionNumber);
+      setCurrentBill(current);
+
+      const outstanding = await getOutstandingBills(subscriptionNumber);
+      setOutstandingBills(outstanding);
+
+      // Reset UI
+      setIsEditOpen(false);
+      setSelectedPayment(null);
+      setUpdatedAmount("");
+
+    } catch (error: any) {
+      const responseMessage = error?.response?.data?.message;
+
+      if (responseMessage) {
+        setAmountError(responseMessage);
+      } else {
+        setAmountError("Something went wrong");
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditOpen(false);
+    setSelectedPayment(null);
+
+    setUpdatedAmount("");
+    setAmountError("");
+    setIsTouched(false);
+  };
+
+  const handleDelete = (paymentId) => {
+    console.log("Delete:", paymentId);
+  };
+
+  const validateAmount = (value) => {
+    const num = Number(value);
+
+    if (!value) {
+      setAmountError("Amount is required");
+    } else if (num <= 0) {
+      setAmountError("Enter a valid amount");
+    } else if (
+      summary &&
+      selectedPayment &&
+      num > (summary.totalDue + selectedPayment.amount)
+    ) {
+      setAmountError("Amount exceeds due balance");
+    } else {
+      setAmountError("");
+    }
+  };
+
+  const handleAmountChange = (value) => {
+    setUpdatedAmount(value);
+
+    setAmountError("");
+
+    if (isTouched) {
+      validateAmount(value);
     }
   };
 
@@ -194,6 +302,16 @@ export const PaymentsAddingPage = () => {
   //Outstanding tab values
   const totalOutstanding = outstandingBills.reduce((sum, b) => sum + (b.balanceDue ?? 0), 0);
 
+  const indexOfLastBill = outstandingPage * billsPerPage;
+  const indexOfFirstBill = indexOfLastBill - billsPerPage;
+  const currentBills = outstandingBills.slice(indexOfFirstBill, indexOfLastBill);
+  const totalPages = Math.ceil(outstandingBills.length / billsPerPage);
+
+  const indexOfLastHistory = historyPage * historyPerPage;
+  const indexOfFirstHistory = indexOfLastHistory - historyPerPage;
+  const currentHistory = paymentHistory.slice(indexOfFirstHistory, indexOfLastHistory);
+  const totalHistoryPages = Math.ceil(paymentHistory.length / historyPerPage);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -248,7 +366,7 @@ export const PaymentsAddingPage = () => {
                         <CalendarDays className="w-4 h-4 text-muted-foreground" />
                         <h4 className="font-medium text-foreground">Current Month Summary</h4>
                       </div>
-                      
+
                     </div>
 
                     <div className="mt-3 space-y-2 text-sm">
@@ -318,26 +436,91 @@ export const PaymentsAddingPage = () => {
 
                     <div className="mt-3 space-y-2 text-sm">
                       {outstandingBills.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">No outstanding bills found.</p>
+                        <p className="text-sm text-muted-foreground">
+                          No outstanding bills found.
+                        </p>
                       ) : (
-                        outstandingBills.slice(0, 6).map((b) => (
-                          <div key={b.billId} className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Bill Id:{b.billId} • {b.billingPeriod}
-                            </span>
-                            <span className="font-medium text-foreground">
-                              Rs. {Number(b.balanceDue ?? 0).toLocaleString()}
+                        <>
+                          {currentBills.slice(0, 6).map((b) => (
+                            <div key={b.billId} className="space-y-1 text-sm">
+
+                              {/* Bill header */}
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">
+                                  Bill Id: {b.billId} • {b.billingPeriod}
+                                </span>
+                              </div>
+
+                              {/* Total Bill */}
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Total Bill</span>
+                                <span className="font-medium text-foreground">
+                                  Rs. {Number(b.totalAmount ?? 0).toLocaleString()}
+                                </span>
+                              </div>
+
+                              {/* Already Paid */}
+                              <div className="flex justify-between">
+                                <span className="text-muted-foreground">Already Paid</span>
+                                <span className="font-medium text-success">
+                                  Rs. {Number(b.paidAmount ?? 0).toLocaleString()}
+                                </span>
+                              </div>
+
+                              {/* Balance Due */}
+                              <div className="flex justify-between">
+                                <span className="font-medium text-foreground">Balance Due</span>
+                                <span className="font-bold text-primary">
+                                  Rs. {Number(b.balanceDue ?? 0).toLocaleString()}
+                                </span>
+                              </div>
+
+                              <hr className="border-border mt-1" />
+                            </div>
+                          ))}
+
+                          {totalPages > 1 && (
+                            <div className="flex justify-center items-center gap-2 mt-3">
+                              {/* Previous button */}
+                              <button
+                                onClick={() => setOutstandingPage(prev => Math.max(prev - 1, 1))}
+                                disabled={outstandingPage === 1}
+                                className="px-2 py-1 border rounded"
+                              >
+                                &lt;
+                              </button>
+
+                              {/* Page numbers */}
+                              {Array.from({ length: totalPages }, (_, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => setOutstandingPage(i + 1)}
+                                  className={`px-3 py-1 border rounded ${outstandingPage === i + 1 ? 'bg-primary text-white' : ''}`}
+                                >
+                                  {i + 1}
+                                </button>
+                              ))}
+
+                              {/* Next button */}
+                              <button
+                                onClick={() => setOutstandingPage(prev => Math.min(prev + 1, totalPages))}
+                                disabled={outstandingPage === totalPages}
+                                className="px-2 py-1 border rounded"
+                              >
+                                &gt;
+                              </button>
+                            </div>
+                          )}
+
+                          {/* Total */}
+                          <div className="flex justify-between pt-2 border-t border-none">
+                            <span className="font-medium text-foreground">Total Due</span>
+                            <span className="text-xl font-bold text-primary">
+                              Rs. {totalOutstanding.toLocaleString()}
                             </span>
                           </div>
-                        ))
+                        </>
                       )}
-
-                      <div className="flex justify-between pt-2 border-t border-border">
-                        <span className="font-medium text-foreground">Total Due</span>
-                        <span className="text-xl font-bold text-primary">
-                          Rs. {totalOutstanding.toLocaleString()}
-                        </span>
-                      </div>
                     </div>
                   </div>
 
@@ -367,7 +550,7 @@ export const PaymentsAddingPage = () => {
 
 
         <div className="lg:w-[35%] space-y-6">
-          {/* Customer Details (from mock customer) */}
+          {/* Customer Details */}
           <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
             <div className="flex items-start justify-between mb-4">
               <h3 className="text-lg font-semibold text-foreground">Customer Details</h3>
@@ -404,53 +587,166 @@ export const PaymentsAddingPage = () => {
           {/* Payment History */}
           <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
             <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Payment History</h3>
-              <span className="text-sm text-muted-foreground">
-                {paymentHistory.length}
-              </span>
+              <h3 className="text-lg font-semibold text-foreground">
+                Payment History
+              </h3>
             </div>
 
             {paymentHistory.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No payments found.</p>
+              <p className="text-sm text-muted-foreground">
+                No payments found.
+              </p>
             ) : (
               <div className="space-y-3">
-                {paymentHistory.map((p) => (
+                {currentHistory.map((p) => (
                   <div
                     key={p.paymentId}
-                    className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all flex items-center justify-between"
+                    className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all flex flex-col"
                   >
-                    <div>
+                    {/* Row 1: Icons */}
+                    <div className="flex justify-end mb-1">
+                      <div className="flex gap-2">
+                        <Pencil
+                          className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
+                          onClick={() => handleEdit(p)}
+                        />
+                        <Trash2
+                          className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
+                          onClick={() => handleDelete(p.paymentId)}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Row 2: Amount + Status */}
+                    <div className="flex justify-between items-center">
                       <p className="text-lg font-semibold text-foreground">
                         Rs. {Number(p.amount).toLocaleString()}
                       </p>
-                      <p className="text-sm text-muted-foreground">
-                        {p.subscriptionNumber}
-                      </p>
-                    </div>
 
-                    <div className="text-right">
                       <span
                         className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${p.status === "FULL"
-                            ? "bg-success/10 text-success"
-                            : "bg-warning/10 text-warning"
+                          ? "bg-success/10 text-success"
+                          : "bg-warning/10 text-warning"
                           }`}
                       >
                         {p.status.toLowerCase()}
                       </span>
-                      <p className="text-sm text-muted-foreground mt-1">
+                    </div>
+
+                    {/* Row 3: Subscription + Date */}
+                    <div className="flex justify-between items-center mt-1">
+                      <p className="text-sm text-muted-foreground">
+                        {p.subscriptionNumber}
+                      </p>
+
+                      <p className="text-sm text-muted-foreground">
                         {new Date(p.createdAt).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                 ))}
+
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-3">
+                    {/* Previous button */}
+                    <button
+                      onClick={() => setHistoryPage(prev => Math.max(prev - 1, 1))}
+                      disabled={historyPage === 1}
+                      className="px-2 py-1 border rounded"
+                    >
+                      &lt;
+                    </button>
+
+                    {/* Page numbers */}
+                    {Array.from({ length: totalHistoryPages }, (_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setHistoryPage(i + 1)}
+                        className={`px-3 py-1 border rounded ${historyPage === i + 1 ? 'bg-primary text-white' : ''}`}
+                      >
+                        {i + 1}
+                      </button>
+                    ))}
+
+                    {/* Next button */}
+                    <button
+                      onClick={() => setHistoryPage(prev => Math.min(prev + 1, totalHistoryPages))}
+                      disabled={historyPage === totalHistoryPages}
+                      className="px-2 py-1 border rounded"
+                    >
+                      &gt;
+                    </button>
+                  </div>
+                )}
               </div>
+
             )}
-
-
           </div>
 
         </div>
       </div>
+
+      {isEditOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          onClick={() => setIsEditOpen(false)} // close on outside click
+        >
+          <div
+            className="bg-white rounded-2xl p-6 w-80 shadow-lg"
+            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+          >
+            {/* Title */}
+            <h2 className="text-lg font-semibold mb-4">
+              Edit Payment
+            </h2>
+
+            {/* Amount Input */}
+            <div className="mb-4">
+              <Label className="text-sm text-muted-foreground">
+                Amount
+              </Label>
+              <Input
+                type="number"
+                value={updatedAmount}
+                onChange={(e) => handleAmountChange(e.target.value)}
+                className="w-full border rounded-lg p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                placeholder="Enter amount"
+              />
+
+              {isTouched && amountError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3 backdrop-blur-sm mt-2"
+                >
+                  <span>⚠️ {amountError}</span>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-2">
+              <Button
+                className="px-4 sm:w-[120px] bg-gray-200 text-gray-700 hover:bg-gray-300 flex-1"
+                onClick={handleCancel}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                className="px-4 sm:w-[120px] flex-1"
+                onClick={handleUpdate}
+                disabled={!updatedAmount || !!amountError}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
+
+
   );
 };
