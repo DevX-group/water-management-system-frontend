@@ -15,8 +15,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import type { Inquiry, InquiryStatus } from '../types/inquiry';
 import { InquiryChatMessage } from '../components/ui/InquiryChatMessage';
 import { InquiryAvatar } from '../components/ui/InquiryAvatar';
-import { useInquiries } from '../hooks/useInquiries';
-import { inquiryService } from '../services/inquiryService';
+
+// --- API base URL ---
+const API_BASE_URL = 'http://localhost:8081/api/inquiries';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -29,19 +30,83 @@ const itemVariants = {
 };
 
 export const AdminInquiriesPage: React.FC = () => {
-  const { inquiries, loading } = useInquiries(1500);
+  // Replace useInquiries hook with local state for direct API control
+  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [replyText, setReplyText] = useState('');
-  const [showQuick, setShowQuick] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const selectedInquiry = inquiries.find((t) => t.id === selectedId) ?? null;
 
+  // 1. Fetch All Inquiries from Backend (GET)
+  const fetchAllInquiries = async () => {
+    try {
+      const response = await fetch(API_BASE_URL);
+      if (response.ok) {
+        const data = await response.json();
+        setInquiries(data);
+      }
+    } catch (error) {
+      console.error("Error fetching inquiries:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllInquiries();
+    // Optional: Poll every 5 seconds for new messages
+    const interval = setInterval(fetchAllInquiries, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [selectedInquiry?.messages.length]);
+
+  // 2. Send Admin Reply (POST)
+  const sendReply = async () => {
+    if (!replyText.trim() || !selectedId) return;
+
+    const newMessage = {
+      msgId: `MSG-${Date.now()}`,
+      user: 'admin', // Maps to sender_role in DB
+      text: replyText.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/${selectedId}/messages`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMessage)
+      });
+
+      if (response.ok) {
+        setReplyText('');
+        fetchAllInquiries(); // Refresh list to show new message
+      }
+    } catch (error) {
+      console.error("Error sending reply:", error);
+    }
+  };
+
+  // 3. Update Status to Resolved (PATCH)
+  const resolveInquiry = async (id: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/${id}/status?status=resolved`, {
+        method: 'PATCH'
+      });
+      if (response.ok) {
+        fetchAllInquiries();
+      }
+    } catch (error) {
+      console.error("Error resolving inquiry:", error);
+    }
+  };
 
   const stats = {
     total: inquiries.length,
@@ -56,17 +121,6 @@ export const AdminInquiriesPage: React.FC = () => {
     return matchStatus && (t.name.toLowerCase().includes(q) || t.id.toLowerCase().includes(q));
   });
 
-  const sendReply = () => {
-    if (!replyText.trim() || !selectedId) return;
-    inquiryService.addMessage(selectedId, {
-      id: inquiryService.genMsgId(),
-      from: 'admin',
-      text: replyText.trim(),
-      time: inquiryService.formatTime(),
-    });
-    setReplyText('');
-  };
-
   return (
     <AdminLayout>
       <div className="container mx-auto px-4 py-8">
@@ -77,7 +131,6 @@ export const AdminInquiriesPage: React.FC = () => {
               <h1 className="text-3xl md:text-4xl font-bold mb-0.5">
                 Customer <span className="text-gradient">Inquiries</span>
               </h1>
-           
             </div>
             <div className="flex gap-2">
               <Badge variant="outline" className="px-4 py-2 text-sm">{stats.open} Open</Badge>
@@ -89,7 +142,7 @@ export const AdminInquiriesPage: React.FC = () => {
             
             {/* Sidebar: Ticket List */}
             <motion.div variants={itemVariants} className="lg:col-span-4 flex flex-col gap-4 overflow-hidden">
-              <Card className="shadow-card border-none flex flex-col h-full overflow-hidden">
+              <Card className="shadow-card border-none flex flex-col h-full overflow-hidden bg-white">
                 <CardHeader className="pb-3">
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -145,7 +198,7 @@ export const AdminInquiriesPage: React.FC = () => {
 
             {/* Main Chat Area */}
             <motion.div variants={itemVariants} className="lg:col-span-8 overflow-hidden">
-              <Card className="shadow-card border-none h-full flex flex-col overflow-hidden">
+              <Card className="shadow-card border-none h-full flex flex-col overflow-hidden bg-white">
                 {!selectedInquiry ? (
                   <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-12 text-center">
                     <MessageSquare size={48} className="opacity-10 mb-4" />
@@ -163,16 +216,21 @@ export const AdminInquiriesPage: React.FC = () => {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="outline" size="sm" onClick={() => inquiryService.setStatus(selectedId!, 'resolved')}>
-                          <CheckCircle className="w-3 h-3 mr-1" /> Resolve
-                        </Button>
+                        {selectedInquiry.status !== 'resolved' && (
+                          <Button variant="outline" size="sm" onClick={() => resolveInquiry(selectedInquiry.id)}>
+                            <CheckCircle className="w-3 h-3 mr-1" /> Resolve
+                          </Button>
+                        )}
+                        <Badge className={selectedInquiry.status === 'open' ? "bg-blue-500" : "bg-emerald-500"}>
+                          {selectedInquiry.status.toUpperCase()}
+                        </Badge>
                       </div>
                     </div>
 
                     <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
                       {selectedInquiry.messages.map((msg) => (
                         <InquiryChatMessage 
-                          key={msg.id} 
+                          key={msg.msgId} 
                           message={msg} 
                           customerName={selectedInquiry.name} 
                         />
@@ -192,7 +250,7 @@ export const AdminInquiriesPage: React.FC = () => {
                           />
                         </div>
                         <Button 
-                          className="h-12 w-12 rounded-xl" 
+                          className="h-12 w-12 rounded-xl gradient-primary" 
                           disabled={!replyText.trim()}
                           onClick={sendReply}
                         >
