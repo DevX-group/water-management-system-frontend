@@ -1,31 +1,84 @@
-interface MessageResponse {
-  success: boolean;
-  recipientCount: number;
-  timestamp: string;
-}
+import { Message } from '../types/messaging';
+import { MessageHistoryRow } from '../types/messaging';
 
-interface RecentMessage {
-  to: string;
-  subject: string;
-  time: string;
-}
+const API_BASE = 'http://localhost:8080/api/messages';
 
-export const sendMessage = (
-  recipients: string[],
-  subject: string,
-  message: string
-): MessageResponse => {
+// The backend returns id as Long (number); normalise to string
+// to keep the rest of the frontend compatible with Message.id: string
+const normalise = (data: any): Message => ({
+  ...data,
+  id: String(data.id),
+});
+
+export const getAllMessages = async (): Promise<Message[]> => {
+  const res = await fetch(API_BASE);
+  if (!res.ok) throw new Error('Failed to fetch messages');
+  const data: any[] = await res.json();
+  return data.map(normalise);
+};
+
+export const createMessage = async (message: Omit<Message, 'id'>): Promise<Message> => {
+  const res = await fetch(API_BASE, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  });
+  if (!res.ok) throw new Error('Failed to create message');
+  return normalise(await res.json());
+};
+
+export const updateMessage = async (id: string, message: Message): Promise<Message> => {
+  const res = await fetch(`${API_BASE}/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(message),
+  });
+  if (!res.ok) throw new Error('Failed to update message');
+  return normalise(await res.json());
+};
+
+export const deleteMessage = async (id: string): Promise<void> => {
+  const res = await fetch(`${API_BASE}/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete message');
+};
+
+type SentMessageHistoryApi = {
+  id: number;
+  name: string;
+  channels: string;
+  recipients: string;
+  sentDate: string;
+  sentTime: string;
+  emailSuccessRate: number | null;
+  totalEmailsSent: number | null;
+  totalEmailsFailed: number | null;
+  totalEmailsDelivered: number | null;
+};
+
+const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
+  const channels = (item.channels ?? '').toLowerCase();
+  let type = 'Message';
+  if (channels.includes('sms') && channels.includes('email')) type = 'SMS & Email';
+  else if (channels.includes('email')) type = 'Email';
+  else if (channels.includes('sms')) type = 'SMS';
+
   return {
-    success: true,
-    recipientCount: recipients.length,
-    timestamp: new Date().toISOString(),
+    id: String(item.id),
+    messageName: item.name ?? '',
+    type,
+    date: item.sentDate ?? '-',
+    time: item.sentTime ?? '-',
+    successRate: item.emailSuccessRate ?? 0,
+    totalSent: item.totalEmailsSent ?? 0,
+    totalFailed: item.totalEmailsFailed ?? 0,
+    totalDelivered: item.totalEmailsDelivered ?? 0,
+    recipients: item.recipients ?? '-',
   };
 };
 
-export const getRecentMessages = (): RecentMessage[] => {
-  return [
-    { to: 'All Customers', subject: 'Monthly Bill Reminder', time: '2 hours ago' },
-    { to: 'Overdue Customers', subject: 'Payment Due Notice', time: '1 day ago' },
-    { to: 'New Customers', subject: 'Welcome to Jal Seva', time: '3 days ago' },
-  ];
+export const getMessageHistory = async (): Promise<MessageHistoryRow[]> => {
+  const res = await fetch(`${API_BASE}/history`);
+  if (!res.ok) throw new Error('Failed to fetch message history');
+  const data: SentMessageHistoryApi[] = await res.json();
+  return data.map(toHistoryRow);
 };
