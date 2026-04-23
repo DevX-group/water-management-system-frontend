@@ -37,7 +37,7 @@ export const Footer = () => {
                 <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
                   <Droplets className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">WaterFlow</span>
+                <span className="text-2xl font-bold text-white">HydroPay</span>
               </Link>
               <p className="text-white/60 max-w-sm leading-relaxed">
                 The modern way to manage your water bills. Track consumption, 
@@ -49,7 +49,7 @@ export const Footer = () => {
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">support@waterflow.com</span>
+                  <span className="text-sm">support@hydropay.com</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/60">
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
