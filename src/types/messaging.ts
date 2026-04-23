@@ -12,6 +12,7 @@ export interface MessageTemplate {
   isCustom: boolean;
   sections: TemplateSection[];
   content: string; // for custom mode
+  subject?: string; // for email templates
 }
 
 export interface MessageSchedule {
@@ -43,15 +44,23 @@ export interface MessageHistoryRow {
   successRate: number;
   totalSent: number;
   totalFailed: number;
+  totalDelivered: number;
   recipients: string;
 }
 
 export const PLACEHOLDERS = [
   "customer_name",
   "customer_number",
+  "billing_period",
+  "bill_date",
+  "base_charge",
+  "usage_units",
+  "usage_charge",
+  "tax_amount",
   "monthly_fee",
   "outstanding_balance",
   "total_balance",
+  "due_date",
   "overdue_threshold_(LKR)",
   "reconnection_fee_(LKR)",
   "pradeshiya_sabha_acc_no",
