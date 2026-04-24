@@ -36,6 +36,7 @@ const navLinks = [
   { name: "Payments", path: "/customer/payments", icon: CreditCard },
   { name: "Usage", path: "/customer/usage", icon: BarChart3 },
   { name: "Alerts", path: "/customer/notifications", icon: Bell },
+  { name: "Inquiry", path: "/customer/inquiry", icon: Bell },
 ];
 
 const languages = [
@@ -142,7 +143,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
       <div className="mx-4 mt-4">
         <nav className="glass rounded-2xl px-4 lg:px-6 py-3 flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
-          <Link to="/dashboard" className="flex items-center gap-3 group">
+          <Link to="/customer/dashboard" className="flex items-center gap-3 group">
             <motion.div 
               whileHover={{ scale: 1.05, rotate: 5 }}
               whileTap={{ scale: 0.95 }}

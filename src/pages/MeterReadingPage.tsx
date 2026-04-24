@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 
-const API_BASE = 'http://localhost:8080/api';
+const API_BASE = 'http://localhost:8081/api';
 
 interface TodayReading {
   readingId: number;

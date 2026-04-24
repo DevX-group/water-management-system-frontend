@@ -11,8 +11,6 @@ const footerLinks = {
   ],
   company: [
     { name: "About Us", path: "/about" },
-    { name: "Contact", path: "/contact" },
-    { name: "Careers", path: "/careers" },
     { name: "Blog", path: "/blog" },
   ],
   legal: [
@@ -22,11 +20,7 @@ const footerLinks = {
   ],
 };
 
-const socialLinks = [
-  { name: "Twitter", url: "#", icon: "𝕏" },
-  { name: "LinkedIn", url: "#", icon: "in" },
-  { name: "Facebook", url: "#", icon: "f" },
-];
+
 
 export const Footer = () => {
   return (
@@ -43,7 +37,7 @@ export const Footer = () => {
                 <div className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-glow">
                   <Droplets className="w-6 h-6 text-white" />
                 </div>
-                <span className="text-2xl font-bold text-white">WaterFlow</span>
+                <span className="text-2xl font-bold text-white">HydroPay</span>
               </Link>
               <p className="text-white/60 max-w-sm leading-relaxed">
                 The modern way to manage your water bills. Track consumption, 
@@ -55,7 +49,7 @@ export const Footer = () => {
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">support@waterflow.com</span>
+                  <span className="text-sm">support@hydropay.com</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/60">
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
@@ -133,23 +127,11 @@ export const Footer = () => {
       <div className="bg-black/40 py-6">
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-white/50 text-sm">
-              © 2025 WaterFlow. All rights reserved.
-            </p>
-            
-            <div className="flex items-center gap-3">
-              {socialLinks.map((social) => (
-                <motion.a
-                  key={social.name}
-                  href={social.url}
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center text-white/60 hover:bg-white/20 hover:text-white transition-colors text-sm font-bold"
-                >
-                  {social.icon}
-                </motion.a>
-              ))}
-            </div>
+        <p className="text-white/50 text-sm text-center">
+          © 2025 WaterFlow. All rights reserved.
+        </p>
+        
+           
           </div>
         </div>
       </div>
