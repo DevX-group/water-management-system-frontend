@@ -3,6 +3,8 @@
 export type MessageSender = 'user' | 'admin' | 'system';
 
 export interface InquiryMessage {
+  sender: string;
+  sender_role: string;
   id: string;
   from: MessageSender;
   text: string;
