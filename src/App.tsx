@@ -8,13 +8,14 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
-import Payments from "./pages/Payments";
+import Payments from "./pages/CustomerPayments";
 import Usage from "./pages/Usage";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
 import { PaymentsPage } from "./pages/PaymentsPage";
+import CustomerPayments from "./pages/CustomerPayments";
 
 const queryClient = new QueryClient();
 
@@ -33,7 +34,7 @@ const App = () => (
           {/* Customer Routes */}
           <Route path="/customer/dashboard" element={<Dashboard />} />
           <Route path="/customer/bills" element={<Bills />} />
-          <Route path="/customer/payments" element={<Payments />} />
+          <Route path="/customer/payments" element={<CustomerPayments />} />
           <Route path="/customer/usage" element={<Usage />} />
           <Route path="/customer/notifications" element={<Notifications />} />
           <Route path="/customer/profile" element={<Profile />} />
