@@ -29,7 +29,7 @@ const MOCK_BLOGS = [
 export const AdminBlogPage: React.FC = () => {
   const [blogs, setBlogs] = useState(MOCK_BLOGS);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ title: '', category: '', image: '', description: '' });
+  const [formData, setFormData] = useState({ title: '', category: '', image: '' });
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ export const AdminBlogPage: React.FC = () => {
     };
     setBlogs([newPost, ...blogs]);
     setShowForm(false);
-    setFormData({ title: '', category: '', image: '', description: '' });
+    setFormData({ title: '', category: '', image: '' });
   };
 
   return (
@@ -63,24 +63,11 @@ export const AdminBlogPage: React.FC = () => {
               <Card className="border-none shadow-xl bg-white p-8 rounded-3xl">
                 <form onSubmit={handleCreate} className="space-y-4">
                   <Input placeholder="Blog Title" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} required />
-            
                   <div className="grid grid-cols-2 gap-4">
                     <Input placeholder="Department/Category" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} required />
-
                     <Input placeholder="Image URL" value={formData.image} onChange={e => setFormData({...formData, image: e.target.value})} />
-                     </div>
-
-                    <div className="space-y-4">
-                      <textarea 
-                        placeholder="write here..." 
-                        value={formData.description} 
-                        onChange={e => setFormData({...formData, description: e.target.value})} 
-                        required 
-                        className="w-full p-3 border border-gray-300 rounded-md resize-none h-24 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                    </div>
-                    
-                 
+                  </div>
+                <textarea placeholder="Blog Content" value={formData.content} onChange={e => setFormData({...formData, content: e.target.value})} className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none" rows={6} />
                   <Button type="submit" className="w-full gradient-primary h-12 rounded-xl font-bold">Publish Now</Button>
                 </form>
               </Card>
