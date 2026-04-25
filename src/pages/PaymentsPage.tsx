@@ -42,7 +42,7 @@ export const PaymentsPage = () => {
     const fetchCustomers = async () => {
       try {
         const data = await searchCustomersApi(searchQuery);
-        setSearchResults(data);
+        setSearchResults(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error searching customers:", err);
       }
@@ -55,7 +55,8 @@ export const PaymentsPage = () => {
     const loadRecent = async () => {
       try {
         const data = await getRecentPayments(5);
-        setRecentPayments(data);
+        console.log("API RESPONSE:", data);
+        setRecentPayments(Array.isArray(data) ? data : []);
       } catch (err) {
         toast.error("Failed to load recent payments");
       }
@@ -117,7 +118,7 @@ export const PaymentsPage = () => {
 
             {searchQuery && searchResults.length > 0 && (
               <div className="mt-2 border border-border rounded-lg overflow-hidden">
-                {searchResults.slice(0, 5).map((customer) => (
+                {Array.isArray(searchResults) && searchResults.slice(0, 5).map((customer) => (
                   <button
                     key={customer.subscriptionNumber}
                     onClick={() => handleCustomerSelect(customer)}
@@ -209,7 +210,7 @@ export const PaymentsPage = () => {
               </p>
             ) : (
               <div className="space-y-3">
-                {recentPayments.map((payment) => {
+                {Array.isArray(recentPayments) && recentPayments.map((payment) => {
                   const statusKey = payment.status.toLowerCase();
                   const StatusIcon = statusIcons[statusKey] || Clock;
                   const statusClass = statusStyles[statusKey] || 'bg-muted text-muted-foreground';
