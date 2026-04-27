@@ -1,18 +1,19 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://localhost:8081/api",
+  baseURL: "https://water-management-system-backend-0p2e.onrender.com/api",
   headers: { "Content-Type": "application/json" },
 });
 
 export type PaymentStatus = "FULL" | "PARTIAL";
 export type PaymentType = "MONTHLY" | "OUTSTANDING";
+export type PaymentMethod = "ONLINE" | "BANK_TRANSFER" | "MANUAL";
 
 export interface AddPaymentRequest {
   subscriptionNumber: string;
   amount: number;
-  status: PaymentStatus;
   paymentType: PaymentType;
+  paymentMethod: PaymentMethod;
 }
 
 export interface AddPaymentResponse {
@@ -78,6 +79,27 @@ export interface RecentPaymentResponse {
   createdAt: string;
 }
 
+export interface CustomerPaymentResponse {
+  merchant_id: string;
+  order_id: string;
+  amount: number;
+  currency: string;
+  hash: string;
+
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string;
+
+  address?: string;
+  city?: string;
+  country?: string;
+
+  return_url: string;
+  cancel_url: string;
+  notify_url: string;
+}
+
 export const getCustomerPaymentSummary = async (
   subscriptionNumber: string
 ): Promise<CustomerPaymentSummaryResponse> => {
@@ -121,3 +143,8 @@ export const updatePayment = async (paymentId: string, amount: number) => {
   const res = await api.patch(`/payments/${paymentId}`, { amount });
   return res.data;
 }
+
+export const initiatePayment = async (payload: AddPaymentRequest): Promise<CustomerPaymentResponse> => {
+  const res = await api.post("/customer/payments/initiate", payload);
+  return res.data;
+};

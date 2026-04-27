@@ -30,18 +30,19 @@ import {
   CheckCircle2,
   AlertTriangle,
 } from "lucide-react";
- 
+import { initiatePayment, PaymentType } from "@/services/paymentService";
+
 // ─── Types ────────────────────────────────────────────────────────────────────
- 
+
 type PaymentMethod = "online" | "slip";
 type ModalVariant = "monthly" | "outstanding" | null;
 type WarnVariant = "outstanding-block" | null;
- 
+
 interface OutstandingItem {
   month: string;
   amount: number;
 }
- 
+
 interface HistoryEntry {
   month: string;
   amount: number;
@@ -49,7 +50,7 @@ interface HistoryEntry {
   method: "Online" | "Bank Slip";
   status: "Full" | "Partial";
 }
- 
+
 interface BankSlipForm {
   paymentFor: string;
   amount: string;
@@ -57,20 +58,20 @@ interface BankSlipForm {
   reference: string;
   file: File | null;
 }
- 
+
 // ─── Static data ──────────────────────────────────────────────────────────────
- 
+
 const MONTHLY_BILL = { total: 1850, alreadyPaid: 500, due: 1350 };
- 
+
 const OUTSTANDING_ITEMS: OutstandingItem[] = [];
- 
+
 const PAYMENT_OPTIONS = [
   "Monthly Bill – February 2025",
   "Outstanding – July 2025",
   "Outstanding – September 2025",
   "Full Outstanding Balance",
 ];
- 
+
 const BANKS = [
   "Bank of Ceylon – Online",
   "People's Bank – iBanking",
@@ -79,15 +80,15 @@ const BANKS = [
   "Sampath Bank – Vishwa",
   "Visa / Mastercard (Direct)",
 ];
- 
+
 const HISTORY: HistoryEntry[] = [
   { month: "October 2025", amount: 2800, date: "20/10/2025", method: "Online", status: "Full" },
   { month: "September 2025", amount: 1400, date: "28/09/2025", method: "Bank Slip", status: "Partial" },
   { month: "August 2025", amount: 2800, date: "21/08/2025", method: "Online", status: "Full" },
 ];
- 
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
- 
+
 const BANK_DETAILS = [
   ["Bank", "Bank of Ceylon"],
   ["Branch", "Colombo Main"],
@@ -95,27 +96,31 @@ const BANK_DETAILS = [
   ["Account Name", "NWSB – Water Services"],
   ["Reference", "WF-2025-00142"],
 ] as const;
- 
+
 // ─── Component ────────────────────────────────────────────────────────────────
- 
+
 const CustomerPayments = () => {
   const navigate = useNavigate();
- 
+
   // Payment method per card
   const [monthlyMethod, setMonthlyMethod] = useState<PaymentMethod>("online");
   const [outstandingMethod, setOutstandingMethod] = useState<PaymentMethod>("online");
- 
+
+  //payment amount
+  const [monthlyAmount, setMonthlyAmount] = useState("");
+  const [outstandingAmount, setOutstandingAmount] = useState("");
+
   // Whether this customer has unpaid outstanding balance
   const hasOutstanding = OUTSTANDING_ITEMS.length > 0;
- 
+
   // Modal
   const [modal, setModal] = useState<ModalVariant>(null);
   const [selectedBank, setSelectedBank] = useState(BANKS[0]);
- 
+
   // Outstanding-block warning dialog
   const [warn, setWarn] = useState<WarnVariant>(null);
   const outstandingCardRef = useRef<HTMLDivElement>(null);
- 
+
   // Bank slip form
   const [slipForm, setSlipForm] = useState<BankSlipForm>({
     paymentFor: PAYMENT_OPTIONS[0],
@@ -128,47 +133,113 @@ const CustomerPayments = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const slipSectionRef = useRef<HTMLDivElement>(null);
- 
+
   // Toast
-  const [toast, setToast] = useState<string | null>(null);
- 
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
   const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 3500);
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3500);
   };
- 
+
   // ── Payment handlers ────────────────────────────────────────────────────────
- 
-  const handlePay = (type: "monthly" | "outstanding") => {
-    // Block monthly payment if outstanding balance exists
+
+  const redirectToPayHere = (data) => {
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "https://sandbox.payhere.lk/pay/checkout";
+
+    const mappedData = {
+      merchant_id: data.merchantId,
+      order_id: data.orderId,
+      items: data.items,
+      amount: data.amount,
+      currency: data.currency,
+      hash: data.hash,
+
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      phone: data.phoneNumber,
+      address: data.address,
+      city: data.city,
+      country: data.country,
+
+      return_url: data.returnUrl,
+      cancel_url: data.cancelUrl,
+      notify_url: data.notifyUrl
+    };
+
+    Object.entries(mappedData).forEach(([key, value]) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = key;
+      input.value = value as string;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  };
+
+  const handlePay = async (type: "monthly" | "outstanding") => {
     if (type === "monthly" && hasOutstanding) {
       setWarn("outstanding-block");
       return;
     }
- 
+
     const method = type === "monthly" ? monthlyMethod : outstandingMethod;
+    const amount = type === "monthly" ? monthlyAmount : outstandingAmount;
+    const paymentType: PaymentType = type === "monthly" ? "MONTHLY" : "OUTSTANDING";
+
+    if (!amount) {
+      showToast("⚠️ Please enter an amount");
+      return;
+    }
+
+    const enteredAmount = Number(amount);
+    if (!Number.isFinite(enteredAmount) || enteredAmount <= 0) {
+      showToast("⚠️ Enter a valid amount");
+      return;
+    }
+
     if (method === "slip") {
       slipSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
       showToast("📋 Please fill in the bank slip upload form below.");
-    } else {
-      setModal(type);
+      return;
+    }
+
+    try {
+      const response = await initiatePayment({
+        subscriptionNumber: "SK-2341", // replace        
+        amount: enteredAmount,
+        paymentType,
+        paymentMethod: "ONLINE"
+      });
+
+      redirectToPayHere(response);
+
+    } catch (e) {
+      const data = (e)?.response?.data;
+      const msg = (typeof data === 'object' ? data?.message || data?.error : data) || 'Failed to add payment';
+      showToast(`❌ ${msg}`); // 
     }
   };
- 
+
   const handleWarnPayOutstanding = () => {
     setWarn(null);
     setTimeout(() => {
       outstandingCardRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
     }, 150);
   };
- 
+
   const handleConfirmPayment = (success = true) => {
     setModal(null);
     const type = modal ?? "monthly";
     const amount = type === "outstanding"
       ? outstandingTotal.toLocaleString()
       : MONTHLY_BILL.due.toLocaleString();
- 
+
     if (success) {
       navigate(
         `/payment-success?type=${type}&amount=${encodeURIComponent(amount)}&bank=${encodeURIComponent(selectedBank)}`
@@ -179,28 +250,28 @@ const CustomerPayments = () => {
       );
     }
   };
- 
+
   // ── File upload handlers ─────────────────────────────────────────────────────
- 
+
   const handleFile = (file: File) => setSlipForm((p) => ({ ...p, file }));
- 
+
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
   };
- 
+
   const handleDrop = (e: DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setDragging(false);
     const file = e.dataTransfer.files[0];
     if (file) handleFile(file);
   };
- 
+
   const removeFile = () => {
     setSlipForm((p) => ({ ...p, file: null }));
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
- 
+
   const handleSlipSubmit = () => {
     if (!slipForm.file) {
       showToast("⚠️ Please upload a bank slip image or PDF.");
@@ -211,14 +282,14 @@ const CustomerPayments = () => {
     setTimeout(() => setSubmitSuccess(false), 4000);
     showToast("✅ Bank slip submitted! Verification within 24 hours.");
   };
- 
+
   // ── Derived ─────────────────────────────────────────────────────────────────
- 
+
   const outstandingTotal = OUTSTANDING_ITEMS.reduce((s, i) => s + i.amount, 0);
   const isOutstandingModal = modal === "outstanding";
- 
+
   // ── Render ──────────────────────────────────────────────────────────────────
- 
+
   return (
     <MainLayout isAuthenticated={true}>
       <div className="container mx-auto px-4 py-8">
@@ -228,10 +299,10 @@ const CustomerPayments = () => {
             Manage your monthly and outstanding water bill payments
           </p>
         </div>
- 
+
         {/* ── Payment Cards ── */}
         <div className="grid lg:grid-cols-2 gap-6 mb-6">
- 
+
           {/* Monthly */}
           <Card className={`shadow-card border-none transition-opacity ${hasOutstanding ? "opacity-75" : ""}`}>
             <CardHeader>
@@ -270,40 +341,49 @@ const CustomerPayments = () => {
                 <span className="text-muted-foreground">Status:</span>
                 <Badge variant="outline" className="text-warning border-warning">Partial</Badge>
               </div>
- 
+
               <div className="flex justify-between border-t pt-4">
                 <span className="font-medium">Total Due:</span>
                 <span className="text-xl font-bold text-primary">
                   Rs. {MONTHLY_BILL.due.toLocaleString()}
                 </span>
               </div>
- 
+
               {/* Method Toggle */}
               <MethodTabs value={monthlyMethod} onChange={setMonthlyMethod} variant="primary" />
- 
-              <Button
-                className="w-full gradient-primary"
-                onClick={() => handlePay("monthly")}
-                disabled={hasOutstanding}
-                title={hasOutstanding ? "Clear outstanding balance first" : undefined}
-              >
-                {hasOutstanding ? (
-                  <><AlertTriangle className="w-4 h-4 mr-2" />Pay Outstanding First</>
-                ) : (
-                  "Pay Now →"
-                )}
-              </Button>
+
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  placeholder="Enter amount"
+                  value={monthlyAmount}
+                  onChange={(e) => setMonthlyAmount(e.target.value)}
+                  className="flex-1"
+                />
+
+                <Button
+                  className="gradient-primary"
+                  onClick={() => handlePay("monthly")}
+                  disabled={hasOutstanding}
+                  title={hasOutstanding ? "Clear outstanding balance first" : undefined}
+                >
+                  {hasOutstanding ? (
+                    <><AlertTriangle className="w-4 h-4 mr-2" />Pay Outstanding First</>
+                  ) : (
+                    "Pay Now →"
+                  )}
+                </Button>
+              </div>
             </CardContent>
           </Card>
- 
+
           {/* Outstanding */}
           <Card
             ref={outstandingCardRef}
-            className={`shadow-card border-none ring-2 transition-all ${
-              warn === "outstanding-block"
-                ? "ring-destructive ring-offset-2"
-                : "ring-transparent"
-            }`}
+            className={`shadow-card border-none ring-2 transition-all ${warn === "outstanding-block"
+              ? "ring-destructive ring-offset-2"
+              : "ring-transparent"
+              }`}
           >
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -320,24 +400,34 @@ const CustomerPayments = () => {
                       <span className="font-semibold">Rs. {item.amount.toLocaleString()}</span>
                     </div>
                   ))}
- 
+
                   <div className="flex justify-between border-t pt-4">
                     <span className="font-medium">Total Due:</span>
                     <span className="text-xl font-bold text-destructive">
                       Rs. {outstandingTotal.toLocaleString()}
                     </span>
                   </div>
- 
+
                   {/* Method Toggle */}
                   <MethodTabs value={outstandingMethod} onChange={setOutstandingMethod} variant="destructive" />
- 
-                  <Button
-                    className="w-full"
-                    variant="destructive"
-                    onClick={() => handlePay("outstanding")}
-                  >
-                    Pay Now →
-                  </Button>
+
+                  <div className="flex gap-2">
+                    <Input
+                      type="number"
+                      placeholder="Enter amount"
+                      value={outstandingAmount}
+                      onChange={(e) => setOutstandingAmount(e.target.value)}
+                      className="flex-1"
+                    />
+
+                    <Button
+                      className="w-full"
+                      variant="destructive"
+                      onClick={() => handlePay("outstanding")}
+                    >
+                      Pay Now →
+                    </Button>
+                  </div>
                 </>
               ) : (
                 <div className="flex flex-col gap-4">
@@ -353,7 +443,7 @@ const CustomerPayments = () => {
                       </p>
                     </div>
                   </div>
- 
+
                   {/* Summary rows */}
                   <div className="space-y-2.5">
                     <div className="flex justify-between text-sm">
@@ -369,7 +459,7 @@ const CustomerPayments = () => {
                       <span className="font-semibold">20/10/2025</span>
                     </div>
                   </div>
- 
+
                   <div className="flex justify-between border-t pt-3">
                     <span className="font-medium text-sm">Outstanding Balance</span>
                     <span className="text-xl font-bold text-success">Rs. 0</span>
@@ -379,7 +469,7 @@ const CustomerPayments = () => {
             </CardContent>
           </Card>
         </div>
- 
+
         {/* ── Bank Slip Section ── */}
         <Card ref={slipSectionRef} className="shadow-card border-none mb-6">
           <CardHeader>
@@ -394,7 +484,7 @@ const CustomerPayments = () => {
           </CardHeader>
           <CardContent>
             <div className="grid lg:grid-cols-2 gap-6">
- 
+
               {/* Bank Details */}
               <div className="rounded-lg bg-secondary/40 p-5 space-y-3">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">
@@ -414,13 +504,13 @@ const CustomerPayments = () => {
                   </span>
                 </div>
               </div>
- 
+
               {/* Upload Form */}
               <div className="space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                   Upload Your Slip
                 </h3>
- 
+
                 {/* Payment For */}
                 <div className="space-y-1.5">
                   <Label htmlFor="paymentFor">Payment For</Label>
@@ -438,7 +528,7 @@ const CustomerPayments = () => {
                     </SelectContent>
                   </Select>
                 </div>
- 
+
                 {/* Amount + Date */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
@@ -461,7 +551,7 @@ const CustomerPayments = () => {
                     />
                   </div>
                 </div>
- 
+
                 {/* Reference */}
                 <div className="space-y-1.5">
                   <Label htmlFor="slipRef">Bank Reference / Slip No.</Label>
@@ -473,11 +563,11 @@ const CustomerPayments = () => {
                     onChange={(e) => setSlipForm((p) => ({ ...p, reference: e.target.value }))}
                   />
                 </div>
- 
+
                 {/* File Upload */}
                 <div className="space-y-1.5">
                   <Label>Upload Bank Slip</Label>
- 
+
                   {slipForm.file ? (
                     <div className="flex items-center gap-3 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm">
                       <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
@@ -490,11 +580,10 @@ const CustomerPayments = () => {
                     </div>
                   ) : (
                     <div
-                      className={`relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors ${
-                        dragging
-                          ? "border-success bg-success/10"
-                          : "border-border hover:border-success/50 hover:bg-secondary/50"
-                      }`}
+                      className={`relative flex flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed p-6 text-center cursor-pointer transition-colors ${dragging
+                        ? "border-success bg-success/10"
+                        : "border-border hover:border-success/50 hover:bg-secondary/50"
+                        }`}
                       onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
                       onDragLeave={() => setDragging(false)}
                       onDrop={handleDrop}
@@ -516,7 +605,7 @@ const CustomerPayments = () => {
                     </div>
                   )}
                 </div>
- 
+
                 <Button
                   className="w-full"
                   variant="default"
@@ -525,7 +614,7 @@ const CustomerPayments = () => {
                   <Receipt className="w-4 h-4 mr-2" />
                   Submit Bank Slip
                 </Button>
- 
+
                 {submitSuccess && (
                   <p className="text-sm text-success flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4" />
@@ -536,7 +625,7 @@ const CustomerPayments = () => {
             </div>
           </CardContent>
         </Card>
- 
+
         {/* ── Payment History ── */}
         <Card className="shadow-card border-none">
           <CardHeader>
@@ -587,7 +676,7 @@ const CustomerPayments = () => {
           </CardContent>
         </Card>
       </div>
- 
+
       {/* ── Outstanding Balance Block Warning ── */}
       <Dialog open={warn === "outstanding-block"} onOpenChange={(open) => !open && setWarn(null)}>
         <DialogContent className="sm:max-w-sm text-center">
@@ -596,7 +685,7 @@ const CustomerPayments = () => {
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10">
               <AlertTriangle className="h-8 w-8 text-destructive" />
             </div>
- 
+
             <DialogHeader className="space-y-1.5">
               <DialogTitle className="text-center text-lg">
                 Outstanding Balance Due
@@ -605,7 +694,7 @@ const CustomerPayments = () => {
                 You must clear your outstanding balance before making a monthly payment.
               </p>
             </DialogHeader>
- 
+
             {/* Outstanding breakdown */}
             <div className="w-full rounded-lg border border-destructive/20 bg-destructive/5 p-4 space-y-2">
               {OUTSTANDING_ITEMS.map((item) => (
@@ -622,7 +711,7 @@ const CustomerPayments = () => {
               </div>
             </div>
           </div>
- 
+
           <DialogFooter className="flex-col sm:flex-col gap-2 mt-2">
             <Button
               variant="destructive"
@@ -641,7 +730,7 @@ const CustomerPayments = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
- 
+
       {/* ── Online Banking Modal ── */}
       <Dialog open={modal !== null} onOpenChange={(open) => !open && setModal(null)}>
         <DialogContent className="sm:max-w-md">
@@ -655,19 +744,17 @@ const CustomerPayments = () => {
                 : "Pay your current month's bill"}
             </p>
           </DialogHeader>
- 
+
           {/* Amount box */}
           <div
-            className={`rounded-lg p-4 flex justify-between items-center ${
-              isOutstandingModal ? "bg-destructive/10" : "bg-primary/10"
-            }`}
+            className={`rounded-lg p-4 flex justify-between items-center ${isOutstandingModal ? "bg-destructive/10" : "bg-primary/10"
+              }`}
           >
             <div>
               <p className="text-xs text-muted-foreground">Amount Due</p>
               <p
-                className={`text-2xl font-bold ${
-                  isOutstandingModal ? "text-destructive" : "text-primary"
-                }`}
+                className={`text-2xl font-bold ${isOutstandingModal ? "text-destructive" : "text-primary"
+                  }`}
               >
                 Rs.{" "}
                 {(isOutstandingModal
@@ -678,7 +765,7 @@ const CustomerPayments = () => {
             </div>
             <CreditCard className="w-8 h-8 text-muted-foreground" />
           </div>
- 
+
           {/* Form */}
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
@@ -694,7 +781,7 @@ const CustomerPayments = () => {
                 </SelectContent>
               </Select>
             </div>
- 
+
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
                 <Label>Account / Card Number</Label>
@@ -709,7 +796,7 @@ const CustomerPayments = () => {
               </div>
             </div>
           </div>
- 
+
           <DialogFooter className="gap-2 sm:gap-2">
             <Button variant="outline" onClick={() => setModal(null)} className="flex-1">
               Cancel
@@ -724,44 +811,43 @@ const CustomerPayments = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
- 
+
       {/* ── Toast ── */}
-      {toast && (
+      {toastMsg && (
         <div className="fixed bottom-8 right-8 z-50 rounded-xl bg-foreground text-background px-5 py-3.5 text-sm font-medium shadow-lg animate-in slide-in-from-bottom-4">
-          {toast}
+          {toastMsg}
         </div>
       )}
     </MainLayout>
   );
 };
- 
+
 // ─── Method Tabs Sub-component ────────────────────────────────────────────────
- 
+
 interface MethodTabsProps {
   value: PaymentMethod;
   onChange: (v: PaymentMethod) => void;
   variant: "primary" | "destructive";
 }
- 
+
 const MethodTabs = ({ value, onChange, variant }: MethodTabsProps) => {
   const activeClass =
     variant === "primary"
       ? "border-primary bg-primary/10 text-primary"
       : "border-destructive bg-destructive/10 text-destructive";
- 
+
   const tab = (method: PaymentMethod, icon: React.ReactNode, label: string) => (
     <button
       type="button"
       onClick={() => onChange(method)}
-      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border-[1.5px] py-2 text-sm font-medium transition-colors ${
-        value === method ? activeClass : "border-border text-muted-foreground hover:border-primary/40"
-      }`}
+      className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg border-[1.5px] py-2 text-sm font-medium transition-colors ${value === method ? activeClass : "border-border text-muted-foreground hover:border-primary/40"
+        }`}
     >
       {icon}
       {label}
     </button>
   );
- 
+
   return (
     <div>
       <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -774,5 +860,5 @@ const MethodTabs = ({ value, onChange, variant }: MethodTabsProps) => {
     </div>
   );
 };
- 
+
 export default CustomerPayments;
