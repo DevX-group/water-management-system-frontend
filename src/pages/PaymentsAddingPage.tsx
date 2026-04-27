@@ -209,8 +209,8 @@ export const PaymentsAddingPage = () => {
       const res = await addPayment({
         subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
-        status,
         paymentType: 'MONTHLY',
+        paymentMethod: 'MANUAL' 
       });
 
       toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
@@ -244,8 +244,8 @@ export const PaymentsAddingPage = () => {
       const res = await addPayment({
         subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
-        status,
         paymentType: 'OUTSTANDING',
+        paymentMethod: 'MANUAL'
       });
 
       toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
