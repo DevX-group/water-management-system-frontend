@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "https://water-management-system-backend-0p2e.onrender.com/api",
+  baseURL: "http://localhost:8081/api",
   headers: { "Content-Type": "application/json" },
 });
 
@@ -40,11 +40,12 @@ export interface CurrentBillResponse {
   billingPeriod: string;
   billDate: string;
   totalAmount: number;
+  alreadyPaid: number;
   balanceDue: number;
   status: string;
 }
 
-export interface OutstandingBillItemResponse {
+export interface OutstandingBillResponse {
   billId: number;
   billingPeriod: string;
   billDate: string;
@@ -54,16 +55,21 @@ export interface OutstandingBillItemResponse {
   paidAmount: number;
 }
 
+export interface OutstandingBillsSummaryResponse {
+  outstandingBills: OutstandingBillResponse[];
+  totalOutstandingAmount: number;
+}
+
 export interface PaymentHistoryItemResponse {
   paymentId: string;
   subscriptionNumber: string;
   amount: number;
-  status: string;        
-  paymentType: string;   
-  createdAt: string;     
+  status: string;
+  paymentType: string;
+  createdAt: string;
 }
 
-export interface PaymentCustomerInfoResponse{
+export interface PaymentCustomerInfoResponse {
   subscriptionNumber: string;
   accountHolderName: string;
   nic: string;
@@ -119,9 +125,9 @@ export const getCurrentBill = async (subscriptionNumber: string) => {
   return res.data as CurrentBillResponse | null;
 };
 
-export const getOutstandingBills = async (subscriptionNumber: string) => {
+export const getOutstandingBillsSummary = async (subscriptionNumber: string) => {
   const res = await api.get(`/bills/outstanding/${subscriptionNumber}`);
-  return res.data as OutstandingBillItemResponse[];
+  return res.data as OutstandingBillsSummaryResponse;
 };
 
 export const getPaymentHistory = async (subscriptionNumber: string) => {
@@ -129,7 +135,7 @@ export const getPaymentHistory = async (subscriptionNumber: string) => {
   return res.data as PaymentHistoryItemResponse[];
 };
 
-export const getPaymentCustomerInfo = async (subscriptionNumber: string) =>{
+export const getPaymentCustomerInfo = async (subscriptionNumber: string) => {
   const res = await api.get(`/payments/customerInfo/${subscriptionNumber}`);
   return res.data;
 }
