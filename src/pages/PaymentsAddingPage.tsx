@@ -9,16 +9,17 @@ import {
   addPayment,
   getCustomerPaymentSummary,
   getCurrentBill,
-  getOutstandingBills,
   type CurrentBillResponse,
-  type OutstandingBillItemResponse,
   PaymentHistoryItemResponse,
   getPaymentHistory,
   getPaymentCustomerInfo,
   type PaymentCustomerInfoResponse,
   updatePayment,
+  type OutstandingBillResponse,
+  type OutstandingBillsSummaryResponse,
+  getOutstandingBillsSummary,
 } from '@/services/paymentService';
-import { Label } from 'recharts';
+import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 
 type TabKey = 'monthly' | 'outstanding';
@@ -38,7 +39,7 @@ export const PaymentsAddingPage = () => {
   const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState(null);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentHistoryItemResponse | null>(null);
   const [updatedAmount, setUpdatedAmount] = useState("");
 
   const [amountError, setAmountError] = useState("");
@@ -50,8 +51,6 @@ export const PaymentsAddingPage = () => {
   const [historyPage, setHistoryPage] = useState(1);
   const historyPerPage = 6;
 
-
-
   const [summary, setSummary] = useState<null | {
     subscriptionNumber: string;
     monthlyDue: number;
@@ -61,7 +60,8 @@ export const PaymentsAddingPage = () => {
   }>(null);
 
   const [currentBill, setCurrentBill] = useState<CurrentBillResponse | null>(null);
-  const [outstandingBills, setOutstandingBills] = useState<OutstandingBillItemResponse[]>([]);
+  const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
+  const [outstandingBills, setOutstandingBills] = useState<OutstandingBillResponse[]>([]);
 
   const statusStyles = {
     paid: 'bg-success/10 text-success',
@@ -80,14 +80,15 @@ export const PaymentsAddingPage = () => {
       const [sum, bill, outs, history, customerInfo] = await Promise.all([
         getCustomerPaymentSummary(subscriptionNumber),
         getCurrentBill(subscriptionNumber),
-        getOutstandingBills(subscriptionNumber),
+        getOutstandingBillsSummary(subscriptionNumber),
         getPaymentHistory(subscriptionNumber),
         getPaymentCustomerInfo(subscriptionNumber),
       ]);
 
       setSummary(sum);
       setCurrentBill(bill);
-      setOutstandingBills(outs);
+      setOutstandingBills(outs.outstandingBills);
+      setOutstandingBillsSummary(outs);
       setPaymentHistory(history);
       setCustomerInfo(customerInfo);
 
@@ -103,6 +104,7 @@ export const PaymentsAddingPage = () => {
   }
 
   const handleUpdate = async () => {
+    if (!subscriptionNumber) return;
     setIsTouched(true);
     if (!updatedAmount) return;
 
@@ -126,8 +128,9 @@ export const PaymentsAddingPage = () => {
       const current = await getCurrentBill(subscriptionNumber);
       setCurrentBill(current);
 
-      const outstanding = await getOutstandingBills(subscriptionNumber);
-      setOutstandingBills(outstanding);
+      const outstanding = await getOutstandingBillsSummary(subscriptionNumber);
+      setOutstandingBillsSummary(outstanding);
+      setOutstandingBills(outstanding.outstandingBills);
 
       // Reset UI
       setIsEditOpen(false);
@@ -200,17 +203,12 @@ export const PaymentsAddingPage = () => {
       return;
     }
 
-    const due = Number(monthlyDue ?? 0);
-
-    const isFull = Math.abs(amount - due) < 0.0001;
-    const status = isFull ? 'FULL' : 'PARTIAL';
-
     try {
       const res = await addPayment({
         subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
         paymentType: 'MONTHLY',
-        paymentMethod: 'MANUAL' 
+        paymentMethod: 'MANUAL'
       });
 
       toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
@@ -234,11 +232,6 @@ export const PaymentsAddingPage = () => {
       toast.error('Enter a valid amount', { className: "toast-error" });
       return;
     }
-
-    const due = Number(totalOutstanding ?? 0);
-
-    const isFull = Math.abs(amount - due) < 0.0001;
-    const status = isFull ? 'FULL' : 'PARTIAL';
 
     try {
       const res = await addPayment({
@@ -284,7 +277,7 @@ export const PaymentsAddingPage = () => {
 
   const monthlyBill = currentBill?.totalAmount ?? 0;
   const monthlyDue = currentBill?.balanceDue ?? summary?.monthlyDue ?? 0;
-  const alreadyPaid = Math.max(monthlyBill - monthlyDue, 0);
+  const alreadyPaid = currentBill?.alreadyPaid ?? 0;
 
   const billStatus = (currentBill?.status ?? summary?.billStatus ?? '').toUpperCase();
 
@@ -300,7 +293,6 @@ export const PaymentsAddingPage = () => {
   const MonthlyIcon = statusIcons[monthlyStatus];
 
   //Outstanding tab values
-  const totalOutstanding = outstandingBills.reduce((sum, b) => sum + (b.balanceDue ?? 0), 0);
 
   const indexOfLastBill = outstandingPage * billsPerPage;
   const indexOfFirstBill = indexOfLastBill - billsPerPage;
@@ -516,7 +508,7 @@ export const PaymentsAddingPage = () => {
                           <div className="flex justify-between pt-2 border-t border-none">
                             <span className="font-medium text-foreground">Total Due</span>
                             <span className="text-xl font-bold text-primary">
-                              Rs. {totalOutstanding.toLocaleString()}
+                              Rs. {(outstandingBillsSummary?.totalOutstandingAmount ?? 0).toLocaleString()}
                             </span>
                           </div>
                         </>
@@ -646,7 +638,7 @@ export const PaymentsAddingPage = () => {
                   </div>
                 ))}
 
-                {totalPages > 1 && (
+                {totalHistoryPages > 1 && (
                   <div className="flex justify-center items-center gap-2 mt-3">
                     {/* Previous button */}
                     <button
