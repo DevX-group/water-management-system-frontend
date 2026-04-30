@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Search, TrendingUp, AlertCircle, CheckCircle2, Download, Eye, Loader2 } from "lucide-react";
+import { FileText, Search, TrendingUp, AlertCircle, CheckCircle2, Download, Eye, Loader2, RotateCw, X, ZoomIn, ZoomOut } from "lucide-react";
 
 // The Subscription Number would ideally come from your Auth Context
 const SUBSCRIPTION_NUMBER = "SK-2341"; 
@@ -25,6 +25,11 @@ const Bills = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [viewingBill, setViewingBill] = useState<any | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const [rotation, setRotation] = useState(0);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   // 1. Fetch Bills from Spring Boot Database
   useEffect(() => {
@@ -88,6 +93,35 @@ const Bills = () => {
       bgColor: "bg-primary/10"
     },
   ];
+
+  // Handler functions
+  const handleCloseView = () => {
+    setViewingBill(null);
+    setZoom(1);
+    setRotation(0);
+    setImageError(false);
+  };
+
+  const handleDownload = async (bill: any) => {
+    try {
+      const response = await fetch(`http://localhost:8081/api/bills/${bill.billId}/download`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bill-${bill.billingPeriod}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error("Error downloading bill:", error);
+    }
+  };
+
+  const getBillImageUrl = (billId: string) => {
+    return `http://localhost:8081/api/bills/${billId}/image`;
+  };
 
   if (loading) {
     return (
