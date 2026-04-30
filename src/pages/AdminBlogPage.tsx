@@ -29,7 +29,7 @@ const MOCK_BLOGS = [
 export const AdminBlogPage: React.FC = () => {
   const [blogs, setBlogs] = useState(MOCK_BLOGS);
   const [showForm, setShowForm] = useState(false);
-  const [formData, setFormData] = useState({ title: '', category: '', image: '' });
+  const [formData, setFormData] = useState({ title: '', category: '', image: '', content: '' });
 
   const handleCreate = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +42,7 @@ export const AdminBlogPage: React.FC = () => {
     };
     setBlogs([newPost, ...blogs]);
     setShowForm(false);
-    setFormData({ title: '', category: '', image: '' });
+    setFormData({ title: '', category: '', image: '', content: '' });
   };
 
   return (
