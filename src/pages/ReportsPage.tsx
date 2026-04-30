@@ -251,6 +251,12 @@ export const ReportsPage = () => {
       )
     : billsTableData;
 
+  const transformedBillsData = filteredBills.map((bill) => ({
+    month: bill.dueDate,
+    usage: 1,
+    revenue: bill.amount,
+  }));
+
   //Serach bar for Overdue report + default shows all overdue bills
   const filteredOverdue = overdueBill
     ? overdueTableData.filter((overdue) =>
@@ -419,7 +425,7 @@ export const ReportsPage = () => {
                 </ResponsiveContainer>
               </div>
               <div className="flex justify-end">
-                <Button>
+                <Button onClick={() => exportPDF({ [customerYear]: customerChartData }, `CustomerReport-${customerSearch}-${customerYear}.pdf`)}>
                 <Download className="w-4 h-4 mr-2" />
                  Export as PDF
                 </Button>
@@ -520,7 +526,20 @@ export const ReportsPage = () => {
                 </ResponsiveContainer>
               </div>
               <div className="flex justify-end">
-                <Button>
+                <Button
+                  onClick={() =>
+                    exportPDF(
+                      {
+                        [areaYear]: areaDataForYear.map((row) => ({
+                          month: row.month,
+                          usage: row.area1Usage + row.area2Usage + row.area3Usage,
+                          revenue: row.area1Revenue + row.area2Revenue + row.area3Revenue,
+                        })),
+                      },
+                      `AreaReport-${areaYear}.pdf`
+                    )
+                  }
+                >
                 <Download className="w-4 h-4 mr-2" />
                  Export as PDF
                 </Button>
@@ -605,7 +624,15 @@ export const ReportsPage = () => {
                 </Table>
               </div>
               <div className="flex justify-end">
-                <Button>
+              <Button
+                onClick={() =>
+                exportPDF(
+                  {
+                     bills: transformedBillsData },
+                  `BillsReport.pdf`
+                )
+                }
+                >
                 <Download className="w-4 h-4 mr-2" />
                  Export as PDF
                 </Button>
@@ -683,7 +710,14 @@ export const ReportsPage = () => {
                 </Table>
               </div>
               <div className="flex justify-end">
-                <Button>
+                <Button
+                  onClick={() =>
+                    exportPDF(
+                      { bills: transformedBillsData },
+                      `BillsReport.pdf`
+                    )
+                  }
+                >
                 <Download className="w-4 h-4 mr-2" />
                  Export as PDF
                 </Button>
