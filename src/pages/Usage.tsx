@@ -91,6 +91,22 @@ const Usage = () => {
     boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
   };
 
+  const stats = data
+    ? [
+        { label: "Average Usage", value: `${data.averageUsage.toLocaleString()} units`, icon: Activity },
+        { label: "Peak Usage",    value: `${data.peakUsage.toLocaleString()} units`,    icon: TrendingUp },
+        { label: "Minimum Usage", value: `${data.minimumUsage.toLocaleString()} units`, icon: TrendingDown },
+        { label: "Total Usage",   value: `${data.totalUsage.toLocaleString()} units`,   icon: BarChart3 },
+      ]
+    : [];
+
+  const tooltipStyle = {
+    borderRadius: "8px",
+    border: "none",
+    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+  };
+
+  // Render 
   return (
     <MainLayout isAuthenticated={true}>
       <div className="container mx-auto px-4 py-8">
@@ -265,6 +281,7 @@ const Usage = () => {
             )}
           </CardContent>
         </Card>
+
       </div>
     </MainLayout>
   );

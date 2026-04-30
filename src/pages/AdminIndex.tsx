@@ -15,10 +15,11 @@ import { UserManagementPage } from './UserManagementPage';
 import NotFound from './NotFound';
 import '../admin.css';
 import { BankSlipReviewPage } from './BankSlipReviewPage';
+import { AdminBlogPage } from './AdminBlogPage';
 
 type AdminRole = 'main_admin' | 'meter_reader' | 'payment_handler';
 
-type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'inquiry' | 'reports' | 'predictions';
+type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'inquiry' | 'reports' | 'predictions' | 'blog';
 
 const sectionPathMap: Record<Section, string> = {
   dashboard: '/admin/dashboard',
@@ -30,6 +31,8 @@ const sectionPathMap: Record<Section, string> = {
   inquiry: '/admin/inquiry',
   reports: '/admin/reports',
   predictions: '/admin/predictions',
+  blog: '/admin/blog',
+
 };
 
 const getDefaultAdminPath = (role: AdminRole): string => {
@@ -47,6 +50,7 @@ const getSectionFromPath = (pathname: string): Section => {
   if (pathname.startsWith('/admin/inquiry')) return 'inquiry';
   if (pathname.startsWith('/admin/reports')) return 'reports';
   if (pathname.startsWith('/admin/predictions')) return 'predictions';
+   if (pathname.startsWith('/admin/blog')) return 'blog';
   return 'dashboard';
 };
 
@@ -74,6 +78,7 @@ const DashboardContent: React.FC = () => {
           <Route path="inquiry" element={<AdminInquiriesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="predictions" element={<PredictionsPage />} />
+          <Route path="blog" element={<AdminBlogPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AdminLayout>
