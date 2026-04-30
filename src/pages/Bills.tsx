@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -107,17 +107,13 @@ const Bills = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
               Billing <span className="text-gradient">History</span>
             </h1>
-            <p className="text-muted-foreground text-lg">View and manage all your water bills</p>
+            <p className="text-muted-foreground text-lg">View and manage all your water bills for {SUBSCRIPTION_NUMBER}</p>
           </motion.div>
 
           {/* Summary Cards */}
           <motion.div variants={itemVariants} className="grid sm:grid-cols-3 gap-4 mb-8">
             {summaryStats.map((stat, index) => (
-              <motion.div 
-                key={index}
-                whileHover={{ y: -4, scale: 1.02 }}
-                className="stat-card"
-              >
+              <motion.div key={index} whileHover={{ y: -4, scale: 1.02 }} className="stat-card">
                 <div className="flex items-center gap-4">
                   <div className={`w-14 h-14 rounded-2xl ${stat.bgColor} flex items-center justify-center`}>
                     <stat.icon className={`w-7 h-7 ${stat.color}`} />
@@ -134,15 +130,7 @@ const Bills = () => {
           {/* Filters */}
           <motion.div variants={itemVariants}>
             <Card className="shadow-card border-none mb-6">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-white" />
-                  </div>
-                  Filter Bills
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+              <CardContent className="pt-6">
                 <div className="flex flex-col sm:flex-row gap-4">
                   <div className="relative flex-1">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -157,10 +145,10 @@ const Bills = () => {
                     <SelectTrigger className="w-full sm:w-48 h-12 rounded-xl">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
-                    <SelectContent className="rounded-xl">
-                      <SelectItem value="all" className="rounded-lg">All Status</SelectItem>
-                      <SelectItem value="paid" className="rounded-lg">Paid</SelectItem>
-                      <SelectItem value="unpaid" className="rounded-lg">Unpaid</SelectItem>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="paid">Paid</SelectItem>
+                      <SelectItem value="pending">Pending</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -189,15 +177,9 @@ const Bills = () => {
                         key={bill.billId} 
                         className="border-t border-border hover:bg-secondary/30 transition-colors group"
                       >
-                        <td className="p-5">
-                          <span className="font-semibold">{bill.period}</span>
-                        </td>
-                        <td className="p-5">
-                          <span className="font-bold text-lg">LKR {bill.amount.toLocaleString()}</span>
-                        </td>
-                        <td className="p-5">
-                          <span className="text-muted-foreground">{bill.usage} units</span>
-                        </td>
+                        <td className="p-5 font-semibold">{bill.billingPeriod}</td>
+                        <td className="p-5 font-bold text-lg">LKR {bill.totalAmount.toLocaleString()}</td>
+                        <td className="p-5 text-muted-foreground">{bill.usageUnits} units</td>
                         <td className="p-5">
                           <Badge
                             variant="secondary"
@@ -207,7 +189,7 @@ const Bills = () => {
                                 : "bg-warning/10 text-warning"
                             }`}
                           >
-                            {bill.status === "paid" ? "✓ Paid" : "• Pending"}
+                            {bill.status}
                           </Badge>
                         </td>
                         <td className="p-5 text-muted-foreground">{bill.dueDate}</td>
@@ -221,6 +203,9 @@ const Bills = () => {
                     ))}
                   </tbody>
                 </table>
+                {filteredBills.length === 0 && (
+                  <div className="p-10 text-center text-muted-foreground">No bills found.</div>
+                )}
               </div>
             </Card>
           </motion.div>
@@ -329,6 +314,5 @@ const Bills = () => {
     </MainLayout>
   );
 };
-
 
 export default Bills;
