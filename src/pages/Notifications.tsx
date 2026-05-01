@@ -14,7 +14,7 @@ const Notifications = () => {
 
   const fetchAlerts = async () => {
     try {
-      const res = await fetch(`http://localhost:8081/api/alert/customer/${subNum}`);
+      const res = await fetch(`http://localhost:8081/api/alerts`);
       if (res.ok) {
         const data = await res.json();
         setAlerts(data);
@@ -28,7 +28,7 @@ const Notifications = () => {
 
   const handleDismiss = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:8081/api/alert/${id}/dismiss`, { 
+      const res = await fetch(`http://localhost:8081/api/alerts/${id}/dismiss`, { 
         method: 'PUT' 
       });
       if (res.ok) {
