@@ -102,13 +102,15 @@ export const MessageHistoryPage = () => {
                                 <div className="text-muted-foreground">Recipients</div>
                                 <div className="font-medium">{row.recipients}</div>
                               </div>
-                              <div>
-                                <div className="text-muted-foreground">Email Success Rate</div>
-                                <div className="font-medium">{row.emailSuccessRate}%</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">SMS Success Rate</div>
-                                <div className="font-medium">{row.smsSuccessRate}%</div>
+                              <div className="col-span-2 grid grid-cols-2 gap-3">
+                                <div>
+                                  <div className="text-muted-foreground">Email Success Rate</div>
+                                  <div className="font-medium">{row.emailSuccessRate}%</div>
+                                </div>
+                                <div>
+                                  <div className="text-muted-foreground">SMS Success Rate</div>
+                                  <div className="font-medium">{row.smsSuccessRate}%</div>
+                                </div>
                               </div>
                             </div>
                             <div className="grid grid-cols-3 gap-3">
