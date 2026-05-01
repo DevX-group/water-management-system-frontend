@@ -104,12 +104,25 @@ export const ReportsPage = () => {
   status: bill.status === "PAID" ? "Paid" : "Unpaid",
 }));
 
+  useEffect(() => {
+    fetch("http://localhost:8081/api/bills_report")
+      .then((res) => res.json())
+      .then((data) => {
+        const mappedBills = data.map((bill) => ({
+          id: bill.id,
+          customerid: bill.customerId,
+          customer: bill.customerName,
+          amount: bill.amount,
+          dueDate: bill.dueDate,
+          status: bill.status === "PAID" ? "Paid" : "Unpaid",
+        }));
+
         setBillsTableData(mappedBills);
       })
       .catch((err) => console.error(err));
   }, []);
 
-   // Filter bills
+   // Filter
   const filteredBills = customerSearchBill
     ? billsTableData.filter((bill) =>
         bill.customerid
