@@ -1,5 +1,5 @@
 import { useState, useRef, DragEvent, ChangeEvent, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -80,6 +80,61 @@ export const CustomerPayments = () => {
   const [outstandingBills, setOutstandingBills] = useState<OutstandingBillResponse[]>([]);
   const [history, setHistory] = useState([]);
   const [loadingData, setLoadingData] = useState(true);
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get("tab") || "monthly";
+
+  useEffect(() => {
+    const tab = searchParams.get("tab");
+    if(!tab) return;
+    const validTabs = ["monthly", "outstanding", "slip", "history"];
+    if (!validTabs.includes(tab)) {
+      setSearchParams({ tab: "monthly" });
+    }
+  }, [searchParams , setSearchParams]);
+
+  const goToTab = (tab: string) => {
+    setSearchParams({ tab });
+  }
+
+  const monthlyCardRef = useRef<HTMLDivElement>(null);
+  const historyRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+  if (loadingData) return;
+
+  const timer = setTimeout(() => {
+    if (activeTab === "monthly") {
+      monthlyCardRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+
+    if (activeTab === "outstanding") {
+      outstandingCardRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }
+
+    if (activeTab === "slip") {
+      slipSectionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+
+    if (activeTab === "history") {
+      historyRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  }, 150);
+
+  return () => clearTimeout(timer);
+}, [activeTab, loadingData]);
 
   const loadAll = async (subscriptionNumber: string) => {
     setLoadingData(true);
@@ -209,7 +264,7 @@ export const CustomerPayments = () => {
     }
 
     if (method === "slip") {
-      slipSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      goToTab("slip");
       showToast("📋 Please fill in the bank slip upload form below.");
       return;
     }
@@ -311,7 +366,7 @@ export const CustomerPayments = () => {
           <div className="grid lg:grid-cols-2 gap-6 mb-6">
 
             {/* Monthly */}
-            <Card className={`shadow-card border-none transition-opacity ${hasOutstanding ? "opacity-75" : ""}`}>
+            <Card ref={monthlyCardRef} className={`shadow-card border-none transition-opacity ${hasOutstanding ? "opacity-75" : ""}`}>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <CreditCard className="w-5 h-5 text-primary" />
@@ -737,7 +792,7 @@ export const CustomerPayments = () => {
           </Card>
 
           {/* ── Payment History ── */}
-          <Card className="shadow-card border-none">
+          <Card ref={historyRef} className="shadow-card border-none">
             <CardHeader>
               <CardTitle>Payment History</CardTitle>
             </CardHeader>
