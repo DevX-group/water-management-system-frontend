@@ -1,7 +1,7 @@
 import { Message } from '../types/messaging';
 import { MessageHistoryRow } from '../types/messaging';
 
-const API_BASE = 'http://localhost:8080/api/messages';
+const API_BASE = 'http://localhost:8081/api/messages';
 
 // The backend returns id as Long (number); normalise to string
 // to keep the rest of the frontend compatible with Message.id: string
@@ -50,9 +50,13 @@ type SentMessageHistoryApi = {
   sentDate: string;
   sentTime: string;
   emailSuccessRate: number | null;
+  smsSuccessRate: number | null;
   totalEmailsSent: number | null;
   totalEmailsFailed: number | null;
   totalEmailsDelivered: number | null;
+  totalSMSsSent: number | null;
+  totalSMSsFailed: number | null;
+  totalSMSsDelivered: number | null;
 };
 
 const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
@@ -69,9 +73,14 @@ const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
     date: item.sentDate ?? '-',
     time: item.sentTime ?? '-',
     successRate: item.emailSuccessRate ?? 0,
-    totalSent: item.totalEmailsSent ?? 0,
-    totalFailed: item.totalEmailsFailed ?? 0,
-    totalDelivered: item.totalEmailsDelivered ?? 0,
+    emailSuccessRate: item.emailSuccessRate ?? 0,
+    smsSuccessRate: item.smsSuccessRate ?? 0,
+    totalEmailsSent: item.totalEmailsSent ?? 0,
+    totalEmailsFailed: item.totalEmailsFailed ?? 0,
+    totalEmailsDelivered: item.totalEmailsDelivered ?? 0,
+    totalSmsSent: item.totalSMSsSent ?? 0,
+    totalSmsFailed: item.totalSMSsFailed ?? 0,
+    totalSmsDelivered: item.totalSMSsDelivered ?? 0,
     recipients: item.recipients ?? '-',
   };
 };

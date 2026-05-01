@@ -103,22 +103,40 @@ export const MessageHistoryPage = () => {
                                 <div className="font-medium">{row.recipients}</div>
                               </div>
                               <div>
-                                <div className="text-muted-foreground">Success Rate</div>
-                                <div className="font-medium">{row.successRate}%</div>
+                                <div className="text-muted-foreground">Email Success Rate</div>
+                                <div className="font-medium">{row.emailSuccessRate}%</div>
+                              </div>
+                              <div>
+                                <div className="text-muted-foreground">SMS Success Rate</div>
+                                <div className="font-medium">{row.smsSuccessRate}%</div>
                               </div>
                             </div>
                             <div className="grid grid-cols-3 gap-3">
                               <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Total Sent</div>
-                                <div className="text-lg font-semibold">{row.totalSent}</div>
+                                <div className="text-muted-foreground">Total Emails Sent</div>
+                                <div className="text-lg font-semibold">{row.totalEmailsSent}</div>
                               </div>
                               <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Failed</div>
-                                <div className="text-lg font-semibold">{row.totalFailed}</div>
+                                <div className="text-muted-foreground">Total Emails Failed</div>
+                                <div className="text-lg font-semibold">{row.totalEmailsFailed}</div>
                               </div>
                               <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Delivered</div>
-                                <div className="text-lg font-semibold">{row.totalDelivered}</div>
+                                <div className="text-muted-foreground">Total Emails Delivered</div>
+                                <div className="text-lg font-semibold">{row.totalEmailsDelivered}</div>
+                              </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-3">
+                              <div className="rounded-md border p-3">
+                                <div className="text-muted-foreground">Total SMSs Sent</div>
+                                <div className="text-lg font-semibold">{row.totalSmsSent}</div>
+                              </div>
+                              <div className="rounded-md border p-3">
+                                <div className="text-muted-foreground">Total SMSs Failed</div>
+                                <div className="text-lg font-semibold">{row.totalSmsFailed}</div>
+                              </div>
+                              <div className="rounded-md border p-3">
+                                <div className="text-muted-foreground">Total SMSs Delivered</div>
+                                <div className="text-lg font-semibold">{row.totalSmsDelivered}</div>
                               </div>
                             </div>
                           </div>

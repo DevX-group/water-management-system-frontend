@@ -42,9 +42,14 @@ export interface MessageHistoryRow {
   date: string;
   time: string;
   successRate: number;
-  totalSent: number;
-  totalFailed: number;
-  totalDelivered: number;
+  emailSuccessRate: number;
+  smsSuccessRate: number;
+  totalEmailsSent: number;
+  totalEmailsFailed: number;
+  totalEmailsDelivered: number;
+  totalSmsSent: number;
+  totalSmsFailed: number;
+  totalSmsDelivered: number;
   recipients: string;
 }
 
