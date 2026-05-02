@@ -176,7 +176,7 @@ export const MessageHistoryPage = () => {
                             </div>
                             <div>
                               <Button
-                                variant="secondary"
+                                variant="outline"
                                 size="sm"
                                 onClick={() => openFailures(row.id)}
                               >
