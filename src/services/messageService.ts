@@ -1,5 +1,4 @@
-import { Message } from '../types/messaging';
-import { MessageHistoryRow } from '../types/messaging';
+import { FailedRecipient, Message, MessageHistoryRow } from '../types/messaging';
 
 const API_BASE = 'http://localhost:8081/api/messages';
 
@@ -90,4 +89,10 @@ export const getMessageHistory = async (): Promise<MessageHistoryRow[]> => {
   if (!res.ok) throw new Error('Failed to fetch message history');
   const data: SentMessageHistoryApi[] = await res.json();
   return data.map(toHistoryRow);
+};
+
+export const getMessageFailures = async (sentMessageId: string): Promise<FailedRecipient[]> => {
+  const res = await fetch(`${API_BASE}/failures/${sentMessageId}`);
+  if (!res.ok) throw new Error('Failed to fetch failed recipients');
+  return res.json();
 };

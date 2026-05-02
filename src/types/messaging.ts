@@ -53,6 +53,15 @@ export interface MessageHistoryRow {
   recipients: string;
 }
 
+export interface FailedRecipient {
+  subscriptionNumber: string;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  smsFailed: boolean;
+  emailFailed: boolean;
+}
+
 export const PLACEHOLDERS = [
   "customer_name",
   "customer_number",
