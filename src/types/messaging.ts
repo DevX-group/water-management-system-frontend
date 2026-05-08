@@ -42,10 +42,24 @@ export interface MessageHistoryRow {
   date: string;
   time: string;
   successRate: number;
-  totalSent: number;
-  totalFailed: number;
-  totalDelivered: number;
+  emailSuccessRate: number;
+  smsSuccessRate: number;
+  totalEmailsSent: number;
+  totalEmailsFailed: number;
+  totalEmailsDelivered: number;
+  totalSmsSent: number;
+  totalSmsFailed: number;
+  totalSmsDelivered: number;
   recipients: string;
+}
+
+export interface FailedRecipient {
+  subscriptionNumber: string;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  smsFailed: boolean;
+  emailFailed: boolean;
 }
 
 export const PLACEHOLDERS = [
