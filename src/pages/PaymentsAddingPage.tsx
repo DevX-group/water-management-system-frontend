@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle, Clock, AlertCircle, Wallet, CalendarDays, Pencil, Trash2 } from 'lucide-react';
+import { Wallet, CalendarDays, Pencil, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -18,6 +18,7 @@ import {
   type OutstandingBillResponse,
   type OutstandingBillsSummaryResponse,
   getOutstandingBillsSummary,
+  deletePayment,
 } from '@/services/paymentService';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
@@ -36,6 +37,7 @@ export const PaymentsAddingPage = () => {
   const [monthlyAmount, setMonthlyAmount] = useState('');
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
+  const [totalHistoryPages, setTotalHistoryPages] = useState(1);
   const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -51,6 +53,9 @@ export const PaymentsAddingPage = () => {
   const [historyPage, setHistoryPage] = useState(1);
   const historyPerPage = 6;
 
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedDeleteId, setSelectedDeleteId] = useState<string | null>(null);
+
   const [summary, setSummary] = useState<null | {
     subscriptionNumber: string;
     monthlyDue: number;
@@ -63,25 +68,12 @@ export const PaymentsAddingPage = () => {
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
   const [outstandingBills, setOutstandingBills] = useState<OutstandingBillResponse[]>([]);
 
-  const statusStyles = {
-    paid: 'bg-success/10 text-success',
-    partial: 'bg-warning/10 text-warning',
-    overdue: 'bg-destructive/10 text-destructive',
-  } as const;
-
-  const statusIcons = {
-    paid: CheckCircle,
-    partial: Clock,
-    overdue: AlertCircle,
-  } as const;
-
   const loadAll = async (subscriptionNumber: string) => {
     try {
-      const [sum, bill, outs, history, customerInfo] = await Promise.all([
+      const [sum, bill, outs, customerInfo] = await Promise.all([
         getCustomerPaymentSummary(subscriptionNumber),
         getCurrentBill(subscriptionNumber),
         getOutstandingBillsSummary(subscriptionNumber),
-        getPaymentHistory(subscriptionNumber),
         getPaymentCustomerInfo(subscriptionNumber),
       ]);
 
@@ -89,12 +81,18 @@ export const PaymentsAddingPage = () => {
       setCurrentBill(bill);
       setOutstandingBills(outs.outstandingBills);
       setOutstandingBillsSummary(outs);
-      setPaymentHistory(history);
       setCustomerInfo(customerInfo);
 
     } catch (e) {
       toast.error('Failed to load payment data');
     }
+  };
+
+  const loadHistory = async () => {
+    if (!subscriptionNumber) return;
+
+    const history = await getPaymentHistory(subscriptionNumber, historyPage - 1, historyPerPage)
+    setPaymentHistory(history.content ?? []);
   };
 
   const handleEdit = (payment) => {
@@ -119,8 +117,9 @@ export const PaymentsAddingPage = () => {
       );
 
       // Fetch fresh data
-      const payments = await getPaymentHistory(subscriptionNumber);
-      setPaymentHistory(payments);
+      const history = await getPaymentHistory(subscriptionNumber, historyPage - 1, historyPerPage);
+      setPaymentHistory(history.content ?? []);
+      setTotalHistoryPages(history.totalPages ?? 1);
 
       const summaryData = await getCustomerPaymentSummary(subscriptionNumber);
       setSummary(summaryData);
@@ -157,8 +156,36 @@ export const PaymentsAddingPage = () => {
     setIsTouched(false);
   };
 
-  const handleDelete = (paymentId) => {
-    console.log("Delete:", paymentId);
+  const handleDelete = (paymentId: string) => {
+    setSelectedDeleteId(paymentId);
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedDeleteId || !subscriptionNumber) return;
+
+    try {
+      await deletePayment(selectedDeleteId);
+
+      toast.success("Payment deleted successfully");
+
+      setIsDeleteOpen(false);
+      setSelectedDeleteId(null);
+
+      await loadAll(subscriptionNumber);
+      await loadHistory();
+
+    } catch (error: any) {
+      const msg =
+        error?.response?.data?.message || "Failed to delete payment";
+
+      toast.error(msg);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDeleteOpen(false);
+    setSelectedDeleteId(null);
   };
 
   const validateAmount = (value) => {
@@ -193,6 +220,10 @@ export const PaymentsAddingPage = () => {
     if (!subscriptionNumber) return;
     loadAll(subscriptionNumber);
   }, [subscriptionNumber]);
+
+  useEffect(() => {
+    loadHistory();
+  }, [historyPage, subscriptionNumber]);
 
   const handleAddMonthly = async () => {
     if (!customerInfo) return;
@@ -279,30 +310,12 @@ export const PaymentsAddingPage = () => {
   const monthlyDue = currentBill?.balanceDue ?? summary?.monthlyDue ?? 0;
   const alreadyPaid = currentBill?.alreadyPaid ?? 0;
 
-  const billStatus = (currentBill?.status ?? summary?.billStatus ?? '').toUpperCase();
-
-  const monthlyStatus: UiStatus =
-    monthlyDue === 0
-      ? 'paid'
-      : billStatus === 'OVERDUE'
-        ? 'overdue'
-        : alreadyPaid > 0
-          ? 'partial'
-          : 'overdue';
-
-  const MonthlyIcon = statusIcons[monthlyStatus];
-
-  //Outstanding tab values
-
   const indexOfLastBill = outstandingPage * billsPerPage;
   const indexOfFirstBill = indexOfLastBill - billsPerPage;
   const currentBills = outstandingBills.slice(indexOfFirstBill, indexOfLastBill);
   const totalPages = Math.ceil(outstandingBills.length / billsPerPage);
 
-  const indexOfLastHistory = historyPage * historyPerPage;
-  const indexOfFirstHistory = indexOfLastHistory - historyPerPage;
-  const currentHistory = paymentHistory.slice(indexOfFirstHistory, indexOfLastHistory);
-  const totalHistoryPages = Math.ceil(paymentHistory.length / historyPerPage);
+  const latestManualPaymentId = paymentHistory.find((p) => p.paymentMethod === "MANUAL")?.paymentId;
 
   return (
     <div className="space-y-6">
@@ -590,7 +603,7 @@ export const PaymentsAddingPage = () => {
               </p>
             ) : (
               <div className="space-y-3">
-                {currentHistory.map((p) => (
+                {paymentHistory.map((p, index) => (
                   <div
                     key={p.paymentId}
                     className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all flex flex-col"
@@ -598,14 +611,21 @@ export const PaymentsAddingPage = () => {
                     {/* Row 1: Icons */}
                     <div className="flex justify-end mb-1">
                       <div className="flex gap-2">
-                        <Pencil
-                          className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
-                          onClick={() => handleEdit(p)}
-                        />
-                        <Trash2
-                          className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
-                          onClick={() => handleDelete(p.paymentId)}
-                        />
+                        {/* Edit only for latest MANUAL payment */}
+                        {p.paymentId === latestManualPaymentId && (
+                          <Pencil
+                            className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
+                            onClick={() => handleEdit(p)}
+                          />
+                        )}
+
+                        {/* Delete only for MANUAL payments */}
+                        {p.paymentMethod === "MANUAL" && (
+                          <Trash2
+                            className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
+                            onClick={() => handleDelete(p.paymentId)}
+                          />
+                        )}
                       </div>
                     </div>
 
@@ -732,6 +752,39 @@ export const PaymentsAddingPage = () => {
               >
                 Save
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDeleteOpen && (
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-80 shadow-lg">
+
+            <h2 className="text-lg font-semibold mb-2">
+              Delete Payment
+            </h2>
+
+            <p className="text-sm text-muted-foreground mb-4">
+              Are you sure you want to delete this payment?
+            </p>
+
+            <div className="flex justify-end gap-2">
+
+              <Button
+                className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                onClick={cancelDelete}
+              >
+                Cancel
+              </Button>
+
+              <Button
+                className="bg-red-600 text-white hover:bg-red-700"
+                onClick={confirmDelete}
+              >
+                Yes, Delete
+              </Button>
+
             </div>
           </div>
         </div>
