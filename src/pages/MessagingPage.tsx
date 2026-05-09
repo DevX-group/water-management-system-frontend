@@ -58,10 +58,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { 
-  Message, 
+  ScheduledMessage,
+  TriggeredMessage,
+  TriggerType,
   MessageChannel, 
   MessageTemplate, 
-  ScheduleType, 
   TemplateSection,
   RecipientType 
 } from '../types/messaging';
@@ -96,19 +97,33 @@ export const MessagingPage = () => {
 };
 
 const MessagingList = () => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
+  const [triggeredMessages, setTriggeredMessages] = useState<TriggeredMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingMessage, setEditingMessage] = useState<Message | null>(null);
+  const [editingMessage, setEditingMessage] = useState<ScheduledMessage | TriggeredMessage | null>(null);
+  const [dialogMode, setDialogMode] = useState<'scheduled' | 'triggered'>('scheduled');
   const [placeholders, setPlaceholders] = useState<string[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
-    messageApi.getAllMessages()
-      .then(setMessages)
-      .catch(() => toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' }))
-      .finally(() => setIsLoading(false));
-  }, []);
+    const load = async () => {
+      try {
+        const [scheduled, triggered] = await Promise.all([
+          messageApi.getAllScheduledMessages(),
+          messageApi.getAllTriggeredMessages(),
+        ]);
+        setScheduledMessages(scheduled);
+        setTriggeredMessages(triggered);
+      } catch {
+        toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, [toast]);
 
   useEffect(() => {
     messageApi.getMessagePlaceholders()
@@ -116,26 +131,50 @@ const MessagingList = () => {
       .catch(() => toast({ title: 'Error', description: 'Failed to load placeholders.', variant: 'destructive' }));
   }, []);
 
-  const handleDelete = async (id: string) => {
+  const handleDeleteScheduled = async (id: string) => {
     try {
-      await messageApi.deleteMessage(id);
-      setMessages(prev => prev.filter(m => m.id !== id));
-      toast({ title: 'Message deleted', description: 'The message has been successfully deleted.' });
+      await messageApi.deleteScheduledMessage(id);
+      setScheduledMessages(prev => prev.filter(m => m.id !== id));
+      toast({ title: 'Message deleted', description: 'The scheduled message has been successfully deleted.' });
     } catch {
       toast({ title: 'Error', description: 'Failed to delete message.', variant: 'destructive' });
     }
   };
 
-  const handleSave = async (message: Message) => {
+  const handleDeleteTriggered = async (id: string) => {
     try {
-      if (editingMessage) {
-        const updated = await messageApi.updateMessage(message.id, message);
-        setMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
-        toast({ title: 'Message updated', description: 'Your changes have been saved.' });
+      await messageApi.deleteTriggeredMessage(id);
+      setTriggeredMessages(prev => prev.filter(m => m.id !== id));
+      toast({ title: 'Message deleted', description: 'The triggered message has been successfully deleted.' });
+    } catch {
+      toast({ title: 'Error', description: 'Failed to delete message.', variant: 'destructive' });
+    }
+  };
+
+  const handleSave = async (message: ScheduledMessage | TriggeredMessage) => {
+    try {
+      if (dialogMode === 'scheduled') {
+        const scheduled = message as ScheduledMessage;
+        if (editingMessage) {
+          const updated = await messageApi.updateScheduledMessage(scheduled.id, scheduled);
+          setScheduledMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
+          toast({ title: 'Message updated', description: 'Your changes have been saved.' });
+        } else {
+          const created = await messageApi.createScheduledMessage(scheduled);
+          setScheduledMessages(prev => [...prev, created]);
+          toast({ title: 'Message created', description: 'New scheduled message has been created.' });
+        }
       } else {
-        const created = await messageApi.createMessage(message);
-        setMessages(prev => [...prev, created]);
-        toast({ title: 'Message created', description: 'New message has been created.' });
+        const triggered = message as TriggeredMessage;
+        if (editingMessage) {
+          const updated = await messageApi.updateTriggeredMessage(triggered.id, triggered);
+          setTriggeredMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
+          toast({ title: 'Message updated', description: 'Your changes have been saved.' });
+        } else {
+          const created = await messageApi.createTriggeredMessage(triggered);
+          setTriggeredMessages(prev => [...prev, created]);
+          toast({ title: 'Message created', description: 'New triggered message has been created.' });
+        }
       }
     } catch {
       toast({ title: 'Error', description: 'Failed to save message.', variant: 'destructive' });
@@ -144,55 +183,112 @@ const MessagingList = () => {
     setEditingMessage(null);
   };
 
-  const openNewMessage = () => {
+  const openNewScheduledMessage = () => {
+    setDialogMode('scheduled');
     setEditingMessage(null);
     setIsDialogOpen(true);
   };
 
-  const openEditMessage = (message: Message) => {
+  const openNewTriggeredMessage = () => {
+    setDialogMode('triggered');
+    setEditingMessage(null);
+    setIsDialogOpen(true);
+  };
+
+  const openEditScheduledMessage = (message: ScheduledMessage) => {
+    setDialogMode('scheduled');
+    setEditingMessage(message);
+    setIsDialogOpen(true);
+  };
+
+  const openEditTriggeredMessage = (message: TriggeredMessage) => {
+    setDialogMode('triggered');
     setEditingMessage(message);
     setIsDialogOpen(true);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-end">
-        <Button onClick={openNewMessage}>
-          <Plus className="mr-2 h-4 w-4" /> New Message
-        </Button>
-      </div>
+    <div className="space-y-10">
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Scheduled Messages</h2>
+            <p className="text-sm text-muted-foreground">Messages sent at specific dates or recurring times.</p>
+          </div>
+          <Button onClick={openNewScheduledMessage}>
+            <Plus className="mr-2 h-4 w-4" /> New Scheduled Message
+          </Button>
+        </div>
 
-      {isLoading ? (
-        <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
-      ) : (
-        <>
+        {isLoading ? (
+          <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+        ) : scheduledMessages.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">No scheduled messages yet.</div>
+        ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {messages.map((message) => (
-              <MessageCard 
-                key={message.id} 
-                message={message} 
-                onEdit={() => openEditMessage(message)} 
-                onDelete={() => handleDelete(message.id)} 
+            {scheduledMessages.map((message) => (
+              <ScheduledMessageCard
+                key={message.id}
+                message={message}
+                onEdit={() => openEditScheduledMessage(message)}
+                onDelete={() => handleDeleteScheduled(message.id)}
               />
             ))}
           </div>
+        )}
+      </section>
 
-          {isDialogOpen && (
-            <MessageDialog
-              isOpen={isDialogOpen}
-              onClose={() => setIsDialogOpen(false)}
-              initialData={editingMessage}
-              onSave={handleSave}
-              placeholders={placeholders}
-            />
-          )}
-        </>
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-semibold">Triggered Messages</h2>
+            <p className="text-sm text-muted-foreground">Messages sent when a specific event occurs.</p>
+          </div>
+          <Button onClick={openNewTriggeredMessage}>
+            <Plus className="mr-2 h-4 w-4" /> New Triggered Message
+          </Button>
+        </div>
+
+        {isLoading ? (
+          <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+        ) : triggeredMessages.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">No triggered messages yet.</div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {triggeredMessages.map((message) => (
+              <TriggeredMessageCard
+                key={message.id}
+                message={message}
+                onEdit={() => openEditTriggeredMessage(message)}
+                onDelete={() => handleDeleteTriggered(message.id)}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      {isDialogOpen && (
+        <MessageDialog
+          isOpen={isDialogOpen}
+          mode={dialogMode}
+          onClose={() => setIsDialogOpen(false)}
+          initialData={editingMessage}
+          onSave={handleSave}
+          placeholders={placeholders}
+        />
       )}
     </div>
   );
 };
 
-const MessageCard = ({ message, onEdit, onDelete }: { message: Message, onEdit: () => void, onDelete: () => void }) => {
+const formatTriggerType = (triggerType: TriggerType) => {
+  return triggerType
+    .split('_')
+    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
+    .join(' ');
+};
+
+const ScheduledMessageCard = ({ message, onEdit, onDelete }: { message: ScheduledMessage, onEdit: () => void, onDelete: () => void }) => {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -256,23 +352,80 @@ const MessageCard = ({ message, onEdit, onDelete }: { message: Message, onEdit: 
   );
 };
 
+const TriggeredMessageCard = ({ message, onEdit, onDelete }: { message: TriggeredMessage, onEdit: () => void, onDelete: () => void }) => {
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardTitle className="text-lg font-medium">
+          {message.name}
+        </CardTitle>
+        <span className={`px-2 py-1 rounded text-xs font-medium ${
+          message.active
+            ? 'bg-green-100 text-green-700'
+            : 'bg-gray-100 text-gray-700'
+        }`}>
+          {message.active ? 'Active' : 'Inactive'}
+        </span>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2 text-sm text-muted-foreground mt-2">
+          <div className="flex items-center">
+            <MessageSquare className="mr-2 h-4 w-4" />
+            <span>{formatTriggerType(message.triggerType)}</span>
+          </div>
+          <div className="flex items-center">
+            <Users className="mr-2 h-4 w-4" />
+            <span>{message.recipients}</span>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="flex justify-between">
+        <Button variant="outline" size="sm" onClick={onEdit}>
+          <Edit className="mr-2 h-4 w-4" /> Edit
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50">
+              <Trash2 className="mr-2 h-4 w-4" /> Delete
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This action cannot be undone. This will permanently delete the message template.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </CardFooter>
+    </Card>
+  );
+};
+
 const MessageDialog = ({ 
   isOpen, 
+  mode,
   onClose, 
   initialData, 
   onSave,
   placeholders,
 }: { 
-  isOpen: boolean, 
-  onClose: () => void, 
-  initialData: Message | null, 
-  onSave: (m: Message) => void,
+  isOpen: boolean,
+  mode: 'scheduled' | 'triggered',
+  onClose: () => void,
+  initialData: ScheduledMessage | TriggeredMessage | null,
+  onSave: (m: ScheduledMessage | TriggeredMessage) => void,
   placeholders: string[],
 }) => {
   const { toast } = useToast();
 
   // Defaults for new message
-  const defaultMessage: Message = {
+  const defaultScheduledMessage: ScheduledMessage = {
     id: '',
     name: '',
     channels: ['SMS'],
@@ -285,9 +438,34 @@ const MessageDialog = ({
     isDefault: false,
   };
 
-  const [formData, setFormData] = useState<Message>(initialData ? JSON.parse(JSON.stringify(initialData)) : defaultMessage);
+  const defaultTriggeredMessage: TriggeredMessage = {
+    id: '',
+    name: '',
+    channels: ['SMS'],
+    recipients: 'All Customers',
+    templates: {
+      sms: { isCustom: true, sections: [], content: '' },
+      email: { isCustom: true, sections: [], content: '' },
+    },
+    isDefault: false,
+    triggerType: 'PAYMENT_CONFIRMED',
+    active: true,
+  };
+
+  const [formData, setFormData] = useState<ScheduledMessage | TriggeredMessage>(
+    initialData ? JSON.parse(JSON.stringify(initialData)) : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage)
+  );
   const [activeTab, setActiveTab] = useState<'SMS' | 'Email'>('SMS');
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const seed = initialData
+      ? JSON.parse(JSON.stringify(initialData))
+      : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
+    setFormData(seed);
+    setActiveTab('SMS');
+    setActiveSectionId(null);
+  }, [initialData, mode]);
 
   // We need to track the last focused textarea to insert placeholders
   const [lastFocusedInput, setLastFocusedInput] = useState<{
@@ -300,7 +478,15 @@ const MessageDialog = ({
   };
 
   const handleScheduleChange = (field: string, value: any) => {
-    setFormData({ ...formData, schedule: { ...formData.schedule, [field]: value } });
+    if (mode !== 'scheduled') return;
+    const scheduled = formData as ScheduledMessage;
+    setFormData({ ...scheduled, schedule: { ...scheduled.schedule, [field]: value } });
+  };
+
+  const handleTriggeredChange = (field: 'triggerType' | 'active', value: any) => {
+    if (mode !== 'triggered') return;
+    const triggered = formData as TriggeredMessage;
+    setFormData({ ...triggered, [field]: value });
   };
 
   const handleChannelChange = (channel: MessageChannel, checked: boolean) => {
@@ -570,58 +756,95 @@ const MessageDialog = ({
                 </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label>Schedule Type</Label>
-                <Select 
-                  value={formData.schedule.type} 
-                  onValueChange={(val) => handleScheduleChange('type', val)}
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Recurring">Recurring</SelectItem>
-                    <SelectItem value="One-Time">One-Time</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              {mode === 'scheduled' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Schedule Type</Label>
+                    <Select 
+                      value={(formData as ScheduledMessage).schedule.type}
+                      onValueChange={(val) => handleScheduleChange('type', val)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Recurring">Recurring</SelectItem>
+                        <SelectItem value="One-Time">One-Time</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-              {formData.schedule.type === 'Recurring' ? (
-                <div className="space-y-2">
-                  <Label>Day of Month</Label>
-                  <Select 
-                    value={formData.schedule.dayOfMonth?.toString()} 
-                    onValueChange={(val) => handleScheduleChange('dayOfMonth', parseInt(val))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select day" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-48">
-                      {Array.from({length: 28}, (_, i) => i + 1).map(d => (
-                        <SelectItem key={d} value={d.toString()}>{d}th of every month</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <Label>Date</Label>
-                  <Input 
-                    type="date" 
-                    value={formData.schedule.date} 
-                    onChange={(e) => handleScheduleChange('date', e.target.value)}
-                  />
-                </div>
+                  {(formData as ScheduledMessage).schedule.type === 'Recurring' ? (
+                    <div className="space-y-2">
+                      <Label>Day of Month</Label>
+                      <Select 
+                        value={(formData as ScheduledMessage).schedule.dayOfMonth?.toString()}
+                        onValueChange={(val) => handleScheduleChange('dayOfMonth', parseInt(val))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select day" />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-48">
+                          {Array.from({length: 28}, (_, i) => i + 1).map(d => (
+                            <SelectItem key={d} value={d.toString()}>{d}th of every month</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      <Label>Date</Label>
+                      <Input 
+                        type="date" 
+                        value={(formData as ScheduledMessage).schedule.date}
+                        onChange={(e) => handleScheduleChange('date', e.target.value)}
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label>Time</Label>
+                    <Input 
+                      type="time" 
+                      value={(formData as ScheduledMessage).schedule.time}
+                      onChange={(e) => handleScheduleChange('time', e.target.value)}
+                    />
+                  </div>
+                </>
               )}
 
-              <div className="space-y-2">
-                <Label>Time</Label>
-                <Input 
-                  type="time" 
-                  value={formData.schedule.time} 
-                  onChange={(e) => handleScheduleChange('time', e.target.value)}
-                />
-              </div>
+              {mode === 'triggered' && (
+                <>
+                  <div className="space-y-2">
+                    <Label>Trigger Type</Label>
+                    <Select 
+                      value={(formData as TriggeredMessage).triggerType}
+                      onValueChange={(val) => handleTriggeredChange('triggerType', val as TriggerType)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="PAYMENT_CONFIRMED">Payment Confirmed</SelectItem>
+                        <SelectItem value="EMAIL_VERIFICATION">Email Verification</SelectItem>
+                        <SelectItem value="PHONE_VERIFICATION">Phone Verification</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-md border p-3">
+                    <div>
+                      <Label htmlFor="trigger-active" className="text-sm font-medium">Active</Label>
+                      <div className="text-xs text-muted-foreground">Whether this trigger is enabled.</div>
+                    </div>
+                    <Switch
+                      id="trigger-active"
+                      checked={(formData as TriggeredMessage).active}
+                      onCheckedChange={(chk) => handleTriggeredChange('active', chk)}
+                    />
+                  </div>
+                </>
+              )}
             </div>
           </TabsContent>
           
