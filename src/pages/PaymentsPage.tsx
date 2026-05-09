@@ -2,11 +2,13 @@ import { useState, useEffect } from 'react';
 import { Search, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockBankSlips } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';
 import { searchCustomersApi } from '@/services/customerService';
 import { getPaymentCustomerInfo, getRecentPayments, RecentPaymentResponse } from '@/services/paymentService';
 import { toast } from '@/components/ui/sonner';
+import { AdminBankSlipResponse, getAllPendingSlips, getPendingSlips } from '@/services/bankSlipService';
+import { connectAdminSlipSocket, disconnectAdminSlipSocket } from '@/services/websocketService';
+import { formatDateTime } from "@/util/dateUtils";
 
 console.log({ Search, AlertCircle, CheckCircle, Clock });
 console.log({ Button, Input, toast });
@@ -18,6 +20,15 @@ export const PaymentsPage = () => {
   const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [recentPayments, setRecentPayments] = useState<RecentPaymentResponse[]>([]);
+  const [pendingSlips, setPendingSlips] = useState<AdminBankSlipResponse[]>([]);
+
+  const [slipPage, setSlipPage] = useState(0);
+  const [slipSearch, setSlipSearch] = useState('');
+  const [slipData, setSlipData] = useState<AdminBankSlipResponse[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loadingSlips, setLoadingSlips] = useState(false);
+
+  const [showSlipSearch, setShowSlipSearch] = useState(false);
 
   const statusStyles = {
     full: 'bg-success/10 text-success',
@@ -29,8 +40,23 @@ export const PaymentsPage = () => {
     partial: Clock,
   } as const;
 
-  const handleReviewSlip = (slipId: string) => {
-    navigate(`/payments/slips/${slipId}`);
+  const handleReviewAll = async () => {
+    try {
+      const data = await getAllPendingSlips();
+
+      if (!data || data.length === 0) {
+        toast.info("No pending slips to review.");
+        return;
+      }
+
+      // navigate with first slip + pass data (state)
+      navigate(`/admin/payments/slip/${data[0].slipId}?mode=all`, {
+        state: { slips: data }
+      });
+
+    } catch (err) {
+      toast.error("Failed to load slips for review");
+    }
   };
 
   useEffect(() => {
@@ -65,6 +91,41 @@ export const PaymentsPage = () => {
     loadRecent();
   }, []);
 
+  useEffect(() => {
+    const loadPendingSlips = async () => {
+      setLoadingSlips(true);
+      try {
+        const data = await getPendingSlips(slipPage, 10, slipSearch);
+
+        setSlipData(data.content);
+        setTotalPages(data.totalPages);
+
+      } catch (err) {
+        toast.error("Failed to load pending slips");
+      } finally {
+        setLoadingSlips(false);
+      }
+    };
+
+    loadPendingSlips();
+  }, [slipPage, slipSearch]);
+
+  useEffect(() => {
+    const handleNewSlip = (newSlip: AdminBankSlipResponse) => {
+      setPendingSlips((prev) => {
+        const exists = prev.some(s => s.slipId === newSlip.slipId);
+        if (exists) return prev;
+        return [newSlip, ...prev];
+      });
+    };
+
+    connectAdminSlipSocket(handleNewSlip);
+
+    return () => {
+      disconnectAdminSlipSocket();
+    };
+  }, []);
+
   const handleCustomerSelect = async (customer: any) => {
     try {
       const fullCustomer = await getPaymentCustomerInfo(customer.subscriptionNumber);
@@ -76,21 +137,12 @@ export const PaymentsPage = () => {
     }
   }
 
-  const formatDateTime = (dateString) => {
-  const date = new Date(dateString.replace(" ", "T"));
-
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-
-  let hours = date.getHours();
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-
-  const ampm = hours >= 12 ? "PM" : "AM";
-  hours = hours % 12 || 12; // convert 0 → 12
-
-  return `${year}-${month}-${day} ${hours}:${minutes} ${ampm}`;
-};
+  const formatPaymentMethod = (method: string) => {
+    return method
+      .toLowerCase()
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (c) => c.toUpperCase());
+  };
 
   return (
     <div className="space-y-6">
@@ -250,16 +302,68 @@ export const PaymentsPage = () => {
 
         {/* Pending Bank Slip Table */}
         <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up lg:w-[60%]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-foreground">
-              Pending Bank Slips
-            </h3>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-foreground">
-              {mockBankSlips.length} Pending
-            </span>
+
+          {/* Header */}
+          <div className="flex items-start justify-between mb-5 gap-4">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground">
+                Pending Bank Slips
+              </h3>
+
+              <p className="text-sm text-muted-foreground mt-1">
+                Review uploaded customer bank slips
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3">
+
+              {/* Expandable Search */}
+              <div
+                className={`
+          flex items-center h-11 rounded-xl border border-border bg-background
+          overflow-hidden transition-all duration-300 shadow-sm
+          ${showSlipSearch ? "w-72 px-3" : "w-11 justify-center"}
+        `}
+              >
+                <Search
+                  className="w-4 h-4 text-muted-foreground cursor-pointer shrink-0"
+                  onClick={() => setShowSlipSearch(true)}
+                />
+
+                {showSlipSearch && (
+                  <input
+                    autoFocus
+                    type="text"
+                    value={slipSearch}
+                    onChange={(e) => {
+                      setSlipSearch(e.target.value);
+                      setSlipPage(0);
+                    }}
+                    onBlur={() => {
+                      if (!slipSearch.trim()) {
+                        setShowSlipSearch(false);
+                      }
+                    }}
+                    placeholder="Enter Name / Subscription Number"
+                    className="ml-3 w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
+                  />
+                )}
+              </div>
+
+              {/* Review All Button */}
+              <Button
+                variant="outline"
+                onClick={handleReviewAll}
+                className="rounded-xl h-11 px-4 border-primary/20 hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                Review All
+              </Button>
+            </div>
           </div>
 
+          {/* Table */}
           <div className="border border-border rounded-xl overflow-hidden">
+
             {/* Table Header */}
             <div className="grid grid-cols-12 px-6 py-3 bg-secondary/50 text-xs font-semibold text-muted-foreground">
               <div className="col-span-4">Customer</div>
@@ -269,49 +373,97 @@ export const PaymentsPage = () => {
             </div>
 
             {/* Table Body */}
-            <div className="max-h-[450px] overflow-auto">
-              {mockBankSlips.map((slip) => (
-                <div
-                  key={slip.id}
-                  className="grid grid-cols-12 px-6 py-4 border-t border-border hover:bg-secondary/30 transition-colors text-sm items-center"
-                >
-                  {/* Customer */}
-                  <div className="col-span-4">
-                    <p className="font-medium text-foreground">
-                      {slip.customerName}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {slip.subscriptionNo}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground mt-1">
-                      {slip.uploadedAt}
-                    </p>
-                  </div>
-
-                  {/* Ref No */}
-                  <div className="col-span-3 text-muted-foreground">
-                    {slip.refNo}
-                  </div>
-
-                  {/* Amount */}
-                  <div className="col-span-2 text-right font-semibold text-foreground pr-4">
-                    Rs. {slip.amount.toLocaleString()}
-                  </div>
-
-                  {/* Action */}
-                  <div className="col-span-3 flex justify-center">
-                    <Button size="sm" className="px-5" onClick={() => navigate(`/admin/payments/slip/${slip.id}`)}>
-                      Review
-                    </Button>
-                  </div>
+            <div>
+              {loadingSlips && (
+                <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
+                  Loading pending slips...
                 </div>
-              ))}
+              )}
+
+              {!loadingSlips && slipData.length === 0 && (
+                <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
+                  No pending slips found
+                </div>
+              )}
+
+              {!loadingSlips &&
+                slipData.length > 0 &&
+                slipData.map((slip) => (
+                  <div
+                    key={slip.slipId}
+                    className="grid grid-cols-12 px-6 py-4 border-t border-border hover:bg-secondary/30 transition-colors text-sm items-center"
+                  >
+                    {/* Customer */}
+                    <div className="col-span-4">
+                      <p className="font-medium text-foreground">
+                        {slip.accountHolderName}
+                      </p>
+
+                      <p className="text-xs text-muted-foreground">
+                        {slip.subscriptionNumber}
+                      </p>
+
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {formatDateTime(slip.uploadedAt)}
+                      </p>
+                    </div>
+
+                    {/* Ref No */}
+                    <div className="col-span-3 text-muted-foreground">
+                      {slip.bankReference}
+                    </div>
+
+                    {/* Amount */}
+                    <div className="col-span-2 text-right font-semibold text-foreground pr-4">
+                      Rs. {slip.amount.toLocaleString()}
+                    </div>
+
+                    {/* Action */}
+                    <div className="col-span-3 flex justify-center">
+                      <Button
+                        size="sm"
+                        className="px-5 rounded-lg"
+                        onClick={() =>
+                          navigate(`/admin/payments/slip/${slip.slipId}`)
+                        }
+                      >
+                        Review
+                      </Button>
+                    </div>
+                  </div>
+                ))}
             </div>
           </div>
 
-          <p className="mt-3 text-xs text-muted-foreground">
-            Only pending slips are shown here.
-          </p>
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-6 mt-5">
+
+              <button
+                onClick={() => setSlipPage((p) => p - 1)}
+                disabled={slipPage === 0}
+                className="h-9 w-9 rounded-full border border-border flex items-center justify-center
+        text-muted-foreground hover:text-foreground hover:bg-secondary
+        disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                &lt;
+              </button>
+
+              <span className="text-sm font-medium text-foreground">
+                Page {slipPage + 1} of {totalPages}
+              </span>
+
+              <button
+                onClick={() => setSlipPage((p) => p + 1)}
+                disabled={slipPage + 1 >= totalPages}
+                className="h-9 w-9 rounded-full border border-border flex items-center justify-center
+        text-muted-foreground hover:text-foreground hover:bg-secondary
+        disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              >
+                &gt;
+              </button>
+            </div>
+          )}
         </div>
 
       </div>
