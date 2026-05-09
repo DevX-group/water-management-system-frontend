@@ -96,3 +96,9 @@ export const getMessageFailures = async (sentMessageId: string): Promise<FailedR
   if (!res.ok) throw new Error('Failed to fetch failed recipients');
   return res.json();
 };
+
+export const getMessagePlaceholders = async (): Promise<string[]> => {
+  const res = await fetch(`${API_BASE}/placeholders`);
+  if (!res.ok) throw new Error('Failed to fetch placeholders');
+  return res.json();
+};

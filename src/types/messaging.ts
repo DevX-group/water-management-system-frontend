@@ -61,23 +61,3 @@ export interface FailedRecipient {
   smsFailed: boolean;
   emailFailed: boolean;
 }
-
-export const PLACEHOLDERS = [
-  "customer_name",
-  "customer_number",
-  "billing_period",
-  "bill_date",
-  "base_charge",
-  "usage_units",
-  "usage_charge",
-  "tax_amount",
-  "monthly_fee",
-  "outstanding_balance",
-  "total_balance",
-  "due_date",
-  "overdue_threshold_(LKR)",
-  "reconnection_fee_(LKR)",
-  "pradeshiya_sabha_acc_no",
-  "whatsApp_number",
-  "online_bill_portal_link"
-];

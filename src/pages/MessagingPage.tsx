@@ -61,7 +61,6 @@ import {
   Message, 
   MessageChannel, 
   MessageTemplate, 
-  PLACEHOLDERS, 
   ScheduleType, 
   TemplateSection,
   RecipientType 
@@ -101,6 +100,7 @@ const MessagingList = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
+  const [placeholders, setPlaceholders] = useState<string[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -108,6 +108,12 @@ const MessagingList = () => {
       .then(setMessages)
       .catch(() => toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' }))
       .finally(() => setIsLoading(false));
+  }, []);
+
+  useEffect(() => {
+    messageApi.getMessagePlaceholders()
+      .then(setPlaceholders)
+      .catch(() => toast({ title: 'Error', description: 'Failed to load placeholders.', variant: 'destructive' }));
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -177,6 +183,7 @@ const MessagingList = () => {
               onClose={() => setIsDialogOpen(false)}
               initialData={editingMessage}
               onSave={handleSave}
+              placeholders={placeholders}
             />
           )}
         </>
@@ -253,12 +260,14 @@ const MessageDialog = ({
   isOpen, 
   onClose, 
   initialData, 
-  onSave 
+  onSave,
+  placeholders,
 }: { 
   isOpen: boolean, 
   onClose: () => void, 
   initialData: Message | null, 
-  onSave: (m: Message) => void 
+  onSave: (m: Message) => void,
+  placeholders: string[],
 }) => {
   const { toast } = useToast();
 
@@ -645,20 +654,24 @@ const MessageDialog = ({
                    {/* Editor Area */}
                    <div className="space-y-4">
                      <div className="space-y-2">
-                       <Label className="text-xs text-muted-foreground">Placeholders (Click to copy/insert)</Label>
-                       <div className="flex flex-wrap gap-2">
-                         {PLACEHOLDERS.map(p => (
-                           <Button 
-                             key={p} 
-                             variant="outline" 
-                             size="sm" 
-                             onClick={() => insertPlaceholder(p)}
-                             className="h-6 text-[10px] px-2"
-                           >
-                             {p}
-                           </Button>
-                         ))}
-                       </div>
+                      <Label className="text-xs text-muted-foreground">Placeholders (Click to copy/insert)</Label>
+                      <div className="flex flex-wrap gap-2">
+                        {placeholders.length === 0 ? (
+                          <div className="text-xs text-muted-foreground">No placeholders available.</div>
+                        ) : (
+                          placeholders.map(p => (
+                            <Button 
+                              key={p} 
+                              variant="outline" 
+                              size="sm" 
+                              onClick={() => insertPlaceholder(p)}
+                              className="h-6 text-[10px] px-2"
+                            >
+                              {p}
+                            </Button>
+                          ))
+                        )}
+                      </div>
                      </div>
                      {activeTab === 'Email' && (
                        <div className="space-y-2">
