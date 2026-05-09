@@ -8,6 +8,7 @@ const api = axios.create({
 export type PaymentStatus = "FULL" | "PARTIAL";
 export type PaymentType = "MONTHLY" | "OUTSTANDING";
 export type PaymentMethod = "ONLINE" | "BANK_TRANSFER" | "MANUAL";
+export type SlipStatus = "PENDING" | "APPROVED" | "REJECTED";
 
 export interface AddPaymentRequest {
   subscriptionNumber: string;
@@ -64,8 +65,9 @@ export interface PaymentHistoryItemResponse {
   paymentId: string;
   subscriptionNumber: string;
   amount: number;
-  status: string;
-  paymentType: string;
+  status: PaymentStatus;
+  paymentType: PaymentType;
+  paymentMethod: PaymentMethod;
   createdAt: string;
 }
 
@@ -83,6 +85,13 @@ export interface RecentPaymentResponse {
   amountPaid: number;
   status: string;
   createdAt: string;
+  paymentType: PaymentType;
+  paymentMethod: PaymentMethod;
+}
+
+export interface CustomerAddPaymentRequest {
+  amount: number;
+  paymentMethod: PaymentMethod;
 }
 
 export interface CustomerPaymentResponse {
@@ -104,6 +113,13 @@ export interface CustomerPaymentResponse {
   return_url: string;
   cancel_url: string;
   notify_url: string;
+}
+
+export interface BankDetailsResponse {
+  bankName: string;
+  branch: string;
+  accountNumber: string;
+  accountName: string;
 }
 
 export const getCustomerPaymentSummary = async (
@@ -130,9 +146,9 @@ export const getOutstandingBillsSummary = async (subscriptionNumber: string) => 
   return res.data as OutstandingBillsSummaryResponse;
 };
 
-export const getPaymentHistory = async (subscriptionNumber: string) => {
-  const res = await api.get(`/payments/history/${subscriptionNumber}`);
-  return res.data as PaymentHistoryItemResponse[];
+export const getPaymentHistory = async (subscriptionNumber: string, page = 0, size = 6) => {
+  const res = await api.get(`/payments/history/${subscriptionNumber}?page=${page}&size=${size}`);
+  return res.data;
 };
 
 export const getPaymentCustomerInfo = async (subscriptionNumber: string) => {
@@ -150,7 +166,37 @@ export const updatePayment = async (paymentId: string, amount: number) => {
   return res.data;
 }
 
-export const initiatePayment = async (payload: AddPaymentRequest): Promise<CustomerPaymentResponse> => {
+export const initiatePayment = async (payload: CustomerAddPaymentRequest): Promise<CustomerPaymentResponse> => {
   const res = await api.post("/customer/payments/initiate", payload);
   return res.data;
 };
+
+export const getPaymentStatus = async (orderId: string) => {
+  const response = await api.get(`/customer/payments/status/${orderId}`);
+  return response.data;
+};
+
+export const getCurrentBillForCustomer = async () => {
+  const res = await api.get("/customer/payments/current-bill");
+  return res.data as CurrentBillResponse | null;
+}
+
+export const getOutstandingBillsForCustomer = async () => {
+  const res = await api.get("/customer/payments/outstanding-bills");
+  return res.data as OutstandingBillsSummaryResponse;
+}
+
+export const getPaymentHistoryForCustomer = async (page = 0, size = 6) => {
+  const res = await api.get(`/customer/payments/history?page=${page}&size=${size}`);
+  return res.data;
+};
+
+export const getBankDetails = async () => {
+  const res = await api.get("/public/payments/bank-details");
+  return res.data as BankDetailsResponse;
+};
+
+export const deletePayment = async (paymentId: string) => {
+  const res = await api.delete(`/payments/delete/${paymentId}`);
+  return res.data;
+}
