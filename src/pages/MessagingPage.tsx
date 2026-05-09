@@ -1,5 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { 
   Plus, 
   Trash2, 
@@ -71,6 +72,17 @@ import * as messageApi from '../services/messageService';
 import { MessageHistoryPage } from './messageHistoryPage';
 
 export const MessagingPage = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const isHistory = location.pathname.includes('/admin/messaging/history');
+  const activeTab = location.pathname.includes('/admin/messaging/triggered') ? 'triggered' : 'scheduled';
+
+  useEffect(() => {
+    if (location.pathname === '/admin/messaging' || location.pathname === '/admin/messaging/') {
+      navigate('/admin/messaging/scheduled', { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
   return (
     <div className="space-y-6 p-6 pb-24 px-24">
       <div className="flex justify-between items-center mb-6">
@@ -80,41 +92,45 @@ export const MessagingPage = () => {
         </div>
       </div>
 
-       <Tabs defaultValue="messages" className="w-full">
+      <Tabs value={activeTab} onValueChange={(val) => navigate(`/admin/messaging/${val}`)} className="w-full">
         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="messages" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Messages</TabsTrigger>
-          <TabsTrigger value="history" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">History</TabsTrigger>
+          <TabsTrigger value="scheduled" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Scheduled Messages</TabsTrigger>
+          <TabsTrigger value="triggered" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Triggered Messages</TabsTrigger>
         </TabsList>
-        <TabsContent value="messages" className="mt-6">
-          <MessagingList />
-        </TabsContent>
-        <TabsContent value="history" className="mt-6">
-          <MessageHistoryPage />
-        </TabsContent>
+        {!isHistory && (
+          <>
+            <TabsContent value="scheduled" className="mt-6">
+              <ScheduledMessagePage />
+            </TabsContent>
+            <TabsContent value="triggered" className="mt-6">
+              <TriggeredMessagePage />
+            </TabsContent>
+          </>
+        )}
       </Tabs>
+      {isHistory && (
+        <div className="mt-6">
+          <MessageHistoryPage />
+        </div>
+      )}
     </div>
   );
 };
 
-const MessagingList = () => {
+const ScheduledMessagePage = () => {
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
-  const [triggeredMessages, setTriggeredMessages] = useState<TriggeredMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingMessage, setEditingMessage] = useState<ScheduledMessage | TriggeredMessage | null>(null);
-  const [dialogMode, setDialogMode] = useState<'scheduled' | 'triggered'>('scheduled');
+  const [editingMessage, setEditingMessage] = useState<ScheduledMessage | null>(null);
   const [placeholders, setPlaceholders] = useState<string[]>([]);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const load = async () => {
       try {
-        const [scheduled, triggered] = await Promise.all([
-          messageApi.getAllScheduledMessages(),
-          messageApi.getAllTriggeredMessages(),
-        ]);
+        const scheduled = await messageApi.getAllScheduledMessages();
         setScheduledMessages(scheduled);
-        setTriggeredMessages(triggered);
       } catch {
         toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' });
       } finally {
@@ -141,6 +157,111 @@ const MessagingList = () => {
     }
   };
 
+  const handleSave = async (message: ScheduledMessage) => {
+    try {
+      if (editingMessage) {
+        const updated = await messageApi.updateScheduledMessage(message.id, message);
+        setScheduledMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
+        toast({ title: 'Message updated', description: 'Your changes have been saved.' });
+      } else {
+        const created = await messageApi.createScheduledMessage(message);
+        setScheduledMessages(prev => [...prev, created]);
+        toast({ title: 'Message created', description: 'New scheduled message has been created.' });
+      }
+    } catch {
+      toast({ title: 'Error', description: 'Failed to save message.', variant: 'destructive' });
+    }
+    setIsDialogOpen(false);
+    setEditingMessage(null);
+  };
+
+  const openNewScheduledMessage = () => {
+    setEditingMessage(null);
+    setIsDialogOpen(true);
+  };
+
+  const openEditScheduledMessage = (message: ScheduledMessage) => {
+    setEditingMessage(message);
+    setIsDialogOpen(true);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Scheduled Messages</h2>
+          <p className="text-sm text-muted-foreground">Messages sent at specific dates or recurring times.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={() => navigate('/admin/messaging/history')}>
+            View Scheduled Message History
+          </Button>
+          <Button onClick={openNewScheduledMessage}>
+            <Plus className="mr-2 h-4 w-4" /> New Scheduled Message
+          </Button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+      ) : scheduledMessages.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">No scheduled messages yet.</div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {scheduledMessages.map((message) => (
+            <ScheduledMessageCard
+              key={message.id}
+              message={message}
+              onEdit={() => openEditScheduledMessage(message)}
+              onDelete={() => handleDeleteScheduled(message.id)}
+            />
+          ))}
+        </div>
+      )}
+
+      {isDialogOpen && (
+        <MessageDialog
+          isOpen={isDialogOpen}
+          mode="scheduled"
+          onClose={() => setIsDialogOpen(false)}
+          initialData={editingMessage}
+          onSave={handleSave}
+          placeholders={placeholders}
+        />
+      )}
+    </div>
+  );
+};
+
+const TriggeredMessagePage = () => {
+  const [triggeredMessages, setTriggeredMessages] = useState<TriggeredMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingMessage, setEditingMessage] = useState<TriggeredMessage | null>(null);
+  const [placeholders, setPlaceholders] = useState<string[]>([]);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const triggered = await messageApi.getAllTriggeredMessages();
+        setTriggeredMessages(triggered);
+      } catch {
+        toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, [toast]);
+
+  useEffect(() => {
+    messageApi.getMessagePlaceholders()
+      .then(setPlaceholders)
+      .catch(() => toast({ title: 'Error', description: 'Failed to load placeholders.', variant: 'destructive' }));
+  }, []);
+
   const handleDeleteTriggered = async (id: string) => {
     try {
       await messageApi.deleteTriggeredMessage(id);
@@ -151,30 +272,16 @@ const MessagingList = () => {
     }
   };
 
-  const handleSave = async (message: ScheduledMessage | TriggeredMessage) => {
+  const handleSave = async (message: TriggeredMessage) => {
     try {
-      if (dialogMode === 'scheduled') {
-        const scheduled = message as ScheduledMessage;
-        if (editingMessage) {
-          const updated = await messageApi.updateScheduledMessage(scheduled.id, scheduled);
-          setScheduledMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
-          toast({ title: 'Message updated', description: 'Your changes have been saved.' });
-        } else {
-          const created = await messageApi.createScheduledMessage(scheduled);
-          setScheduledMessages(prev => [...prev, created]);
-          toast({ title: 'Message created', description: 'New scheduled message has been created.' });
-        }
+      if (editingMessage) {
+        const updated = await messageApi.updateTriggeredMessage(message.id, message);
+        setTriggeredMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
+        toast({ title: 'Message updated', description: 'Your changes have been saved.' });
       } else {
-        const triggered = message as TriggeredMessage;
-        if (editingMessage) {
-          const updated = await messageApi.updateTriggeredMessage(triggered.id, triggered);
-          setTriggeredMessages(prev => prev.map(m => m.id === updated.id ? updated : m));
-          toast({ title: 'Message updated', description: 'Your changes have been saved.' });
-        } else {
-          const created = await messageApi.createTriggeredMessage(triggered);
-          setTriggeredMessages(prev => [...prev, created]);
-          toast({ title: 'Message created', description: 'New triggered message has been created.' });
-        }
+        const created = await messageApi.createTriggeredMessage(message);
+        setTriggeredMessages(prev => [...prev, created]);
+        toast({ title: 'Message created', description: 'New triggered message has been created.' });
       }
     } catch {
       toast({ title: 'Error', description: 'Failed to save message.', variant: 'destructive' });
@@ -183,94 +290,49 @@ const MessagingList = () => {
     setEditingMessage(null);
   };
 
-  const openNewScheduledMessage = () => {
-    setDialogMode('scheduled');
-    setEditingMessage(null);
-    setIsDialogOpen(true);
-  };
-
   const openNewTriggeredMessage = () => {
-    setDialogMode('triggered');
     setEditingMessage(null);
-    setIsDialogOpen(true);
-  };
-
-  const openEditScheduledMessage = (message: ScheduledMessage) => {
-    setDialogMode('scheduled');
-    setEditingMessage(message);
     setIsDialogOpen(true);
   };
 
   const openEditTriggeredMessage = (message: TriggeredMessage) => {
-    setDialogMode('triggered');
     setEditingMessage(message);
     setIsDialogOpen(true);
   };
 
   return (
-    <div className="space-y-10">
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold">Scheduled Messages</h2>
-            <p className="text-sm text-muted-foreground">Messages sent at specific dates or recurring times.</p>
-          </div>
-          <Button onClick={openNewScheduledMessage}>
-            <Plus className="mr-2 h-4 w-4" /> New Scheduled Message
-          </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Triggered Messages</h2>
+          <p className="text-sm text-muted-foreground">Messages sent when a specific event occurs.</p>
         </div>
+        <Button onClick={openNewTriggeredMessage}>
+          <Plus className="mr-2 h-4 w-4" /> New Triggered Message
+        </Button>
+      </div>
 
-        {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
-        ) : scheduledMessages.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">No scheduled messages yet.</div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {scheduledMessages.map((message) => (
-              <ScheduledMessageCard
-                key={message.id}
-                message={message}
-                onEdit={() => openEditScheduledMessage(message)}
-                onDelete={() => handleDeleteScheduled(message.id)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
-
-      <section className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold">Triggered Messages</h2>
-            <p className="text-sm text-muted-foreground">Messages sent when a specific event occurs.</p>
-          </div>
-          <Button onClick={openNewTriggeredMessage}>
-            <Plus className="mr-2 h-4 w-4" /> New Triggered Message
-          </Button>
+      {isLoading ? (
+        <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
+      ) : triggeredMessages.length === 0 ? (
+        <div className="text-center py-12 text-muted-foreground">No triggered messages yet.</div>
+      ) : (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {triggeredMessages.map((message) => (
+            <TriggeredMessageCard
+              key={message.id}
+              message={message}
+              onEdit={() => openEditTriggeredMessage(message)}
+              onDelete={() => handleDeleteTriggered(message.id)}
+            />
+          ))}
         </div>
-
-        {isLoading ? (
-          <div className="text-center py-12 text-muted-foreground">Loading messages...</div>
-        ) : triggeredMessages.length === 0 ? (
-          <div className="text-center py-12 text-muted-foreground">No triggered messages yet.</div>
-        ) : (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {triggeredMessages.map((message) => (
-              <TriggeredMessageCard
-                key={message.id}
-                message={message}
-                onEdit={() => openEditTriggeredMessage(message)}
-                onDelete={() => handleDeleteTriggered(message.id)}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+      )}
 
       {isDialogOpen && (
         <MessageDialog
           isOpen={isDialogOpen}
-          mode={dialogMode}
+          mode="triggered"
           onClose={() => setIsDialogOpen(false)}
           initialData={editingMessage}
           onSave={handleSave}
