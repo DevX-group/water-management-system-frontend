@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +20,7 @@ import { getMessageFailures, getMessageHistory } from "../services/messageServic
 import { FailedRecipient, MessageHistoryRow } from "../types/messaging";
 
 export const MessageHistoryPage = () => {
+  const navigate = useNavigate();
   const [rows, setRows] = useState<MessageHistoryRow[]>([]);
   const [failedRecipients, setFailedRecipients] = useState<Record<string, FailedRecipient[]>>({});
   const [loadingFailuresFor, setLoadingFailuresFor] = useState<string | null>(null);
@@ -65,6 +67,11 @@ export const MessageHistoryPage = () => {
 
   return (
     <div className="space-y-6 p-6 pb-24 px-0">
+      <div>
+        <Button variant="outline" onClick={() => navigate('/admin/messaging/scheduled')}>
+          Back to Scheduled Messages
+        </Button>
+      </div>
       {/* <div>
         <h1 className="text-3xl font-bold tracking-tight">Message History</h1>
         <p className="text-muted-foreground">

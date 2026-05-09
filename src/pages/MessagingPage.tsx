@@ -188,11 +188,8 @@ const ScheduledMessagePage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold">Scheduled Messages</h2>
-          <p className="text-sm text-muted-foreground">Messages sent at specific dates or recurring times.</p>
-        </div>
-        <div className="flex items-center gap-2">
+        <div className="flex-1" />
+        <div className="flex items-center gap-5">
           <Button variant="outline" onClick={() => navigate('/admin/messaging/history')}>
             View Scheduled Message History
           </Button>
@@ -303,10 +300,7 @@ const TriggeredMessagePage = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-lg font-semibold">Triggered Messages</h2>
-          <p className="text-sm text-muted-foreground">Messages sent when a specific event occurs.</p>
-        </div>
+        <div className="flex-1" />
         <Button onClick={openNewTriggeredMessage}>
           <Plus className="mr-2 h-4 w-4" /> New Triggered Message
         </Button>
