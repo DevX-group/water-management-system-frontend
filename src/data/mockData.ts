@@ -115,7 +115,9 @@ export interface BankSlip {
   amount: number;
   refNo: string;
   uploadedAt: string;
+  bankPaymentDate: string;
   slipImageUrl: string;
+  status: 'pending' | 'verified' | 'rejected';
 }
 
 export const mockAdmins: Admin[] = [
@@ -151,10 +153,10 @@ export const mockPayments: Payment[] = [
 
 export const mockBankSlips: BankSlip[] = [
 
-  { id: 'BS-001', customerId: '002', customerName: 'Supun Perera', subscriptionNo: 'SOU-458945', amount: 2800, refNo: 'BANK-84321', uploadedAt: '2026-02-16 09:12 AM', slipImageUrl:"/mock-bank-slip.jpg"},
-  { id: 'BS-002', customerId: '001', customerName: 'Sanjeewa Kumara', subscriptionNo: 'NOR-234123', amount: 1500, refNo: 'BANK-77109', uploadedAt: '2026-02-16 08:40 AM', slipImageUrl: "/mock-bank-slip.jpg"},
-  { id: 'BS-003', customerId: '003', customerName: 'Kamani Silva', subscriptionNo: 'NOR-789267', amount: 3200, refNo: 'BANK-12345', uploadedAt: '2026-02-15 11:30 AM', slipImageUrl: "/mock-bank-slip.jpg"},
-  { id: 'BS-004', customerId: '004', customerName: 'Ruwan Jayawardena', subscriptionNo: 'EAS-123459', amount: 2100, refNo: 'BANK-56789', uploadedAt: '2026-02-15 14:45 PM', slipImageUrl: "/mock-bank-slip.jpg"},
+  { id: 'BS-001', customerId: '002', customerName: 'Supun Perera', subscriptionNo: 'SOU-458945', amount: 2800, refNo: 'BANK-84321', uploadedAt: '2026-02-16 09:12 AM', slipImageUrl:"/mock-bank-slip.jpg", status: 'pending', bankPaymentDate: '2026-02-15' },
+  { id: 'BS-002', customerId: '001', customerName: 'Sanjeewa Kumara', subscriptionNo: 'NOR-234123', amount: 1500, refNo: 'BANK-77109', uploadedAt: '2026-02-16 08:40 AM', slipImageUrl: "/mock-bank-slip.jpg", status: 'pending', bankPaymentDate: '2026-02-15' },
+  { id: 'BS-003', customerId: '003', customerName: 'Kamani Silva', subscriptionNo: 'NOR-789267', amount: 3200, refNo: 'BANK-12345', uploadedAt: '2026-02-15 11:30 AM', slipImageUrl: "/mock-bank-slip.jpg", status: 'pending', bankPaymentDate: '2026-02-15' },
+  { id: 'BS-004', customerId: '004', customerName: 'Ruwan Jayawardena', subscriptionNo: 'EAS-123459', amount: 2100, refNo: 'BANK-56789', uploadedAt: '2026-02-15 14:45 PM', slipImageUrl: "/mock-bank-slip.jpg", status: 'pending', bankPaymentDate: '2026-02-15' },
 
 ];
 
