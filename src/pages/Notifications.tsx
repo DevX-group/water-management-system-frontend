@@ -9,7 +9,7 @@ const Notifications = () => {
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   // Use the subscription number currently in your database
   const subNum = "SK-2341"; 
@@ -48,36 +48,36 @@ const Notifications = () => {
   const getSeverityStyles = (severity: string) => {
     switch (severity.toLowerCase()) {
       case "critical": return { 
-        cardBg: "bg-red-100/80", 
-        borderColor: "border-red-200",
-        textColor: "text-red-900",
+        cardBg: "bg-white", 
+        borderColor: "border-red-100",
+        textColor: "text-red-600",
         icon: AlertOctagon, 
-        iconColor: "text-red-700",
-        dismissBtn: "bg-red-200 text-red-800 hover:bg-red-300"
+        iconColor: "text-red-500",
+        dismissBtn: "bg-red-50 text-red-600 hover:bg-red-100"
       };
       case "high": return { 
-        cardBg: "bg-orange-100/80", 
-        borderColor: "border-orange-200",
-        textColor: "text-orange-900",
+        cardBg: "bg-white", 
+        borderColor: "border-orange-100",
+        textColor: "text-orange-600",
         icon: AlertTriangle, 
-        iconColor: "text-orange-700",
-        dismissBtn: "bg-orange-200 text-orange-800 hover:bg-orange-300"
+        iconColor: "text-orange-500",
+        dismissBtn: "bg-orange-50 text-orange-600 hover:bg-orange-100"
       };
       case "medium": return { 
-        cardBg: "bg-amber-100/80", 
-        borderColor: "border-amber-200",
-        textColor: "text-amber-900",
+        cardBg: "bg-white", 
+        borderColor: "border-amber-100",
+        textColor: "text-amber-600",
         icon: AlertTriangle, 
-        iconColor: "text-amber-700",
-        dismissBtn: "bg-amber-200 text-amber-800 hover:bg-amber-300"
+        iconColor: "text-amber-500",
+        dismissBtn: "bg-amber-50 text-amber-600 hover:bg-amber-100"
       };
       default: return { 
-        cardBg: "bg-blue-100/80", 
-        borderColor: "border-blue-200",
-        textColor: "text-blue-900",
+        cardBg: "bg-white", 
+        borderColor: "border-blue-100",
+        textColor: "text-blue-600",
         icon: Info, 
-        iconColor: "text-blue-700",
-        dismissBtn: "bg-blue-200 text-blue-800 hover:bg-blue-300"
+        iconColor: "text-blue-500",
+        dismissBtn: "bg-blue-50 text-blue-600 hover:bg-blue-100"
       };
     }
   };
@@ -150,17 +150,17 @@ const Notifications = () => {
               return (
                 <Card 
                   key={alert.id} 
-                  className={`rounded-3xl border-none shadow-sm transition-all ${styles.cardBg}`}
+                  className={`rounded-3xl border ${styles.borderColor} shadow-sm transition-all ${styles.cardBg}`}
                 >
                   <CardContent className="p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                     <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-2xl bg-white/60 backdrop-blur-sm ${styles.iconColor}`}>
+                      <div className={`p-3 rounded-2xl bg-slate-50 ${styles.iconColor}`}>
                         <Icon className="w-6 h-6" />
                       </div>
                       <div>
                         <h3 className={`font-bold text-lg ${styles.textColor}`}>{alert.title}</h3>
-                        <p className={`${styles.textColor} opacity-80 text-sm mb-1`}>{alert.description}</p>
-                        <div className={`flex items-center gap-4 text-xs font-medium ${styles.textColor} opacity-70`}>
+                        <p className="text-slate-600 text-sm mb-1">{alert.description}</p>
+                        <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
                           {alert.usage && <span>Usage: {alert.usage}</span>}
                           <span>{new Date(alert.time).toLocaleString()}</span>
                         </div>
