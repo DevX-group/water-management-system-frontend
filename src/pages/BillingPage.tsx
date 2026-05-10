@@ -106,6 +106,27 @@ export const BillingPage = () => {
   const [editingType, setEditingType] = useState<Partial<Record<ConnectionType, boolean>>>({});
   const [editDraft, setEditDraft]     = useState<Partial<Record<ConnectionType, Partial<ConnectionRate>>>>({});
 
+  useEffect(() => {
+    const fetchRates = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/rates`);
+        if (res.ok) {
+          const data: ConnectionRate[] = await res.json();
+          const newRates = { ...DEFAULT_RATES };
+          data.forEach(rate => {
+            if (rate.connectionType === 'metered' || rate.connectionType === 'non_metered') {
+              newRates[rate.connectionType] = rate;
+            }
+          });
+          setRates(newRates);
+        }
+      } catch (err) {
+        console.error("Failed to fetch rates:", err);
+      }
+    };
+    fetchRates();
+  }, []);
+
   // view bills
   const [searchQuery, setSearchQuery]   = useState('');
   const [bills, setBills]               = useState<BillResponse[]>([]);
@@ -152,16 +173,35 @@ export const BillingPage = () => {
     }));
   };
 
-  const handleSaveRates = (type: ConnectionType) => {
+  const handleSaveRates = async (type: ConnectionType) => {
     const draft = editDraft[type];
     if (!draft) return;
-    // Merge draft into rates, converting tax % back to decimal if needed
-    setRates(prev => ({
-      ...prev,
-      [type]: { ...prev[type], ...draft },
-    }));
-    cancelEditing(type);
-    toast({ title: 'Success', description: `${TYPE_META[type].label} rates updated!` });
+    
+    // Combine existing rate with draft
+    const updatedRate = { ...rates[type], ...draft };
+    
+    try {
+      const res = await fetch(`${API_BASE}/rates`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedRate),
+      });
+      
+      if (res.ok) {
+        const savedRate = await res.json();
+        setRates(prev => ({
+          ...prev,
+          [type]: savedRate,
+        }));
+        cancelEditing(type);
+        toast({ title: 'Success', description: `${TYPE_META[type].label} rates updated in database!` });
+      } else {
+        throw new Error('Failed to save rate');
+      }
+    } catch (error) {
+      console.error(error);
+      toast({ title: 'Error', description: 'Failed to update rates', variant: 'destructive' });
+    }
   };
 
   // ── Search bills ─────────────────────────────────────────────────────
@@ -184,7 +224,7 @@ export const BillingPage = () => {
     }
   };
   // ── Rate Card ────────────────────────────────────────────────────────
-  const RateCard = ({ type }: { type: ConnectionType }) => {
+  const renderRateCard = (type: ConnectionType) => {
     const r       = rates[type];
     const draft   = editDraft[type] ?? r;
     const meta    = TYPE_META[type];
@@ -236,7 +276,7 @@ export const BillingPage = () => {
 
                   type="number"
 
-                  defaultValue={r.baseRate}
+                  defaultValue={draft.baseRate}
 
                   className="mt-1"
 
@@ -254,7 +294,7 @@ export const BillingPage = () => {
 
                   type="number"
 
-                  defaultValue={(r.taxRate * 100).toFixed(1)}
+                  defaultValue={(draft.taxRate * 100).toFixed(1)}
 
                   step="0.1"
 
@@ -282,7 +322,7 @@ export const BillingPage = () => {
 
                         type="number"
 
-                        defaultValue={r.tier1Limit}
+                        defaultValue={draft.tier1Limit}
 
                         className="mt-1"
 
@@ -300,7 +340,7 @@ export const BillingPage = () => {
 
                         type="number"
 
-                        defaultValue={r.tier2Limit}
+                        defaultValue={draft.tier2Limit}
 
                         className="mt-1"
 
@@ -322,7 +362,7 @@ export const BillingPage = () => {
 
                       type="number"
 
-                      defaultValue={r.unitRateTier1}
+                      defaultValue={draft.unitRateTier1}
 
                       step="0.01"
 
@@ -342,7 +382,7 @@ export const BillingPage = () => {
 
                       type="number"
 
-                      defaultValue={r.unitRateTier2}
+                      defaultValue={draft.unitRateTier2}
 
                       step="0.01"
 
@@ -362,7 +402,7 @@ export const BillingPage = () => {
 
                       type="number"
 
-                      defaultValue={r.unitRateTier3}
+                      defaultValue={draft.unitRateTier3}
 
                       step="0.01"
 
@@ -756,9 +796,9 @@ export const BillingPage = () => {
 
                 <div className="space-y-4">
 
-                  <RateCard type="metered" />
+                  {renderRateCard('metered')}
 
-                  <RateCard type="non_metered" />
+                  {renderRateCard('non_metered')}
 
                 </div>
 
