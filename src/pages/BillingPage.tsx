@@ -38,31 +38,29 @@ interface BillResponse {
 
 
 
-// ── Hardcoded default rates ───────────────────────────────────────────
 
-const DEFAULT_RATES: Record<ConnectionType, ConnectionRate> = {
+
+const INITIAL_RATES: Record<ConnectionType, ConnectionRate> = {
   metered: {
     connectionType: 'metered',
-    baseRate:       400,
-    unitRateTier1:  2.50,
-    unitRateTier2:  4.00,
-    unitRateTier3:  6.00,
-    tier1Limit:     50,
-    tier2Limit:     100,
-    taxRate:        0.10,
-  },
-
-  non_metered: {
-    connectionType: 'non_metered',
-    baseRate:       850,
+    baseRate:       0,
     unitRateTier1:  0,
     unitRateTier2:  0,
     unitRateTier3:  0,
     tier1Limit:     0,
     tier2Limit:     0,
-    taxRate:        0.10,
+    taxRate:        0,
   },
-
+  non_metered: {
+    connectionType: 'non_metered',
+    baseRate:       0,
+    unitRateTier1:  0,
+    unitRateTier2:  0,
+    unitRateTier3:  0,
+    tier1Limit:     0,
+    tier2Limit:     0,
+    taxRate:        0,
+  },
 };
 
 
@@ -99,8 +97,8 @@ export const BillingPage = () => {
   const [selectedType, setSelectedType] = useState<ConnectionType>('metered');
   const [usage, setUsage]               = useState(150);
 
-  // rates state — initialised from hardcoded defaults, editable in UI
-  const [rates, setRates] = useState<Record<ConnectionType, ConnectionRate>>(DEFAULT_RATES);
+  // rates state — initialised with zeros, then loaded from database
+  const [rates, setRates] = useState<Record<ConnectionType, ConnectionRate>>(INITIAL_RATES);
 
   // per-type independent edit/save state
   const [editingType, setEditingType] = useState<Partial<Record<ConnectionType, boolean>>>({});
@@ -112,7 +110,7 @@ export const BillingPage = () => {
         const res = await fetch(`${API_BASE}/rates`);
         if (res.ok) {
           const data: ConnectionRate[] = await res.json();
-          const newRates = { ...DEFAULT_RATES };
+          const newRates = { ...INITIAL_RATES };
           data.forEach(rate => {
             if (rate.connectionType === 'metered' || rate.connectionType === 'non_metered') {
               newRates[rate.connectionType] = rate;
@@ -221,6 +219,25 @@ export const BillingPage = () => {
       setBills([]);
     } finally {
       setLoadingBills(false);
+    }
+  };
+
+  const handleDownload = async (billId: number) => {
+    try {
+      const response = await fetch(`${API_BASE}/bills/${billId}/download`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `bill-${billId}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Download failed', error);
+      toast({ title: 'Error', description: 'Failed to download bill.', variant: 'destructive' });
     }
   };
   // ── Rate Card ────────────────────────────────────────────────────────
@@ -944,9 +961,12 @@ export const BillingPage = () => {
 
                         <div className="flex gap-2">
 
-                          <Button variant="secondary" size="sm"><Eye className="w-3 h-3 mr-1" /> View Details</Button>
-
-                          <Button variant="ghost" size="sm"><Download className="w-4 h-4" /></Button>
+                          <Button variant="secondary" size="sm" onClick={() => window.location.href='/customer/bills'}>
+                            <Eye className="w-3 h-3 mr-1" /> View Details
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDownload(b.billId)}>
+                            <Download className="w-4 h-4" />
+                          </Button>
 
                         </div>
 
