@@ -16,10 +16,7 @@ import NotFound from './NotFound';
 import '../admin.css';
 import { BankSlipReviewPage } from './BankSlipReviewPage';
 import { AdminBlogPage } from './AdminBlogPage';
-
-type AdminRole = 'main_admin' | 'meter_reader' | 'payment_handler';
-
-type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'inquiry' | 'reports' | 'predictions' | 'blog';
+import type { AdminRole, Section } from '@/types/admin';
 
 const sectionPathMap: Record<Section, string> = {
   dashboard: '/admin/dashboard',
@@ -32,7 +29,6 @@ const sectionPathMap: Record<Section, string> = {
   reports: '/admin/reports',
   predictions: '/admin/predictions',
   blog: '/admin/blog',
-
 };
 
 const getDefaultAdminPath = (role: AdminRole): string => {
@@ -42,29 +38,17 @@ const getDefaultAdminPath = (role: AdminRole): string => {
 };
 
 const getSectionFromPath = (pathname: string): Section => {
-  if (pathname.startsWith('/admin/users')) return 'users';
-  if (pathname.startsWith('/admin/meter')) return 'meter';
-  if (pathname.startsWith('/admin/payments')) return 'payments';
-  if (pathname.startsWith('/admin/billing')) return 'billing';
-  if (pathname.startsWith('/admin/messaging')) return 'messaging';
-  if (pathname.startsWith('/admin/inquiry')) return 'inquiry';
-  if (pathname.startsWith('/admin/reports')) return 'reports';
-  if (pathname.startsWith('/admin/predictions')) return 'predictions';
-   if (pathname.startsWith('/admin/blog')) return 'blog';
-  return 'dashboard';
+  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog'];
+  return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
 };
 
 const DashboardContent: React.FC = () => {
   const { currentAdmin } = useAdmin();
   const location = useLocation();
 
-  const activeSection = getSectionFromPath(location.pathname);
-
   return (
     <div className="admin-wrapper">
-      <AdminLayout
-        activeSection={activeSection}
-      >
+      <AdminLayout activeSection={getSectionFromPath(location.pathname)}>
         <Routes>
           <Route index element={<Navigate to={getDefaultAdminPath(currentAdmin.role)} replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
