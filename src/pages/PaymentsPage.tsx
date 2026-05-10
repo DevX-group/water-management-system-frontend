@@ -1,26 +1,23 @@
 import { useState, useEffect } from 'react';
-import { Search, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { searchCustomersApi } from '@/services/customerService';
-import { getPaymentCustomerInfo, getRecentPayments, RecentPaymentResponse } from '@/services/paymentService';
+import { getPaymentCustomerInfo, getRecentPayments, PaymentCustomerInfoResponse, RecentPaymentResponse } from '@/services/paymentService';
 import { toast } from '@/components/ui/sonner';
 import { AdminBankSlipResponse, getAllPendingSlips, getPendingSlips } from '@/services/bankSlipService';
 import { connectAdminSlipSocket, disconnectAdminSlipSocket } from '@/services/websocketService';
 import { formatDateTime } from "@/util/dateUtils";
-
-console.log({ Search, AlertCircle, CheckCircle, Clock });
-console.log({ Button, Input, toast });
+import { formatPaymentMethod } from "@/util/paymentUtils"
 
 export const PaymentsPage = () => {
   const navigate = useNavigate();
 
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCustomer, setSelectedCustomer] = useState<any | null>(null);
+  const [selectedCustomer, setSelectedCustomer] = useState<PaymentCustomerInfoResponse | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [recentPayments, setRecentPayments] = useState<RecentPaymentResponse[]>([]);
-  const [pendingSlips, setPendingSlips] = useState<AdminBankSlipResponse[]>([]);
 
   const [slipPage, setSlipPage] = useState(0);
   const [slipSearch, setSlipSearch] = useState('');
@@ -33,11 +30,6 @@ export const PaymentsPage = () => {
   const statusStyles = {
     full: 'bg-success/10 text-success',
     partial: 'bg-warning/10 text-warning',
-  } as const;
-
-  const statusIcons = {
-    full: CheckCircle,
-    partial: Clock,
   } as const;
 
   const handleReviewAll = async () => {
@@ -55,6 +47,7 @@ export const PaymentsPage = () => {
       });
 
     } catch (err) {
+      console.error("Failed to load slips for review:", err);
       toast.error("Failed to load slips for review");
     }
   };
@@ -65,25 +58,26 @@ export const PaymentsPage = () => {
       return;
     }
 
-    const fetchCustomers = async () => {
+    const timeout = setTimeout(async () => {
       try {
         const data = await searchCustomersApi(searchQuery);
         setSearchResults(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error searching customers:", err);
       }
-    }
+    }, 400);
 
-    fetchCustomers();
+    return () => clearTimeout(timeout);
+
   }, [searchQuery]);
 
   useEffect(() => {
     const loadRecent = async () => {
       try {
         const data = await getRecentPayments(5);
-        console.log("API RESPONSE:", data);
         setRecentPayments(Array.isArray(data) ? data : []);
       } catch (err) {
+        console.error("Failed to load recent payments:", err);
         toast.error("Failed to load recent payments");
       }
     }
@@ -97,10 +91,11 @@ export const PaymentsPage = () => {
       try {
         const data = await getPendingSlips(slipPage, 10, slipSearch);
 
-        setSlipData(data.content);
-        setTotalPages(data.totalPages);
+        setSlipData(Array.isArray(data.content) ? data.content : []);
+        setTotalPages(data.totalPages || 0);
 
       } catch (err) {
+        console.error("Failed to load pending slips:", err);
         toast.error("Failed to load pending slips");
       } finally {
         setLoadingSlips(false);
@@ -110,15 +105,15 @@ export const PaymentsPage = () => {
     loadPendingSlips();
   }, [slipPage, slipSearch]);
 
-  useEffect(() => {
-    const handleNewSlip = (newSlip: AdminBankSlipResponse) => {
-      setPendingSlips((prev) => {
-        const exists = prev.some(s => s.slipId === newSlip.slipId);
-        if (exists) return prev;
-        return [newSlip, ...prev];
-      });
-    };
+  const handleNewSlip = (newSlip: AdminBankSlipResponse) => {
+    setSlipData((prev) => {
+      const exists = prev.some(s => s.slipId === newSlip.slipId);
+      if (exists) return prev;
+      return [newSlip, ...prev].slice(0, 10);
+    });
+  };
 
+  useEffect(() => {
     connectAdminSlipSocket(handleNewSlip);
 
     return () => {
@@ -136,13 +131,6 @@ export const PaymentsPage = () => {
       console.error("Error fetching customer details:", err);
     }
   }
-
-  const formatPaymentMethod = (method: string) => {
-    return method
-      .toLowerCase()
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (c) => c.toUpperCase());
-  };
 
   return (
     <div className="space-y-6">
@@ -201,12 +189,12 @@ export const PaymentsPage = () => {
                 </h3>
 
                 <span
-                  className={`px-3 py-1 rounded-full text-xs font-medium ${selectedCustomer.customerType === 'with_meter'
+                  className={`px-3 py-1 rounded-full text-xs font-medium ${selectedCustomer.connectionType === 'metered'
                     ? 'bg-success/10 text-success'
                     : 'bg-warning/10 text-warning'
                     }`}
                 >
-                  {selectedCustomer.customerType === 'with_meter'
+                  {selectedCustomer.connectionType === 'metered'
                     ? 'With Meter'
                     : 'No Meter'}
                 </span>
@@ -264,9 +252,16 @@ export const PaymentsPage = () => {
               <div className="space-y-3">
                 {Array.isArray(recentPayments) && recentPayments.map((payment) => {
                   const statusKey = payment.status.toLowerCase();
-                  const StatusIcon = statusIcons[statusKey] || Clock;
                   const statusClass = statusStyles[statusKey] || 'bg-muted text-muted-foreground';
                   const formattedStatus = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+
+                  const paymentType =
+                    payment.paymentMethod === "MANUAL" && payment.paymentType
+                      ? payment.paymentType?.toLowerCase()
+                      : null;
+                  const formattedPaymentType = paymentType
+                    ? paymentType.charAt(0).toUpperCase() + paymentType.slice(1)
+                    : "";
 
                   return (
                     <div
@@ -278,8 +273,9 @@ export const PaymentsPage = () => {
                         <span
                           className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}
                         >
-                          <StatusIcon className="w-3 h-3" />
-                          {formattedStatus}
+                          {payment.paymentMethod === "MANUAL" && payment.paymentType
+                            ? `${formattedPaymentType}.${formattedStatus}`
+                            : formattedStatus}
                         </span>
                       </div>
 
@@ -293,6 +289,9 @@ export const PaymentsPage = () => {
                       <p className="text-xs text-muted-foreground mt-1">
                         {formatDateTime(payment.createdAt)}
                       </p>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-secondary text-muted-foreground mt-1 bg-blue-100 text-blue-700">
+                        {formatPaymentMethod(payment.paymentMethod)}
+                      </span>
                     </div>
                   );
                 })}
@@ -368,7 +367,7 @@ export const PaymentsPage = () => {
             <div className="grid grid-cols-12 px-6 py-3 bg-secondary/50 text-xs font-semibold text-muted-foreground">
               <div className="col-span-4">Customer</div>
               <div className="col-span-3">Ref No</div>
-              <div className="col-span-2 text-center">Amount</div>
+              <div className="col-span-2 text-left">Amount</div>
               <div className="col-span-3 text-center">Action</div>
             </div>
 
@@ -414,7 +413,7 @@ export const PaymentsPage = () => {
                     </div>
 
                     {/* Amount */}
-                    <div className="col-span-2 text-right font-semibold text-foreground pr-4">
+                    <div className="col-span-2 text-left font-semibold text-foreground pr-4">
                       Rs. {slip.amount.toLocaleString()}
                     </div>
 
