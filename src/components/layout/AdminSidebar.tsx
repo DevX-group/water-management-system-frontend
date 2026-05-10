@@ -30,6 +30,7 @@ const navItems: NavItem[] = [
   { icon: MessageSquare, label: 'Inquiry', id: 'inquiry', roles: ['main_admin'] },
   { icon: BarChart3, label: 'Reports', id: 'reports', roles: ['main_admin'] },
   { icon: TrendingUp, label: 'Predictions', id: 'predictions', roles: ['main_admin'] },
+  { icon: MessageSquare, label: 'Blog', id: 'blog', roles: ['main_admin'] },
 ];
 
 const sectionPathMap: Record<string, string> = {
@@ -42,6 +43,7 @@ const sectionPathMap: Record<string, string> = {
   inquiry: '/admin/inquiry',
   reports: '/admin/reports',
   predictions: '/admin/predictions',
+  blog: '/admin/blog',
 };
 
 export const AdminSidebar: React.FC<AdminSidebarProps> = ({ 

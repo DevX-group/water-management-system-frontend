@@ -15,6 +15,11 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
 import {CustomerInquiryPage} from "./pages/CustomerInquiryPage";
+import { AboutUs } from "./pages/Info/AboutUs";
+import { PrivacyPolicy } from "./pages/Info/PrivacyPolicy";
+import { TermsOfService } from "./pages/Info/TermsOfService";
+import { CookiePolicy } from "./pages/Info/CookiePolicy";
+import { Blog } from "./pages/Info/Blog";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +43,12 @@ const App = () => (
           <Route path="/customer/notifications" element={<Notifications />} />
           <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
           <Route path="/customer/profile" element={<Profile />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/blog" element={<Blog />} />
           
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminIndex />} />
