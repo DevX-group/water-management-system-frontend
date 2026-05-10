@@ -233,6 +233,7 @@ export const AdminInquiriesPage: React.FC = () => {
                           key={msg.msgId} 
                           message={msg} 
                           customerName={selectedInquiry.name} 
+                          viewerRole="admin"
                         />
                       ))}
                       <div ref={messagesEndRef} />
