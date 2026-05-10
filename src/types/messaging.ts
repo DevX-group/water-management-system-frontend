@@ -1,6 +1,7 @@
 export type MessageChannel = 'SMS' | 'Email';
 export type ScheduleType = 'Recurring' | 'One-Time';
 export type RecipientType = 'All Customers' | 'Overdue Customers' | 'Selected Customers';
+export type TriggerType = 'PAYMENT_CONFIRMED' | 'EMAIL_VERIFICATION' | 'PHONE_VERIFICATION';
 
 export interface TemplateSection {
   id: string;
@@ -22,11 +23,10 @@ export interface MessageSchedule {
   time: string; // HH:mm
 }
 
-export interface Message {
+export interface MessageBase {
   id: string;
   name: string;
   channels: MessageChannel[]; 
-  schedule: MessageSchedule;
   recipients: RecipientType;
   templates: {
     sms: MessageTemplate;
@@ -34,6 +34,17 @@ export interface Message {
   };
   isDefault: boolean;
 }
+
+export interface ScheduledMessage extends MessageBase {
+  schedule: MessageSchedule;
+}
+
+export interface TriggeredMessage extends MessageBase {
+  triggerType: TriggerType;
+  active: boolean;
+}
+
+export type Message = ScheduledMessage;
 
 export interface MessageHistoryRow {
   id: string;
@@ -61,23 +72,3 @@ export interface FailedRecipient {
   smsFailed: boolean;
   emailFailed: boolean;
 }
-
-export const PLACEHOLDERS = [
-  "customer_name",
-  "customer_number",
-  "billing_period",
-  "bill_date",
-  "base_charge",
-  "usage_units",
-  "usage_charge",
-  "tax_amount",
-  "monthly_fee",
-  "outstanding_balance",
-  "total_balance",
-  "due_date",
-  "overdue_threshold_(LKR)",
-  "reconnection_fee_(LKR)",
-  "pradeshiya_sabha_acc_no",
-  "whatsApp_number",
-  "online_bill_portal_link"
-];
