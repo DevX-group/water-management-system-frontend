@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, ChevronDown, Loader2, MessageCircle,
-  CheckCircle, ArrowRight, HeadphonesIcon, History, ChevronLeft,
+  CheckCircle, ArrowRight, HeadphonesIcon, History, ChevronLeft, ArrowLeft,
 } from 'lucide-react';
 import clsx from 'clsx';
 import type { Inquiry, InquiryCategory, InquiryFormData, InquiryMessage } from '../types/inquiry';
@@ -61,6 +61,8 @@ export const CustomerInquiryPage: React.FC = () => {
   const [chatInput, setChatInput] = useState('');
   const [showTyping, setShowTyping] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
+  const [historyIndex, setHistoryIndex] = useState(0);
+  const itemsPerPage = 5;
 
   const { inquiry } = useInquiry(activeId, 1500);
   const { inquiries } = useInquiries(3000);
@@ -174,7 +176,7 @@ export const CustomerInquiryPage: React.FC = () => {
                     My Previous Inquiries
                   </div>
                   <CardContent className="p-2 space-y-1 max-h-[600px] overflow-y-auto">
-                    {inquiries.map((inq) => (
+                    {inquiries.slice(historyIndex, historyIndex + itemsPerPage).map((inq) => (
                       <button
                         key={inq.id}
                         onClick={() => setViewingHistoryId(inq.id)}
@@ -195,6 +197,32 @@ export const CustomerInquiryPage: React.FC = () => {
                         <p className="text-[10px] text-primary/60 mt-1">{inq.id}</p>
                       </button>
                     ))}
+
+                    {inquiries.length > itemsPerPage && (
+                      <div className="flex justify-center items-center gap-2 mt-4 pb-2">
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => setHistoryIndex(prev => Math.max(0, prev - itemsPerPage))}
+                          disabled={historyIndex === 0}
+                        >
+                          <ArrowLeft size={14} />
+                        </Button>
+                        <span className="text-[10px] font-medium text-muted-foreground">
+                          {historyIndex + 1}-{Math.min(historyIndex + itemsPerPage, inquiries.length)} / {inquiries.length}
+                        </span>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => setHistoryIndex(prev => Math.min(inquiries.length - itemsPerPage, prev + itemsPerPage))}
+                          disabled={historyIndex + itemsPerPage >= inquiries.length}
+                        >
+                          <ArrowRight size={14} />
+                        </Button>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               </motion.div>

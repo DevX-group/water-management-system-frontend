@@ -1,5 +1,5 @@
  import React, { useState, useEffect } from 'react';
-import { Calculator, FileText, Download, Eye, Settings2, Loader2, Zap, ToggleLeft } from 'lucide-react';
+import { Calculator, FileText, Download, Eye, Settings2, Loader2, Zap, ToggleLeft, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -131,6 +131,8 @@ export const BillingPage = () => {
   const [loadingBills, setLoadingBills] = useState(false);
   const [searchedSub, setSearchedSub]   = useState('');
   const [hasSearched, setHasSearched]   = useState(false);
+  const [billIndex, setBillIndex]       = useState(0);
+  const billsPerPage = 4;
 
   const selectedRate = rates[selectedType];
 
@@ -920,45 +922,25 @@ export const BillingPage = () => {
               ) : (
 
                 <div className="space-y-3">
-
-                  {bills.map((b) => (
-
+                  {bills.slice(billIndex, billIndex + billsPerPage).map((b) => (
                     <div key={b.billId} className="p-4 rounded-xl bg-secondary/50 hover:bg-secondary transition-colors border border-border/50">
-
                       <div className="flex items-start justify-between mb-3">
-
                         <div>
-
                           <p className="font-medium text-foreground">Bill #{b.billId}</p>
-
                           <p className="text-sm text-muted-foreground">Period: {b.billingPeriod}</p>
-
                         </div>
-
                         <span className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ml-4 ${STATUS_STYLES[b.status] ?? 'bg-gray-100 text-gray-600'}`}>
-
                           {b.status}
-
                         </span>
-
                       </div>
-
                       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3 text-sm">
-
                         <div><p className="text-muted-foreground text-xs">Bill Date</p><p className="font-medium text-foreground">{b.billDate}</p></div>
-
                         <div><p className="text-muted-foreground text-xs">Due Date</p><p className="font-medium text-foreground">{b.dueDate}</p></div>
-
                         <div><p className="text-muted-foreground text-xs">Usage</p><p className="font-medium text-foreground">{b.usageUnits} units</p></div>
-
                         <div><p className="text-muted-foreground text-xs">Balance Due</p><p className="font-medium text-foreground">LKR {Number(b.balanceDue).toFixed(2)}</p></div>
-
                       </div>
-
                       <div className="flex items-center justify-between">
-
                         <span className="font-bold text-lg text-primary">LKR {Number(b.totalAmount).toFixed(2)}</span>
-
                         <div className="flex gap-2">
 
                           <Button variant="secondary" size="sm" onClick={() => window.location.href='/customer/bills'}>
@@ -969,13 +951,33 @@ export const BillingPage = () => {
                           </Button>
 
                         </div>
-
                       </div>
-
                     </div>
-
                   ))}
 
+                  {bills.length > billsPerPage && (
+                    <div className="flex justify-center items-center gap-4 mt-6">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setBillIndex(prev => Math.max(0, prev - billsPerPage))}
+                        disabled={billIndex === 0}
+                      >
+                        <ArrowLeft className="w-4 h-4 mr-1" /> Previous
+                      </Button>
+                      <span className="text-sm font-medium">
+                        {billIndex + 1} - {Math.min(billIndex + billsPerPage, bills.length)} of {bills.length}
+                      </span>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => setBillIndex(prev => Math.min(bills.length - billsPerPage, prev + billsPerPage))}
+                        disabled={billIndex + billsPerPage >= bills.length}
+                      >
+                        Next <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  )}
                 </div>
 
               )}

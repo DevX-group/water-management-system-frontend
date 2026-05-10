@@ -2,12 +2,14 @@ import { useState, useEffect } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2, ArrowLeft, ArrowRight } from "lucide-react";
 
 const Notifications = () => {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [filter, setFilter] = useState("all");
   const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 10;
 
   // Use the subscription number currently in your database
   const subNum = "SK-2341"; 
@@ -141,7 +143,7 @@ const Notifications = () => {
           <div className="space-y-3 max-w-4xl mx-auto">
             {loading ? (
               <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary w-8 h-8" /></div>
-            ) : filteredAlerts.map((alert) => {
+            ) : filteredAlerts.slice(currentIndex, currentIndex + itemsPerPage).map((alert) => {
               const styles = getSeverityStyles(alert.severity);
               const Icon = styles.icon;
               
@@ -175,6 +177,32 @@ const Notifications = () => {
                 </Card>
               );
             })}
+            
+            {filteredAlerts.length > itemsPerPage && (
+              <div className="flex justify-center items-center gap-4 mt-8 pb-10">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full bg-white shadow-sm"
+                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}
+                  disabled={currentIndex === 0}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1" /> Previous
+                </Button>
+                <span className="text-sm font-medium text-slate-500">
+                  {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, filteredAlerts.length)} of {filteredAlerts.length}
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="rounded-full bg-white shadow-sm"
+                  onClick={() => setCurrentIndex(prev => Math.min(filteredAlerts.length - itemsPerPage, prev + itemsPerPage))}
+                  disabled={currentIndex + itemsPerPage >= filteredAlerts.length}
+                >
+                  Next <ArrowRight className="w-4 h-4 ml-1" />
+                </Button>
+              </div>
+            )}
             
             {!loading && filteredAlerts.length === 0 && (
               <div className="text-center py-12 text-slate-400">

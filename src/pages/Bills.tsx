@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { FileText, Search, TrendingUp, AlertCircle, CheckCircle2, Download, Eye, Loader2, RotateCw, X, ZoomIn, ZoomOut } from "lucide-react";
+import { FileText, Search, TrendingUp, AlertCircle, CheckCircle2, Download, Eye, Loader2, RotateCw, X, ZoomIn, ZoomOut, ArrowLeft, ArrowRight } from "lucide-react";
 
 // The Subscription Number would ideally come from your Auth Context
 const SUBSCRIPTION_NUMBER = "SK-2341"; 
@@ -30,6 +30,8 @@ const Bills = () => {
   const [rotation, setRotation] = useState(0);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 5;
 
   // 1. Fetch Bills from Spring Boot Database
   useEffect(() => {
@@ -206,7 +208,7 @@ const Bills = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredBills.map((bill) => (
+                    {filteredBills.slice(currentIndex, currentIndex + itemsPerPage).map((bill) => (
                       <motion.tr 
                         key={bill.billId} 
                         className="border-t border-border hover:bg-secondary/30 transition-colors group"
@@ -237,6 +239,29 @@ const Bills = () => {
                     ))}
                   </tbody>
                 </table>
+                {filteredBills.length > itemsPerPage && (
+                  <div className="p-4 border-t bg-secondary/20 flex justify-center items-center gap-4">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}
+                      disabled={currentIndex === 0}
+                    >
+                      <ArrowLeft className="w-4 h-4 mr-1" /> Previous
+                    </Button>
+                    <span className="text-sm font-medium">
+                      Showing {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, filteredBills.length)} of {filteredBills.length}
+                    </span>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => setCurrentIndex(prev => Math.min(filteredBills.length - itemsPerPage, prev + itemsPerPage))}
+                      disabled={currentIndex + itemsPerPage >= filteredBills.length}
+                    >
+                      Next <ArrowRight className="w-4 h-4 ml-1" />
+                    </Button>
+                  </div>
+                )}
                 {filteredBills.length === 0 && (
                   <div className="p-10 text-center text-muted-foreground">No bills found.</div>
                 )}

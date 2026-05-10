@@ -4,7 +4,7 @@ import {
   Search, Send, CheckCircle, Clock, Inbox, 
   Users, BarChart2, Zap, MessageSquare, 
   Filter, ChevronDown, BellRing, Loader2,
-  Eye, Download
+  Eye, Download, ArrowLeft, ArrowRight
 } from 'lucide-react';
 import { AdminLayout } from "@/components/layout/AdminLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +37,8 @@ export const AdminInquiriesPage: React.FC = () => {
   const [filter, setFilter] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [replyText, setReplyText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 5;
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const selectedInquiry = inquiries.find((t) => t.id === selectedId) ?? null;
@@ -170,28 +172,58 @@ export const AdminInquiriesPage: React.FC = () => {
                 <CardContent className="flex-1 overflow-y-auto px-3">
                   {loading ? (
                     <div className="flex justify-center p-8"><Loader2 className="animate-spin text-primary" /></div>
-                  ) : filtered.map((inq) => (
-                    <button
-                      key={inq.id}
-                      onClick={() => setSelectedId(inq.id)}
-                      className={`w-full text-left p-4 rounded-xl mb-2 transition-all border ${
-                        selectedId === inq.id 
-                        ? "bg-primary/5 border-primary/20 shadow-sm" 
-                        : "border-transparent hover:bg-secondary/50"
-                      }`}
-                    >
-                      <div className="flex justify-between items-start mb-1">
-                        <span className="font-semibold text-sm truncate">{inq.name}</span>
-                        <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                          {inq.messages[inq.messages.length - 1]?.time}
-                        </span>
-                      </div>
-                      <p className="text-xs text-primary font-medium mb-1">{inq.id}</p>
-                      <p className="text-xs text-muted-foreground truncate line-clamp-1">
-                        {inq.messages[inq.messages.length - 1]?.text}
-                      </p>
-                    </button>
-                  ))}
+                  ) : (
+                    <>
+                      {filtered.slice(currentIndex, currentIndex + itemsPerPage).map((inq) => (
+                        <button
+                          key={inq.id}
+                          onClick={() => setSelectedId(inq.id)}
+                          className={`w-full text-left p-4 rounded-xl mb-2 transition-all border ${
+                            selectedId === inq.id 
+                            ? "bg-primary/5 border-primary/20 shadow-sm" 
+                            : "border-transparent hover:bg-secondary/50"
+                          }`}
+                        >
+                          <div className="flex justify-between items-start mb-1">
+                            <span className="font-semibold text-sm truncate">{inq.name}</span>
+                            <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                              {inq.messages[inq.messages.length - 1]?.time}
+                            </span>
+                          </div>
+                          <p className="text-xs text-primary font-medium mb-1">{inq.id}</p>
+                          <p className="text-xs text-muted-foreground truncate line-clamp-1">
+                            {inq.messages[inq.messages.length - 1]?.text}
+                          </p>
+                        </button>
+                      ))}
+
+                      {filtered.length > itemsPerPage && (
+                        <div className="flex justify-center items-center gap-2 mt-4 pb-4">
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}
+                            disabled={currentIndex === 0}
+                          >
+                            <ArrowLeft className="w-4 h-4" />
+                          </Button>
+                          <span className="text-[10px] font-medium text-muted-foreground">
+                            {currentIndex + 1}-{Math.min(currentIndex + itemsPerPage, filtered.length)} / {filtered.length}
+                          </span>
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => setCurrentIndex(prev => Math.min(filtered.length - itemsPerPage, prev + itemsPerPage))}
+                            disabled={currentIndex + itemsPerPage >= filtered.length}
+                          >
+                            <ArrowRight className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </motion.div>
