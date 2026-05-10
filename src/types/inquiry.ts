@@ -38,3 +38,6 @@ export interface InquiryFormData {
   category: InquiryCategory | '';
   message: string;
 }
+
+export type InquiryFormErrors = Partial<Record<keyof InquiryFormData, string>>;
+
