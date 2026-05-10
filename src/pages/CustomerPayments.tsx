@@ -32,6 +32,8 @@ import {
 import { toast } from "@/components/ui/sonner";
 import { uploadBankSlip, getMySlips, CustomerBankSlipResponse, deleteSlip } from "@/services/bankSlipService";
 import { formatDateTime } from "@/util/dateUtils";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { formatPaymentMethod } from "@/util/paymentUtils";
 
 type PaymentMethod = "online" | "slip";
 
@@ -50,7 +52,7 @@ export const CustomerPayments = () => {
   const [history, setHistory] = useState<PaymentHistoryItemResponse[]>([]);
   const [historyPage, setHistoryPage] = useState(0);
   const [historyTotalPages, setHistoryTotalPages] = useState(0);
-  const [historyPageSize, setHistoryPageSize] = useState(6);
+  const [historyPageSize, setHistoryPageSize] = useState(5);
   const [historyTotalItems, setHistoryTotalItems] = useState(0);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [bankSlips, setBankSlips] = useState<CustomerBankSlipResponse[]>([]);
@@ -59,7 +61,7 @@ export const CustomerPayments = () => {
 
   const [slipPage, setSlipPage] = useState(0);
   const [slipTotalPages, setSlipTotalPages] = useState(0);
-  const [slipPageSize, setSlipPageSize] = useState(6);
+  const [slipPageSize, setSlipPageSize] = useState(5);
   const [slipTotalItems, setSlipTotalItems] = useState(0);
 
   const [selectedSlip, setSelectedSlip] = useState<any | null>(null);
@@ -171,36 +173,32 @@ export const CustomerPayments = () => {
     loadSlips();
   }, [slipPage, slipPageSize]);
 
-  // ── Derived totals ──────────────────────────────────────────────────────────
   const monthlyDue = currentBill?.balanceDue ?? 0;
   const outstandingDue = outstandingBillsSummary?.totalOutstandingAmount ?? 0;
   const totalDue = monthlyDue + outstandingDue;
   const hasOutstanding = outstandingDue > 0;
 
-  // ── Payment method & amount ─────────────────────────────────────────────────
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
   const [paymentAmount, setPaymentAmount] = useState("");
 
-  // ── Outstanding bills expand/collapse ──────────────────────────────────────
   const [outstandingExpanded, setOutstandingExpanded] = useState(false);
-  const [outstandingPage, setOutstandingPage] = useState(1);
+  const [outstandingPage, setOutstandingPage] = useState(0);
   const billsPerPage = 4;
-  const indexOfLastBill = outstandingPage * billsPerPage;
+  const indexOfLastBill = (outstandingPage + 1) * billsPerPage;
   const indexOfFirstBill = indexOfLastBill - billsPerPage;
   const currentBills = outstandingBills.slice(indexOfFirstBill, indexOfLastBill);
   const totalPages = Math.ceil(outstandingBills.length / billsPerPage);
 
-  // ── Toast ───────────────────────────────────────────────────────────────────
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const showToast = (msg: string) => {
     setToastMsg(msg);
     setTimeout(() => setToastMsg(null), 3500);
   };
 
-  const getStatusClass = (status) => {
-    if (status === "APPROVED") return "bg-success";
-    if (status === "REJECTED") return "bg-destructive";
-    return "bg-warning";
+  const getStatusClass = (status: string) => {
+    if (status === "APPROVED") return "bg-green-100 text-green-700";
+    if (status === "REJECTED") return "bg-red-100 text-red-600";
+    return "bg-yellow-100 text-yellow-700";
   };
 
   const renderBankSlipContent = () => {
@@ -739,10 +737,11 @@ export const CustomerPayments = () => {
                       />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="slipDate">Payment Date</Label>
+                      <Label htmlFor="slipDate">Bank Payment Date</Label>
                       <Input
                         id="slipDate"
                         type="date"
+                        max={new Date().toISOString().split("T")[0]}
                         value={slipForm.date}
                         onChange={(e) => setSlipForm((p) => ({ ...p, date: e.target.value }))}
                       />
@@ -836,18 +835,23 @@ export const CustomerPayments = () => {
                   Items per page
                 </span>
 
-                <select
-                  value={slipPageSize}
-                  onChange={(e) => {
-                    setSlipPageSize(Number(e.target.value));
+                <Select
+                  value={String(slipPageSize)}
+                  onValueChange={(value) => {
+                    setSlipPageSize(Number(value));
                     setSlipPage(0);
                   }}
-                  className="border rounded-md px-2 py-1 bg-background text-sm"
                 >
-                  <option value={5}>5</option>
-                  <option value={10}>10</option>
-                  <option value={25}>25</option>
-                </select>
+                  <SelectTrigger className="w-[65px] h-9 rounded-lg bg-secondary/40">
+                    <SelectValue />
+                  </SelectTrigger>
+
+                  <SelectContent className="min-w-0 w-[70px]">
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardHeader>
 
@@ -927,30 +931,47 @@ export const CustomerPayments = () => {
 
           {/* ── Payment History ── */}
           <Card ref={historyRef} className="shadow-card border-none">
-            <CardHeader>
-              <CardTitle>Payment History</CardTitle>
+            <CardHeader className="flex flex-row items-start justify-between gap-4">
+              <div>
+                <CardTitle>Payment History</CardTitle>
 
-              <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">
-                          Items per page
-                        </span>
+                <p className="text-sm text-muted-foreground mt-1">
+                  View your completed and pending payment records
+                </p>
+              </div>
 
-                        <select
-                          value={historyPageSize}
-                          onChange={(e) => {
-                            setHistoryPageSize(Number(e.target.value));
-                            setHistoryPage(0);
-                          }}
-                          className="border rounded px-2 py-1 bg-background"
-                        >
-                          <option value={5}>5</option>
-                          <option value={10}>10</option>
-                          <option value={25}>25</option>
-                        </select>
-                      </div>
+              {/* Items Per Page */}
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-sm text-muted-foreground">
+                  Items per page
+                </span>
+
+                <Select
+                  value={String(historyPageSize)}
+                  onValueChange={(value) => {
+                    setHistoryPageSize(Number(value));
+                    setHistoryPage(0);
+                  }}
+                >
+                  <SelectTrigger className="w-[65px] h-9 rounded-lg bg-secondary/40">
+                    <SelectValue />
+                  </SelectTrigger>
+
+                  <SelectContent className="min-w-0 w-[70px]">
+                    <SelectItem value="5">5</SelectItem>
+                    <SelectItem value="10">10</SelectItem>
+                    <SelectItem value="25">25</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
+              {historyLoading ? (
+                <div className="text-sm text-muted-foreground">
+                  Loading payment history...
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
                 <table className="w-full table-fixed">
                   <thead className="bg-secondary/50">
                     <tr>
@@ -985,11 +1006,11 @@ export const CustomerPayments = () => {
                               <td className="p-4 text-sm">
                                 <span className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
                                   {getPaymentIcon(p.paymentMethod)}
-                                  {p.paymentMethod}
+                                  {formatPaymentMethod(p.paymentMethod)}
                                 </span>
                               </td>
                               <td className="p-4">
-                                <Badge className={p.status === "FULL" ? "bg-success" : "bg-warning"}>
+                                <Badge className={p.status === "FULL" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}>
                                   {displayStatus}
                                 </Badge>
                               </td>
@@ -1005,36 +1026,12 @@ export const CustomerPayments = () => {
                 {historyTotalPages > 1 && (
                   <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-4">
 
-                    {/* LEFT SIDE */}
-                    <div className="flex items-center gap-4 text-sm">
-
-                      {/* Page Size */}
-                      <div className="flex items-center gap-2">
-                        <span className="text-muted-foreground">
-                          Items per page
-                        </span>
-
-                        <select
-                          value={historyPageSize}
-                          onChange={(e) => {
-                            setHistoryPageSize(Number(e.target.value));
-                            setHistoryPage(0);
-                          }}
-                          className="border rounded px-2 py-1 bg-background"
-                        >
-                          <option value={5}>5</option>
-                          <option value={10}>10</option>
-                          <option value={25}>25</option>
-                        </select>
-                      </div>
-
-                      {/* Showing count */}
-                      <div className="text-muted-foreground">
-                        {historyStart}-{historyEnd} of {historyTotalItems}
-                      </div>
+                    {/* Showing count */}
+                    <div className="text-sm text-muted-foreground">
+                      {historyStart}-{historyEnd} of {historyTotalItems} items
                     </div>
 
-                    {/* RIGHT SIDE */}
+                    {/* Navigation */}
                     <div className="flex items-center gap-2">
 
                       {/* First */}
@@ -1057,7 +1054,7 @@ export const CustomerPayments = () => {
                         {"<"}
                       </button>
 
-                      {/* Page Display */}
+                      {/* Page info */}
                       <div className="text-sm px-3">
                         Page {historyPage + 1} of {historyTotalPages}
                       </div>
@@ -1089,6 +1086,7 @@ export const CustomerPayments = () => {
                   </div>
                 )}
               </div>
+              )}
             </CardContent>
           </Card>
         </div>

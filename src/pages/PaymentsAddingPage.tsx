@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Wallet, CalendarDays, Pencil, Trash2 } from 'lucide-react';
+import { Wallet, CalendarDays, Pencil, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -19,13 +19,15 @@ import {
   type OutstandingBillsSummaryResponse,
   getOutstandingBillsSummary,
   deletePayment,
+  CustomerPaymentSummaryResponse,
 } from '@/services/paymentService';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { formatPaymentMethod } from '@/util/paymentUtils';
 
 type TabKey = 'monthly' | 'outstanding';
-
-type UiStatus = 'paid' | 'partial' | 'overdue';
 
 export const PaymentsAddingPage = () => {
   const navigate = useNavigate();
@@ -37,7 +39,6 @@ export const PaymentsAddingPage = () => {
   const [monthlyAmount, setMonthlyAmount] = useState('');
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
-  const [totalHistoryPages, setTotalHistoryPages] = useState(1);
   const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
 
   const [isEditOpen, setIsEditOpen] = useState(false);
@@ -50,19 +51,16 @@ export const PaymentsAddingPage = () => {
   const [outstandingPage, setOutstandingPage] = useState(1);
   const billsPerPage = 6;
 
-  const [historyPage, setHistoryPage] = useState(1);
-  const historyPerPage = 6;
+  const [historyPage, setHistoryPage] = useState(0);
+  const [historyPageSize, setHistoryPageSize] = useState(5);
+
+  const [totalHistoryPages, setTotalHistoryPages] = useState(1);
+  const [historyTotalItems, setHistoryTotalItems] = useState(0);
 
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedDeleteId, setSelectedDeleteId] = useState<string | null>(null);
 
-  const [summary, setSummary] = useState<null | {
-    subscriptionNumber: string;
-    monthlyDue: number;
-    outstandingBalance: number;
-    totalDue: number;
-    billStatus: string;
-  }>(null);
+  const [summary, setSummary] = useState<null | CustomerPaymentSummaryResponse>(null);
 
   const [currentBill, setCurrentBill] = useState<CurrentBillResponse | null>(null);
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
@@ -84,6 +82,7 @@ export const PaymentsAddingPage = () => {
       setCustomerInfo(customerInfo);
 
     } catch (e) {
+      console.error("loadAll failed:", e);
       toast.error('Failed to load payment data');
     }
   };
@@ -91,8 +90,15 @@ export const PaymentsAddingPage = () => {
   const loadHistory = async () => {
     if (!subscriptionNumber) return;
 
-    const history = await getPaymentHistory(subscriptionNumber, historyPage - 1, historyPerPage)
+    const history = await getPaymentHistory(
+      subscriptionNumber,
+      historyPage,
+      historyPageSize
+    );
+
     setPaymentHistory(history.content ?? []);
+    setTotalHistoryPages(history.totalPages ?? 1);
+    setHistoryTotalItems(history.totalElements ?? 0);
   };
 
   const handleEdit = (payment) => {
@@ -117,9 +123,15 @@ export const PaymentsAddingPage = () => {
       );
 
       // Fetch fresh data
-      const history = await getPaymentHistory(subscriptionNumber, historyPage - 1, historyPerPage);
+      const history = await getPaymentHistory(
+        subscriptionNumber,
+        historyPage,
+        historyPageSize
+      );
+
       setPaymentHistory(history.content ?? []);
       setTotalHistoryPages(history.totalPages ?? 1);
+      setHistoryTotalItems(history.totalElements ?? 0);
 
       const summaryData = await getCustomerPaymentSummary(subscriptionNumber);
       setSummary(summaryData);
@@ -223,7 +235,7 @@ export const PaymentsAddingPage = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [historyPage, subscriptionNumber]);
+  }, [historyPage, historyPageSize, subscriptionNumber]);
 
   const handleAddMonthly = async () => {
     if (!customerInfo) return;
@@ -246,6 +258,7 @@ export const PaymentsAddingPage = () => {
       setMonthlyAmount('');
 
       await loadAll(customerInfo.subscriptionNumber);
+      await loadHistory();
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
@@ -276,6 +289,7 @@ export const PaymentsAddingPage = () => {
       setOutstandingAmount('');
 
       await loadAll(customerInfo.subscriptionNumber);
+      await loadHistory();
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
@@ -284,6 +298,16 @@ export const PaymentsAddingPage = () => {
       toast.error(msg, { className: "toast-error" });
     }
   };
+
+  const historyStart =
+    paymentHistory.length === 0
+      ? 0
+      : historyPage * historyPageSize + 1;
+
+  const historyEnd = Math.min(
+    (historyPage + 1) * historyPageSize,
+    historyTotalItems
+  );
 
   if (!customerInfo) {
     return (
@@ -554,158 +578,285 @@ export const PaymentsAddingPage = () => {
         </div>
 
 
-        <div className="lg:w-[35%] space-y-6">
+        <div className="lg:w-[35%]">
           {/* Customer Details */}
           <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Customer Details</h3>
-              {/*<span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${paymentCustomerInfo.customerType === 'with_meter'
-                  ? 'bg-success/10 text-success'
-                  : 'bg-warning/10 text-warning'
-                  }`}
-              >
-                {customer.customerType === 'with_meter' ? 'With Meter' : 'No Meter'}
-              </span>*/}
-            </div>
+            <h3 className="text-lg font-semibold text-foreground mb-5">
+              Customer Details
+            </h3>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Name</p>
-                <p className="font-medium text-foreground">{customerInfo?.accountHolderName}</p>
+            <div className="space-y-4">
+
+              <div className="flex items-center justify-between border-b pb-3">
+                <span className="text-sm text-muted-foreground">
+                  Name
+                </span>
+
+                <span className="font-medium text-foreground text-right">
+                  {customerInfo?.accountHolderName}
+                </span>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Subscription No.</p>
-                <p className="font-medium text-foreground">{customerInfo?.subscriptionNumber}</p>
+
+              <div className="flex items-center justify-between border-b pb-3">
+                <span className="text-sm text-muted-foreground">
+                  Subscription No.
+                </span>
+
+                <span className="font-medium text-foreground">
+                  {customerInfo?.subscriptionNumber}
+                </span>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">NIC</p>
-                <p className="font-medium text-foreground">{customerInfo?.nic}</p>
+
+              <div className="flex items-center justify-between border-b pb-3">
+                <span className="text-sm text-muted-foreground">
+                  NIC
+                </span>
+
+                <span className="font-medium text-foreground">
+                  {customerInfo?.nic}
+                </span>
               </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Region</p>
-                <p className="font-medium text-foreground capitalize">{customerInfo?.region}</p>
+
+              <div className="flex items-center justify-between border-b pb-3">
+                <span className="text-sm text-muted-foreground">
+                  Region
+                </span>
+
+                <span className="font-medium text-foreground capitalize">
+                  {customerInfo?.region}
+                </span>
               </div>
+
+              <div className="flex items-center justify-between border-b pb-3">
+                <span className="text-sm text-muted-foreground">
+                  Connection Type
+                </span>
+
+                <span className="font-medium text-foreground">
+                  {customerInfo.connectionType == "metered" ? "With Meter" : "No meter"}
+                </span>
+              </div>
+
             </div>
           </div>
-
-          {/* Payment History */}
-          <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">
-                Payment History
-              </h3>
-            </div>
-
-            {paymentHistory.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                No payments found.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {paymentHistory.map((p, index) => (
-                  <div
-                    key={p.paymentId}
-                    className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all flex flex-col"
-                  >
-                    {/* Row 1: Icons */}
-                    <div className="flex justify-end mb-1">
-                      <div className="flex gap-2">
-                        {/* Edit only for latest MANUAL payment */}
-                        {p.paymentId === latestManualPaymentId && (
-                          <Pencil
-                            className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
-                            onClick={() => handleEdit(p)}
-                          />
-                        )}
-
-                        {/* Delete only for MANUAL payments */}
-                        {p.paymentMethod === "MANUAL" && (
-                          <Trash2
-                            className="w-4 h-4 cursor-pointer hover:text-gray-500 transition"
-                            onClick={() => handleDelete(p.paymentId)}
-                          />
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Row 2: Amount + Status */}
-                    <div className="flex justify-between items-center">
-                      <p className="text-lg font-semibold text-foreground">
-                        Rs. {Number(p.amount).toLocaleString()}
-                      </p>
-
-                      <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${p.status === "FULL"
-                          ? "bg-success/10 text-success"
-                          : "bg-warning/10 text-warning"
-                          }`}
-                      >
-                        {p.status.toLowerCase()}
-                      </span>
-                    </div>
-
-                    {/* Row 3: Subscription + Date */}
-                    <div className="flex justify-between items-center mt-1">
-                      <p className="text-sm text-muted-foreground">
-                        {p.subscriptionNumber}
-                      </p>
-
-                      <p className="text-sm text-muted-foreground">
-                        {new Date(p.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-
-                {totalHistoryPages > 1 && (
-                  <div className="flex justify-center items-center gap-2 mt-3">
-                    {/* Previous button */}
-                    <button
-                      onClick={() => setHistoryPage(prev => Math.max(prev - 1, 1))}
-                      disabled={historyPage === 1}
-                      className="px-2 py-1 border rounded"
-                    >
-                      &lt;
-                    </button>
-
-                    {/* Page numbers */}
-                    {Array.from({ length: totalHistoryPages }, (_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setHistoryPage(i + 1)}
-                        className={`px-3 py-1 border rounded ${historyPage === i + 1 ? 'bg-primary text-white' : ''}`}
-                      >
-                        {i + 1}
-                      </button>
-                    ))}
-
-                    {/* Next button */}
-                    <button
-                      onClick={() => setHistoryPage(prev => Math.min(prev + 1, totalHistoryPages))}
-                      disabled={historyPage === totalHistoryPages}
-                      className="px-2 py-1 border rounded"
-                    >
-                      &gt;
-                    </button>
-                  </div>
-                )}
-              </div>
-
-            )}
-          </div>
-
         </div>
       </div>
 
+      {/* Full Width Payment History */}
+      <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5 mt-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-semibold text-foreground">
+            Payment History
+          </h3>
+
+          {/* Items per page */}
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">
+              Items per page
+            </span>
+
+            <Select
+              value={String(historyPageSize)}
+              onValueChange={(value) => {
+                setHistoryPageSize(Number(value));
+                setHistoryPage(0);
+              }}
+            >
+              <SelectTrigger className="w-[65px] h-9">
+                <SelectValue />
+              </SelectTrigger>
+
+              <SelectContent className="min-w-0 w-[70px]">
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {paymentHistory.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No payments found.
+          </p>
+        ) : (
+          <>
+            <div className="overflow-x-auto rounded-xl border bg-white px-6">
+              <table className="w-full border-collapse table-fixed">
+                <thead>
+                  <tr className="border-b border-border bg-secondary/40 text-left">
+                    <th className="py-3 px-2 text-sm font-bold text-foreground">
+                      Date
+                    </th>
+
+                    <th className="py-3 px-2 text-sm font-bold text-foreground">
+                      Amount
+                    </th>
+
+                    <th className="py-3 px-2 text-sm font-bold text-foreground">
+                      Method
+                    </th>
+
+                    <th className="py-3 px-2 w-[220px] text-sm font-bold text-foreground">
+                      Status
+                    </th>
+
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {paymentHistory.map((p) => (
+                    <tr
+                      key={p.paymentId}
+                      className="border-b border-border hover:bg-primary/5 transition"
+                    >
+                      {/* Date */}
+                      <td className="py-4 px-2 text-sm text-foreground">
+                        {new Date(p.createdAt).toLocaleDateString()}
+                      </td>
+
+                      {/* Amount */}
+                      <td className="py-4 px-2 font-medium text-foreground">
+                        Rs. {Number(p.amount).toLocaleString()}
+                      </td>
+
+                      {/* Method */}
+                      <td className="py-4 px-2 text-sm text-foreground">
+                        {formatPaymentMethod(p.paymentMethod)}
+                      </td>
+
+                      {/* Status */}
+                      <td className="py-4 px-2">
+                        <div className="flex items-center justify-between w-full">
+
+                          {/* Status badge */}
+                          <div className="flex items-center gap-2">
+                            <span
+                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${p.status === "FULL"
+                              ? "bg-success/10 text-success"
+                              : "bg-warning/10 text-warning"
+                              }`}
+                          >
+                            {p.paymentMethod === "MANUAL"
+                              ? `${p.paymentType}.${p.status}`
+                              : p.status}
+                          </span>
+                          </div>
+
+                          {/* Actions only for manual payments */}
+                          {p.paymentMethod === "MANUAL" && (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button className="p-1 rounded-md hover:bg-secondary transition">
+                                  <MoreVertical className="w-4 h-4 text-muted-foreground" />
+                                </button>
+                              </DropdownMenuTrigger>
+
+                              <DropdownMenuContent align="end" className="w-36">
+
+                                {/* Edit only latest manual payment */}
+                                {p.paymentId === latestManualPaymentId && (
+                                  <DropdownMenuItem onClick={() => handleEdit(p)}>
+                                    <Pencil className="w-4 h-4 mr-2" />
+                                    Edit
+                                  </DropdownMenuItem>
+                                )}
+
+                                {/* Delete */}
+                                <DropdownMenuItem
+                                  onClick={() => handleDelete(p.paymentId)}
+                                  className="text-red-600 focus:text-red-600"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete
+                                </DropdownMenuItem>
+
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          )}
+
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            {totalHistoryPages > 1 && (
+              <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
+
+                {/* Showing count */}
+                <div className="text-sm text-muted-foreground">
+                  {historyStart}-{historyEnd} of {historyTotalItems} items
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* First */}
+                  <button
+                    onClick={() => setHistoryPage(0)}
+                    disabled={historyPage === 0}
+                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
+                  >
+                    {"<<"}
+                  </button>
+
+                  {/* Previous */}
+                  <button
+                    onClick={() =>
+                      setHistoryPage((p) => Math.max(p - 1, 0))
+                    }
+                    disabled={historyPage === 0}
+                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
+                  >
+                    {"<"}
+                  </button>
+
+                  {/* Page info */}
+                  <div className="text-sm px-3">
+                    Page {historyPage + 1} of {totalHistoryPages}
+                  </div>
+
+                  {/* Next */}
+                  <button
+                    onClick={() =>
+                      setHistoryPage((p) =>
+                        Math.min(p + 1, totalHistoryPages - 1)
+                      )
+                    }
+                    disabled={historyPage === totalHistoryPages - 1}
+                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
+                  >
+                    {">"}
+                  </button>
+
+                  {/* Last */}
+                  <button
+                    onClick={() =>
+                      setHistoryPage(totalHistoryPages - 1)
+                    }
+                    disabled={historyPage === totalHistoryPages - 1}
+                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
+                  >
+                    {">>"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
       {isEditOpen && (
-        <div
+        <button
+          type="button"
           className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
-          onClick={() => setIsEditOpen(false)} // close on outside click
+          onClick={() => setIsEditOpen(false)}
         >
           <div
             className="bg-white rounded-2xl p-6 w-80 shadow-lg"
-            onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+            onClick={(e) => e.stopPropagation()}
           >
             {/* Title */}
             <h2 className="text-lg font-semibold mb-4">
@@ -754,7 +905,7 @@ export const PaymentsAddingPage = () => {
               </Button>
             </div>
           </div>
-        </div>
+        </button>
       )}
 
       {isDeleteOpen && (
