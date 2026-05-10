@@ -76,6 +76,7 @@ export interface PaymentCustomerInfoResponse {
   accountHolderName: string;
   nic: string;
   region: string;
+  connectionType: string;
 }
 
 export interface RecentPaymentResponse {
