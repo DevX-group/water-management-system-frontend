@@ -14,9 +14,8 @@ import {
 } from "recharts";
 
 // --- Types ---
-
 interface MonthlyDataPoint {
-  name: string;   // e.g., "Jan", "Feb"
+  name: string;
   usage: number;
   limit: number;
 }
@@ -29,15 +28,7 @@ interface AnalyticsData {
   monthlyData: MonthlyDataPoint[];
 }
 
-// --- Constants ---
-
 const API_BASE = "http://localhost:8081/api";
-
-const MONTH_COLORS = [
-  "#0ea5e9", "#2dd4bf", "#34d399", "#a3e635",
-  "#facc15", "#fbbf24", "#fb923c", "#f87171",
-  "#f472b6", "#e879f9", "#a78bfa", "#818cf8"
-];
 
 const Usage = () => {
   const [activeChart, setActiveChart] = useState<"bar" | "pie" | "mix">("bar");
@@ -68,17 +59,17 @@ const Usage = () => {
 
   const monthlyData = data?.monthlyData ?? [];
   
-  // Transform data for Pie Chart
-  const pieData = monthlyData.map((item, index) => ({
+  // Transform data for Pie Chart - Now using single color #0ea5e9
+  const pieData = monthlyData.map((item) => ({
     name: item.name,
     value: item.usage,
-    color: MONTH_COLORS[index % MONTH_COLORS.length]
+    color: "#0ea5e9" 
   }));
 
   const stats = data
     ? [
         { label: "Average Usage", value: `${data.averageUsage.toLocaleString()} units`, icon: Activity },
-        { label: "Peak Usage",    value: `${data.peakUsage.toLocaleString()} units`,    icon: TrendingUp },
+        { label: "Peak Usage",     value: `${data.peakUsage.toLocaleString()} units`,    icon: TrendingUp },
         { label: "Minimum Usage", value: `${data.minimumUsage.toLocaleString()} units`, icon: TrendingDown },
         { label: "Total Usage",   value: `${data.totalUsage.toLocaleString()} units`,   icon: BarChart3 },
       ]
@@ -90,12 +81,10 @@ const Usage = () => {
     boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)",
   };
 
-  // Render 
   return (
     <MainLayout isAuthenticated={true}>
       <div className="container mx-auto px-4 py-8">
         
-        {/* Header & Year Selector */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-1">Usage Trends</h1>
@@ -128,7 +117,6 @@ const Usage = () => {
           </div>
         )}
 
-        {/* Stats Grid */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {loading ? (
             Array.from({ length: 4 }).map((_, i) => (
@@ -159,7 +147,6 @@ const Usage = () => {
           )}
         </div>
 
-        {/* Chart Visualization */}
         <Card className="shadow-card border-none mb-8">
           <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-2">
             <div>
@@ -222,7 +209,6 @@ const Usage = () => {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      {/* Tooltip shows Month and Usage ONLY on hover */}
                       <Tooltip 
                         contentStyle={tooltipStyle}
                         itemStyle={{ fontWeight: 'bold', color: '#0ea5e9' }}
@@ -250,7 +236,6 @@ const Usage = () => {
               </div>
             )}
 
-            {/* Static legends below Pie chart have been removed as requested */}
             {!loading && activeChart === "mix" && (
               <div className="flex justify-center gap-6 mt-4">
                 <div className="flex items-center gap-2">
