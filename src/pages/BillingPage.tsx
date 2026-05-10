@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Calculator, FileText, Download, Eye, Settings2, Loader2 } from 'lucide-react';
+ import React, { useState, useEffect } from 'react';
+import { Calculator, FileText, Download, Eye, Settings2, Loader2, Zap, ToggleLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -51,17 +51,16 @@ export const BillingPage = () => {
   const [isEditingRates, setIsEditingRates] = useState(false);
   const [editRates, setEditRates]           = useState<EditRateState>({});
 
-  // ── Region Rates ─────────────────────────────────────────────────────
-  const [rates, setRates]                   = useState<RegionRate[]>([]);
-  const [selectedRate, setSelectedRate]     = useState<RegionRate | null>(null);
-  const [loadingRates, setLoadingRates]     = useState(true);
+  // per-type independent edit/save state
+  const [editingType, setEditingType] = useState<Partial<Record<ConnectionType, boolean>>>({});
+  const [editDraft, setEditDraft]     = useState<Partial<Record<ConnectionType, Partial<ConnectionRate>>>>({});
 
-  // ── View Bills ───────────────────────────────────────────────────────
-  const [searchQuery, setSearchQuery]       = useState('');
-  const [bills, setBills]                   = useState<BillResponse[]>([]);
-  const [loadingBills, setLoadingBills]     = useState(false);
-  const [searchedSub, setSearchedSub]       = useState('');
-  const [hasSearched, setHasSearched]       = useState(false);
+  // view bills
+  const [searchQuery, setSearchQuery]   = useState('');
+  const [bills, setBills]               = useState<BillResponse[]>([]);
+  const [loadingBills, setLoadingBills] = useState(false);
+  const [searchedSub, setSearchedSub]   = useState('');
+  const [hasSearched, setHasSearched]   = useState(false);
 
   // ── Fetch rates on mount ─────────────────────────────────────────────
   useEffect(() => {
@@ -104,36 +103,36 @@ export const BillingPage = () => {
   };
 
   const bill = calculateBill();
+  // ── Edit helpers ─────────────────────────────────────────────────────
+  const startEditing = (type: ConnectionType) => {
+    setEditDraft(prev => ({ ...prev, [type]: { ...rates[type] } }));
+    setEditingType(prev => ({ ...prev, [type]: true }));
+  };
 
-  // ── Save rates ───────────────────────────────────────────────────────
-  const handleSaveRates = async () => {
-    try {
-      await Promise.all(
-        rates.map(r =>
-          fetch(`${API_BASE}/bills/rates/${r.regionId}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              baseRate:      editRates[`base_${r.regionId}`]  ?? r.baseRate,
-              taxRate:       editRates[`tax_${r.regionId}`]   ?? r.taxRate,
-              unitRateTier1: editRates[`t1_${r.regionId}`]    ?? r.unitRateTier1,
-              unitRateTier2: editRates[`t2_${r.regionId}`]    ?? r.unitRateTier2,
-              unitRateTier3: editRates[`t3_${r.regionId}`]    ?? r.unitRateTier3,
-            }),
-          })
-        )
-      );
+  const cancelEditing = (type: ConnectionType) => {
+    setEditDraft(prev => { const n = { ...prev }; delete n[type]; return n; });
+    setEditingType(prev => ({ ...prev, [type]: false }));
+  };
 
-      // Re-fetch updated rates
-      const updated: RegionRate[] = await fetch(`${API_BASE}/bills/rates`).then(r => r.json());
-      setRates(updated);
-      setSelectedRate(updated.find(r => r.regionId === selectedRate?.regionId) ?? updated[0]);
-      setEditRates({});
-      setIsEditingRates(false);
-      toast({ title: 'Success', description: 'Rates updated successfully!' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to save rates', variant: 'destructive' });
-    }
+  const setDraftField = (type: ConnectionType, field: keyof ConnectionRate, raw: string) => {
+    const value = parseFloat(raw);
+    if (isNaN(value)) return;
+    setEditDraft(prev => ({
+      ...prev,
+      [type]: { ...(prev[type] ?? rates[type]), [field]: value },
+    }));
+  };
+
+  const handleSaveRates = (type: ConnectionType) => {
+    const draft = editDraft[type];
+    if (!draft) return;
+    // Merge draft into rates, converting tax % back to decimal if needed
+    setRates(prev => ({
+      ...prev,
+      [type]: { ...prev[type], ...draft },
+    }));
+    cancelEditing(type);
+    toast({ title: 'Success', description: `${TYPE_META[type].label} rates updated!` });
   };
 
   // ── Search bills ─────────────────────────────────────────────────────
@@ -154,6 +153,276 @@ export const BillingPage = () => {
       setLoadingBills(false);
     }
   };
+  // ── Rate Card ────────────────────────────────────────────────────────
+  const RateCard = ({ type }: { type: ConnectionType }) => {
+    const r       = rates[type];
+    const draft   = editDraft[type] ?? r;
+    const meta    = TYPE_META[type];
+    const editing = !!editingType[type];
+
+    return (
+      <div className="rounded-2xl border border-border/50 bg-secondary/40 overflow-hidden">
+        {/* header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-border/40">
+          <div className="flex items-center gap-2">
+            <span className="text-primary">{meta.icon}</span>
+            <span className="font-semibold text-foreground">{meta.label}</span>
+          </div>
+
+          {!editing ? (
+            <Button size="sm" variant="outline" onClick={() => startEditing(type)}>
+              Edit
+            </Button>
+
+          ) : (
+
+            <div className="flex gap-2">
+
+              <Button size="sm" variant="ghost" onClick={() => cancelEditing(type)}>Cancel</Button>
+
+              <Button size="sm" onClick={() => handleSaveRates(type)}>Save</Button>
+
+            </div>
+
+          )}
+
+        </div>
+
+
+
+        {/* body */}
+
+        <div className="px-5 py-4 space-y-3">
+
+          {editing ? (
+
+            <>
+
+              <div>
+
+                <Label className="text-xs text-muted-foreground">Base Charge (LKR)</Label>
+
+                <Input
+
+                  type="number"
+
+                  defaultValue={r.baseRate}
+
+                  className="mt-1"
+
+                  onChange={(e) => setDraftField(type, 'baseRate', e.target.value)}
+
+                />
+
+              </div>
+
+              <div>
+
+                <Label className="text-xs text-muted-foreground">Tax Rate (%)</Label>
+
+                <Input
+
+                  type="number"
+
+                  defaultValue={(r.taxRate * 100).toFixed(1)}
+
+                  step="0.1"
+
+                  className="mt-1"
+
+                  onChange={(e) => setDraftField(type, 'taxRate', String(parseFloat(e.target.value) / 100))}
+
+                />
+
+              </div>
+
+              {type === 'metered' && (
+
+                <div className="space-y-3 pt-2 border-t border-border/40">
+
+                  <p className="text-xs font-medium text-muted-foreground">Tier Limits</p>
+
+                  <div className="grid grid-cols-2 gap-3">
+
+                    <div>
+
+                      <Label className="text-xs text-muted-foreground">Tier 1 limit (units)</Label>
+
+                      <Input
+
+                        type="number"
+
+                        defaultValue={r.tier1Limit}
+
+                        className="mt-1"
+
+                        onChange={(e) => setDraftField(type, 'tier1Limit', e.target.value)}
+
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <Label className="text-xs text-muted-foreground">Tier 2 limit (units)</Label>
+
+                      <Input
+
+                        type="number"
+
+                        defaultValue={r.tier2Limit}
+
+                        className="mt-1"
+
+                        onChange={(e) => setDraftField(type, 'tier2Limit', e.target.value)}
+
+                      />
+
+                    </div>
+
+                  </div>
+
+                  <p className="text-xs font-medium text-muted-foreground pt-1">Tier Rates (LKR / unit)</p>
+
+                  <div>
+
+                    <Label className="text-xs text-muted-foreground">Tier 1 — 0–{r.tier1Limit} units</Label>
+
+                    <Input
+
+                      type="number"
+
+                      defaultValue={r.unitRateTier1}
+
+                      step="0.01"
+
+                      className="mt-1"
+
+                      onChange={(e) => setDraftField(type, 'unitRateTier1', e.target.value)}
+
+                    />
+
+                  </div>
+
+                  <div>
+
+                    <Label className="text-xs text-muted-foreground">Tier 2 — {r.tier1Limit + 1}–{r.tier2Limit} units</Label>
+
+                    <Input
+
+                      type="number"
+
+                      defaultValue={r.unitRateTier2}
+
+                      step="0.01"
+
+                      className="mt-1"
+
+                      onChange={(e) => setDraftField(type, 'unitRateTier2', e.target.value)}
+
+                    />
+
+                  </div>
+
+                  <div>
+
+                    <Label className="text-xs text-muted-foreground">Tier 3 — {r.tier2Limit + 1}+ units</Label>
+
+                    <Input
+
+                      type="number"
+
+                      defaultValue={r.unitRateTier3}
+
+                      step="0.01"
+
+                      className="mt-1"
+
+                      onChange={(e) => setDraftField(type, 'unitRateTier3', e.target.value)}
+
+                    />
+
+                  </div>
+
+                </div>
+
+              )}
+
+            </>
+
+          ) : (
+
+            <>
+
+              <div className="flex justify-between text-sm">
+
+                <span className="text-muted-foreground">Base Charge</span>
+
+                <span className="font-medium">LKR {r.baseRate.toFixed(2)}</span>
+
+              </div>
+
+              <div className="flex justify-between text-sm">
+
+                <span className="text-muted-foreground">Tax Rate</span>
+
+                <span className="font-medium">{(r.taxRate * 100).toFixed(1)}%</span>
+
+              </div>
+
+              {type === 'metered' && (
+
+                <div className="pt-2 border-t border-border/40 space-y-1">
+
+                  <p className="text-xs font-medium text-muted-foreground mb-2">Tier Rates</p>
+
+                  <div className="flex justify-between text-xs">
+
+                    <span className="text-muted-foreground">0–{r.tier1Limit} units</span>
+
+                    <span className="font-medium">LKR {r.unitRateTier1.toFixed(2)}/unit</span>
+
+                  </div>
+
+                  <div className="flex justify-between text-xs">
+
+                    <span className="text-muted-foreground">{r.tier1Limit + 1}–{r.tier2Limit} units</span>
+
+                    <span className="font-medium">LKR {r.unitRateTier2.toFixed(2)}/unit</span>
+
+                  </div>
+
+                  <div className="flex justify-between text-xs">
+
+                    <span className="text-muted-foreground">{r.tier2Limit + 1}+ units</span>
+
+                    <span className="font-medium">LKR {r.unitRateTier3.toFixed(2)}/unit</span>
+
+                  </div>
+
+                </div>
+
+              )}
+
+              {type === 'non_metered' && (
+
+                <p className="text-xs text-muted-foreground italic">Fixed base charge only — no tiered unit rates</p>
+
+              )}
+
+            </>
+
+          )}
+
+        </div>
+
+      </div>
+
+    );
+
+  };
+
+
 
   // ── Render ───────────────────────────────────────────────────────────
   return (
@@ -307,63 +576,12 @@ export const BillingPage = () => {
                     </Button>
                   </div>
 
-                  <div className="space-y-4">
-                    {rates.map((r) => (
-                      <div key={r.regionId} className="p-4 rounded-xl bg-secondary/50 border border-border/50">
-                        <h4 className="font-medium text-foreground mb-4">{r.regionName}</h4>
-                        {isEditingRates ? (
-                          <div className="space-y-3">
-                            <div>
-                              <Label className="text-xs">Base Charge (LKR)</Label>
-                              <Input type="number" defaultValue={r.baseRate} className="mt-1"
-                                onChange={(e) => setEditRates(prev => ({ ...prev, [`base_${r.regionId}`]: parseFloat(e.target.value) }))} />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Tax Rate (%)</Label>
-                              <Input type="number" defaultValue={(r.taxRate * 100).toFixed(1)} step="0.1" className="mt-1"
-                                onChange={(e) => setEditRates(prev => ({ ...prev, [`tax_${r.regionId}`]: parseFloat(e.target.value) / 100 }))} />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Tier 1 Rate — 0–50 units (LKR/unit)</Label>
-                              <Input type="number" defaultValue={r.unitRateTier1} step="0.01" className="mt-1"
-                                onChange={(e) => setEditRates(prev => ({ ...prev, [`t1_${r.regionId}`]: parseFloat(e.target.value) }))} />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Tier 2 Rate — 51–100 units (LKR/unit)</Label>
-                              <Input type="number" defaultValue={r.unitRateTier2} step="0.01" className="mt-1"
-                                onChange={(e) => setEditRates(prev => ({ ...prev, [`t2_${r.regionId}`]: parseFloat(e.target.value) }))} />
-                            </div>
-                            <div>
-                              <Label className="text-xs">Tier 3 Rate — 101+ units (LKR/unit)</Label>
-                              <Input type="number" defaultValue={r.unitRateTier3} step="0.01" className="mt-1"
-                                onChange={(e) => setEditRates(prev => ({ ...prev, [`t3_${r.regionId}`]: parseFloat(e.target.value) }))} />
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Base Charge:</span>
-                              <span className="font-medium">LKR {r.baseRate}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-muted-foreground">Tax Rate:</span>
-                              <span className="font-medium">{(r.taxRate * 100).toFixed(1)}%</span>
-                            </div>
-                            <div className="pt-2 border-t border-border/50 space-y-1">
-                              <p className="text-xs text-muted-foreground font-medium mb-1">Tier Rates:</p>
-                              <div className="flex justify-between text-xs"><span>0–50 units</span><span>LKR {r.unitRateTier1}/unit</span></div>
-                              <div className="flex justify-between text-xs"><span>51–100 units</span><span>LKR {r.unitRateTier2}/unit</span></div>
-                              <div className="flex justify-between text-xs"><span>101+ units</span><span>LKR {r.unitRateTier3}/unit</span></div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
+                <div className="space-y-4">
 
-                  {isEditingRates && (
-                    <Button className="w-full mt-6" onClick={handleSaveRates}>Save Changes</Button>
-                  )}
+                  <RateCard type="metered" />
+
+                  <RateCard type="non_metered" />
+
                 </div>
               )}
             </div>
@@ -447,12 +665,11 @@ export const BillingPage = () => {
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-lg text-primary">LKR {Number(b.totalAmount).toFixed(2)}</span>
                         <div className="flex gap-2">
-                          <Button variant="secondary" size="sm">
-                            <Eye className="w-3 h-3 mr-1" /> View Details
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Download className="w-4 h-4" />
-                          </Button>
+
+                          <Button variant="secondary" size="sm"><Eye className="w-3 h-3 mr-1" /> View Details</Button>
+
+                          <Button variant="ghost" size="sm"><Download className="w-4 h-4" /></Button>
+
                         </div>
                       </div>
                     </div>
@@ -463,6 +680,7 @@ export const BillingPage = () => {
           )}
         </div>
       )}
+
     </div>
   );
 };

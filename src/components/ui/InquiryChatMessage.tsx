@@ -11,15 +11,16 @@ interface Props {
 }
 
 export const InquiryChatMessage: React.FC<Props> = ({ message, customerName }) => {
-  const isUser  = message.from === 'user';
-  const isAdmin = message.from === 'admin';
+  const msgSender = (message as any).user || message.from;
+  const isUser  = msgSender === 'user';
+  const isAdmin = msgSender === 'admin';
 
   // System / auto messages — centred pill
-  if (message.from === 'system') {
+  if (msgSender === 'system') {
     return (
       <div className="flex justify-center my-1">
         <div
-          className="text-[11px] text-slate-400 bg-white/5 border border-white/10 px-4 py-1.5 rounded-full max-w-sm text-center leading-relaxed"
+          className="text-[11px] text-slate-500 bg-slate-50 border border-slate-200 px-4 py-1.5 rounded-full max-w-sm text-center leading-relaxed"
           dangerouslySetInnerHTML={message.isHtml ? { __html: message.text } : undefined}
         >
           {!message.isHtml ? message.text : undefined}
@@ -47,7 +48,7 @@ export const InquiryChatMessage: React.FC<Props> = ({ message, customerName }) =
           className={clsx(
             'px-4 py-2.5 text-sm leading-relaxed break-words',
             isUser
-              ? 'bg-white/8 border border-white/10 text-slate-100 rounded-tl-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl'
+              ? 'bg-slate-100 border border-slate-200 text-slate-800 rounded-tl-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl'
               : 'bg-blue-600 text-white rounded-tl-2xl rounded-tr-sm rounded-br-2xl rounded-bl-2xl'
           )}
         >

@@ -29,7 +29,7 @@ const Notifications = () => {
   const handleDismiss = async (id: number) => {
     try {
       const res = await fetch(`http://localhost:8081/api/alerts/${id}/dismiss`, { 
-        method: 'PUT' 
+        method: 'PATCH' 
       });
       if (res.ok) {
         setAlerts(prev => prev.filter(a => a.id !== id));
@@ -159,8 +159,8 @@ const Notifications = () => {
                         <h3 className={`font-bold text-lg ${styles.textColor}`}>{alert.title}</h3>
                         <p className={`${styles.textColor} opacity-80 text-sm mb-1`}>{alert.description}</p>
                         <div className={`flex items-center gap-4 text-xs font-medium ${styles.textColor} opacity-70`}>
-                          {alert.usageAmount && <span>Usage: {alert.usageAmount}</span>}
-                          <span>{new Date(alert.createdAt).toLocaleString()}</span>
+                          {alert.usage && <span>Usage: {alert.usage}</span>}
+                          <span>{new Date(alert.time).toLocaleString()}</span>
                         </div>
                       </div>
                     </div>
