@@ -1,0 +1,67 @@
+import { useState, useEffect } from "react";
+import type { MonthlyDataPoint, AnalyticsData } from '@/types/usage';
+import { Activity, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
+
+const API_BASE = "http://localhost:8081/api";
+
+export const useUsage = () => {
+  const [activeChart, setActiveChart] = useState<"bar" | "pie" | "mix">("bar");
+  const [year, setYear] = useState<number>(new Date().getFullYear());
+  const [data, setData] = useState<AnalyticsData | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchAnalytics = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const res = await fetch(`${API_BASE}/analytics/usage?year=${year}`);
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        
+        const json: AnalyticsData = await res.json();
+        setData(json);
+      } catch (err: any) {
+        setError(err.message ?? "Failed to load usage data.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAnalytics();
+  }, [year]);
+
+  const monthlyData = data?.monthlyData ?? [];
+  
+  const pieData = monthlyData.map((item) => ({
+    name: item.name,
+    value: item.usage,
+    color: "#0ea5e9" 
+  }));
+
+  const stats = data
+    ? [
+        { label: "Average Usage", value: `${data.averageUsage.toLocaleString()} units`, icon: Activity },
+        { label: "Peak Usage",     value: `${data.peakUsage.toLocaleString()} units`,    icon: TrendingUp },
+        { label: "Minimum Usage", value: `${data.minimumUsage.toLocaleString()} units`, icon: TrendingDown },
+        { label: "Total Usage",   value: `${data.totalUsage.toLocaleString()} units`,   icon: BarChart3 },
+      ]
+    : [];
+
+  const incrementYear = () => setYear(y => y + 1);
+  const decrementYear = () => setYear(y => y - 1);
+
+  return {
+    activeChart,
+    year,
+    data,
+    loading,
+    error,
+    monthlyData,
+    pieData,
+    stats,
+    setActiveChart,
+    incrementYear,
+    decrementYear
+  };
+};

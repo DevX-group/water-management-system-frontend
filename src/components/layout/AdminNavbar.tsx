@@ -1,6 +1,10 @@
 import { useAdmin } from '@/contexts/AdminContext';
 import React from 'react';
-import { Search, Globe, User, ChevronDown } from 'lucide-react';
+import { Search, Globe, User, ChevronDown, Menu } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { NAV_ITEMS, SECTION_PATH_MAP } from '@/constants/adminNav';
+import { cn } from '@/lib/utils';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,14 +29,77 @@ const ROLE_COLORS: Record<string, string> = {
   payment_handler: 'bg-green-100 text-green-700',
 };
 
+const ROLE_DEFAULT_PATHS: Record<string, string> = {
+  main_admin: '/admin/dashboard',
+  meter_reader: '/admin/meter',
+  payment_handler: '/admin/payments',
+};
+
+
+
+
 
 export const AdminNavbar: React.FC = () => {
   const { currentAdmin, setCurrentRole, admins } = useAdmin();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const getSectionFromPath = (pathname: string) => {
+    const sections = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog'];
+    return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
+  };
+
+  const activeSection = getSectionFromPath(location.pathname);
+  const filteredNavItems = NAV_ITEMS.filter(item => item.roles.includes(currentAdmin.role));
 
   return (
-    <header className="h-16 bg-card border-b border-border px-32 flex items-center justify-between">
+    <header className="h-16 bg-card border-b border-border px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between gap-4">
+      {/* Mobile Menu */}
+      <div className="lg:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button variant="ghost" size="icon" className="h-10 w-10">
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-72 p-0 gradient-sidebar border-r border-sidebar-border">
+            <SheetHeader className="p-6 border-b border-sidebar-border/50">
+              <SheetTitle className="text-white text-left flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+                WaterAdmin
+              </SheetTitle>
+            </SheetHeader>
+            <div className="py-4">
+              {filteredNavItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeSection === item.id;
+                return (
+                  <button
+                    key={item.id + item.label}
+                    onClick={() => {
+                      navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard');
+                    }}
+                    className={cn(
+                      "w-full flex items-center gap-3 px-6 py-3 transition-all duration-200",
+                      isActive 
+                        ? "bg-blue-600/20 text-white border-l-4 border-blue-400" 
+                        : "text-slate-300 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
+                    )}
+                  >
+                    <Icon className="w-5 h-5" />
+                    <span className="font-medium text-sm">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
       {/* Search */}
-      <div className="flex items-center gap-4 flex-1 max-w-md">
+      <div className="hidden md:flex items-center gap-4 flex-1 max-w-md">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
@@ -82,7 +149,10 @@ export const AdminNavbar: React.FC = () => {
             {admins.map((admin) => (
               <DropdownMenuItem
                 key={admin.id}
-                onClick={() => setCurrentRole(admin.role)}
+                onClick={() => {
+                  setCurrentRole(admin.role);
+                  navigate(ROLE_DEFAULT_PATHS[admin.role] ?? '/admin/dashboard');
+                }}
                 className={currentAdmin.role === admin.role ? 'bg-secondary' : ''}
               >
                 <div className="flex items-center gap-3 w-full">

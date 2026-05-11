@@ -1,6 +1,7 @@
 export type MessageChannel = 'SMS' | 'Email';
 export type ScheduleType = 'Recurring' | 'One-Time';
 export type RecipientType = 'All Customers' | 'Overdue Customers' | 'Selected Customers';
+export type TriggerType = 'PAYMENT_CONFIRMED' | 'EMAIL_VERIFICATION' | 'PHONE_VERIFICATION';
 
 export interface TemplateSection {
   id: string;
@@ -22,11 +23,10 @@ export interface MessageSchedule {
   time: string; // HH:mm
 }
 
-export interface Message {
+export interface MessageBase {
   id: string;
   name: string;
   channels: MessageChannel[]; 
-  schedule: MessageSchedule;
   recipients: RecipientType;
   templates: {
     sms: MessageTemplate;
@@ -35,6 +35,17 @@ export interface Message {
   isDefault: boolean;
 }
 
+export interface ScheduledMessage extends MessageBase {
+  schedule: MessageSchedule;
+}
+
+export interface TriggeredMessage extends MessageBase {
+  triggerType: TriggerType;
+  active: boolean;
+}
+
+export type Message = ScheduledMessage;
+
 export interface MessageHistoryRow {
   id: string;
   messageName: string;
@@ -42,20 +53,22 @@ export interface MessageHistoryRow {
   date: string;
   time: string;
   successRate: number;
-  totalSent: number;
-  totalFailed: number;
+  emailSuccessRate: number;
+  smsSuccessRate: number;
+  totalEmailsSent: number;
+  totalEmailsFailed: number;
+  totalEmailsDelivered: number;
+  totalSmsSent: number;
+  totalSmsFailed: number;
+  totalSmsDelivered: number;
   recipients: string;
 }
 
-export const PLACEHOLDERS = [
-  "customer_name",
-  "customer_number",
-  "monthly_fee",
-  "outstanding_balance",
-  "total_balance",
-  "overdue_threshold_(LKR)",
-  "reconnection_fee_(LKR)",
-  "pradeshiya_sabha_acc_no",
-  "whatsApp_number",
-  "online_bill_portal_link"
-];
+export interface FailedRecipient {
+  subscriptionNumber: string;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  smsFailed: boolean;
+  emailFailed: boolean;
+}

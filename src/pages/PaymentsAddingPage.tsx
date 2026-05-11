@@ -34,9 +34,8 @@ export const PaymentsAddingPage = () => {
   const { subscriptionNumber } = useParams<{ subscriptionNumber: string }>();
   console.log("subscriptionNumber param =", subscriptionNumber);
 
-  const [activeTab, setActiveTab] = useState<TabKey>('monthly');
-
-  const [monthlyAmount, setMonthlyAmount] = useState('');
+  const [activeTab, setActiveTab]           = useState<TabKey>('monthly');
+  const [monthlyAmount, setMonthlyAmount]   = useState('');
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
   const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
@@ -356,10 +355,11 @@ export const PaymentsAddingPage = () => {
             Back
           </Button>
         </div>
+        <Button variant="secondary" onClick={() => navigate(-1)}>Back</Button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Tabs section */}
+        {/* Left: Tab panel */}
         <div className="lg:w-[65%] space-y-6">
           <div className="bg-card rounded-2xl p-6 shadow-md">
             {/* Tabs header */}

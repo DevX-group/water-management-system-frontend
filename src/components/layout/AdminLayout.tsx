@@ -7,10 +7,9 @@ import { AdminNavbar } from '@/components/layout/AdminNavbar';
 interface AdminLayoutProps {
   children: React.ReactNode;
   activeSection: string;
-  onSectionChange: (section: string) => void;
 }
 
-export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeSection, onSectionChange }) => {
+export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeSection }) => {
   const { currentAdmin } = useAdmin();
 
   return (
@@ -18,8 +17,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeSectio
       <div className="sticky top-0 z-50">
         <AdminNavbar />
         <AdminSidebar 
-          activeSection={activeSection} 
-          onSectionChange={onSectionChange} 
+          activeSection={activeSection}
         />
       </div>
       <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-6" >

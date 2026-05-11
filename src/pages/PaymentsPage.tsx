@@ -13,7 +13,6 @@ import { formatPaymentMethod } from "@/util/paymentUtils"
 
 export const PaymentsPage = () => {
   const navigate = useNavigate();
-
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<PaymentCustomerInfoResponse | null>(null);
   const [searchResults, setSearchResults] = useState<any[]>([]);
@@ -134,14 +133,12 @@ export const PaymentsPage = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div className="animate-fade-in">
         <h1 className="text-2xl font-bold text-foreground">Payments</h1>
         <p className="text-muted-foreground">Manage customer payments and collections</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Search bar and Recently Added section */}
         <div className="lg:w-[40%] space-y-6">
           {/* Search */}
           <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up">

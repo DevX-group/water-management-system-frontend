@@ -1,0 +1,67 @@
+import React from 'react';
+import clsx from 'clsx';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { History, ArrowLeft, ArrowRight } from 'lucide-react';
+import type { Inquiry } from '@/types/inquiry';
+
+export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
+  const config = {
+    open:     { label: 'Open',     className: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+    pending:  { label: 'Pending',  className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
+    resolved: { label: 'Resolved', className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+  }[status] ?? { label: status, className: 'bg-secondary text-muted-foreground' };
+  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${config.className}`}>{config.label}</span>;
+};
+
+interface InquiryHistoryListProps {
+  inquiries:        Inquiry[];
+  historyIndex:     number;
+  itemsPerPage:     number;
+  viewingHistoryId: string | null;
+  setViewingHistoryId: (id: string | null) => void;
+  setHistoryIndex:  (fn: (prev: number) => number) => void;
+}
+
+export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
+  inquiries, historyIndex, itemsPerPage, viewingHistoryId, setViewingHistoryId, setHistoryIndex,
+}) => {
+  if (inquiries.length === 0) return null;
+  return (
+    <Card className="shadow-card border-none overflow-hidden bg-white">
+      <div className="p-4 bg-primary/5 border-b flex items-center gap-2 text-primary font-semibold text-sm">
+        <History size={16} /> My Previous Inquiries
+      </div>
+      <CardContent className="p-2 space-y-1 max-h-[600px] overflow-y-auto">
+        {inquiries.slice(historyIndex, historyIndex + itemsPerPage).map((inq) => (
+          <button
+            key={inq.id} onClick={() => setViewingHistoryId(inq.id)}
+            className={clsx("w-full text-left p-3 rounded-xl transition-all border",
+              viewingHistoryId === inq.id ? "bg-primary/5 border-primary/20 shadow-sm" : "border-transparent hover:bg-secondary/50"
+            )}
+          >
+            <div className="flex items-center justify-between mb-1 gap-2">
+              <span className="text-xs font-semibold truncate">{inq.category || 'General'}</span>
+              <StatusBadge status={inq.status} />
+            </div>
+            <p className="text-[11px] text-muted-foreground truncate">{inq.messages[inq.messages.length - 1]?.text}</p>
+            <p className="text-[10px] text-primary/60 mt-1">{inq.id}</p>
+          </button>
+        ))}
+        {inquiries.length > itemsPerPage && (
+          <div className="flex justify-center items-center gap-2 mt-4 pb-2">
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.max(0, p - itemsPerPage))} disabled={historyIndex === 0}>
+              <ArrowLeft size={14} />
+            </Button>
+            <span className="text-[10px] font-medium text-muted-foreground">
+              {historyIndex + 1}-{Math.min(historyIndex + itemsPerPage, inquiries.length)} / {inquiries.length}
+            </span>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.min(inquiries.length - itemsPerPage, p + itemsPerPage))} disabled={historyIndex + itemsPerPage >= inquiries.length}>
+              <ArrowRight size={14} />
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};

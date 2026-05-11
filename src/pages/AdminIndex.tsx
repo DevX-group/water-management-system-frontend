@@ -1,5 +1,5 @@
-import React, { useState, useEffect, ReactNode } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import React from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AdminProvider, useAdmin } from '@/contexts/AdminContext';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardPage } from './DashboardPage';
@@ -8,91 +8,63 @@ import { PaymentsPage } from './PaymentsPage';
 import { PaymentsAddingPage } from './PaymentsAddingPage';
 import { BillingPage } from './BillingPage';
 import { MessagingPage } from './MessagingPage';
+import { AdminInquiriesPage } from './AdminInquiriesPage';
 import { ReportsPage } from './ReportsPage';
 import { PredictionsPage } from './PredictionsPage';  
 import { UserManagementPage } from './UserManagementPage';
-import { PlaceholderPage } from './PlaceholderPage';
 import NotFound from './NotFound';
 import '../admin.css';
 import { BankSlipReviewPage } from './BankSlipReviewPage';
+import { AdminBlogPage } from './AdminBlogPage';
+import type { AdminRole, Section } from '@/types/admin';
 
-type AdminRole = 'meter_reader' | 'payment_handler' | 'admin' | 'superadmin';
+const sectionPathMap: Record<Section, string> = {
+  dashboard: '/admin/dashboard',
+  users: '/admin/users',
+  meter: '/admin/meter',
+  payments: '/admin/payments',
+  billing: '/admin/billing',
+  messaging: '/admin/messaging',
+  inquiry: '/admin/inquiry',
+  reports: '/admin/reports',
+  predictions: '/admin/predictions',
+  blog: '/admin/blog',
+};
 
-type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'reports' | 'predictions';
+const getDefaultAdminPath = (role: AdminRole): string => {
+  if (role === 'meter_reader') return sectionPathMap.meter;
+  if (role === 'payment_handler') return sectionPathMap.payments;
+  return sectionPathMap.dashboard;
+};
 
-interface Admin {
-  id: string;
-  name: string;
-  email: string;
-  role: AdminRole;
-}
-
-interface AdminContextType {
-  currentAdmin: Admin;
-}
+const getSectionFromPath = (pathname: string): Section => {
+  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog'];
+  return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
+};
 
 const DashboardContent: React.FC = () => {
-  const { currentAdmin } = useAdmin() as AdminContextType;
-
-  const [activeSection, setActiveSection] = useState<Section>(() => {
-    switch (currentAdmin.role) {
-      case 'meter_reader':
-        return 'meter';
-      case 'payment_handler':
-        return 'payments';
-      default:
-        return 'dashboard';
-    }
-  });
-
-  useEffect(() => {
-    switch (currentAdmin.role) {
-      case 'meter_reader':
-        setActiveSection('meter');
-        break;
-      case 'payment_handler':
-        setActiveSection('payments');
-        break;
-      default:
-        setActiveSection('dashboard');
-    }
-  }, [currentAdmin.role]);
-
-  const renderSection = (): ReactNode => {
-    switch (activeSection) {
-      case 'dashboard':
-        return <DashboardPage />;
-      case 'users':
-        return <UserManagementPage />;
-      case 'meter':
-        return <MeterReadingPage />;
-      case 'payments':
-        return (
-          <Routes>
-            <Route path="payments" element={<PaymentsPage />} />
-            <Route path="payments/customer/:subscriptionNumber" element={<PaymentsAddingPage />} />
-            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
-            <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        );
-      case 'billing':
-        return <BillingPage />;
-      case 'messaging':
-        return <MessagingPage />;
-      case 'reports':
-        return <ReportsPage />;
-      case 'predictions':
-        return <PredictionsPage  />;
-      default:
-        return <DashboardPage />;
-    }
-  };
+  const { currentAdmin } = useAdmin();
+  const location = useLocation();
 
   return (
     <div className="admin-wrapper">
-      <AdminLayout activeSection={activeSection} onSectionChange={(section) => setActiveSection(section as Section)}>
-        {renderSection()}
+      <AdminLayout activeSection={getSectionFromPath(location.pathname)}>
+        <Routes>
+          <Route index element={<Navigate to={getDefaultAdminPath(currentAdmin.role)} replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="users" element={<UserManagementPage />} />
+          <Route path="meter" element={<MeterReadingPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
+          <Route path="payments/customer/:subscriptionNo" element={<PaymentsAddingPage />} />
+          <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
+          <Route path="billing" element={<BillingPage />} />
+          <Route path="messaging/*" element={<MessagingPage />} />
+          <Route path="inquiry" element={<AdminInquiriesPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="predictions" element={<PredictionsPage />} />
+          <Route path="blog" element={<AdminBlogPage />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </AdminLayout>
     </div>
   );

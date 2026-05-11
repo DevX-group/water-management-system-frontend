@@ -1,39 +1,41 @@
-import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { mockHistory } from "../data/messagingData";
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { getMessageFailures, getMessageHistory } from '@/services/messageService';
+import type { FailedRecipient, MessageHistoryRow } from '@/types/messaging';
+import { MessageDetailsDialog, FailedRecipientsDialog } from '@/components/messaging/MessageHistoryDialogs';
+
+import { useMessageHistory } from '@/hooks/useMessageHistory';
 
 export const MessageHistoryPage = () => {
-  const rows = mockHistory;
+  const navigate = useNavigate();
+  const {
+    rows,
+    failedRecipients,
+    loadingFailuresFor,
+    failuresError,
+    openDetailsId,
+    openFailuresId,
+    selectedRow,
+    selectedFailedRow,
+    handleViewFailed,
+    closeDetails,
+    closeFailures,
+    openDetails,
+    backToDetails
+  } = useMessageHistory();
 
   return (
     <div className="space-y-6 p-6 pb-24 px-0">
-      {/* <div>
-        <h1 className="text-3xl font-bold tracking-tight">Message History</h1>
-        <p className="text-muted-foreground">
-          Review delivery results for sent messages.
-        </p>
-      </div> */}
+      <div>
+        <Button variant="outline" onClick={() => navigate('/admin/messaging/scheduled')}>
+          Back to Scheduled Messages
+        </Button>
+      </div>
 
       <Card>
-        {/* <CardHeader>
-          <CardTitle>History</CardTitle>
-        </CardHeader> */}
         <CardContent>
           <div className="w-full overflow-x-auto">
             <Table>
@@ -48,7 +50,7 @@ export const MessageHistoryPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((row) => (
+                {rows.map(row => (
                   <TableRow key={row.id}>
                     <TableCell className="font-medium">{row.messageName}</TableCell>
                     <TableCell>{row.type}</TableCell>
@@ -56,62 +58,9 @@ export const MessageHistoryPage = () => {
                     <TableCell>{row.time}</TableCell>
                     <TableCell className="text-right">{row.successRate}%</TableCell>
                     <TableCell className="text-right">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            View Details
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-xl">
-                          <DialogHeader>
-                            <DialogTitle>Message Details</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-3 text-sm">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <div className="text-muted-foreground">Message</div>
-                                <div className="font-medium">{row.messageName}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Type</div>
-                                <div className="font-medium">{row.type}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Date</div>
-                                <div className="font-medium">{row.date}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Time</div>
-                                <div className="font-medium">{row.time}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Recipients</div>
-                                <div className="font-medium">{row.recipients}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Success Rate</div>
-                                <div className="font-medium">{row.successRate}%</div>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Total Sent</div>
-                                <div className="text-lg font-semibold">{row.totalSent}</div>
-                              </div>
-                              <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Failed</div>
-                                <div className="text-lg font-semibold">{row.totalFailed}</div>
-                              </div>
-                              <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Delivered</div>
-                                <div className="text-lg font-semibold">
-                                  {Math.max(row.totalSent - row.totalFailed, 0)}
-                                </div>
-                              </div>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
+                      <Button variant="outline" size="sm" onClick={() => openDetails(row.id)}>
+                        View Details
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -120,6 +69,20 @@ export const MessageHistoryPage = () => {
           </div>
         </CardContent>
       </Card>
+
+      <MessageDetailsDialog
+        row={selectedRow} open={!!openDetailsId}
+        onClose={closeDetails}
+        onViewFailed={handleViewFailed}
+      />
+      <FailedRecipientsDialog
+        row={selectedFailedRow} open={!!openFailuresId}
+        failedRecipients={failedRecipients}
+        loadingFor={loadingFailuresFor}
+        failuresError={failuresError}
+        onClose={closeFailures}
+        onBack={backToDetails}
+      />
     </div>
   );
-}
+};

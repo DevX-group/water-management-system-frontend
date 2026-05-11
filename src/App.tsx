@@ -13,7 +13,12 @@ import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
-import { PaymentsPage } from "./pages/PaymentsPage";
+import {CustomerInquiryPage} from "./pages/CustomerInquiryPage";
+import { AboutUs } from "./pages/Info/AboutUs";
+import { PrivacyPolicy } from "./pages/Info/PrivacyPolicy";
+import { TermsOfService } from "./pages/Info/TermsOfService";
+import { CookiePolicy } from "./pages/Info/CookiePolicy";
+import { Blog } from "./pages/Info/Blog";
 import CustomerPayments from "./pages/CustomerPayments";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
@@ -40,18 +45,17 @@ const App = () => (
           <Route path="/customer/payments/failed" element={<PaymentFailed />} />
           <Route path="/customer/usage" element={<Usage />} />
           <Route path="/customer/notifications" element={<Notifications />} />
+          <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
           <Route path="/customer/profile" element={<Profile />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/cookies" element={<CookiePolicy />} />
+          <Route path="/blog" element={<Blog />} />
           
           {/* Admin Routes */}
           <Route path="/admin/*" element={<AdminIndex />} />
-          
-          {/* Legacy Routes for backwards compatibility */}
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/bills" element={<Bills />} />
-          <Route path="/payments" element={<PaymentsPage />} />
-          <Route path="/usage" element={<Usage />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/profile" element={<Profile />} />
           
           <Route path="*" element={<NotFound />} />
         </Routes>
