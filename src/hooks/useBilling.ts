@@ -109,7 +109,7 @@ export const useBilling = () => {
       if (!res.ok) throw new Error('Customer not found');
       setBills(await res.json());
     } catch (err: any) {
-      toast({ title: 'Error', description: err.message || 'Could not fetch bills.', variant: 'destructive' });
+      toast({ title: 'Error', description:  'Could not fetch bills.', variant: 'destructive' });
       setBills([]);
     } finally {
       setLoadingBills(false);

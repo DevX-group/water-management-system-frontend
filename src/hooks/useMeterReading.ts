@@ -61,7 +61,7 @@ export const useMeterReading = () => {
       setFormData(defaultForm());
       fetchTodaysReadings();
     } catch (err: any) {
-      toast({ title: 'Submission Failed', description: err.message || 'Something went wrong.', variant: 'destructive' });
+      toast({ title: 'Submission Failed', description: 'Something went wrong.', variant: 'destructive' });
     } finally {
       setSubmitting(false);
     }
