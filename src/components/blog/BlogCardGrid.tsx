@@ -45,7 +45,7 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
               </div>
             </div>
             <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-8">{blog.title}</h3>
-            <div className="flex items-center gap-2 text-blue-500 font-bold cursor-pointer hover:gap-4 transition-all"
+            <div className="flex items-center gap-2 text-primary font-bold cursor-pointer hover:gap-4 transition-all"
               onClick={() => onExpand(blog)}>
               <span>Read More</span><ArrowRight size={18} />
             </div>
