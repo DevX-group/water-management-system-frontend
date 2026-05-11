@@ -136,6 +136,8 @@
   .gradient-primary { background: var(--gradient-primary); }
   .gradient-hero { background: var(--gradient-hero); }
   .gradient-mesh { background: var(--gradient-mesh); }
+  .gradient-dark { background: var(--gradient-dark); }
+  .gradient-accent { background: var(--gradient-accent); }
 
   .animate-float { animation: float 6s ease-in-out infinite; }
   

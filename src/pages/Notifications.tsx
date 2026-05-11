@@ -20,21 +20,31 @@ const Notifications = () => {
 
   return (
     <MainLayout isAuthenticated={true}>
-      <div className="min-h-screen bg-[#FFFDF5]">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-serif font-bold mb-2 text-slate-800">Anomaly Alerts</h1>
-          </div>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-10">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900">
+            Anomaly <span className="text-gradient">Alerts</span>
+          </h1>
+          <p className="text-slate-500 text-sm">
+            Real-time monitoring and detection of unusual water consumption patterns.
+          </p>
+        </div>
+
+        <div className="space-y-10">
           <NotificationsStats counts={counts} />
           <NotificationsFilter filter={filter} setFilter={setFilter} />
           <NotificationList
-            alerts={filteredAlerts} loading={loading}
-            currentIndex={currentIndex} itemsPerPage={itemsPerPage}
-            setCurrentIndex={setCurrentIndex} onDismiss={handleDismiss}
+            alerts={filteredAlerts}
+            loading={loading}
+            currentIndex={currentIndex}
+            itemsPerPage={itemsPerPage}
+            setCurrentIndex={setCurrentIndex}
+            onDismiss={handleDismiss}
           />
         </div>
       </div>
     </MainLayout>
+
   );
 };
 
