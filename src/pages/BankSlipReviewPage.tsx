@@ -13,6 +13,7 @@ import {
     DialogFooter,
 } from "@/components/ui/dialog";
 import { AdminBankSlipResponse, getAllPendingSlips, getPendingSlips, getSlipById, processBankSlipReview } from "@/services/bankSlipService";
+import { formatDateTime } from "@/util/dateUtils";
 
 export const BankSlipReviewPage: React.FC = () => {
     const [comment, setComment] = useState("");
@@ -201,7 +202,7 @@ export const BankSlipReviewPage: React.FC = () => {
             <div className="space-y-6 p-6 text-center">
                 <h1 className="text-2xl font-bold">All Slips Reviewed!</h1>
                 <Button onClick={() => navigate("/admin/payments")}>
-                    ← Back
+                    Back
                 </Button>
             </div>
         );
@@ -309,7 +310,7 @@ export const BankSlipReviewPage: React.FC = () => {
 
                                     <div className="flex justify-between">
                                         <span>Uploaded At</span>
-                                        <span>{slip.uploadedAt}</span>
+                                        <span>{formatDateTime(slip.uploadedAt)}</span>
                                     </div>
 
                                     <div className="flex justify-between">
