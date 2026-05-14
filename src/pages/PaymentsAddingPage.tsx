@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Wallet, CalendarDays, Pencil, Trash2, MoreVertical } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -23,19 +22,20 @@ import {
 } from '@/services/paymentService';
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { formatPaymentMethod } from '@/util/paymentUtils';
+
+import { CustomerDetailCard } from '@/components/payments/CustomerDetailCard';
+import { MonthlyPaymentTab } from '@/components/payments/MonthlyPaymentTab';
+import { OutstandingPaymentTab } from '@/components/payments/OutstandingPaymentTab';
+import { PaymentHistoryCard } from '@/components/payments/PaymentHistoryCard';
 
 type TabKey = 'monthly' | 'outstanding';
 
 export const PaymentsAddingPage = () => {
   const navigate = useNavigate();
   const { subscriptionNumber } = useParams<{ subscriptionNumber: string }>();
-  console.log("subscriptionNumber param =", subscriptionNumber);
 
-  const [activeTab, setActiveTab]           = useState<TabKey>('monthly');
-  const [monthlyAmount, setMonthlyAmount]   = useState('');
+  const [activeTab, setActiveTab] = useState<TabKey>('monthly');
+  const [monthlyAmount, setMonthlyAmount] = useState('');
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
   const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
@@ -100,7 +100,7 @@ export const PaymentsAddingPage = () => {
     setHistoryTotalItems(history.totalElements ?? 0);
   };
 
-  const handleEdit = (payment) => {
+  const handleEdit = (payment: PaymentHistoryItemResponse) => {
     setSelectedPayment(payment);
     setUpdatedAmount(payment.amount.toString());
     setIsEditOpen(true);
@@ -109,7 +109,7 @@ export const PaymentsAddingPage = () => {
   const handleUpdate = async () => {
     if (!subscriptionNumber) return;
     setIsTouched(true);
-    if (!updatedAmount) return;
+    if (!updatedAmount || !selectedPayment) return;
 
     validateAmount(updatedAmount);
 
@@ -199,7 +199,7 @@ export const PaymentsAddingPage = () => {
     setSelectedDeleteId(null);
   };
 
-  const validateAmount = (value) => {
+  const validateAmount = (value: string) => {
     const num = Number(value);
 
     if (!value) {
@@ -217,9 +217,8 @@ export const PaymentsAddingPage = () => {
     }
   };
 
-  const handleAmountChange = (value) => {
+  const handleAmountChange = (value: string) => {
     setUpdatedAmount(value);
-
     setAmountError("");
 
     if (isTouched) {
@@ -314,7 +313,7 @@ export const PaymentsAddingPage = () => {
         <div className="bg-card rounded-2xl p-6 shadow-md">
           <h2 className="text-lg font-semibold text-foreground">Customer not found</h2>
           <p className="text-sm text-muted-foreground mt-2">
-            The selected customer does not exist in mock data.
+            The selected customer does not exist.
           </p>
           <Button className="mt-4" onClick={() => navigate(-1)}>
             Go Back
@@ -355,7 +354,6 @@ export const PaymentsAddingPage = () => {
             Back
           </Button>
         </div>
-        <Button variant="secondary" onClick={() => navigate(-1)}>Back</Button>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -387,483 +385,67 @@ export const PaymentsAddingPage = () => {
             {/* Tab content */}
             <div className="mt-6">
               {activeTab === 'monthly' ? (
-                <div className="space-y-4">
-                  {/* Monthly Summary */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                        <h4 className="font-medium text-foreground">Current Month Summary</h4>
-                      </div>
-
-                    </div>
-
-                    <div className="mt-3 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Month</span>
-                        <span className="font-medium text-foreground">{currentMonthLabel}</span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Monthly Bill</span>
-                        <span className="font-medium text-foreground">
-                          Rs. {monthlyBill.toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Already Paid</span>
-                        <span className="font-medium text-success">
-                          Rs. {alreadyPaid.toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between pt-2 border-t border-border">
-                        <span className="font-medium text-foreground">Total Due</span>
-                        <span className="text-xl font-bold text-primary">
-                          Rs. {monthlyDue.toLocaleString()}
-                        </span>
-                      </div>
-
-                      {currentBill?.status && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Bill Status: {currentBill.status}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Add Payment Form */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <h4 className="font-medium text-foreground">Add Payment</h4>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Input
-                        placeholder="Payment amount"
-                        value={monthlyAmount}
-                        onChange={(e) => setMonthlyAmount(e.target.value)}
-                      />
-                      <Button className="sm:w-[180px]" onClick={handleAddMonthly}>
-                        Add Payment
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <MonthlyPaymentTab
+                  currentMonthLabel={currentMonthLabel}
+                  monthlyBill={monthlyBill}
+                  alreadyPaid={alreadyPaid}
+                  monthlyDue={monthlyDue}
+                  currentBillStatus={currentBill?.status}
+                  monthlyAmount={monthlyAmount}
+                  setMonthlyAmount={setMonthlyAmount}
+                  handleAddMonthly={handleAddMonthly}
+                />
               ) : (
-                <div className="space-y-4">
-                  {/* Outstanding Summary */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-foreground">Outstanding Payment Summary</h4>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-foreground">
-                        {outstandingBills.length} items
-                      </span>
-                    </div>
-
-                    <div className="mt-3 space-y-2 text-sm">
-                      {outstandingBills.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">
-                          No outstanding bills found.
-                        </p>
-                      ) : (
-                        <>
-                          {currentBills.slice(0, 6).map((b) => (
-                            <div key={b.billId} className="space-y-1 text-sm">
-
-                              {/* Bill header */}
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">
-                                  Bill Id: {b.billId} • {b.billingPeriod}
-                                </span>
-                              </div>
-
-                              {/* Total Bill */}
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Total Bill</span>
-                                <span className="font-medium text-foreground">
-                                  Rs. {Number(b.totalAmount ?? 0).toLocaleString()}
-                                </span>
-                              </div>
-
-                              {/* Already Paid */}
-                              <div className="flex justify-between">
-                                <span className="text-muted-foreground">Already Paid</span>
-                                <span className="font-medium text-success">
-                                  Rs. {Number(b.paidAmount ?? 0).toLocaleString()}
-                                </span>
-                              </div>
-
-                              {/* Balance Due */}
-                              <div className="flex justify-between">
-                                <span className="font-medium text-foreground">Balance Due</span>
-                                <span className="font-bold text-primary">
-                                  Rs. {Number(b.balanceDue ?? 0).toLocaleString()}
-                                </span>
-                              </div>
-
-                              <hr className="border-border mt-1" />
-                            </div>
-                          ))}
-
-                          {totalPages > 1 && (
-                            <div className="flex justify-center items-center gap-2 mt-3">
-                              {/* Previous button */}
-                              <button
-                                onClick={() => setOutstandingPage(prev => Math.max(prev - 1, 1))}
-                                disabled={outstandingPage === 1}
-                                className="px-2 py-1 border rounded"
-                              >
-                                &lt;
-                              </button>
-
-                              {/* Page numbers */}
-                              {Array.from({ length: totalPages }, (_, i) => (
-                                <button
-                                  key={i}
-                                  onClick={() => setOutstandingPage(i + 1)}
-                                  className={`px-3 py-1 border rounded ${outstandingPage === i + 1 ? 'bg-primary text-white' : ''}`}
-                                >
-                                  {i + 1}
-                                </button>
-                              ))}
-
-                              {/* Next button */}
-                              <button
-                                onClick={() => setOutstandingPage(prev => Math.min(prev + 1, totalPages))}
-                                disabled={outstandingPage === totalPages}
-                                className="px-2 py-1 border rounded"
-                              >
-                                &gt;
-                              </button>
-                            </div>
-                          )}
-
-                          {/* Total */}
-                          <div className="flex justify-between pt-2 border-t border-none">
-                            <span className="font-medium text-foreground">Total Due</span>
-                            <span className="text-xl font-bold text-primary">
-                              Rs. {(outstandingBillsSummary?.totalOutstandingAmount ?? 0).toLocaleString()}
-                            </span>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Add Payment Form */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <h4 className="font-medium text-foreground">Add Payment</h4>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Input
-                        placeholder="Payment amount"
-                        value={outstandingAmount}
-                        onChange={(e) => setOutstandingAmount(e.target.value)}
-                      />
-                      <Button className="sm:w-[180px]" onClick={handleAddOutstanding}>
-                        Add Payment
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <OutstandingPaymentTab
+                  outstandingBills={outstandingBills}
+                  currentBills={currentBills}
+                  totalPages={totalPages}
+                  outstandingPage={outstandingPage}
+                  setOutstandingPage={setOutstandingPage}
+                  totalOutstandingAmount={outstandingBillsSummary?.totalOutstandingAmount ?? 0}
+                  outstandingAmount={outstandingAmount}
+                  setOutstandingAmount={setOutstandingAmount}
+                  handleAddOutstanding={handleAddOutstanding}
+                />
               )}
             </div>
           </div>
         </div>
 
-
         <div className="lg:w-[35%]">
-          {/* Customer Details */}
-          <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
-            <h3 className="text-lg font-semibold text-foreground mb-5">
-              Customer Details
-            </h3>
-
-            <div className="space-y-4">
-
-              <div className="flex items-center justify-between border-b pb-3">
-                <span className="text-sm text-muted-foreground">
-                  Name
-                </span>
-
-                <span className="font-medium text-foreground text-right">
-                  {customerInfo?.accountHolderName}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between border-b pb-3">
-                <span className="text-sm text-muted-foreground">
-                  Subscription No.
-                </span>
-
-                <span className="font-medium text-foreground">
-                  {customerInfo?.subscriptionNumber}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between border-b pb-3">
-                <span className="text-sm text-muted-foreground">
-                  NIC
-                </span>
-
-                <span className="font-medium text-foreground">
-                  {customerInfo?.nic}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between border-b pb-3">
-                <span className="text-sm text-muted-foreground">
-                  Region
-                </span>
-
-                <span className="font-medium text-foreground capitalize">
-                  {customerInfo?.region}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between border-b pb-3">
-                <span className="text-sm text-muted-foreground">
-                  Connection Type
-                </span>
-
-                <span className="font-medium text-foreground">
-                  {customerInfo.connectionType == "metered" ? "With Meter" : "No meter"}
-                </span>
-              </div>
-
-            </div>
-          </div>
+          <CustomerDetailCard customerInfo={customerInfo} />
         </div>
       </div>
 
-      {/* Full Width Payment History */}
-      <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5 mt-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-xl font-semibold text-foreground">
-            Payment History
-          </h3>
-
-          {/* Items per page */}
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">
-              Items per page
-            </span>
-
-            <Select
-              value={String(historyPageSize)}
-              onValueChange={(value) => {
-                setHistoryPageSize(Number(value));
-                setHistoryPage(0);
-              }}
-            >
-              <SelectTrigger className="w-[65px] h-9">
-                <SelectValue />
-              </SelectTrigger>
-
-              <SelectContent className="min-w-0 w-[70px]">
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-
-        {paymentHistory.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No payments found.
-          </p>
-        ) : (
-          <>
-            <div className="overflow-x-auto rounded-xl border bg-white px-6">
-              <table className="w-full border-collapse table-fixed">
-                <thead>
-                  <tr className="border-b border-border bg-secondary/40 text-left">
-                    <th className="py-3 px-2 text-sm font-bold text-foreground">
-                      Date
-                    </th>
-
-                    <th className="py-3 px-2 text-sm font-bold text-foreground">
-                      Amount
-                    </th>
-
-                    <th className="py-3 px-2 text-sm font-bold text-foreground">
-                      Method
-                    </th>
-
-                    <th className="py-3 px-2 w-[220px] text-sm font-bold text-foreground">
-                      Status
-                    </th>
-
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {paymentHistory.map((p) => (
-                    <tr
-                      key={p.paymentId}
-                      className="border-b border-border hover:bg-primary/5 transition"
-                    >
-                      {/* Date */}
-                      <td className="py-4 px-2 text-sm text-foreground">
-                        {new Date(p.createdAt).toLocaleDateString()}
-                      </td>
-
-                      {/* Amount */}
-                      <td className="py-4 px-2 font-medium text-foreground">
-                        Rs. {Number(p.amount).toLocaleString()}
-                      </td>
-
-                      {/* Method */}
-                      <td className="py-4 px-2 text-sm text-foreground">
-                        {formatPaymentMethod(p.paymentMethod)}
-                      </td>
-
-                      {/* Status */}
-                      <td className="py-4 px-2">
-                        <div className="flex items-center justify-between w-full">
-
-                          {/* Status badge */}
-                          <div className="flex items-center gap-2">
-                            <span
-                            className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${p.status === "FULL"
-                              ? "bg-success/10 text-success"
-                              : "bg-warning/10 text-warning"
-                              }`}
-                          >
-                            {p.paymentMethod === "MANUAL"
-                              ? `${p.paymentType}.${p.status}`
-                              : p.status}
-                          </span>
-                          </div>
-
-                          {/* Actions only for manual payments */}
-                          {p.paymentMethod === "MANUAL" && (
-                            <DropdownMenu>
-                              <DropdownMenuTrigger asChild>
-                                <button className="p-1 rounded-md hover:bg-secondary transition">
-                                  <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                                </button>
-                              </DropdownMenuTrigger>
-
-                              <DropdownMenuContent align="end" className="w-36">
-
-                                {/* Edit only latest manual payment */}
-                                {p.paymentId === latestManualPaymentId && (
-                                  <DropdownMenuItem onClick={() => handleEdit(p)}>
-                                    <Pencil className="w-4 h-4 mr-2" />
-                                    Edit
-                                  </DropdownMenuItem>
-                                )}
-
-                                {/* Delete */}
-                                <DropdownMenuItem
-                                  onClick={() => handleDelete(p.paymentId)}
-                                  className="text-red-600 focus:text-red-600"
-                                >
-                                  <Trash2 className="w-4 h-4 mr-2" />
-                                  Delete
-                                </DropdownMenuItem>
-
-                              </DropdownMenuContent>
-                            </DropdownMenu>
-                          )}
-
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination */}
-            {totalHistoryPages > 1 && (
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-6">
-
-                {/* Showing count */}
-                <div className="text-sm text-muted-foreground">
-                  {historyStart}-{historyEnd} of {historyTotalItems} items
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {/* First */}
-                  <button
-                    onClick={() => setHistoryPage(0)}
-                    disabled={historyPage === 0}
-                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
-                  >
-                    {"<<"}
-                  </button>
-
-                  {/* Previous */}
-                  <button
-                    onClick={() =>
-                      setHistoryPage((p) => Math.max(p - 1, 0))
-                    }
-                    disabled={historyPage === 0}
-                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
-                  >
-                    {"<"}
-                  </button>
-
-                  {/* Page info */}
-                  <div className="text-sm px-3">
-                    Page {historyPage + 1} of {totalHistoryPages}
-                  </div>
-
-                  {/* Next */}
-                  <button
-                    onClick={() =>
-                      setHistoryPage((p) =>
-                        Math.min(p + 1, totalHistoryPages - 1)
-                      )
-                    }
-                    disabled={historyPage === totalHistoryPages - 1}
-                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
-                  >
-                    {">"}
-                  </button>
-
-                  {/* Last */}
-                  <button
-                    onClick={() =>
-                      setHistoryPage(totalHistoryPages - 1)
-                    }
-                    disabled={historyPage === totalHistoryPages - 1}
-                    className="px-2 py-1 border rounded text-xs disabled:opacity-40"
-                  >
-                    {">>"}
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-      </div>
+      <PaymentHistoryCard
+        paymentHistory={paymentHistory}
+        historyPageSize={historyPageSize}
+        setHistoryPageSize={setHistoryPageSize}
+        setHistoryPage={setHistoryPage}
+        totalHistoryPages={totalHistoryPages}
+        historyStart={historyStart}
+        historyEnd={historyEnd}
+        historyTotalItems={historyTotalItems}
+        historyPage={historyPage}
+        latestManualPaymentId={latestManualPaymentId}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+      />
 
       {isEditOpen && (
         <button
           type="button"
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
+          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 cursor-default"
           onClick={() => setIsEditOpen(false)}
         >
           <div
-            className="bg-white rounded-2xl p-6 w-80 shadow-lg"
+            className="bg-white rounded-2xl p-6 w-80 shadow-lg cursor-auto"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Title */}
             <h2 className="text-lg font-semibold mb-4">
               Edit Payment
             </h2>
 
-            {/* Amount Input */}
             <div className="mb-4">
               <Label className="text-sm text-muted-foreground">
                 Amount
@@ -887,7 +469,6 @@ export const PaymentsAddingPage = () => {
               )}
             </div>
 
-            {/* Buttons */}
             <div className="flex justify-end gap-2">
               <Button
                 className="px-4 sm:w-[120px] bg-gray-200 text-gray-700 hover:bg-gray-300 flex-1"
@@ -942,7 +523,5 @@ export const PaymentsAddingPage = () => {
       )}
 
     </div>
-
-
   );
 };
