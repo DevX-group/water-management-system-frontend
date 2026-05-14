@@ -1,129 +1,184 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { ZoomIn, ZoomOut, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle, XCircle, ZoomIn, ZoomOut } from 'lucide-react';
-import { toast } from '@/components/ui/sonner';
-
-interface Slip {
-  id:           string;
-  customerName: string;
-  subscriptionNo: string;
-  refNo:        string;
-  amount:       number;
-  uploadedAt:   string;
-  slipImageUrl?: string;
-  imageUrl?:    string;
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { AdminBankSlipResponse } from '@/services/bankSlipService';
+import { formatDateTime } from '@/util/dateUtils';
 
 interface SlipImageViewerProps {
-  imageUrl: string | undefined;
-  zoom:     number;
-  onZoomIn: () => void;
-  onZoomOut: () => void;
-  onApprove: () => void;
-  onReject:  () => void;
+  imageUrl: string;
+  zoom: number;
+  setZoom: (z: number | ((prev: number) => number)) => void;
 }
 
-export const SlipImageViewer: React.FC<SlipImageViewerProps> = ({
-  imageUrl, zoom, onZoomIn, onZoomOut, onApprove, onReject,
-}) => (
-  <div className="lg:w-[60%] bg-card rounded-2xl shadow-md overflow-hidden bg-primary/5">
-    <div className="px-4 py-1 border-b border-border flex items-center justify-end gap-2">
-      <Button variant="secondary" size="icon" className="h-9 w-9" onClick={onZoomOut}>
-        <ZoomOut className="w-4 h-4" />
-      </Button>
-      <Button variant="secondary" size="icon" className="h-9 w-9" onClick={onZoomIn}>
-        <ZoomIn className="w-4 h-4" />
-      </Button>
-      <span className="text-xs text-muted-foreground w-[48px] text-right">{Math.round(zoom * 100)}%</span>
-    </div>
-
-    <div className="p-3 bg-secondary/20">
-      {imageUrl ? (
-        <div className="w-full overflow-auto rounded-xl border border-border bg-background">
-          <div className="flex justify-center p-2">
-            <img src={imageUrl} alt="Bank slip"
-              style={{ transform: `scale(${zoom})`, transformOrigin: 'top center' }}
-              className="max-w-full h-auto rounded-lg shadow-sm" />
+export const SlipImageViewer: React.FC<SlipImageViewerProps> = ({ imageUrl, zoom, setZoom }) => {
+  return (
+    <div className="lg:w-[60%] bg-card rounded-xl p-4 h-[calc(100vh-260px)]">
+      <div className="relative w-full rounded-xl border border-border bg-background p-3 h-full flex flex-col">
+        <div className="overflow-auto flex-1">
+          <div
+            style={{
+              width: `${zoom * 100}%`,
+              transition: "width 0.2s ease",
+            }}
+            className="inline-block min-w-full"
+          >
+            <img
+              src={imageUrl}
+              alt="Bank slip"
+              className="block w-full h-auto rounded-lg"
+              onDoubleClick={() => setZoom(1)}
+            />
           </div>
         </div>
-      ) : (
-        <div className="p-6 rounded-xl bg-secondary/40 text-sm text-muted-foreground">
-          No image URL available for this slip.
-        </div>
-      )}
-    </div>
 
-    <div className="p-5 border-t border-border bg-card">
-      <div className="flex flex-col sm:flex-row justify-center gap-4">
-        <Button onClick={onApprove} className="sm:w-[220px]">
-          <CheckCircle className="w-4 h-4 mr-2" /> Approve
-        </Button>
-        <Button variant="destructive" onClick={onReject} className="sm:w-[220px]">
-          <XCircle className="w-4 h-4 mr-2" /> Reject
-        </Button>
+        <div className="absolute top-4 right-4 flex items-center gap-2 bg-background/80 backdrop-blur-md border border-border rounded-full px-3 py-1.5 shadow-md z-10">
+          <button
+            onClick={() => setZoom((z) => Math.max(0.8, z - 0.1))}
+            className="p-1 rounded-full hover:bg-muted"
+          >
+            <ZoomOut className="w-4 h-4" />
+          </button>
+          <span className="text-xs w-[40px] text-center">
+            {Math.round(zoom * 100)}%
+          </span>
+          <button
+            onClick={() => setZoom((z) => Math.min(3, z + 0.1))}
+            className="p-1 rounded-full hover:bg-muted"
+          >
+            <ZoomIn className="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 interface SlipDetailsCardProps {
-  slip: Slip;
+  slip: AdminBankSlipResponse;
+  isReviewed: boolean;
+  handleApprove: () => void;
+  onRejectClick: () => void;
 }
 
-export const SlipDetailsCard: React.FC<SlipDetailsCardProps> = ({ slip }) => (
-  <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
-    <h3 className="text-lg font-semibold text-foreground mb-4">Slip Details</h3>
-    <div className="space-y-3 text-sm">
-      {[
-        { label: 'Customer',       value: slip.customerName },
-        { label: 'Subscription No.', value: slip.subscriptionNo },
-        { label: 'Reference No.',  value: slip.refNo },
-        { label: 'Amount',         value: `Rs. ${slip.amount.toLocaleString()}`, bold: true },
-        { label: 'Uploaded At',    value: slip.uploadedAt },
-      ].map(({ label, value, bold }) => (
-        <div key={label} className="flex justify-between gap-4">
-          <span className="text-muted-foreground">{label}</span>
-          <span className={`${bold ? 'font-bold' : 'font-medium'} text-foreground text-right`}>{value}</span>
+export const SlipDetailsCard: React.FC<SlipDetailsCardProps> = ({ slip, isReviewed, handleApprove, onRejectClick }) => {
+  return (
+    <div className="lg:w-[40%] h-[calc(100vh-260px)]">
+      <div className="bg-card p-6 rounded-xl h-full flex flex-col">
+        <div>
+          <h3 className="font-semibold mb-4">Slip Details</h3>
+
+          <div className="space-y-4 text-sm">
+            <div className="flex justify-between">
+              <span>Customer</span>
+              <span>{slip.accountHolderName}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Subscription</span>
+              <span>{slip.subscriptionNumber}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Reference</span>
+              <span>{slip.bankReference}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Amount</span>
+              <span className="font-bold">
+                Rs. {slip.amount.toLocaleString()}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Uploaded At</span>
+              <span>{formatDateTime(slip.uploadedAt)}</span>
+            </div>
+
+            <div className="flex justify-between">
+              <span>Bank Payment Date</span>
+              <span>{slip.bankPaymentDate}</span>
+            </div>
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-);
 
-interface RejectDialogProps {
-  open:     boolean;
-  comment:  string;
-  onCommentChange: (v: string) => void;
-  onCancel: () => void;
-  onReject: () => void;
-}
+        <div className="mt-8 flex gap-3">
+          <Button
+            onClick={handleApprove}
+            disabled={isReviewed}
+            className="flex-1"
+          >
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Approve
+          </Button>
 
-export const RejectDialog: React.FC<RejectDialogProps> = ({
-  open, comment, onCommentChange, onCancel, onReject,
-}) => (
-  <Dialog open={open} onOpenChange={onCancel}>
-    <DialogContent className="sm:max-w-[520px]">
-      <DialogHeader>
-        <DialogTitle>Reject Bank Slip</DialogTitle>
-        <DialogDescription>Please add a reason. This message will be shown to the customer.</DialogDescription>
-      </DialogHeader>
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">
-          Rejection reason <span className="text-destructive">*</span>
-        </label>
-        <Textarea value={comment} onChange={e => onCommentChange(e.target.value)}
-          placeholder="Example: Slip is unclear / amount mismatch / wrong reference no..."
-          maxLength={250} className="min-h-[120px]" />
-        <div className="flex justify-between text-xs text-muted-foreground">
-          <span>{comment.length}/250</span>
+          <Button
+            variant="destructive"
+            onClick={onRejectClick}
+            disabled={isReviewed}
+            className="flex-1"
+          >
+            <XCircle className="w-4 h-4 mr-2" />
+            Reject
+          </Button>
         </div>
       </div>
-      <DialogFooter className="gap-2 sm:gap-0">
-        <Button onClick={onCancel} className="bg-muted hover:bg-muted/80 text-foreground">Cancel</Button>
-        <Button variant="destructive" onClick={onReject}>Reject & Notify</Button>
-      </DialogFooter>
-    </DialogContent>
-  </Dialog>
-);
+    </div>
+  );
+};
+
+interface RejectDialogProps {
+  rejectOpen: boolean;
+  setRejectOpen: (open: boolean) => void;
+  comment: string;
+  setComment: (comment: string) => void;
+  handleReject: () => void;
+}
+
+export const RejectDialog: React.FC<RejectDialogProps> = ({ rejectOpen, setRejectOpen, comment, setComment, handleReject }) => {
+  return (
+    <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
+      <DialogContent className="sm:max-w-[520px]">
+        <DialogHeader>
+          <DialogTitle>Reject Bank Slip</DialogTitle>
+          <DialogDescription>
+            Please add a reason. This message will be shown to the customer.
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-foreground">
+            Rejection reason <span className="text-destructive">*</span>
+          </label>
+
+          <Textarea
+            value={comment}
+            onChange={(e) => setComment(e.target.value)}
+            placeholder="Example: Slip is unclear / amount mismatch / wrong reference no..."
+            maxLength={250}
+            className="min-h-[120px] border-border focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:border-[#0d9488] focus:outline-none"
+          />
+
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>{comment.length}/250</span>
+          </div>
+        </div>
+
+        <DialogFooter className="gap-2 sm:gap-0">
+          <Button onClick={() => setRejectOpen(false)} className="bg-muted hover:bg-muted/80 text-foreground">
+            Cancel
+          </Button>
+
+          <Button
+            variant="destructive"
+            onClick={handleReject}
+          >
+            Reject & Notify
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
