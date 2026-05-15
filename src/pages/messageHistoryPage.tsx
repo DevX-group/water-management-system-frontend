@@ -3,8 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { getMessageFailures, getMessageHistory } from '@/services/messageService';
-import type { FailedRecipient, MessageHistoryRow } from '@/types/messaging';
 import { MessageDetailsDialog, FailedRecipientsDialog } from '@/components/messaging/MessageHistoryDialogs';
 
 import { useMessageHistory } from '@/hooks/useMessageHistory';
@@ -13,6 +11,12 @@ export const MessageHistoryPage = () => {
   const navigate = useNavigate();
   const {
     rows,
+    page,
+    size,
+    totalPages,
+    totalElements,
+    setPage,
+    setSize,
     failedRecipients,
     loadingFailuresFor,
     failuresError,
@@ -26,6 +30,9 @@ export const MessageHistoryPage = () => {
     openDetails,
     backToDetails
   } = useMessageHistory();
+
+  const canGoBack = page > 0;
+  const canGoNext = page + 1 < totalPages;
 
   return (
     <div className="space-y-6 p-6 pb-24 px-0">
@@ -66,6 +73,40 @@ export const MessageHistoryPage = () => {
                 ))}
               </TableBody>
             </Table>
+          </div>
+
+          <div className="mt-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-2 text-sm">
+              <span>Items per page</span>
+              <select
+                className="h-9 rounded-md border border-input bg-background px-2"
+                value={size}
+                onChange={event => setSize(Number(event.target.value))}
+              >
+                {[10, 20, 50].map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <span className="text-muted-foreground">
+                {totalElements > 0
+                  ? `${page * size + 1}-${Math.min((page + 1) * size, totalElements)} of ${totalElements}`
+                  : '0 items'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={!canGoBack}>
+                Previous
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page {totalPages === 0 ? 0 : page + 1} of {Math.max(totalPages, 1)}
+              </span>
+              <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={!canGoNext}>
+                Next
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>

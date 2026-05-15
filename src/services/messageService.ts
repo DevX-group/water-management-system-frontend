@@ -122,11 +122,38 @@ const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
   };
 };
 
-export const getMessageHistory = async (): Promise<MessageHistoryRow[]> => {
-  const res = await fetch(`${SCHEDULED_API_BASE}/history`);
+type MessageHistoryPageResponse = {
+  rows: MessageHistoryRow[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+};
+
+export const getMessageHistory = async (
+  page = 0,
+  size = 10
+): Promise<MessageHistoryPageResponse> => {
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+  const res = await fetch(`${SCHEDULED_API_BASE}/history?${params.toString()}`);
   if (!res.ok) throw new Error('Failed to fetch message history');
-  const data: SentMessageHistoryApi[] = await res.json();
-  return data.map(toHistoryRow);
+  const data: {
+    content: SentMessageHistoryApi[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+  } = await res.json();
+  return {
+    rows: data.content.map(toHistoryRow),
+    page: data.number,
+    size: data.size,
+    totalPages: data.totalPages,
+    totalElements: data.totalElements,
+  };
 };
 
 export const getMessageFailures = async (sentMessageId: string): Promise<FailedRecipient[]> => {

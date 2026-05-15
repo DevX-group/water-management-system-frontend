@@ -3,7 +3,11 @@ import { getMessageFailures, getMessageHistory } from '@/services/messageService
 import type { FailedRecipient, MessageHistoryRow } from '@/types/messaging';
 
 export const useMessageHistory = () => {
-  const [rows, setRows]                   = useState<MessageHistoryRow[]>([]);
+  const [rows, setRows] = useState<MessageHistoryRow[]>([]);
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const [failedRecipients, setFailedRecipients] = useState<Record<string, FailedRecipient[]>>({});
   const [loadingFailuresFor, setLoadingFailuresFor] = useState<string | null>(null);
   const [failuresError, setFailuresError] = useState<string | null>(null);
@@ -11,8 +15,19 @@ export const useMessageHistory = () => {
   const [openFailuresId, setOpenFailuresId] = useState<string | null>(null);
 
   useEffect(() => {
-    getMessageHistory().then(setRows).catch(console.error);
-  }, []);
+    let active = true;
+    getMessageHistory(page, size)
+      .then(data => {
+        if (!active) return;
+        setRows(data.rows);
+        setTotalPages(data.totalPages);
+        setTotalElements(data.totalElements);
+      })
+      .catch(console.error);
+    return () => {
+      active = false;
+    };
+  }, [page, size]);
 
   const loadFailures = async (id: string) => {
     if (failedRecipients[id]) return;
@@ -45,8 +60,19 @@ export const useMessageHistory = () => {
   const selectedRow       = rows.find(r => r.id === openDetailsId) ?? null;
   const selectedFailedRow = rows.find(r => r.id === openFailuresId) ?? null;
 
+  const updateSize = (nextSize: number) => {
+    setSize(nextSize);
+    setPage(0);
+  };
+
   return {
     rows,
+    page,
+    size,
+    totalPages,
+    totalElements,
+    setPage,
+    setSize: updateSize,
     failedRecipients,
     loadingFailuresFor,
     failuresError,
