@@ -18,6 +18,12 @@ export const MessageHistoryPage = () => {
     setPage,
     setSize,
     failedRecipients,
+    failuresPage,
+    failuresSize,
+    failuresTotalPages,
+    failuresTotalElements,
+    setFailuresPage,
+    setFailuresSize,
     loadingFailuresFor,
     failuresError,
     openDetailsId,
@@ -119,6 +125,12 @@ export const MessageHistoryPage = () => {
       <FailedRecipientsDialog
         row={selectedFailedRow} open={!!openFailuresId}
         failedRecipients={failedRecipients}
+        page={failuresPage}
+        size={failuresSize}
+        totalPages={failuresTotalPages}
+        totalElements={failuresTotalElements}
+        onPageChange={setFailuresPage}
+        onSizeChange={setFailuresSize}
         loadingFor={loadingFailuresFor}
         failuresError={failuresError}
         onClose={closeFailures}

@@ -130,6 +130,14 @@ type MessageHistoryPageResponse = {
   totalElements: number;
 };
 
+type MessageFailuresPageResponse = {
+  rows: FailedRecipient[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+};
+
 export const getMessageHistory = async (
   page = 0,
   size = 10
@@ -156,10 +164,31 @@ export const getMessageHistory = async (
   };
 };
 
-export const getMessageFailures = async (sentMessageId: string): Promise<FailedRecipient[]> => {
-  const res = await fetch(`${SCHEDULED_API_BASE}/failures/${sentMessageId}`);
+export const getMessageFailures = async (
+  sentMessageId: string,
+  page = 0,
+  size = 5
+): Promise<MessageFailuresPageResponse> => {
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+  const res = await fetch(`${SCHEDULED_API_BASE}/failures/${sentMessageId}?${params.toString()}`);
   if (!res.ok) throw new Error('Failed to fetch failed recipients');
-  return res.json();
+  const data: {
+    content: FailedRecipient[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+  } = await res.json();
+  return {
+    rows: data.content,
+    page: data.number,
+    size: data.size,
+    totalPages: data.totalPages,
+    totalElements: data.totalElements,
+  };
 };
 
 export const getMessagePlaceholders = async (): Promise<string[]> => {

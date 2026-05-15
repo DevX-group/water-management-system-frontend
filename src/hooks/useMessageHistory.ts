@@ -8,7 +8,11 @@ export const useMessageHistory = () => {
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [failedRecipients, setFailedRecipients] = useState<Record<string, FailedRecipient[]>>({});
+  const [failedRecipients, setFailedRecipients] = useState<FailedRecipient[]>([]);
+  const [failuresPage, setFailuresPage] = useState(0);
+  const [failuresSize, setFailuresSize] = useState(5);
+  const [failuresTotalPages, setFailuresTotalPages] = useState(0);
+  const [failuresTotalElements, setFailuresTotalElements] = useState(0);
   const [loadingFailuresFor, setLoadingFailuresFor] = useState<string | null>(null);
   const [failuresError, setFailuresError] = useState<string | null>(null);
   const [openDetailsId, setOpenDetailsId] = useState<string | null>(null);
@@ -29,22 +33,35 @@ export const useMessageHistory = () => {
     };
   }, [page, size]);
 
-  const loadFailures = async (id: string) => {
-    if (failedRecipients[id]) return;
-    setLoadingFailuresFor(id); 
+  useEffect(() => {
+    if (!openFailuresId) return;
+    let active = true;
+    setLoadingFailuresFor(openFailuresId);
     setFailuresError(null);
-    try {
-      const data = await getMessageFailures(id);
-      setFailedRecipients(prev => ({ ...prev, [id]: data }));
-    } catch {
-      setFailuresError('Failed to load failed recipients');
-    } finally {
-      setLoadingFailuresFor(null);
-    }
-  };
+    getMessageFailures(openFailuresId, failuresPage, failuresSize)
+      .then(data => {
+        if (!active) return;
+        setFailedRecipients(data.rows);
+        setFailuresTotalPages(data.totalPages);
+        setFailuresTotalElements(data.totalElements);
+        setFailuresPage(data.page);
+        setFailuresSize(data.size);
+      })
+      .catch(() => {
+        if (active) setFailuresError('Failed to load failed recipients');
+      })
+      .finally(() => {
+        if (active) setLoadingFailuresFor(null);
+      });
+    return () => {
+      active = false;
+    };
+  }, [openFailuresId, failuresPage, failuresSize]);
 
-  const handleViewFailed = async (id: string) => {
-    await loadFailures(id);
+  const handleViewFailed = (id: string) => {
+    setFailuresPage(0);
+    setFailuresSize(5);
+    setFailedRecipients([]);
     setOpenDetailsId(null);
     setOpenFailuresId(id);
   };
@@ -65,6 +82,11 @@ export const useMessageHistory = () => {
     setPage(0);
   };
 
+  const updateFailuresSize = (nextSize: number) => {
+    setFailuresSize(nextSize);
+    setFailuresPage(0);
+  };
+
   return {
     rows,
     page,
@@ -74,6 +96,12 @@ export const useMessageHistory = () => {
     setPage,
     setSize: updateSize,
     failedRecipients,
+    failuresPage,
+    failuresSize,
+    failuresTotalPages,
+    failuresTotalElements,
+    setFailuresPage,
+    setFailuresSize: updateFailuresSize,
     loadingFailuresFor,
     failuresError,
     openDetailsId,
