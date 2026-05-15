@@ -58,7 +58,8 @@ export const MessageHistoryPage = () => {
                   <TableHead>Type</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Time</TableHead>
-                  <TableHead className="text-right">Success Rate</TableHead>
+                  <TableHead className="text-right">Email Success Rate</TableHead>
+                  <TableHead className="text-right">SMS Success Rate</TableHead>
                   <TableHead className="text-right">Details</TableHead>
                 </TableRow>
               </TableHeader>
@@ -69,7 +70,8 @@ export const MessageHistoryPage = () => {
                     <TableCell>{row.type}</TableCell>
                     <TableCell>{row.date}</TableCell>
                     <TableCell>{row.time}</TableCell>
-                    <TableCell className="text-right">{row.successRate}%</TableCell>
+                    <TableCell className="text-right">{row.emailSuccessRate}%</TableCell>
+                    <TableCell className="text-right">{row.smsSuccessRate}%</TableCell>
                     <TableCell className="text-right">
                       <Button variant="outline" size="sm" onClick={() => openDetails(row.id)}>
                         View Details
