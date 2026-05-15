@@ -55,7 +55,7 @@ const DashboardContent: React.FC = () => {
           <Route path="users" element={<UserManagementPage />} />
           <Route path="meter" element={<MeterReadingPage />} />
           <Route path="payments" element={<PaymentsPage />} />
-          <Route path="payments/customer/:subscriptionNo" element={<PaymentsAddingPage />} />
+          <Route path="payments/customer/:subscriptionNumber" element={<PaymentsAddingPage />} />
           <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="messaging/*" element={<MessagingPage />} />

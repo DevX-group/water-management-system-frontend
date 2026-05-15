@@ -8,7 +8,6 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
-import Payments from "./pages/Payments";
 import Usage from "./pages/Usage";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
@@ -20,6 +19,9 @@ import { PrivacyPolicy } from "./pages/Info/PrivacyPolicy";
 import { TermsOfService } from "./pages/Info/TermsOfService";
 import { CookiePolicy } from "./pages/Info/CookiePolicy";
 import { Blog } from "./pages/Info/Blog";
+import CustomerPayments from "./pages/CustomerPayments";
+import PaymentSuccess from "./pages/PaymentSuccess";
+import PaymentFailed from "./pages/PaymentFailed";
 
 const queryClient = new QueryClient();
 
@@ -38,7 +40,9 @@ const App = () => (
           {/* Customer Routes */}
           <Route path="/customer/dashboard" element={<Dashboard />} />
           <Route path="/customer/bills" element={<Bills />} />
-          <Route path="/customer/payments" element={<Payments />} />
+          <Route path="/customer/payments" element={<CustomerPayments />} />
+          <Route path="/customer/payments/success" element={<PaymentSuccess />} />
+          <Route path="/customer/payments/failed" element={<PaymentFailed />} />
           <Route path="/customer/usage" element={<Usage />} />
           <Route path="/customer/notifications" element={<Notifications />} />
           <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
