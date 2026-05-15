@@ -433,90 +433,96 @@ export const PaymentsAddingPage = () => {
       />
 
       {isEditOpen && (
-        <button
-          type="button"
-          className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 cursor-default"
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
           onClick={() => setIsEditOpen(false)}
         >
           <div
-            className="bg-white rounded-2xl p-6 w-80 shadow-lg cursor-auto"
+            className="bg-card rounded-2xl p-6 w-[350px] shadow-xl border border-border/40 text-left"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-lg font-semibold mb-4">
+            <h2 className="text-xl font-bold text-foreground mb-1">
               Edit Payment
             </h2>
+            <p className="text-xs text-muted-foreground mb-5">Update the manual payment amount.</p>
 
-            <div className="mb-4">
-              <Label className="text-sm text-muted-foreground">
-                Amount
+            <div className="mb-6">
+              <Label className="text-sm font-medium text-foreground mb-1.5 block">
+                Amount (Rs.)
               </Label>
               <Input
                 type="number"
                 value={updatedAmount}
                 onChange={(e) => handleAmountChange(e.target.value)}
-                className="w-full border rounded-lg p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                className="w-full text-foreground border-border/50 rounded-xl focus-visible:ring-primary/20 bg-background"
                 placeholder="Enter amount"
               />
 
               {isTouched && amountError && (
                 <motion.div
-                  initial={{ opacity: 0, y: -10 }}
+                  initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 border border-destructive/20 rounded-xl px-4 py-3 backdrop-blur-sm mt-2"
+                  className="flex items-start gap-2 text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2 mt-2"
                 >
-                  <span>⚠️ {amountError}</span>
+                  <span className="mt-0.5">⚠️</span>
+                  <span>{amountError}</span>
                 </motion.div>
               )}
             </div>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex justify-end gap-3">
               <Button
-                className="px-4 sm:w-[120px] bg-gray-200 text-gray-700 hover:bg-gray-300 flex-1"
+                variant="outline"
+                className="flex-1 rounded-xl"
                 onClick={handleCancel}
               >
                 Cancel
               </Button>
 
               <Button
-                className="px-4 sm:w-[120px] flex-1"
+                className="flex-1 rounded-xl"
                 onClick={handleUpdate}
                 disabled={!updatedAmount || !!amountError}
               >
-                Save
+                Save Changes
               </Button>
             </div>
           </div>
-        </button>
+        </div>
       )}
 
       {isDeleteOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-6 w-80 shadow-lg">
-
-            <h2 className="text-lg font-semibold mb-2">
+        <div 
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
+          onClick={cancelDelete}
+        >
+          <div 
+            className="bg-card rounded-2xl p-6 w-[350px] shadow-xl border border-border/40 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold text-foreground mb-1">
               Delete Payment
             </h2>
-
-            <p className="text-sm text-muted-foreground mb-4">
-              Are you sure you want to delete this payment?
+            <p className="text-sm text-muted-foreground mb-6">
+              Are you sure you want to delete this payment? This action cannot be undone.
             </p>
 
-            <div className="flex justify-end gap-2">
-
+            <div className="flex justify-end gap-3">
               <Button
-                className="bg-gray-200 text-gray-700 hover:bg-gray-300"
+                variant="outline"
+                className="flex-1 rounded-xl"
                 onClick={cancelDelete}
               >
                 Cancel
               </Button>
 
               <Button
-                className="bg-red-600 text-white hover:bg-red-700"
+                variant="destructive"
+                className="flex-1 rounded-xl"
                 onClick={confirmDelete}
               >
-                Yes, Delete
+                Delete
               </Button>
-
             </div>
           </div>
         </div>

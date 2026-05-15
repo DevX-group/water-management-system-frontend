@@ -191,7 +191,7 @@ export const PendingBankSlipsTable = () => {
                 <div className="col-span-3 flex justify-center">
                   <Button
                     size="sm"
-                    className="px-5 rounded-lg"
+                    className="px-5 rounded-xl"
                     onClick={() =>
                       navigate(`/admin/payments/slip/${slip.slipId}`)
                     }

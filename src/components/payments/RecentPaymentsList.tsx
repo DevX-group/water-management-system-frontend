@@ -51,12 +51,25 @@ export const RecentPaymentsList = () => {
             return (
               <div
                 key={payment.paymentId}
-                className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all"
+                className="group p-3.5 rounded-xl border border-border/60 bg-background hover:bg-primary/[0.02] shadow-sm hover:shadow-md transition-all duration-300"
               >
-                <div className="flex items-start justify-between mb-1">
-                  <p className="font-medium text-foreground text-sm">{payment.accountHolderName}</p>
+                {/* Top Row: Name & Amount */}
+                <div className="flex items-start justify-between mb-1.5 gap-2">
+                  <p className="font-medium text-foreground text-sm truncate">
+                    {payment.accountHolderName}
+                  </p>
+                  <span className="font-medium text-primary shrink-0 text-sm">
+                    Rs. {payment.amountPaid.toLocaleString()}
+                  </span>
+                </div>
+
+                {/* Second Row: Sub No & Status */}
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs text-muted-foreground bg-secondary/50 px-1.5 py-0.5 rounded">
+                    {payment.subscriptionNumber}
+                  </span>
                   <span
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusClass}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium uppercase tracking-wider ${statusClass}`}
                   >
                     {payment.paymentMethod === "MANUAL" && payment.paymentType
                       ? `${formattedPaymentType}.${formattedStatus}`
@@ -64,19 +77,15 @@ export const RecentPaymentsList = () => {
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-xs text-muted-foreground">
-                  <span>{payment.subscriptionNumber}</span>
-                  <span className="font-medium text-foreground">
-                    Rs. {payment.amountPaid.toLocaleString()}
+                {/* Bottom Row: Date & Method */}
+                <div className="flex items-center justify-between pt-2 border-t border-border/40">
+                  <p className="text-[11px] font-medium text-muted-foreground">
+                    {formatDateTime(payment.createdAt)}
+                  </p>
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-secondary/80 text-secondary-foreground">
+                    {formatPaymentMethod(payment.paymentMethod)}
                   </span>
                 </div>
-
-                <p className="text-xs text-muted-foreground mt-1">
-                  {formatDateTime(payment.createdAt)}
-                </p>
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-secondary text-muted-foreground mt-1 bg-blue-100 text-blue-700">
-                  {formatPaymentMethod(payment.paymentMethod)}
-                </span>
               </div>
             );
           })}
