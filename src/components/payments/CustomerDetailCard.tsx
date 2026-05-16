@@ -1,3 +1,5 @@
+import '@/index.css';
+import React from 'react';
 import { PaymentCustomerInfoResponse } from '@/services/paymentService';
 import { User, Hash, CreditCard, MapPin, Zap } from 'lucide-react';
 
