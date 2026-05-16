@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Calculator } from 'lucide-react';
 import { Label } from '@/components/ui/label';

@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Edit, Users, MessageSquare, Trash2 } from 'lucide-react';
 import {

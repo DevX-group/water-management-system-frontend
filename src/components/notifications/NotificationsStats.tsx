@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, Info, AlertOctagon } from 'lucide-react';
@@ -17,7 +18,7 @@ export const NotificationsStats: React.FC<NotificationsStatsProps> = ({ counts }
       { label: "Critical", count: counts.critical, color: "text-red-500", icon: AlertOctagon, bg: "bg-red-50" },
       { label: "High",     count: counts.high,     color: "text-orange-500", icon: AlertTriangle, bg: "bg-orange-50" },
       { label: "Medium",   count: counts.medium,   color: "text-amber-500", icon: Info, bg: "bg-amber-50" },
-      { label: "Info",     count: counts.info,     color: "text-blue-500", icon: Info, bg: "bg-blue-50" },
+      { label: "Info",     count: counts.info,     color: "text-primary", icon: Info, bg: "bg-blue-50" },
     ].map((stat, i) => {
       const Icon = stat.icon;
       return (
@@ -47,7 +48,7 @@ export const NotificationsFilter: React.FC<NotificationsFilterProps> = ({ filter
         { id: "critical", hover: "hover:bg-red-50 hover:text-red-600",    active: "bg-red-500 text-white" },
         { id: "high",     hover: "hover:bg-orange-50 hover:text-orange-600", active: "bg-orange-500 text-white" },
         { id: "medium",   hover: "hover:bg-amber-50 hover:text-amber-600",  active: "bg-amber-500 text-white" },
-        { id: "info",     hover: "hover:bg-blue-50 hover:text-blue-600",    active: "bg-blue-500 text-white" },
+        { id: "info",     hover: "hover:bg-blue-50 hover:text-primary",    active: "bg-primary text-white" },
       ].map((lvl) => (
         <button
           key={lvl.id}

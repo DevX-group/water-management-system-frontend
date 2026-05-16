@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Download } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

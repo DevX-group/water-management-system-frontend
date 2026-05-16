@@ -1,3 +1,4 @@
+import '@/index.css';
 import { useState, useEffect } from 'react';
 import { getRecentPayments, RecentPaymentResponse } from '@/services/paymentService';
 import { toast } from '@/components/ui/sonner';

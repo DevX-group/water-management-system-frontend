@@ -1,3 +1,4 @@
+import '@/index.css';
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -39,7 +40,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 className={cn(
                   "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative",
                   isActive 
-                    ? "border-blue-400 text-white" 
+                    ? "border-primary text-white" 
                     : "border-transparent text-slate-300 hover:text-white hover:border-white/30"
                 )}
               >

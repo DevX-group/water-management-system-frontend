@@ -1,6 +1,5 @@
 import '@/index.css';
 import React from 'react';
-import type { PaymentHistoryItemResponse } from '@/services/paymentService';
 import { Pencil, Trash2, MoreVertical, History, Landmark, Receipt, HandCoins } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';

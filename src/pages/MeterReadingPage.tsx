@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { MeterReadingForm }         from '@/components/meter-reading/MeterReadingForm';
 import { MeterReadingInstructions } from '@/components/meter-reading/MeterReadingInstructions';

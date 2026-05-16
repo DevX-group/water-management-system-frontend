@@ -1,3 +1,4 @@
+import '@/index.css';
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Droplets, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";

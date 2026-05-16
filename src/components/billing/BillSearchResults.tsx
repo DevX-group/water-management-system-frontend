@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { FileText, Eye, Download, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';

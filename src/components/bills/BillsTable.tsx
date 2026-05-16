@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Download, ArrowLeft, ArrowRight } from 'lucide-react';

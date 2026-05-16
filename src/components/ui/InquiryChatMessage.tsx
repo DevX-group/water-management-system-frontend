@@ -1,3 +1,4 @@
+import '@/index.css';
 // src/components/inquiry/InquiryChatMessage.tsx
 
 import React from 'react';
@@ -49,7 +50,7 @@ export const InquiryChatMessage: React.FC<Props> = ({ message, customerName, vie
           className={clsx(
             'px-4 py-2.5 text-sm leading-relaxed break-words',
             isMyMessage
-              ? (viewerRole === 'user' ? 'bg-primary text-primary-foreground rounded-tl-2xl rounded-tr-sm rounded-br-2xl rounded-bl-2xl' : 'bg-blue-600 text-white rounded-tl-2xl rounded-tr-sm rounded-br-2xl rounded-bl-2xl')
+              ? (viewerRole === 'user' ? 'bg-primary text-primary-foreground rounded-tl-2xl rounded-tr-sm rounded-br-2xl rounded-bl-2xl' : 'bg-primary text-white rounded-tl-2xl rounded-tr-sm rounded-br-2xl rounded-bl-2xl')
               : 'bg-slate-100 border border-slate-200 text-slate-800 rounded-tl-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl'
           )}
         >

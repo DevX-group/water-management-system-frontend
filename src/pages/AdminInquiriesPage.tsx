@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Loader2 } from 'lucide-react';
@@ -54,7 +55,7 @@ export const AdminInquiriesPage: React.FC = () => {
           </div>
           <div className="flex gap-2">
             <Badge variant="outline" className="px-4 py-2 text-sm">{stats.open} Open</Badge>
-            <Badge variant="outline" className="px-4 py-2 text-sm text-emerald-500 border-emerald-500/20">{stats.resolved} Resolved</Badge>
+            <Badge variant="outline" className="px-4 py-2 text-sm text-success border-success/20">{stats.resolved} Resolved</Badge>
           </div>
         </motion.div>
 

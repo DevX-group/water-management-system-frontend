@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';

@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { ChangeEvent, DragEvent, RefObject } from "react";
 import { Landmark, AlertTriangle, CheckCircle2, X, Upload, Receipt } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

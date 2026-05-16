@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { ZoomIn, ZoomOut, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';

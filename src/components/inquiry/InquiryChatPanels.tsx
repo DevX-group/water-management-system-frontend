@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,8 +40,8 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
           <InquiryAvatar name="S" size="sm" variant="admin" />
           <div>
             <CardTitle className="text-base">Live Support Session</CardTitle>
-            <p className="text-xs text-emerald-500 font-medium flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Connected with Support Team
+            <p className="text-xs text-success font-medium flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Connected with Support Team
             </p>
           </div>
           <Badge variant="secondary" className="ml-auto">ID: {inquiry.id}</Badge>
@@ -54,7 +55,7 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
     </CardContent>
     {isHistory ? (
       inquiry.status === 'resolved' ? (
-        <div className="p-4 bg-emerald-500/5 border-t flex items-center justify-center gap-2 text-emerald-500">
+        <div className="p-4 bg-success/5 border-t flex items-center justify-center gap-2 text-success">
           <CheckCircle size={16} /><span className="text-xs font-medium">This inquiry has been resolved.</span>
         </div>
       ) : (

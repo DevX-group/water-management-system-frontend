@@ -1,3 +1,4 @@
+import '@/index.css';
 import { useAdmin } from '@/contexts/AdminContext';
 import React from 'react';
 import { AdminSidebar } from '@/components/layout/AdminSidebar';

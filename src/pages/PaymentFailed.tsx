@@ -1,3 +1,4 @@
+import '@/index.css';
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { PaymentResultCard } from "@/components/payments/PaymentResultComponents";

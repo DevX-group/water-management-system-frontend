@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Search, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';

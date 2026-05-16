@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { RefObject } from 'react';
 import { Send, CheckCircle, MessageSquare } from 'lucide-react';
 import { Card } from '@/components/ui/card';
@@ -45,7 +46,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
                   <CheckCircle className="w-3 h-3 mr-1" /> Resolve
                 </Button>
               )}
-              <Badge className={selectedInquiry.status === 'open' ? 'bg-blue-500' : 'bg-emerald-500'}>
+              <Badge className={selectedInquiry.status === 'open' ? 'bg-primary' : 'bg-success'}>
                 {selectedInquiry.status.toUpperCase()}
               </Badge>
             </div>

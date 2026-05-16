@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Zap, ToggleLeft } from 'lucide-react';
 import type { ConnectionType, ConnectionRate, BillBreakdown } from '@/types/billing';

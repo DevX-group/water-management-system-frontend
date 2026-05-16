@@ -1,3 +1,4 @@
+import '@/index.css';
 import "./polyfills";
 
 import { createRoot } from "react-dom/client";
