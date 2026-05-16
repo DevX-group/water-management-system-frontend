@@ -1,3 +1,4 @@
+import '@/index.css';
 // src/components/inquiry/InquiryAvatar.tsx
 
 import React from 'react';
@@ -21,7 +22,7 @@ export const InquiryAvatar: React.FC<Props> = ({ name, size = 'md', variant = 'u
       'rounded-full flex items-center justify-center font-bold flex-shrink-0',
       SIZE[size],
       variant === 'user'
-        ? 'bg-gradient-to-br from-blue-500 to-cyan-400 text-white'
+        ? 'bg-gradient-to-br from-primary to-accent text-white'
         : 'bg-gradient-to-br from-violet-500 to-pink-400 text-white'
     )}
   >

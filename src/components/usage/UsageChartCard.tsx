@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -22,13 +23,13 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
         <CardDescription>Hover over charts to see detailed data</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
-        <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-white" : ""}`}>
           <BarChartHorizontal className="w-4 h-4" /> Bar
         </Button>
-        <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-primary hover:bg-primary/90 text-white" : ""}`}>
           <PieIcon className="w-4 h-4" /> Pie
         </Button>
-        <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-primary hover:bg-primary/90 text-white" : ""}`}>
           <LineChart className="w-4 h-4" /> Mix
         </Button>
       </div>
@@ -36,7 +37,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
     <CardContent className="pt-6">
       {loading ? (
         <div className="h-[400px] w-full flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">Syncing data...</p>
         </div>
       ) : (
@@ -79,7 +80,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
       )}
       {!loading && activeChart === "mix" && (
         <div className="flex justify-center gap-6 mt-4">
-          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-sky-500" /><span className="text-sm text-muted-foreground font-medium">Monthly Usage</span></div>
+          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary" /><span className="text-sm text-muted-foreground font-medium">Monthly Usage</span></div>
           <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500" /><span className="text-sm text-muted-foreground font-medium">Standard Limit</span></div>
         </div>
       )}

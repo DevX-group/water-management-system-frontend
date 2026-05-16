@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';

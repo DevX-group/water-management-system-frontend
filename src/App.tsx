@@ -1,3 +1,4 @@
+import '@/index.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -43,7 +44,6 @@ const App = () => (
           <Route path="/customer/notifications" element={<Notifications />} />
           <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
           <Route path="/customer/profile" element={<Profile />} />
-          <Route path="/about" element={<AboutUs />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />

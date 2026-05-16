@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -37,8 +38,8 @@ export const LoginRightPanel: React.FC = () => (
           <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 + i * 0.1 }}
             className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/10">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/40 to-cyan-500/40 backdrop-blur flex items-center justify-center border border-white/20">
-              <f.icon className="w-5 h-5 text-cyan-300" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/40 to-accent/40 backdrop-blur flex items-center justify-center border border-white/20">
+              <f.icon className="w-5 h-5 text-accent" />
             </div>
             <span className="font-medium text-white/80">{f.text}</span>
           </motion.div>

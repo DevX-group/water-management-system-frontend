@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -8,7 +9,7 @@ const getSeverityStyles = (severity: string) => {
     case "critical": return { cardBg: "bg-white", borderColor: "border-red-100", textColor: "text-red-600", icon: AlertOctagon, iconColor: "text-red-500", dismissBtn: "bg-red-50 text-red-600 hover:bg-red-100" };
     case "high": return { cardBg: "bg-white", borderColor: "border-orange-100", textColor: "text-orange-600", icon: AlertTriangle, iconColor: "text-orange-500", dismissBtn: "bg-orange-50 text-orange-600 hover:bg-orange-100" };
     case "medium": return { cardBg: "bg-white", borderColor: "border-amber-100", textColor: "text-amber-600", icon: AlertTriangle, iconColor: "text-amber-500", dismissBtn: "bg-amber-50 text-amber-600 hover:bg-amber-100" };
-    default: return { cardBg: "bg-white", borderColor: "border-blue-100", textColor: "text-blue-600", icon: Info, iconColor: "text-blue-500", dismissBtn: "bg-blue-50 text-blue-600 hover:bg-blue-100" };
+    default: return { cardBg: "bg-white", borderColor: "border-blue-100", textColor: "text-primary", icon: Info, iconColor: "text-primary", dismissBtn: "bg-blue-50 text-primary hover:bg-blue-100" };
   }
 };
 

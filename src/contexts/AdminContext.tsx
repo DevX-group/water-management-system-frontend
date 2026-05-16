@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { mockAdmins } from '@/data/mockData';
 

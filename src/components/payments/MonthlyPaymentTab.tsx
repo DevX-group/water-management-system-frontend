@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { CalendarDays, Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';

@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';

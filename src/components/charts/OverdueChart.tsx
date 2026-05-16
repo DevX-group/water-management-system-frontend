@@ -1,3 +1,4 @@
+import '@/index.css';
 interface BillingData {
   overdueAmount: number;
   currentBill: number;

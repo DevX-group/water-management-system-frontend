@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { useMemo, useState } from 'react';
 import { mockPayments, mockCustomers, mockBankSlips } from '@/data/mockData';
 import { useNavigate } from 'react-router-dom';

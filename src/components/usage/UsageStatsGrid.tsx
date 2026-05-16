@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -26,7 +27,7 @@ export const UsageStatsGrid: React.FC<UsageStatsGridProps> = ({ loading, stats }
           <Card key={i} className="shadow-card border-none">
             <CardContent className="p-5 flex items-center gap-4">
               <div className="w-12 h-12 rounded-xl bg-sky-100 flex items-center justify-center">
-                <stat.icon className="w-6 h-6 text-sky-600" />
+                <stat.icon className="w-6 h-6 text-primary" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">{stat.label}</p>

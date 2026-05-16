@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import clsx from 'clsx';
 import { Card, CardContent } from '@/components/ui/card';
@@ -7,9 +8,9 @@ import type { Inquiry } from '@/types/inquiry';
 
 export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
   const config = {
-    open:     { label: 'Open',     className: 'bg-blue-500/10 text-blue-400 border-blue-500/20' },
+    open:     { label: 'Open',     className: 'bg-primary/10 text-blue-400 border-primary/20' },
     pending:  { label: 'Pending',  className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
-    resolved: { label: 'Resolved', className: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20' },
+    resolved: { label: 'Resolved', className: 'bg-success/10 text-emerald-400 border-success/20' },
   }[status] ?? { label: status, className: 'bg-secondary text-muted-foreground' };
   return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${config.className}`}>{config.label}</span>;
 };

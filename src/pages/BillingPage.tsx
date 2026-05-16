@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Calculator, FileText, Settings2 } from 'lucide-react';
 import { useAdmin } from '@/contexts/AdminContext';

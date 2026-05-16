@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Download } from 'lucide-react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';

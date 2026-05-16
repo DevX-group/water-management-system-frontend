@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Edit, Calendar, Clock, Users, Trash2 } from 'lucide-react';
 import {

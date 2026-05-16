@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, Loader2, Download, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';

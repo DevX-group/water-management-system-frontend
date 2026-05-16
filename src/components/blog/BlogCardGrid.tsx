@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
