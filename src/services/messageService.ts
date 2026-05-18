@@ -1,5 +1,6 @@
 import { FailedRecipient, MessageHistoryRow, ScheduledMessage, TriggeredMessage } from '../types/messaging';
 
+// Messaging API endpoints for scheduled and triggered templates.
 const SCHEDULED_API_BASE = 'http://localhost:8081/api/scheduled-messages';
 const TRIGGERED_API_BASE = 'http://localhost:8081/api/triggered-messages';
 
@@ -97,6 +98,7 @@ type SentMessageHistoryApi = {
 };
 
 const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
+  // Derive a human-friendly channel label from backend channel text.
   const channels = (item.channels ?? '').toLowerCase();
   let type = 'Message';
   if (channels.includes('sms') && channels.includes('email')) type = 'SMS & Email';
@@ -142,6 +144,7 @@ export const getMessageHistory = async (
   page = 0,
   size = 10
 ): Promise<MessageHistoryPageResponse> => {
+  // Paged history for sent scheduled messages.
   const params = new URLSearchParams({
     page: String(page),
     size: String(size),
@@ -169,6 +172,7 @@ export const getMessageFailures = async (
   page = 0,
   size = 5
 ): Promise<MessageFailuresPageResponse> => {
+  // Paged failures for a specific sent message.
   const params = new URLSearchParams({
     page: String(page),
     size: String(size),

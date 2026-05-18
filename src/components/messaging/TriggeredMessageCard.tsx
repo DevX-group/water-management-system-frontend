@@ -17,6 +17,7 @@ interface TriggeredMessageCardProps {
 }
 
 export const TriggeredMessageCard: React.FC<TriggeredMessageCardProps> = ({ message, onEdit, onDelete }) => {
+  // Compact card showing trigger type and active status with edit/delete actions.
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

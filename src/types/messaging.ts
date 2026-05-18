@@ -1,3 +1,4 @@
+// Core types for scheduled and triggered messaging.
 export type MessageChannel = 'SMS' | 'Email';
 export type ScheduleType = 'Recurring' | 'One-Time';
 export type RecipientType = 'All Customers' | 'Overdue Customers' | 'Selected Customers';

@@ -15,6 +15,7 @@ interface MessageDetailsDialogProps {
 export const MessageDetailsDialog: React.FC<MessageDetailsDialogProps> = ({
   row, open, onClose, onViewFailed,
 }) => {
+  // Details modal for a single sent message.
   if (!row) return null;
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -103,6 +104,7 @@ export const FailedRecipientsDialog: React.FC<FailedRecipientsDialogProps> = ({
   onClose,
   onBack,
 }) => {
+  // Modal that lists failed recipients with independent paging.
   if (!row) return null;
   const failures = failedRecipients;
   const canGoBack = page > 0;
