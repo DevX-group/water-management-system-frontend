@@ -23,13 +23,13 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
         <CardDescription>Hover over charts to see detailed data</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
-        <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-white" : ""}`}>
           <BarChartHorizontal className="w-4 h-4" /> Bar
         </Button>
-        <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-primary hover:bg-primary/90 text-white" : ""}`}>
           <PieIcon className="w-4 h-4" /> Pie
         </Button>
-        <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-primary hover:bg-primary/90 text-white" : ""}`}>
           <LineChart className="w-4 h-4" /> Mix
         </Button>
       </div>
@@ -37,7 +37,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
     <CardContent className="pt-6">
       {loading ? (
         <div className="h-[400px] w-full flex flex-col items-center justify-center gap-3">
-          <Loader2 className="w-8 h-8 animate-spin text-sky-500" />
+          <Loader2 className="w-8 h-8 animate-spin text-primary" />
           <p className="text-sm text-muted-foreground">Syncing data...</p>
         </div>
       ) : (
@@ -49,30 +49,30 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} />
                 <Tooltip cursor={{ fill: "transparent" }} contentStyle={tooltipStyle} />
-                <Bar dataKey="usage" fill="#0ea5e9" radius={[4, 4, 0, 0]} barSize={40} />
+                <Bar dataKey="usage" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} barSize={40} />
               </BarChart>
             ) : activeChart === "pie" ? (
               <PieChart>
                 <Pie data={pieData} cx="50%" cy="50%" innerRadius={80} outerRadius={120} paddingAngle={2} dataKey="value" style={{ cursor: 'pointer', outline: 'none' }}>
                   {pieData.map((entry, index) => <Cell key={`cell-${index}`} fill={entry.color} />)}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} itemStyle={{ fontWeight: 'bold', color: '#0ea5e9' }} formatter={(value: number, name: string) => [`${value} units`, `${name}`]} />
+                <Tooltip contentStyle={tooltipStyle} itemStyle={{ fontWeight: 'bold', color: 'hsl(var(--primary))' }} formatter={(value: number, name: string) => [`${value} units`, `${name}`]} />
               </PieChart>
             ) : (
               <ComposedChart data={monthlyData}>
                 <defs>
                   <linearGradient id="colorUsage" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#0ea5e9" stopOpacity={0} />
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} />
                 <Tooltip contentStyle={tooltipStyle} />
-                <Area type="monotone" dataKey="usage" fill="url(#colorUsage)" stroke="#0ea5e9" strokeWidth={2} />
+                <Area type="monotone" dataKey="usage" fill="url(#colorUsage)" stroke="hsl(var(--primary))" strokeWidth={2} />
                 <Line type="monotone" dataKey="limit" stroke="#f59e0b" strokeWidth={2} dot={false} strokeDasharray="5 5" />
-                <Bar dataKey="usage" barSize={30} fill="#0ea5e9" radius={[4, 4, 0, 0]} opacity={0.8} />
+                <Bar dataKey="usage" barSize={30} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} opacity={0.8} />
               </ComposedChart>
             )}
           </ResponsiveContainer>
@@ -80,7 +80,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
       )}
       {!loading && activeChart === "mix" && (
         <div className="flex justify-center gap-6 mt-4">
-          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-sky-500" /><span className="text-sm text-muted-foreground font-medium">Monthly Usage</span></div>
+          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary" /><span className="text-sm text-muted-foreground font-medium">Monthly Usage</span></div>
           <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500" /><span className="text-sm text-muted-foreground font-medium">Standard Limit</span></div>
         </div>
       )}
