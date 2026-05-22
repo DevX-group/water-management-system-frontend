@@ -15,6 +15,7 @@ export const useMessageHistory = () => {
   const [failuresSize, setFailuresSize] = useState(5);
   const [failuresTotalPages, setFailuresTotalPages] = useState(0);
   const [failuresTotalElements, setFailuresTotalElements] = useState(0);
+  
   const [loadingFailuresFor, setLoadingFailuresFor] = useState<string | null>(null);
   const [failuresError, setFailuresError] = useState<string | null>(null);
   const [openDetailsId, setOpenDetailsId] = useState<string | null>(null);

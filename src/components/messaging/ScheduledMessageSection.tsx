@@ -10,7 +10,7 @@ import { ScheduledMessageCard } from '@/components/messaging/ScheduledMessageCar
 import { MessageDialog } from '@/components/messaging/MessageDialog';
 
 export const ScheduledMessageSection = () => {
-  // Server-backed list of scheduled message templates.
+  // Server-backed list of scheduled messages.
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
   const [isLoading, setIsLoading]                 = useState(true);
   const [isDialogOpen, setIsDialogOpen]           = useState(false);
@@ -20,7 +20,7 @@ export const ScheduledMessageSection = () => {
   const navigate   = useNavigate();
 
   useEffect(() => {
-    // Initial fetch of scheduled templates.
+    // Initial fetch of scheduled messages.
     const load = async () => {
       try {
         const scheduled = await messageApi.getAllScheduledMessages();
