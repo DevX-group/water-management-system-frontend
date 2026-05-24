@@ -3,9 +3,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Landmark, Receipt, HandCoins } from "lucide-react";
-import { PaymentHistoryItemResponse } from "@/services/paymentService";
-import { formatDateTime } from "@/util/dateUtils";
-import { formatPaymentMethod } from "@/util/paymentUtils";
+import { PaymentHistoryItemResponse } from "@/types/payment";
+import { formatDateTime } from "@/utils/dateUtils";
+import { formatPaymentMethod } from "@/utils/paymentUtils";
 
 interface CustomerPaymentHistoryTableProps {
   historyRef: RefObject<HTMLDivElement>;

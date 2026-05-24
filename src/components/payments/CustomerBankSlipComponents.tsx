@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CustomerBankSlipResponse } from "@/services/bankSlipService";
+import { CustomerBankSlipResponse } from "@/types/bankSlip";
 
 export interface BankSlipForm {
   amount: string;

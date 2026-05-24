@@ -2,18 +2,23 @@ import { useState, useRef, DragEvent, ChangeEvent, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
-  CurrentBillResponse,
   getBankDetails,
   getCurrentBillForCustomer,
   getOutstandingBillsForCustomer,
   getPaymentHistoryForCustomer,
   initiatePayment,
-  OutstandingBillResponse,
-  OutstandingBillsSummaryResponse,
-  PaymentHistoryItemResponse,
 } from "@/services/paymentService";
 import { toast } from "@/components/ui/sonner";
-import { uploadBankSlip, getMySlips, CustomerBankSlipResponse, deleteSlip } from "@/services/bankSlipService";
+import { uploadBankSlip, getMySlips, deleteSlip } from "@/services/bankSlipService";
+import type {
+  CurrentBillResponse,
+  PaymentHistoryItemResponse,
+  OutstandingBillResponse,
+  OutstandingBillsSummaryResponse,
+} from "@/types/payment";
+import type {
+  CustomerBankSlipResponse,
+} from "@/types/bankSlip";
 
 import { CustomerPaymentCard, PaymentMethod } from "@/components/payments/CustomerPaymentComponents";
 import { CustomerBankSlipSection, CustomerBankSlipHistory, CustomerBankSlipModal, BankSlipForm } from "@/components/payments/CustomerBankSlipComponents";

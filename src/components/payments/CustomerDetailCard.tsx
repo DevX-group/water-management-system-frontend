@@ -1,5 +1,5 @@
-import { PaymentCustomerInfoResponse } from '@/services/paymentService';
 import { User, Hash, CreditCard, MapPin, Zap } from 'lucide-react';
+import { PaymentCustomerInfoResponse } from '@/types/payment';
 
 export const CustomerDetailCard = ({ customerInfo }: { customerInfo: PaymentCustomerInfoResponse | null }) => {
   if (!customerInfo) return null;

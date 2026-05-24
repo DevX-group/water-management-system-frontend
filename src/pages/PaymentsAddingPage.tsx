@@ -8,18 +8,22 @@ import {
   addPayment,
   getCustomerPaymentSummary,
   getCurrentBill,
-  type CurrentBillResponse,
-  PaymentHistoryItemResponse,
   getPaymentHistory,
   getPaymentCustomerInfo,
-  type PaymentCustomerInfoResponse,
   updatePayment,
-  type OutstandingBillResponse,
-  type OutstandingBillsSummaryResponse,
   getOutstandingBillsSummary,
   deletePayment,
-  CustomerPaymentSummaryResponse,
 } from '@/services/paymentService';
+
+import type {
+  CurrentBillResponse,
+  PaymentHistoryItemResponse,
+  PaymentCustomerInfoResponse,
+  OutstandingBillResponse,
+  OutstandingBillsSummaryResponse,
+  CustomerPaymentSummaryResponse,
+} from '@/types/payment';
+
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 
@@ -492,11 +496,11 @@ export const PaymentsAddingPage = () => {
       )}
 
       {isDeleteOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
           onClick={cancelDelete}
         >
-          <div 
+          <div
             className="bg-card rounded-2xl p-6 w-[350px] shadow-xl border border-border/40 text-left"
             onClick={(e) => e.stopPropagation()}
           >

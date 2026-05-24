@@ -1,9 +1,9 @@
 import { Pencil, Trash2, MoreVertical, History, Landmark, Receipt, HandCoins } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { PaymentHistoryItemResponse } from '@/services/paymentService';
-import { formatPaymentMethod } from '@/util/paymentUtils';
-import { formatDateTime } from '@/util/dateUtils';
+import { PaymentHistoryItemResponse } from '@/types/payment';
+import { formatPaymentMethod } from '@/utils/paymentUtils';
+import { formatDateTime } from '@/utils/dateUtils';
 
 interface PaymentHistoryCardProps {
   paymentHistory: PaymentHistoryItemResponse[];

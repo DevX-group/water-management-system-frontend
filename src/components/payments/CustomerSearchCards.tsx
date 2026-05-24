@@ -51,11 +51,11 @@ export const CustomerDetailsCard: React.FC<CustomerDetailsCardProps> = ({ select
       </div>
       <div className="grid grid-cols-2 gap-4 mb-6">
         {[{ label: 'Name', value: selectedCustomer.name }, { label: 'Subscription No.', value: selectedCustomer.subscriptionNo },
-          { label: 'NIC', value: selectedCustomer.nic }, { label: 'Region', value: selectedCustomer.region }].map(({ label, value }) => (
-            <div key={label}>
-              <p className="text-sm text-muted-foreground">{label}</p>
-              <p className="font-medium text-foreground">{value}</p>
-            </div>
+        { label: 'NIC', value: selectedCustomer.nic }, { label: 'Region', value: selectedCustomer.region }].map(({ label, value }) => (
+          <div key={label}>
+            <p className="text-sm text-muted-foreground">{label}</p>
+            <p className="font-medium text-foreground">{value}</p>
+          </div>
         ))}
       </div>
       <button className="w-full bg-primary text-primary-foreground h-10 rounded-md font-medium" onClick={onNavigate}>

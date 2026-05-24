@@ -1,7 +1,7 @@
 import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { OutstandingBillResponse } from '@/services/paymentService';
+import { OutstandingBillResponse } from '@/types/payment';
 
 interface OutstandingPaymentTabProps {
   outstandingBills: OutstandingBillResponse[];

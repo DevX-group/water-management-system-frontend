@@ -3,7 +3,8 @@ import { useLocation, useNavigate, useParams, useSearchParams } from "react-rout
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
-import { AdminBankSlipResponse, getAllPendingSlips, getSlipById, processBankSlipReview } from "@/services/bankSlipService";
+import { getAllPendingSlips, getSlipById, processBankSlipReview } from "@/services/bankSlipService";
+import type { AdminBankSlipResponse } from "@/types/bankSlip";
 
 import { SlipImageViewer, SlipDetailsCard, RejectDialog } from "@/components/payments/SlipReviewComponents";
 
