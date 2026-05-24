@@ -1,70 +1,6 @@
-import axios from 'axios';
+import { AdminBankSlipResponse, BankSlipActionRequest, BankSlipUploadRequest, BankSlipUploadResponse, PageResponse } from '@/types/bankSlip';
+import api from "@/lib/api";
 
-const api = axios.create({
-    baseURL: "http://localhost:8081/api",
-    headers: { "Content-Type": "application/json" },
-});
-
-export type PaymentStatus = "FULL" | "PARTIAL";
-export type PaymentType = "MONTHLY" | "OUTSTANDING";
-export type PaymentMethod = "ONLINE" | "BANK_TRANSFER" | "MANUAL";
-export type SlipStatus = "PENDING" | "APPROVED" | "REJECTED";
-
-export interface BankSlipUploadRequest {
-    amount: number;
-    bankPaymentDate: string;
-    bankReference: string;
-    file: File;
-}
-
-export interface BankSlipUploadResponse {
-    message: string;
-    slipId: number;
-    amount: number;
-    status: SlipStatus;
-    bankReference: string;
-    filePath: string;
-    uploadedAt: string;
-    bankPaymentDate: string;
-}
-
-export interface AdminBankSlipResponse {
-    slipId: number;
-    subscriptionNumber: string;
-    accountHolderName: string;
-    status: SlipStatus;
-    amount: number;
-    bankReference: string;
-    filePath: string;
-    uploadedAt: string;
-    bankPaymentDate: string;
-}
-
-export interface CustomerBankSlipResponse {
-    slipId: number;
-    amount: number;
-    bankReference: string;
-    filePath: string;
-    status: SlipStatus;
-    uploadedAt: string;
-    bankPaymentDate: string;
-    reviewedAt: string;
-    rejectionReason?: string;
-}
-
-export interface BankSlipActionRequest {
-    slipId: number;
-    action: SlipStatus;
-    rejectionReason?: string;
-}
-
-export interface PageResponse<T> {
-    content: T[];
-    totalPages: number;
-    totalElements: number;
-    number: number;
-    size: number;
-}
 
 export const uploadBankSlip = async (payload: BankSlipUploadRequest): Promise<BankSlipUploadResponse> => {
     const formData = new FormData();
@@ -89,7 +25,7 @@ export const getMySlips = async (page = 0, size = 6) => {
 
 export const getPendingSlips = async (page: number, size: number, search?: string): Promise<PageResponse<AdminBankSlipResponse>> => {
     const res = await api.get("/slips/pending", {
-        params: {page, size, search}
+        params: { page, size, search }
     });
 
     return res.data;
