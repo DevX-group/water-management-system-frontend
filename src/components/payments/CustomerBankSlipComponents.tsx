@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomerBankSlipResponse } from "@/types/bankSlip";
+import { SlipStatus } from "@/types/payment";
 
 export interface BankSlipForm {
   amount: string;
@@ -193,17 +194,45 @@ interface CustomerBankSlipHistoryProps {
   slipEnd: number;
   slipTotalItems: number;
   slipPage: number;
+  // Filter props
+  filterYear: number | undefined;
+  setFilterYear: (v: number | undefined) => void;
+  filterStatus: SlipStatus | undefined;
+  setFilterStatus: (v: SlipStatus | undefined) => void;
+  onFilterChange: () => void;
 }
+
+const slipCurrentYear = new Date().getFullYear();
+const slipYearOptions = Array.from({ length: 6 }, (_, i) => slipCurrentYear - i);
 
 export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = ({
   slipPageSize, setSlipPageSize, setSlipPage, slipsLoading, bankSlips, setSelectedSlip,
-  slipTotalPages, slipStart, slipEnd, slipTotalItems, slipPage
+  slipTotalPages, slipStart, slipEnd, slipTotalItems, slipPage,
+  filterYear, setFilterYear, filterStatus, setFilterStatus, onFilterChange
 }) => {
+  const hasActiveFilter = filterYear !== undefined || filterStatus !== undefined;
+
+  const handleYearChange = (val: string) => {
+    setFilterYear(val === 'all' ? undefined : Number(val));
+    onFilterChange();
+  };
+
+  const handleStatusChange = (val: string) => {
+    setFilterStatus(val === 'all' ? undefined : (val as SlipStatus));
+    onFilterChange();
+  };
+
+  const clearFilters = () => {
+    setFilterYear(undefined);
+    setFilterStatus(undefined);
+    onFilterChange();
+  };
+
   const renderBankSlipContent = () => {
     if (bankSlips.length === 0) {
       return (
         <div className="text-sm text-muted-foreground text-center py-6">
-          No bank slips uploaded yet.
+          No bank slips found.
         </div>
       );
     }
@@ -254,7 +283,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
 
   return (
     <Card className="shadow-card border-none">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <CardTitle className="flex items-center gap-2">
             <Receipt className="w-5 h-5 text-primary" />
@@ -264,7 +293,51 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
             Track your submitted bank slips and verification status
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Year filter */}
+          <Select
+            value={filterYear !== undefined ? String(filterYear) : 'all'}
+            onValueChange={handleYearChange}
+          >
+            <SelectTrigger className="h-9 w-[110px] rounded-lg bg-secondary/40 text-xs font-medium">
+              <SelectValue placeholder="All Years" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {slipYearOptions.map((y) => (
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Status filter */}
+          <Select
+            value={filterStatus ?? 'all'}
+            onValueChange={handleStatusChange}
+          >
+            <SelectTrigger className="h-9 w-[120px] rounded-lg bg-secondary/40 text-xs font-medium">
+              <SelectValue placeholder="All Statuses" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Statuses</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="APPROVED">Approved</SelectItem>
+              <SelectItem value="REJECTED">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Clear */}
+          {hasActiveFilter && (
+            <button
+              onClick={clearFilters}
+              className="flex items-center gap-1 h-9 px-2.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors border border-border/50"
+            >
+              <X className="w-3 h-3" />
+              Clear
+            </button>
+          )}
+
+          {/* Page size */}
           <span className="text-sm text-muted-foreground">Items per page</span>
           <Select
             value={String(slipPageSize)}

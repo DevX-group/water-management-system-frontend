@@ -1,5 +1,6 @@
 import { AdminBankSlipResponse, BankSlipActionRequest, BankSlipUploadRequest, BankSlipUploadResponse, PageResponse } from '@/types/bankSlip';
 import api from "@/lib/api";
+import { SlipStatus } from '@/types/payment';
 
 
 export const uploadBankSlip = async (payload: BankSlipUploadRequest): Promise<BankSlipUploadResponse> => {
@@ -18,8 +19,17 @@ export const uploadBankSlip = async (payload: BankSlipUploadRequest): Promise<Ba
     return res.data;
 }
 
-export const getMySlips = async (page = 0, size = 6) => {
-    const res = await api.get(`/slips/my?page=${page}&size=${size}`);
+export const getMySlips = async (page = 0, size = 6, year?: number, status?: SlipStatus) => {
+    let url = `/slips/my?page=${page}&size=${size}`;
+
+    if (year !== undefined) {
+        url += `&year=${year}`;
+    }
+
+    if (status) {
+        url += `&status=${status}`;
+    }
+    const res = await api.get(url);
     return res.data;
 }
 

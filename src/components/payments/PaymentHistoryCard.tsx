@@ -1,7 +1,7 @@
-import { Pencil, Trash2, MoreVertical, History, Landmark, Receipt, HandCoins } from 'lucide-react';
+import { Pencil, Trash2, MoreVertical, History, Landmark, Receipt, HandCoins, X } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { PaymentHistoryItemResponse } from '@/types/payment';
+import { PaymentHistoryItemResponse, PaymentMethod } from '@/types/payment';
 import { formatPaymentMethod } from '@/utils/paymentUtils';
 import { formatDateTime } from '@/utils/dateUtils';
 
@@ -18,6 +18,12 @@ interface PaymentHistoryCardProps {
   latestManualPaymentId?: string;
   handleEdit: (payment: PaymentHistoryItemResponse) => void;
   handleDelete: (id: string) => void;
+  // Filter props
+  filterYear: number | undefined;
+  setFilterYear: (v: number | undefined) => void;
+  filterMethod: PaymentMethod | undefined;
+  setFilterMethod: (v: PaymentMethod | undefined) => void;
+  onFilterChange: () => void;
 }
 
 const getPaymentIcon = (method: string) => {
@@ -28,6 +34,9 @@ const getPaymentIcon = (method: string) => {
     default: return <Receipt className="w-3.5 h-3.5" />;
   }
 };
+
+const currentYear = new Date().getFullYear();
+const yearOptions = Array.from({ length: 6 }, (_, i) => currentYear - i);
 
 export const PaymentHistoryCard = ({
   paymentHistory,
@@ -41,11 +50,33 @@ export const PaymentHistoryCard = ({
   historyPage,
   latestManualPaymentId,
   handleEdit,
-  handleDelete
+  handleDelete,
+  filterYear,
+  setFilterYear,
+  filterMethod,
+  setFilterMethod,
+  onFilterChange,
 }: PaymentHistoryCardProps) => {
+  const hasActiveFilter = filterYear !== undefined || filterMethod !== undefined;
+
+  const handleYearChange = (val: string) => {
+    setFilterYear(val === 'all' ? undefined : Number(val));
+    onFilterChange();
+  };
+
+  const handleMethodChange = (val: string) => {
+    setFilterMethod(val === 'all' ? undefined : (val as PaymentMethod));
+    onFilterChange();
+  };
+
+  const clearFilters = () => {
+    setFilterYear(undefined);
+    setFilterMethod(undefined);
+    onFilterChange();
+  };
   return (
     <div className="bg-card rounded-2xl p-6 shadow-md border border-border/40 mt-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="bg-primary/10 p-2 rounded-lg">
             <History className="w-5 h-5 text-primary" />
@@ -58,24 +89,70 @@ export const PaymentHistoryCard = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 bg-secondary/50 p-1 rounded-xl">
-          <span className="text-xs text-muted-foreground pl-3 pr-1 font-medium">Show</span>
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Year filter */}
           <Select
-            value={String(historyPageSize)}
-            onValueChange={(value) => {
-              setHistoryPageSize(Number(value));
-              setHistoryPage(0);
-            }}
+            value={filterYear !== undefined ? String(filterYear) : 'all'}
+            onValueChange={handleYearChange}
           >
-            <SelectTrigger className="w-[65px] h-8 bg-background border-none rounded-lg shadow-sm">
-              <SelectValue />
+            <SelectTrigger className="h-8 w-[110px] bg-secondary/50 border-none rounded-lg text-xs font-medium">
+              <SelectValue placeholder="All Years" />
             </SelectTrigger>
-            <SelectContent className="min-w-0 w-[70px]">
-              <SelectItem value="5">5</SelectItem>
-              <SelectItem value="10">10</SelectItem>
-              <SelectItem value="25">25</SelectItem>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {yearOptions.map((y) => (
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
+
+          {/* Payment Method filter */}
+          <Select
+            value={filterMethod ?? 'all'}
+            onValueChange={handleMethodChange}
+          >
+            <SelectTrigger className="h-8 w-[130px] bg-secondary/50 border-none rounded-lg text-xs font-medium">
+              <SelectValue placeholder="All Methods" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Methods</SelectItem>
+              <SelectItem value="ONLINE">Online</SelectItem>
+              <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
+              <SelectItem value="MANUAL">Manual</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Clear Filters */}
+          {hasActiveFilter && (
+            <button
+              onClick={clearFilters}
+              className="flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors border border-border/50"
+            >
+              <X className="w-3 h-3" />
+              Clear
+            </button>
+          )}
+
+          {/* Page size */}
+          <div className="flex items-center gap-1.5 bg-secondary/50 p-1 rounded-xl">
+            <span className="text-xs text-muted-foreground pl-2 pr-1 font-medium">Show</span>
+            <Select
+              value={String(historyPageSize)}
+              onValueChange={(value) => {
+                setHistoryPageSize(Number(value));
+                setHistoryPage(0);
+              }}
+            >
+              <SelectTrigger className="w-[65px] h-8 bg-background border-none rounded-lg shadow-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="min-w-0 w-[70px]">
+                <SelectItem value="5">5</SelectItem>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
       </div>
 

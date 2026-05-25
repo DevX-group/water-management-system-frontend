@@ -1,4 +1,4 @@
-import { AddPaymentRequest, AddPaymentResponse, BankDetailsResponse, CurrentBillResponse, CustomerAddPaymentRequest, CustomerPaymentResponse, CustomerPaymentSummaryResponse, OutstandingBillsSummaryResponse, RecentPaymentResponse } from '@/types/payment';
+import { AddPaymentRequest, AddPaymentResponse, BankDetailsResponse, CurrentBillResponse, CustomerAddPaymentRequest, CustomerPaymentResponse, CustomerPaymentSummaryResponse, OutstandingBillsSummaryResponse, PaymentMethod, RecentPaymentResponse } from '@/types/payment';
 import api from "@/lib/api";
 
 
@@ -26,8 +26,18 @@ export const getOutstandingBillsSummary = async (subscriptionNumber: string) => 
   return res.data as OutstandingBillsSummaryResponse;
 };
 
-export const getPaymentHistory = async (subscriptionNumber: string, page = 0, size = 6) => {
-  const res = await api.get(`/payments/history/${subscriptionNumber}?page=${page}&size=${size}`);
+export const getPaymentHistory = async (subscriptionNumber: string, page = 0, size = 6, year?: number, paymentMethod?: PaymentMethod) => {
+  let url = `/payments/history/${subscriptionNumber}?page=${page}&size=${size}`;
+
+  if (year !== undefined) {
+    url += `&year=${year}`;
+  }
+
+  if (paymentMethod) {
+    url += `&paymentMethod=${paymentMethod}`;
+  }
+
+  const res = await api.get(url);
   return res.data;
 };
 
@@ -66,8 +76,18 @@ export const getOutstandingBillsForCustomer = async () => {
   return res.data as OutstandingBillsSummaryResponse;
 }
 
-export const getPaymentHistoryForCustomer = async (page = 0, size = 6) => {
-  const res = await api.get(`/customer/payments/history?page=${page}&size=${size}`);
+export const getPaymentHistoryForCustomer = async (page = 0, size = 6, year?: number, paymentMethod?: PaymentMethod) => {
+  let url = `/customer/payments/history?page=${page}&size=${size}`;
+
+  if (year !== undefined) {
+    url += `&year=${year}`;
+  }
+
+  if (paymentMethod) {
+    url += `&paymentMethod=${paymentMethod}`;
+  }
+
+  const res = await api.get(url);
   return res.data;
 };
 

@@ -22,6 +22,7 @@ import type {
   OutstandingBillResponse,
   OutstandingBillsSummaryResponse,
   CustomerPaymentSummaryResponse,
+  PaymentMethod,
 } from '@/types/payment';
 
 import { Label } from '@/components/ui/label';
@@ -69,6 +70,9 @@ export const PaymentsAddingPage = () => {
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
   const [outstandingBills, setOutstandingBills] = useState<OutstandingBillResponse[]>([]);
 
+  const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
+  const [historyFilterMethod, setHistoryFilterMethod] = useState<PaymentMethod | undefined>(undefined);
+
   const loadAll = async (subscriptionNumber: string) => {
     try {
       const [sum, bill, outs, customerInfo] = await Promise.all([
@@ -96,7 +100,9 @@ export const PaymentsAddingPage = () => {
     const history = await getPaymentHistory(
       subscriptionNumber,
       historyPage,
-      historyPageSize
+      historyPageSize,
+      historyFilterYear,
+      historyFilterMethod
     );
 
     setPaymentHistory(history.content ?? []);
@@ -237,7 +243,11 @@ export const PaymentsAddingPage = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [historyPage, historyPageSize, subscriptionNumber]);
+  }, [historyPage, historyPageSize, subscriptionNumber, historyFilterYear, historyFilterMethod]);
+
+  const handleHistoryFilterChange = () => {
+    setHistoryPage(0);
+  };
 
   const handleAddMonthly = async () => {
     if (!customerInfo) return;
@@ -434,6 +444,11 @@ export const PaymentsAddingPage = () => {
         latestManualPaymentId={latestManualPaymentId}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        filterYear={historyFilterYear}
+        setFilterYear={setHistoryFilterYear}
+        filterMethod={historyFilterMethod}
+        setFilterMethod={setHistoryFilterMethod}
+        onFilterChange={handleHistoryFilterChange}
       />
 
       {isEditOpen && (

@@ -15,12 +15,14 @@ import type {
   PaymentHistoryItemResponse,
   OutstandingBillResponse,
   OutstandingBillsSummaryResponse,
+  PaymentMethod,
+  SlipStatus,
 } from "@/types/payment";
 import type {
   CustomerBankSlipResponse,
 } from "@/types/bankSlip";
 
-import { CustomerPaymentCard, PaymentMethod } from "@/components/payments/CustomerPaymentComponents";
+import { CustomerPaymentCard } from "@/components/payments/CustomerPaymentComponents";
 import { CustomerBankSlipSection, CustomerBankSlipHistory, CustomerBankSlipModal, BankSlipForm } from "@/components/payments/CustomerBankSlipComponents";
 import { CustomerPaymentHistoryTable } from "@/components/payments/CustomerPaymentHistoryTable";
 
@@ -50,6 +52,12 @@ export const CustomerPayments = () => {
   const activeTab = searchParams.get("tab") || "payment";
 
   const [bankDetails, setBankDetails] = useState<any>(null);
+
+  // Filter state
+  const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
+  const [historyFilterMethod, setHistoryFilterMethod] = useState<PaymentMethod | undefined>(undefined);
+  const [slipFilterYear, setSlipFilterYear] = useState<number | undefined>(undefined);
+  const [slipFilterStatus, setSlipFilterStatus] = useState<SlipStatus | undefined>(undefined);
 
   useEffect(() => {
     const tab = searchParams.get("tab");
@@ -109,7 +117,9 @@ export const CustomerPayments = () => {
     try {
       const response = await getPaymentHistoryForCustomer(
         historyPage,
-        historyPageSize
+        historyPageSize,
+        historyFilterYear,
+        historyFilterMethod
       );
 
       setHistory(response.content);
@@ -128,7 +138,9 @@ export const CustomerPayments = () => {
     try {
       const response = await getMySlips(
         slipPage,
-        slipPageSize
+        slipPageSize,
+        slipFilterYear,
+        slipFilterStatus
       );
 
       setBankSlips(response.content);
@@ -147,18 +159,26 @@ export const CustomerPayments = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [historyPage, historyPageSize]);
+  }, [historyPage, historyPageSize, historyFilterYear, historyFilterMethod]);
 
   useEffect(() => {
     loadSlips();
-  }, [slipPage, slipPageSize]);
+  }, [slipPage, slipPageSize, slipFilterYear, slipFilterStatus]);
+
+  const handleHistoryFilterChange = () => {
+    setHistoryPage(0);
+  };
+
+  const handleSlipFilterChange = () => {
+    setSlipPage(0);
+  };
 
   const monthlyDue = currentBill?.balanceDue ?? 0;
   const outstandingDue = outstandingBillsSummary?.totalOutstandingAmount ?? 0;
   const totalDue = monthlyDue + outstandingDue;
   const hasOutstanding = outstandingDue > 0;
 
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("online");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("ONLINE");
   const [paymentAmount, setPaymentAmount] = useState("");
 
   const [outstandingExpanded, setOutstandingExpanded] = useState(false);
@@ -210,7 +230,7 @@ export const CustomerPayments = () => {
   };
 
   const handlePay = async () => {
-    if (paymentMethod === "slip") {
+    if (paymentMethod === "BANK_TRANSFER") {
       goToTab("slip");
       showToast("📋 Please fill in the bank slip upload form below.");
       return;
@@ -408,6 +428,11 @@ export const CustomerPayments = () => {
             slipEnd={slipEnd}
             slipTotalItems={slipTotalItems}
             slipPage={slipPage}
+            filterYear={slipFilterYear}
+            setFilterYear={setSlipFilterYear}
+            filterStatus={slipFilterStatus}
+            setFilterStatus={setSlipFilterStatus}
+            onFilterChange={handleSlipFilterChange}
           />
 
           <CustomerPaymentHistoryTable
@@ -422,6 +447,11 @@ export const CustomerPayments = () => {
             historyEnd={historyEnd}
             historyTotalItems={historyTotalItems}
             historyPage={historyPage}
+            filterYear={historyFilterYear}
+            setFilterYear={setHistoryFilterYear}
+            filterMethod={historyFilterMethod}
+            setFilterMethod={setHistoryFilterMethod}
+            onFilterChange={handleHistoryFilterChange}
           />
         </div>
       )}
