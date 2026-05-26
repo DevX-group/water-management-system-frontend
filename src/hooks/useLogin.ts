@@ -1,32 +1,30 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { LoginFormData } from '@/types/auth';
-
-const VALID_CREDENTIALS = [
-  { email: "superadmin@gmail.com", password: "sa@123", route: "/admin" },
-  { email: "customer@gmail.com", password: "cust@123", route: "/customer/dashboard" },
-];
+import { authService } from '@/services/authService';
+import { useAuth } from '@/contexts/AuthContext';
 
 export const useLogin = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [loginError, setLoginError] = useState("");
   const [formData, setFormData] = useState<LoginFormData>({ 
-    email: "", 
+    nic: "", 
     password: "", 
     rememberMe: false 
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoginError("");
 
-    if (!formData.email && !formData.password) { 
-      setLoginError("Please enter your email and password."); 
+    if (!formData.nic && !formData.password) { 
+      setLoginError("Please enter your NIC and password."); 
       return; 
     }
-    if (!formData.email) { 
-      setLoginError("Please enter your email."); 
+    if (!formData.nic) { 
+      setLoginError("Please enter your NIC."); 
       return; 
     }
     if (!formData.password) { 
@@ -34,19 +32,30 @@ export const useLogin = () => {
       return; 
     }
 
-    const matchedUser = VALID_CREDENTIALS.find(
-      (cred) => cred.email === formData.email.toLowerCase() && cred.password === formData.password
-    );
+    try {
+      const response = await authService.login({
+        nic: formData.nic,
+        password: formData.password
+      });
 
-    if (matchedUser) {
-      navigate(matchedUser.route);
-    } else {
-      setLoginError("Invalid email or password. Please try again.");
+      login(response);
+
+      if (response.role === 'SUPER_ADMIN' || response.role === 'SYSTEM_ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/customer/dashboard');
+      }
+    } catch (error: any) {
+      if (error.response && error.response.data && error.response.data.message) {
+        setLoginError(error.response.data.message);
+      } else {
+        setLoginError("Invalid NIC or password. Please try again.");
+      }
     }
   };
 
-  const handleEmailChange = (email: string) => {
-    setFormData(prev => ({ ...prev, email }));
+  const handleNicChange = (nic: string) => {
+    setFormData(prev => ({ ...prev, nic }));
     setLoginError("");
   };
 
@@ -66,7 +75,7 @@ export const useLogin = () => {
     showPassword,
     loginError,
     handleSubmit,
-    handleEmailChange,
+    handleNicChange,
     handlePasswordChange,
     togglePasswordVisibility,
     handleRememberChange
