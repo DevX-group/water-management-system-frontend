@@ -9,10 +9,12 @@ import { TriggeredMessageSection } from '@/components/messaging/TriggeredMessage
 export const MessagingPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  // Switch between list tabs and history view based on the URL.
   const isHistory = location.pathname.includes('/admin/messaging/history');
   const activeTab = location.pathname.includes('/admin/messaging/triggered') ? 'triggered' : 'scheduled';
 
   useEffect(() => {
+    // Keep the messaging root path pinned to the scheduled tab.
     if (location.pathname === '/admin/messaging' || location.pathname === '/admin/messaging/') {
       navigate('/admin/messaging/scheduled', { replace: true });
     }
@@ -32,6 +34,7 @@ export const MessagingPage = () => {
           <TabsTrigger value="scheduled" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Scheduled Messages</TabsTrigger>
           <TabsTrigger value="triggered" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Triggered Messages</TabsTrigger>
         </TabsList>
+        {/* Only render the list tabs when not showing history. */}
         {!isHistory && (
           <>
             <TabsContent value="scheduled" className="mt-6">
