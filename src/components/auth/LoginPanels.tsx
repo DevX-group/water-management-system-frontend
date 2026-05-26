@@ -2,7 +2,11 @@ import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Droplets, Shield, Zap, Bell } from 'lucide-react';
+import { Droplets, Shield, Zap, Bell, Eye, EyeOff, User, Lock, ArrowRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const features = [
   { icon: Shield, text: 'Secure & encrypted' },
@@ -64,12 +68,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   formData, showPassword, loginError,
   onNicChange, onPasswordChange, onTogglePassword, onRememberChange, onSubmit,
 }) => {
-  // Lazy imports to keep bundle clean
-  const { Input }    = require('@/components/ui/input');
-  const { Label }    = require('@/components/ui/label');
-  const { Button }   = require('@/components/ui/button');
-  const { Checkbox } = require('@/components/ui/checkbox');
-  const { Eye, EyeOff, User, Lock, ArrowRight } = require('lucide-react');
+
 
   return (
     <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
