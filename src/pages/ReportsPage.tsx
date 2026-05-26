@@ -122,7 +122,7 @@ export const ReportsPage = () => {
       .catch((err) => console.error(err));
   }, []);
 
-   // Filter
+   // Filter bills
   const filteredBills = customerSearchBill
     ? billsTableData.filter((bill) =>
         bill.customerid
