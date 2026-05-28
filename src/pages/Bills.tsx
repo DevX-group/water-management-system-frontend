@@ -63,8 +63,9 @@ const Bills = () => {
             <p className="text-muted-foreground text-lg">View and manage all your water bills for {SUBSCRIPTION_NUMBER}</p>
           </motion.div>
 
+          {/* normalize billId to string to satisfy BillsSummaryStats Bill type */}
           <motion.div variants={itemVariants}>
-            <BillsSummaryStats bills={bills} />
+            <BillsSummaryStats bills={bills.map(b => ({ ...b, billId: String(b.billId) }))} />
           </motion.div>
 
           <motion.div variants={itemVariants}>
@@ -76,12 +77,17 @@ const Bills = () => {
 
           <motion.div variants={itemVariants}>
             <BillsTable
-              bills={filteredBills}
+              bills={filteredBills.map(b => ({ ...b, billId: String(b.billId) }))}
               currentIndex={currentIndex}
               itemsPerPage={itemsPerPage}
               setCurrentIndex={setCurrentIndex}
-              onView={handleView}
-              onDownload={handleDownload}
+              // BillsTable expects a Bill type; adapt BillResponse to Bill by picking required fields
+              onView={(billParam) => {
+                // find original source item (has billDate) by id, fall back to passed item
+                const source = bills.find(b => String(b.billId) === String((billParam as any).billId));
+                handleView({ ...(source ?? billParam), billDate: (source as any)?.billDate ?? '' } as any);
+              }}
+              onDownload={(bill) => { void handleDownload(bill as any); }}
             />
           </motion.div>
 
@@ -89,10 +95,11 @@ const Bills = () => {
       </div>
 
       <BillImageViewer
-        bill={viewingBill} zoom={zoom} rotation={rotation}
+        bill={viewingBill ? { ...viewingBill, billId: String((viewingBill as any).billId) } : undefined}
+        zoom={zoom} rotation={rotation}
         imageLoading={imageLoading} imageError={imageError}
         onClose={handleCloseView}
-        onDownload={handleDownload}
+        onDownload={(bill) => { void handleDownload(bill as any); }}
         onZoomIn={() => setZoom(z => Math.min(3, z + 0.25))}
         onZoomOut={() => setZoom(z => Math.max(0.5, z - 0.25))}
         onRotate={() => setRotation(r => (r + 90) % 360)}
