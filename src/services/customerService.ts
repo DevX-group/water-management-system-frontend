@@ -20,7 +20,7 @@ export const getCustomerById = (id: string): Customer | undefined => {
   return mockCustomers.find(customer => customer.id === id);
 };
 
-//search customers from mock data
+//search customers from  data
 export const searchCustomers = (query: string): Customer[] => {
   if (!query) return [];
   const lowerQuery = query.toLowerCase();

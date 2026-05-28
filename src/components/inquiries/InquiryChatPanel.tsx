@@ -22,7 +22,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
   messagesEndRef, onSendReply, onResolve,
 }) => {
   return (
-    <Card className="shadow-card border-none h-full flex flex-col overflow-hidden bg-white">
+    <Card className="shadow-card border-none h-full flex flex-col overflow-hidden bg-card">
       {!selectedInquiry ? (
         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-12 text-center">
           <MessageSquare size={48} className="opacity-10 mb-4" />
@@ -54,9 +54,9 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
-            {selectedInquiry.messages.map((msg) => (
+            {selectedInquiry.messages.map((msg, index) => (
               <InquiryChatMessage
-                key={msg.msgId}
+                key={`${selectedInquiry.id}-${index}`}
                 message={msg}
                 customerName={selectedInquiry.name}
                 viewerRole="admin"

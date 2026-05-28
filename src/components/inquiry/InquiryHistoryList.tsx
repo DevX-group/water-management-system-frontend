@@ -29,7 +29,7 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
 }) => {
   if (inquiries.length === 0) return null;
   return (
-    <Card className="shadow-card border-none overflow-hidden bg-white">
+    <Card className="shadow-card border-none overflow-hidden bg-card">
       <div className="p-4 bg-primary/5 border-b flex items-center gap-2 text-primary font-semibold text-sm">
         <History size={16} /> My Previous Inquiries
       </div>

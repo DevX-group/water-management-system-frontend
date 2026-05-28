@@ -12,7 +12,7 @@ export const formatTriggerType = (triggerType: TriggerType): string => {
 };
 
 /**
- * Replaces message template placeholders with mock preview values.
+ * Replaces message template placeholders with  preview values.
  */
 export const replacePlaceholders = (text: string): string => {
   let res = text || '';

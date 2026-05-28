@@ -23,13 +23,13 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
         <CardDescription>Hover over charts to see detailed data</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
-        <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
           <BarChartHorizontal className="w-4 h-4" /> Bar
         </Button>
-        <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
           <PieIcon className="w-4 h-4" /> Pie
         </Button>
-        <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
+        <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
           <LineChart className="w-4 h-4" /> Mix
         </Button>
       </div>

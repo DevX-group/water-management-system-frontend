@@ -6,10 +6,10 @@ import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2, ArrowLeft, Ar
 
 const getSeverityStyles = (severity: string) => {
   switch (severity.toLowerCase()) {
-    case "critical": return { cardBg: "bg-white", borderColor: "border-red-100", textColor: "text-red-600", icon: AlertOctagon, iconColor: "text-red-500", dismissBtn: "bg-red-50 text-red-600 hover:bg-red-100" };
-    case "high": return { cardBg: "bg-white", borderColor: "border-orange-100", textColor: "text-orange-600", icon: AlertTriangle, iconColor: "text-orange-500", dismissBtn: "bg-orange-50 text-orange-600 hover:bg-orange-100" };
-    case "medium": return { cardBg: "bg-white", borderColor: "border-amber-100", textColor: "text-amber-600", icon: AlertTriangle, iconColor: "text-amber-500", dismissBtn: "bg-amber-50 text-amber-600 hover:bg-amber-100" };
-    default: return { cardBg: "bg-white", borderColor: "border-blue-100", textColor: "text-primary", icon: Info, iconColor: "text-primary", dismissBtn: "bg-blue-50 text-primary hover:bg-blue-100" };
+    case "critical": return { cardBg: "bg-card", borderColor: "border-red-100", textColor: "text-red-600", icon: AlertOctagon, iconColor: "text-red-500", dismissBtn: "bg-red-50 text-red-600 hover:bg-red-100" };
+    case "high": return { cardBg: "bg-card", borderColor: "border-orange-100", textColor: "text-orange-600", icon: AlertTriangle, iconColor: "text-orange-500", dismissBtn: "bg-orange-50 text-orange-600 hover:bg-orange-100" };
+    case "medium": return { cardBg: "bg-card", borderColor: "border-amber-100", textColor: "text-amber-600", icon: AlertTriangle, iconColor: "text-amber-500", dismissBtn: "bg-amber-50 text-amber-600 hover:bg-amber-100" };
+    default: return { cardBg: "bg-card", borderColor: "border-blue-100", textColor: "text-primary", icon: Info, iconColor: "text-primary", dismissBtn: "bg-blue-50 text-primary hover:bg-blue-100" };
   }
 };
 
@@ -57,14 +57,14 @@ export const NotificationList: React.FC<NotificationListProps> = ({
 
     {alerts.length > itemsPerPage && (
       <div className="flex justify-center items-center gap-4 mt-8 pb-10">
-        <Button variant="outline" size="sm" className="rounded-full bg-white shadow-sm"
+        <Button variant="outline" size="sm" className="rounded-full bg-card shadow-sm"
           onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))} disabled={currentIndex === 0}>
           <ArrowLeft className="w-4 h-4 mr-1" /> Previous
         </Button>
         <span className="text-sm font-medium text-slate-500">
           {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, alerts.length)} of {alerts.length}
         </span>
-        <Button variant="outline" size="sm" className="rounded-full bg-white shadow-sm"
+        <Button variant="outline" size="sm" className="rounded-full bg-card shadow-sm"
           onClick={() => setCurrentIndex(prev => Math.min(alerts.length - itemsPerPage, prev + itemsPerPage))}
           disabled={currentIndex + itemsPerPage >= alerts.length}>
           Next <ArrowRight className="w-4 h-4 ml-1" />

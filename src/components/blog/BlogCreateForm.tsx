@@ -35,7 +35,7 @@ export const BlogCreateForm: React.FC<BlogCreateFormProps> = ({
           initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }} className="mb-12 overflow-hidden"
         >
-          <Card className="border-none shadow-xl bg-white p-8 rounded-3xl">
+          <Card className="border-none shadow-xl bg-card p-8 rounded-3xl">
             <form onSubmit={onSubmit} className="space-y-4">
               <Input placeholder="Blog Title" value={formData.title}
                 onChange={e => onChange({ ...formData, title: e.target.value })} required />

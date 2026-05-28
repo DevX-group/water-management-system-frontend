@@ -24,7 +24,7 @@ interface InquiryChatPanelsProps {
 export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
   inquiry, isHistory, onBack, chatInput, setChatInput, onSendMessage, showTyping, messagesEndRef
 }) => (
-  <Card className="shadow-card border-none overflow-hidden h-[600px] flex flex-col bg-white">
+  <Card className="shadow-card border-none overflow-hidden h-[600px] flex flex-col bg-card">
     <CardHeader className="bg-secondary/20 border-b flex flex-row items-center gap-4 py-4">
       {isHistory ? (
         <>
@@ -68,7 +68,7 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
     ) : (
       <div className="p-4 bg-secondary/10 border-t">
         <div className="flex gap-2">
-          <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder="Type your message..." className="flex-1 bg-white border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
+          <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder="Type your message..." className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
           <Button onClick={onSendMessage} disabled={!chatInput?.trim()} className="h-auto px-6 rounded-xl gradient-primary">
             <Send size={18} />
           </Button>

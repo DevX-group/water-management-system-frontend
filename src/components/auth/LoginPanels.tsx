@@ -81,7 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onEmailChange(e.target.value); }}
             style={{ caretColor: 'black' }}
-            className="h-14 rounded-xl pl-12 input-premium text-base bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" />
+            className="h-14 rounded-xl pl-12 input-premium text-base bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" />
         </div>
       </div>
       <div className="space-y-2">
@@ -92,7 +92,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             value={formData.password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onPasswordChange(e.target.value); }}
             style={{ caretColor: 'black' }}
-            className="h-14 rounded-xl pl-12 pr-14 input-premium text-base bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" />
+            className="h-14 rounded-xl pl-12 pr-14 input-premium text-base bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" />
           <button type="button" onClick={onTogglePassword}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1">
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

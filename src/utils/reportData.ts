@@ -1,5 +1,5 @@
 /**
- * Mock data for ReportsPage.
+ *  data for ReportsPage.
  * Extracted from ReportsPage.tsx to reduce file length.
  */
 

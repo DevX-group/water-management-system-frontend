@@ -374,7 +374,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             </TabsContent>
 
             <TabsContent value="template" className="py-4 flex-1 min-h-0 flex flex-col">
-              <div className="flex flex-col border rounded-md bg-white h-full">
+              <div className="flex flex-col border rounded-md bg-card h-full">
                 <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'SMS' | 'Email')} className="flex flex-col flex-1 min-h-0">
                   <div className="bg-slate-50 p-2 border-b flex justify-between items-center flex-none">
                     <TabsList>
@@ -389,7 +389,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-white flex-1 overflow-y-auto">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-card flex-1 overflow-y-auto">
                     {/* Editor */}
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -428,7 +428,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                     {/* Preview */}
                     <div className="border rounded-md bg-stone-50 p-4 h-[440px] flex flex-col">
                       <Label className="mb-2 block text-muted-foreground flex-none">{activeTab} Preview</Label>
-                      <div className="bg-white p-4 rounded shadow-sm border text-sm flex-1 overflow-y-auto w-full break-words">
+                      <div className="bg-card p-4 rounded shadow-sm border text-sm flex-1 overflow-y-auto w-full break-words">
                         {renderPreview(activeTab === 'SMS' ? 'sms' : 'email')}
                       </div>
                     </div>

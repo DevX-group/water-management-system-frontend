@@ -22,7 +22,7 @@ interface InquiryFormCardProps {
 }
 
 export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm, errors, submitting, onSubmit }) => (
-  <Card className="shadow-card border-none overflow-hidden bg-white">
+  <Card className="shadow-card border-none overflow-hidden bg-card">
     <div className="p-6 bg-primary/5 border-b flex items-center gap-4 text-primary font-semibold">
       <HeadphonesIcon size={20} /> Submit a Support Inquiry
     </div>
@@ -41,7 +41,7 @@ export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm,
       </div>
       <div className="space-y-2">
         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Issue Category</label>
-        <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer appearance-none">
+        <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value as "" | InquiryCategory})} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer appearance-none">
           <option value="">Select a category...</option>
           {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.icon} {c.label}</option>)}
         </select>
