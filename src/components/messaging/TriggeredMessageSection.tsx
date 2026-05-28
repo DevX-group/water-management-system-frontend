@@ -9,6 +9,7 @@ import { TriggeredMessageCard } from '@/components/messaging/TriggeredMessageCar
 import { MessageDialog } from '@/components/messaging/MessageDialog';
 
 export const TriggeredMessageSection = () => {
+  // Server-backed list of triggered message templates.
   const [triggeredMessages, setTriggeredMessages] = useState<TriggeredMessage[]>([]);
   const [isLoading, setIsLoading]                 = useState(true);
   const [isDialogOpen, setIsDialogOpen]           = useState(false);
@@ -17,6 +18,7 @@ export const TriggeredMessageSection = () => {
   const { toast } = useToast();
 
   useEffect(() => {
+    // Initial fetch of triggered templates.
     const load = async () => {
       try {
         const triggered = await messageApi.getAllTriggeredMessages();
@@ -31,12 +33,14 @@ export const TriggeredMessageSection = () => {
   }, [toast]);
 
   useEffect(() => {
+    // Placeholder tokens used by the template editor.
     messageApi.getMessagePlaceholders()
       .then(setPlaceholders)
       .catch(() => toast({ title: 'Error', description: 'Failed to load placeholders.', variant: 'destructive' }));
   }, [toast]);
 
   const handleDelete = async (id: string) => {
+    // Delete and prune the list locally on success.
     try {
       await messageApi.deleteTriggeredMessage(id);
       setTriggeredMessages(prev => prev.filter(m => m.id !== id));
@@ -47,6 +51,7 @@ export const TriggeredMessageSection = () => {
   };
 
   const handleSave = async (message: TriggeredMessage) => {
+    // Create or update based on whether we're editing an existing message.
     try {
       if (editingMessage) {
         const updated = await messageApi.updateTriggeredMessage(message.id, message);

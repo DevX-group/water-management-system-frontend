@@ -1,5 +1,6 @@
 import type { TriggerType } from '@/types/messaging';
 
+// Shared formatting helpers for messaging UI.
 /**
  * Formats a trigger type enum value into a human-readable label.
  * e.g. 'PAYMENT_CONFIRMED' → 'Payment Confirmed'

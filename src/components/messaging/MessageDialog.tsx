@@ -61,16 +61,19 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 }) => {
   const { toast } = useToast();
 
+  // Local working copy of the message for the editor form.
   const [formData, setFormData] = useState<ScheduledMessage | TriggeredMessage>(
     initialData ? JSON.parse(JSON.stringify(initialData)) : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage)
   );
   const [activeTab, setActiveTab]             = useState<'SMS' | 'Email'>('SMS');
+  // Track focus to insert placeholders into the right section.
   const [lastFocusedInput, setLastFocusedInput] = useState<{
     sectionId: string | null;
     templateType: 'sms' | 'email';
   } | null>(null);
 
   useEffect(() => {
+    // Reset form state when switching mode or editing a new message.
     const seed = initialData
       ? JSON.parse(JSON.stringify(initialData))
       : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
@@ -84,18 +87,21 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   };
 
   const handleScheduleChange = (field: string, value: any) => {
+    // Only scheduled messages have schedule fields.
     if (mode !== 'scheduled') return;
     const scheduled = formData as ScheduledMessage;
     setFormData({ ...scheduled, schedule: { ...scheduled.schedule, [field]: value } });
   };
 
   const handleTriggeredChange = (field: 'triggerType' | 'active', value: any) => {
+    // Only triggered messages have trigger configuration.
     if (mode !== 'triggered') return;
     const triggered = formData as TriggeredMessage;
     setFormData({ ...triggered, [field]: value });
   };
 
   const handleChannelChange = (channel: MessageChannel, checked: boolean) => {
+    // Enforce at least one delivery channel.
     let newChannels = [...formData.channels];
     if (checked) {
       if (!newChannels.includes(channel)) newChannels.push(channel);
@@ -107,6 +113,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   };
 
   const updateTemplate = (type: 'sms' | 'email', updates: Partial<MessageTemplate>) => {
+    // Merge template updates into the selected channel.
     setFormData({
       ...formData,
       templates: {
@@ -117,6 +124,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   };
 
   const moveSection = (type: 'sms' | 'email', fromIndex: number, toIndex: number) => {
+    // Reorder multi-section templates in non-custom mode.
     const sections = [...(formData.templates[type]?.sections || [])];
     if (toIndex < 0 || toIndex >= sections.length) return;
     const [moved] = sections.splice(fromIndex, 1);
@@ -125,6 +133,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   };
 
   const insertPlaceholder = (placeholder: string) => {
+    // Insert placeholders into either the custom body or the focused section.
     const templateType = activeTab === 'SMS' ? 'sms' : 'email';
     const template = formData.templates[templateType];
     if (template?.isCustom) {
@@ -147,6 +156,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   };
 
   const renderEditor = (type: 'sms' | 'email') => {
+    // Editor view for custom vs. sectioned templates.
     const t = formData.templates[type];
     if (!t) return null;
     if (t.isCustom) {
@@ -216,6 +226,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   };
 
   const renderPreview = (type: 'sms' | 'email') => {
+    // Read-only preview of the current template content.
     const t = formData.templates[type];
     if (!t) return <div className="text-muted-foreground italic">No template configured</div>;
     if (t.isCustom) {

@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: "http://localhost:8081/api",
+    //baseURL: "https://localhost:8081/api",
+    baseURL: "https://water-management-system-backend-0p2e.onrender.com/api",
     headers: { "Content-Type": "application/json" },
 });
 

@@ -16,6 +16,7 @@ interface ScheduledMessageCardProps {
 }
 
 export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ message, onEdit, onDelete }) => {
+  // Compact card showing schedule and recipients with edit/delete actions.
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

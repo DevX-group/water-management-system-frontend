@@ -5,9 +5,9 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import {
   CurrentBillResponse,
   getBankDetails,
-  getCurrentBillForCustomer,
-  getOutstandingBillsForCustomer,
-  getPaymentHistoryForCustomer,
+  getCurrentBill,
+  getOutstandingBillsSummary,
+  getPaymentHistory,
   initiatePayment,
   OutstandingBillResponse,
   OutstandingBillsSummaryResponse,
@@ -15,6 +15,7 @@ import {
 } from "@/services/paymentService";
 import { toast } from "@/components/ui/sonner";
 import { uploadBankSlip, getMySlips, CustomerBankSlipResponse, deleteSlip } from "@/services/bankSlipService";
+import { CUSTOMER_SUBSCRIPTION_NUMBER } from "@/constants/customer";
 
 import { CustomerPaymentCard, PaymentMethod } from "@/components/payments/CustomerPaymentComponents";
 import { CustomerBankSlipSection, CustomerBankSlipHistory, CustomerBankSlipModal, BankSlipForm } from "@/components/payments/CustomerBankSlipComponents";
@@ -83,8 +84,8 @@ export const CustomerPayments = () => {
 
     try {
       const [bill, outs, bank] = await Promise.all([
-        getCurrentBillForCustomer(),
-        getOutstandingBillsForCustomer(),
+        getCurrentBill(CUSTOMER_SUBSCRIPTION_NUMBER),
+        getOutstandingBillsSummary(CUSTOMER_SUBSCRIPTION_NUMBER),
         getBankDetails(),
       ]);
 
@@ -103,7 +104,8 @@ export const CustomerPayments = () => {
     setHistoryLoading(true);
 
     try {
-      const response = await getPaymentHistoryForCustomer(
+      const response = await getPaymentHistory(
+        CUSTOMER_SUBSCRIPTION_NUMBER,
         historyPage,
         historyPageSize
       );

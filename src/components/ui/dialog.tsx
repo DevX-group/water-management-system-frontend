@@ -5,6 +5,7 @@ import { X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
+// Dialog primitives with standard overlay and content styling.
 const Dialog = DialogPrimitive.Root;
 
 const DialogTrigger = DialogPrimitive.Trigger;

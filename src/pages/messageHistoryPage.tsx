@@ -10,6 +10,7 @@ import { useMessageHistory } from '@/hooks/useMessageHistory';
 
 export const MessageHistoryPage = () => {
   const navigate = useNavigate();
+  // Hook centralizes paging, dialog state, and API calls for history/failures.
   const {
     rows,
     page,
@@ -38,6 +39,7 @@ export const MessageHistoryPage = () => {
     backToDetails
   } = useMessageHistory();
 
+  // Pagination controls for the main history table.
   const canGoBack = page > 0;
   const canGoNext = page + 1 < totalPages;
 
@@ -125,6 +127,7 @@ export const MessageHistoryPage = () => {
         onClose={closeDetails}
         onViewFailed={handleViewFailed}
       />
+      {/* Failed recipients dialog uses separate paging state. */}
       <FailedRecipientsDialog
         row={selectedFailedRow} open={!!openFailuresId}
         failedRecipients={failedRecipients}
