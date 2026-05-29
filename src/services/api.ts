@@ -28,7 +28,9 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+    const status = error?.response?.status;
+    // Only clear auth on 401 (unauthenticated). 403 is an authorization error.
+    if (status === 401) {
       removeToken();
       window.location.href = '/login';
     }
