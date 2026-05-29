@@ -39,6 +39,10 @@ interface CustomerRegistrationRequest {
   regionCode: string;
 }
 
+const normalizeConnectionType = (value: string): string => {
+  return value.replace('-', '_').toUpperCase();
+};
+
 // Adapter function to map BackendCustomer to frontend Customer interface
 const mapBackendToFrontend = (b: BackendCustomer): Customer => {
   const status = b.user.status;
@@ -76,7 +80,7 @@ export const createCustomer = async (data: CustomerFormData): Promise<Customer> 
     address: data.address,
     phoneNumber: data.phone,
     email: data.email || undefined,
-    connectionType: data.connectionType.toUpperCase(),
+    connectionType: normalizeConnectionType(data.connectionType),
     regionCode: data.region,
   };
   
@@ -106,7 +110,7 @@ export const updateCustomer = async (subscriptionNumber: string, data: CustomerF
     address: data.address,
     phoneNumber: data.phone,
     email: data.email || undefined,
-    connectionType: data.connectionType.toUpperCase(),
+    connectionType: normalizeConnectionType(data.connectionType),
     regionCode: data.region,
   };
   

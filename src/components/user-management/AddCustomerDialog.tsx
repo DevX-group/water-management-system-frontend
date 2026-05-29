@@ -68,7 +68,7 @@ export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="metered">Metered Customer</SelectItem>
-                <SelectItem value="non-metered">Non Metered Customer</SelectItem>
+                <SelectItem value="non_metered">Non Metered Customer</SelectItem>
               </SelectContent>
             </Select>
           </div>

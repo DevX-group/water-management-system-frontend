@@ -84,8 +84,8 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Regions" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Regions</SelectItem>
-              {Object.entries(REGION_CONFIG).map(([key, val]) => (
-                <SelectItem key={key} value={key}>{val.label}</SelectItem>
+              {Object.values(REGION_CONFIG).map((val) => (
+                <SelectItem key={val.code} value={val.code}>{val.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -97,7 +97,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="metered">Metered</SelectItem>
-              <SelectItem value="non-metered">Non Metered</SelectItem>
+              <SelectItem value="non_metered">Non Metered</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -139,7 +139,9 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 <td className="py-4 text-sm text-muted-foreground">{customer.nic}</td>
                 <td className="py-4 text-sm text-muted-foreground">{customer.subscriptionNo}</td>
                 <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
-                <td className="py-4 text-sm text-muted-foreground capitalize">{customer.region}</td>
+                <td className="py-4 text-sm text-muted-foreground">
+                  {Object.values(REGION_CONFIG).find(r => r.code === customer.region)?.label || customer.region}
+                </td>
                 <td className="py-4 text-sm text-muted-foreground">
                   {new Date(customer.registeredDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </td>

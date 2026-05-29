@@ -20,7 +20,7 @@ export const REGION_CONFIG = {
 
 const EMPTY_FORM: CustomerFormData = {
   name: '', nic: '', address: '', phone: '', email: '',
-  region: '', connectionType: 'METERED'
+  region: '', connectionType: 'metered'
 };
 
 export const useUserManagement = (initialCustomers: Customer[] = []) => {

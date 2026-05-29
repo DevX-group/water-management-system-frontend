@@ -51,7 +51,7 @@ export const EditCustomerDialog: React.FC<EditCustomerDialogProps> = ({
                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="metered">Metered Customer</SelectItem>
-                  <SelectItem value="non-metered">Non Metered Customer</SelectItem>
+                  <SelectItem value="non_metered">Non Metered Customer</SelectItem>
                 </SelectContent>
               </Select>
             </div>

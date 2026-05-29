@@ -2,7 +2,6 @@ import '@/index.css';
 import React from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { mockCustomers } from '@/data/mockData';
 import { useUserManagement } from '@/hooks/useUserManagement';
 import { CustomerTable } from '@/components/user-management/CustomerTable';
 import { AddCustomerDialog } from '@/components/user-management/AddCustomerDialog';
@@ -10,7 +9,7 @@ import { ViewCustomerDialog } from '@/components/user-management/ViewCustomerDia
 import { EditCustomerDialog } from '@/components/user-management/EditCustomerDialog';
 
 export const CustomerManagement: React.FC = () => {
-  const um = useUserManagement(mockCustomers);
+  const um = useUserManagement();
 
   return (
     <div className="space-y-6">
@@ -37,7 +36,7 @@ export const CustomerManagement: React.FC = () => {
           paginatedCustomers={um.paginatedCustomers}
           sortBy={um.sortBy}
           sortOrder={um.sortOrder}
-          totalCount={mockCustomers.length}
+          totalCount={um.customers.length}
           onSort={um.handleSort}
           onView={um.handleViewCustomer}
           onEdit={um.handleEditCustomer}
