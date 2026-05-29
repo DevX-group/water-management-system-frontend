@@ -114,7 +114,7 @@ export const useUserManagement = (initialCustomers: Customer[] = []) => {
     if (!validateNIC(formData.nic))             newErrors.nic = true;
     if (!validateAddress(formData.address))     newErrors.address = true;
     if (!validatePhone(formData.phone))         newErrors.phone = true;
-    if (formData.email && !validateEmail(formData.email)) newErrors.email = true;
+    if (!formData.email || !validateEmail(formData.email)) newErrors.email = true;
     if (!formData.region)                       newErrors.region = true;
     if (!formData.connectionType)               newErrors.connectionType = true;
 

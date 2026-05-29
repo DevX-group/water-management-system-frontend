@@ -54,7 +54,7 @@ export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
               className={errors.phone ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>Email (Optional)</Label>
+            <Label>Email *</Label>
             <Input placeholder="Enter Email" value={formData.email}
               onChange={(e) => { setFormData({ ...formData, email: e.target.value }); onFieldChange('email', e.target.value); }}
               className={errors.email ? 'border-red-500 border-2' : ''} />
