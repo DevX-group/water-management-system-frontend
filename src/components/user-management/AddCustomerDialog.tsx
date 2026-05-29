@@ -81,17 +81,11 @@ export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(REGION_CONFIG).map(([key, value]) => (
-                  <SelectItem key={key} value={key}>{value.label}</SelectItem>
+                  <SelectItem key={key} value={value.code}>{value.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-2">
-            <Label>Subscription Number</Label>
-            <Input placeholder="Auto-generated" value={formData.subscriptionNumber} disabled
-              className="bg-accent/30 cursor-not-allowed" />
-          </div>
-          <p className="text-xs text-muted-foreground">Subscription number generated automatically</p>
         </div>
         <div className="flex gap-3 mt-4">
           <Button className="flex-1" onClick={onAdd}>Register Customer</Button>
