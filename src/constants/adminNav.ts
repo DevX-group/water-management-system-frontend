@@ -10,7 +10,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
-  { icon: Users, label: 'User Management', id: 'users', roles: ['SUPER_ADMIN'] },
+  { icon: Users, label: 'User Management', id: 'users', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: Gauge, label: 'Meter Reading', id: 'meter', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'METER_READER'] },
   { icon: Receipt, label: 'Billing', id: 'billing', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: CreditCard, label: 'Add Payment', id: 'payments', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'PAYMENT_HANDLER'] },
