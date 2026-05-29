@@ -1,11 +1,12 @@
 import '@/index.css';
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { mockAdmins } from '@/data/mockData';
+import React, { createContext, useContext, ReactNode, useMemo } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import type { AdminRole } from '@/types/admin';
 
 interface Admin {
   id: string;
   name: string;
-  role: 'main_admin' | 'meter_reader' | 'payment_handler';
+  role: AdminRole;
   email: string;
 }
 
@@ -22,19 +23,35 @@ interface AdminProviderProps {
 }
 
 export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
-  const [currentAdmin, setCurrentAdmin] = useState<Admin>(mockAdmins[0]);
+  const { user } = useAuth();
 
-  const setCurrentRole = (role: string): void => {
-    const admin = mockAdmins.find(a => a.role === role);
-    if (admin) {
-      setCurrentAdmin(admin);
-    }
+  const currentAdmin = useMemo<Admin>(() => {
+    const mapRole = (role?: string | null): AdminRole | null => {
+      if (role === 'SUPER_ADMIN' || role === 'SYSTEM_ADMIN') return 'main_admin';
+      if (role === 'METER_READER') return 'meter_reader';
+      if (role === 'PAYMENT_HANDLER') return 'payment_handler';
+      return null;
+    };
+
+    const mappedRole = mapRole(user?.role) ?? 'main_admin';
+    const nic = user?.nic ?? 'admin';
+
+    return {
+      id: nic,
+      name: user?.nic ?? 'Admin User',
+      role: mappedRole,
+      email: '',
+    };
+  }, [user]);
+
+  const setCurrentRole = (): void => {
+    // Role switching is disabled; admin role is derived from authenticated user.
   };
 
   const value: AdminContextType = {
     currentAdmin,
     setCurrentRole,
-    admins: mockAdmins,
+    admins: [currentAdmin],
   };
 
   return (
