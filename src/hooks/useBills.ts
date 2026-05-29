@@ -18,6 +18,8 @@ export const useBills = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
 
+ 
+  //  use the CUSTOMER_SUBSCRIPTION_NUMBER to pull their specific bills.
   useEffect(() => {
     fetch(`${API_BASE}/bills/customer/${encodeURIComponent(SUBSCRIPTION_NUMBER)}`)
       .then(r => r.ok ? r.json() : [])
@@ -31,6 +33,8 @@ export const useBills = () => {
     const matchStatus = statusFilter === 'all' || b.status.toLowerCase() === statusFilter;
     return matchSearch && matchStatus;
   });
+
+  // Handles downloading the bill as a PDF directly from the backend.
 
   const handleDownload = async (bill: BillResponse) => {
     try {

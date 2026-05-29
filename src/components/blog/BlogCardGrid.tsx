@@ -26,7 +26,7 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
       <motion.div key={blog.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
         <Card className="border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-[32px] overflow-hidden bg-card group">
           <div className="relative h-56 overflow-hidden">
-            <img src={blog.imageUrl} alt={blog.title}
+            <img src={blog.imageUrl} alt={blog.title}       // Blog Image with hover zoom effect
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
             <Button variant="destructive" size="icon"
               className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity rounded-full shadow-lg"
@@ -37,7 +37,7 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
           <CardContent className="p-7">
             <div className="flex items-center gap-4 text-slate-400 text-sm mb-4">
               <div className="flex items-center gap-1.5">
-                <Calendar size={14} />
+                <Calendar size={14} /> // Display formatted date
                 <span>{new Date(blog.date).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center gap-1.5">

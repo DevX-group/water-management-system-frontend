@@ -26,7 +26,8 @@ export const NotificationList: React.FC<NotificationListProps> = ({
   alerts, loading, currentIndex, itemsPerPage, setCurrentIndex, onDismiss,
 }) => (
   <div className="space-y-3 max-w-4xl mx-auto">
-    {loading ? (
+    {loading ? (  // Show loading spinner while fetching alerts
+
       <div className="flex justify-center p-12"><Loader2 className="animate-spin text-primary w-8 h-8" /></div>
     ) : alerts.slice(currentIndex, currentIndex + itemsPerPage).map((alert) => {
       const styles = getSeverityStyles(alert.severity);
@@ -55,7 +56,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
       );
     })}
 
-    {alerts.length > itemsPerPage && (
+    {alerts.length > itemsPerPage && (         // Show pagination controls if there are more alerts than items per page
       <div className="flex justify-center items-center gap-4 mt-8 pb-10">
         <Button variant="outline" size="sm" className="rounded-full bg-card shadow-sm"
           onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))} disabled={currentIndex === 0}>
@@ -72,7 +73,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
       </div>
     )}
 
-    {!loading && alerts.length === 0 && (
+    {!loading && alerts.length === 0 && (      // Show empty state if no alerts found
       <div className="text-center py-12 text-slate-400">
         <CheckCircle2 className="w-12 h-12 mx-auto mb-2 opacity-20" />
         <p>No alerts found</p>

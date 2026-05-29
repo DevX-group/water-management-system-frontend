@@ -29,7 +29,7 @@ export const InquiryList: React.FC<InquiryListProps> = ({
       <CardHeader className="pb-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
+          <Input        // Search inquiry
             placeholder="Search tickets..."
             className="pl-10 h-11 rounded-xl"
             value={search}
@@ -37,7 +37,7 @@ export const InquiryList: React.FC<InquiryListProps> = ({
           />
         </div>
         <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-          {['all', 'open', 'pending', 'resolved'].map((tab) => (
+          {['all', 'open', 'pending', 'resolved'].map((tab) => (     // Filter buttons
             <Button
               key={tab}
               variant={filter === tab ? 'default' : 'ghost'}
@@ -57,7 +57,7 @@ export const InquiryList: React.FC<InquiryListProps> = ({
           </div>
         ) : (
           <>
-            {filtered.slice(currentIndex, currentIndex + itemsPerPage).map((inq) => (
+            {filtered.slice(currentIndex, currentIndex + itemsPerPage).map((inq) => (   // Render each inquiry in the list with pagination
               <button
                 key={inq.id}
                 onClick={() => setSelectedId(inq.id)}
@@ -80,7 +80,7 @@ export const InquiryList: React.FC<InquiryListProps> = ({
               </button>
             ))}
 
-            {filtered.length > itemsPerPage && (
+            {filtered.length > itemsPerPage && (         // Pagination controls
               <div className="flex justify-center items-center gap-2 mt-4 pb-4">
                 <Button variant="ghost" size="icon" className="h-8 w-8"
                   onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}

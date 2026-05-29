@@ -31,7 +31,7 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
   return (
     <Card className="shadow-card border-none overflow-hidden bg-card">
       <div className="p-4 bg-primary/5 border-b flex items-center gap-2 text-primary font-semibold text-sm">
-        <History size={16} /> My Previous Inquiries
+        <History size={16} />  Previous Inquiries
       </div>
       <CardContent className="p-2 space-y-1 max-h-[600px] overflow-y-auto">
         {inquiries.slice(historyIndex, historyIndex + itemsPerPage).map((inq) => (
@@ -45,11 +45,11 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
               <span className="text-xs font-semibold truncate">{inq.category || 'General'}</span>
               <StatusBadge status={inq.status} />
             </div>
-            <p className="text-[11px] text-muted-foreground truncate">{inq.messages[inq.messages.length - 1]?.text}</p>
+            <p className="text-[11px] text-muted-foreground truncate">{inq.messages[inq.messages.length - 1]?.text}</p> // Last message preview
             <p className="text-[10px] text-primary/60 mt-1">{inq.id}</p>
           </button>
         ))}
-        {inquiries.length > itemsPerPage && (
+        {inquiries.length > itemsPerPage && (  // Show pagination controls
           <div className="flex justify-center items-center gap-2 mt-4 pb-2">
             <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.max(0, p - itemsPerPage))} disabled={historyIndex === 0}>
               <ArrowLeft size={14} />

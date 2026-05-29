@@ -16,6 +16,8 @@ export const useAdminInquiries = () => {
   const messagesEndRef  = useRef<HTMLDivElement>(null);
   const selectedInquiry = inquiries.find((t) => t.id === selectedId) ?? null;
 
+  // Fetches all customer support inquiries from the backend database.
+
   const fetchAllInquiries = async () => {
     try {
       const response = await fetch(API_BASE_URL);
@@ -40,6 +42,8 @@ export const useAdminInquiries = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [selectedInquiry?.messages.length]);
 
+  // Posts an admin reply message to the currently selected inquiry chat.
+ 
   const sendReply = async () => {
     if (!replyText.trim() || !selectedId) return;
     const newMessage = {
@@ -63,6 +67,7 @@ export const useAdminInquiries = () => {
     }
   };
 
+  // Marks a support ticket as resolved by hitting the backend PATCH endpoint.
   const resolveInquiry = async (id: string) => {
     try {
       const response = await fetch(`${API_BASE_URL}/${id}/status?status=resolved`, { method: 'PATCH' });

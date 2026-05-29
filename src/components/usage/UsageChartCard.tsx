@@ -7,7 +7,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 interface UsageChartCardProps {
   activeChart: "bar" | "pie" | "mix";
-  setActiveChart: (v: "bar" | "pie" | "mix") => void;
+  setActiveChart: (v: "bar" | "pie" | "mix") => void; // Function to change active chart type
   loading: boolean;
   monthlyData: any[];
   pieData: any[];
@@ -23,6 +23,8 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
         <CardDescription>Hover over charts to see detailed data</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
+        // The buttons to switch between chart types, with dynamic styling based on the active chart
+
         <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
           <BarChartHorizontal className="w-4 h-4" /> Bar
         </Button>
@@ -43,7 +45,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
       ) : (
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
-            {activeChart === "bar" ? (
+            {activeChart === "bar" ? (           // Render Bar Chart
               <BarChart data={monthlyData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} dy={10} />

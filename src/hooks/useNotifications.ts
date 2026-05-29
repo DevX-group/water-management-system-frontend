@@ -8,6 +8,8 @@ export const useNotifications = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
 
+  // Retrieves  system alerts and notifications from the backend API.
+ 
   const fetchAlerts = async () => {
     try {
       const res = await fetch(`http://localhost:8081/api/alerts`);
@@ -22,6 +24,8 @@ export const useNotifications = () => {
     }
   };
 
+  // Dismisses a specific alert by ID 
+  
   const handleDismiss = async (id: number) => {
     try {
       const res = await fetch(`http://localhost:8081/api/alerts/${id}/dismiss`, { method: 'PATCH' });

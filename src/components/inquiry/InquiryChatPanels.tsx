@@ -54,7 +54,7 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
       <div ref={messagesEndRef} />
     </CardContent>
     {isHistory ? (
-      inquiry.status === 'resolved' ? (
+      inquiry.status === 'resolved' ? (  // Show resolved banner if inquiry is resolved
         <div className="p-4 bg-success/5 border-t flex items-center justify-center gap-2 text-success">
           <CheckCircle size={16} /><span className="text-xs font-medium">This inquiry has been resolved.</span>
         </div>

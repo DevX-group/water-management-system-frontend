@@ -23,7 +23,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
 }) => {
   return (
     <Card className="shadow-card border-none h-full flex flex-col overflow-hidden bg-card">
-      {!selectedInquiry ? (
+      {!selectedInquiry ? (    // Empty State when no inquiry is selected
         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-12 text-center">
           <MessageSquare size={48} className="opacity-10 mb-4" />
           <h3 className="text-lg font-medium">No Inquiry Selected</h3>
@@ -31,7 +31,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
         </div>
       ) : (
         <>
-          {/* Header */}
+          // Header 
           <div className="p-4 border-b flex items-center justify-between bg-secondary/20">
             <div className="flex items-center gap-3">
               <InquiryAvatar name={selectedInquiry.name} size="sm" variant="user" />
@@ -41,7 +41,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
               </div>
             </div>
             <div className="flex gap-2">
-              {selectedInquiry.status !== 'resolved' && (
+              {selectedInquiry.status !== 'resolved' && (  // Show Resolve button only if inquiry is not already resolved
                 <Button variant="outline" size="sm" onClick={() => onResolve(selectedInquiry.id)}>
                   <CheckCircle className="w-3 h-3 mr-1" /> Resolve
                 </Button>
@@ -52,7 +52,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
             </div>
           </div>
 
-          {/* Messages */}
+           // Messages 
           <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
             {selectedInquiry.messages.map((msg, index) => (
               <InquiryChatMessage
@@ -65,7 +65,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Reply input */}
+          // Reply input 
           <div className="p-4 border-t bg-secondary/10">
             <div className="flex items-end gap-2">
               <div className="flex-1 relative">

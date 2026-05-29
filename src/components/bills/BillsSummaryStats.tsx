@@ -13,8 +13,8 @@ interface Bill {
 interface BillsSummaryStatsProps {
   bills: Bill[];
 }
-
-export const BillsSummaryStats: React.FC<BillsSummaryStatsProps> = ({ bills }) => {
+ 
+export const BillsSummaryStats: React.FC<BillsSummaryStatsProps> = ({ bills }) => {   // Calculate summary stats for cards
   const totalPaid = bills
     .filter(b => b.status.toLowerCase() === 'paid')
     .reduce((sum, b) => sum + b.totalAmount, 0);

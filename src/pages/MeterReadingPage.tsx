@@ -35,7 +35,7 @@ export const MeterReadingPage = () => {
       </div>
 
       <MeterReadingsTable
-        readings={todaysReadings}
+        readings={todaysReadings as unknown as any}
         loading={loadingReadings}
         onRefresh={fetchTodaysReadings}
       />

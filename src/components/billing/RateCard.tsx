@@ -17,7 +17,7 @@ interface RateCardProps {
   onSave:        (type: ConnectionType) => void;
 }
 
-export const RateCard: React.FC<RateCardProps> = ({
+export const RateCard: React.FC<RateCardProps> = ({          // Pass data types for the RateCard component
   type, rates, editingType, editDraft, onStartEdit, onCancelEdit, onSetDraft, onSave,
 }) => {
   const r       = rates[type];
@@ -46,7 +46,7 @@ export const RateCard: React.FC<RateCardProps> = ({
         )}
       </div>
 
-      {/* body */}
+      // body of the rate card
       <div className="px-5 py-4 space-y-3">
         {editing ? (
           <>
@@ -71,7 +71,7 @@ export const RateCard: React.FC<RateCardProps> = ({
               />
             </div>
 
-            {type === 'metered' && (
+            {type === 'metered' && (          // Show tiered rate inputs for metered connections when editing
               <div className="space-y-3 pt-2 border-t border-border/40">
                 <p className="text-xs font-medium text-muted-foreground">Tier Limits</p>
                 <div className="grid grid-cols-2 gap-3">
@@ -106,7 +106,7 @@ export const RateCard: React.FC<RateCardProps> = ({
               </div>
             )}
           </>
-        ) : (
+        ) : (       // Show rate details when not editing
           <>
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Base Charge</span>

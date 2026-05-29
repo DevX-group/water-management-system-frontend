@@ -30,7 +30,7 @@ interface BillImageViewerProps {
 }
 
 const getBillImageUrl = (billId: string) =>
-  `http://localhost:8081/api/bills/${billId}/image`;
+  `http://localhost:8081/api/bills/${billId}/image`;   // Replace with actual API endpoint
 
 export const BillImageViewer: React.FC<BillImageViewerProps> = ({
   bill, zoom, rotation, imageLoading, imageError,
@@ -44,7 +44,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
         className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
         onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
       >
-        {/* Header */}
+         // Header
         <div className="flex items-center justify-between px-6 py-4 bg-black/60 border-b border-white/10 flex-shrink-0">
           <div>
             <p className="text-white font-bold text-base">Bill — {bill.billingPeriod}</p>
@@ -60,7 +60,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
           </div>
         </div>
 
-        {/* Image */}
+        // Image Container
         <div className="flex-1 overflow-auto flex items-center justify-center p-6 relative">
           {imageLoading && (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -93,7 +93,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
           )}
         </div>
 
-        {/* Footer */}
+        // Footer 
         <div className="flex items-center justify-center gap-6 px-6 py-3 bg-black/60 border-t border-white/10 flex-shrink-0">
           <Badge variant="secondary" className={`rounded-full px-3 py-1 ${
             bill.status?.toLowerCase() === 'paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'

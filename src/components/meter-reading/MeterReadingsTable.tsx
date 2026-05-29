@@ -44,7 +44,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
       <p className="text-center text-muted-foreground py-10">No readings submitted today yet.</p>
     ) : (
       <div className="overflow-x-auto">
-        <table className="w-full">
+        <table className="w-full">      // Table of today's meter readings 
           <thead>
             <tr className="text-left border-b border-border">
               {['Meter No.', 'Customer', 'Subscription', 'Previous', 'Current', 'Usage', 'Bill Amount', 'Status'].map(h => (
@@ -66,7 +66,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
                   </span>
                 </td>
                 <td className="py-4 text-sm text-foreground">
-                  {r.totalAmount != null ? `LKR ${Number(r.totalAmount).toFixed(2)}` : '-'}
+                  {r.totalAmount != null ? `LKR ${Number(r.totalAmount).toFixed(2)}` : '-'}      // Show bill amount if available, otherwise show '-'
                 </td>
                 <td className="py-4">
                   {r.billStatus ? (

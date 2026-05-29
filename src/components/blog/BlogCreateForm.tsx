@@ -24,7 +24,7 @@ export const BlogCreateForm: React.FC<BlogCreateFormProps> = ({
   <>
     <div className="flex justify-between items-center mb-10">
       <h1 className="text-3xl font-bold">Blog Management</h1>
-      <Button onClick={onToggle} className="rounded-full px-6 gradient-primary">
+      <Button onClick={onToggle} className="rounded-full px-6">
         {showForm ? <><X className="mr-2" />Cancel</> : <><Plus className="mr-2" />Add New Blog</>}
       </Button>
     </div>
@@ -37,26 +37,26 @@ export const BlogCreateForm: React.FC<BlogCreateFormProps> = ({
         >
           <Card className="border-none shadow-xl bg-card p-8 rounded-3xl">
             <form onSubmit={onSubmit} className="space-y-4">
-              <Input placeholder="Blog Title" value={formData.title}
+              <Input placeholder="Blog Title" value={formData.title}    // Title Input
                 onChange={e => onChange({ ...formData, title: e.target.value })} required />
               <div className="grid grid-cols-2 gap-4">
-                <Input placeholder="Department/Category" value={formData.category}
+                <Input placeholder="Department/Category" value={formData.category}   // Category Input
                   onChange={e => onChange({ ...formData, category: e.target.value })} required />
                 <div className="flex gap-2">
-                  <Input type="file" accept="image/*"
+                  <Input type="file" accept="image/*"  // Image Upload Input
                     onChange={e => onFileChange(e.target.files?.[0] || null)} />
-                  <Input placeholder="Or Image URL" value={formData.image}
+                  <Input placeholder="Or Image URL" value={formData.image}  // Image URL Input
                     onChange={e => onChange({ ...formData, image: e.target.value })}
                     disabled={!!imageFile} />
                 </div>
               </div>
-              <textarea
+              <textarea    // Content Textarea
                 placeholder="Blog Content" value={formData.content}
                 onChange={e => onChange({ ...formData, content: e.target.value })}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                 rows={6}
               />
-              <Button type="submit" className="w-full gradient-primary h-12 rounded-xl font-bold" disabled={uploading}>
+              <Button type="submit" className="w-full h-12 rounded-xl font-bold" disabled={uploading}>
                 {uploading ? <><Loader2 className="animate-spin mr-2" />Publishing...</> : 'Publish Now'}
               </Button>
             </form>

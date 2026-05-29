@@ -11,6 +11,7 @@ export const useUsage = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetches  yearly water usage analytics from the backend
   useEffect(() => {
     const fetchAnalytics = async () => {
       setLoading(true);
