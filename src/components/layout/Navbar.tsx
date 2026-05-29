@@ -1,6 +1,7 @@
 import '@/index.css';
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -52,6 +53,7 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
+  const { logout } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -248,11 +250,11 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem asChild className="rounded-lg text-destructive focus:text-destructive">
-                  <Link to="/" className="flex items-center gap-3 cursor-pointer">
+                <DropdownMenuItem onClick={() => logout()} className="rounded-lg text-destructive focus:text-destructive cursor-pointer">
+                  <div className="flex items-center gap-3">
                     <LogOut className="w-4 h-4" />
                     Sign out
-                  </Link>
+                  </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

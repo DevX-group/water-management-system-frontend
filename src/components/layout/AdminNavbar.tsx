@@ -1,5 +1,6 @@
 import '@/index.css';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/contexts/AuthContext';
 import React from 'react';
 import { Search, Globe, User, ChevronDown, Menu } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -45,6 +46,7 @@ const languages = [
 
 export const AdminNavbar: React.FC = () => {
   const { currentAdmin, setCurrentRole, admins } = useAdmin();
+  const { logout } = useAuth();
   const { i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
@@ -185,7 +187,7 @@ export const AdminNavbar: React.FC = () => {
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
