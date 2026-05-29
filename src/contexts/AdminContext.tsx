@@ -2,6 +2,7 @@ import '@/index.css';
 import React, { createContext, useContext, ReactNode, useMemo } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import type { AdminRole } from '@/types/admin';
+import { isAdminRole } from '@/utils/adminAccess';
 
 interface Admin {
   id: string;
@@ -26,20 +27,13 @@ export const AdminProvider: React.FC<AdminProviderProps> = ({ children }) => {
   const { user } = useAuth();
 
   const currentAdmin = useMemo<Admin>(() => {
-    const mapRole = (role?: string | null): AdminRole | null => {
-      if (role === 'SUPER_ADMIN' || role === 'SYSTEM_ADMIN') return 'main_admin';
-      if (role === 'METER_READER') return 'meter_reader';
-      if (role === 'PAYMENT_HANDLER') return 'payment_handler';
-      return null;
-    };
-
-    const mappedRole = mapRole(user?.role) ?? 'main_admin';
+    const resolvedRole: AdminRole = isAdminRole(user?.role) ? user.role : 'SYSTEM_ADMIN';
     const nic = user?.nic ?? 'admin';
 
     return {
       id: nic,
       name: user?.nic ?? 'Admin User',
-      role: mappedRole,
+      role: resolvedRole,
       email: '',
     };
   }, [user]);
