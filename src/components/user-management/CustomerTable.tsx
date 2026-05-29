@@ -71,8 +71,10 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="ACTIVE">Active</SelectItem>
+              <SelectItem value="INACTIVE">Inactive</SelectItem>
+              <SelectItem value="PENDING_ACTIVATION">Pending</SelectItem>
+              <SelectItem value="SUSPENDED">Suspended</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -142,7 +144,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                   {new Date(customer.registeredDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </td>
                 <td className="py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'active' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'ACTIVE' ? 'bg-success/10 text-success' : customer.status === 'INACTIVE' ? 'bg-muted text-muted-foreground' : 'bg-blue-500/10 text-blue-500'}`}>
                     {customer.status}
                   </span>
                 </td>
@@ -156,7 +158,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                       <Edit className="w-4 h-4 text-green-600" />
                     </button>
                     <button onClick={() => onDelete(customer.id, customer.name)} disabled={customer.isDeleted}
-                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Delete">
+                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Deactivate">
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>

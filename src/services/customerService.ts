@@ -40,7 +40,10 @@ interface CustomerRegistrationRequest {
 }
 
 // Adapter function to map BackendCustomer to frontend Customer interface
-const mapBackendToFrontend = (b: BackendCustomer): Customer => ({
+const mapBackendToFrontend = (b: BackendCustomer): Customer => {
+  const status = b.user.status;
+  const isDeleted = status === 'INACTIVE' || status === 'SUSPENDED';
+  return {
   id: b.subscriptionNumber, // Use subscriptionNumber as the unique ID for frontend components
   name: b.accountHolderName,
   nic: b.user.nic,
@@ -51,9 +54,10 @@ const mapBackendToFrontend = (b: BackendCustomer): Customer => ({
   region: b.region.regionCode,
   connectionType: b.connectionType.toLowerCase(), // Backend stores enum, frontend uses lowercase
   registeredDate: new Date(b.user.createdAt).toISOString().split('T')[0],
-  status: b.user.status,
-  isDeleted: false,
-});
+  status,
+  isDeleted,
+  };
+};
 
 export const getCustomers = async (): Promise<Customer[]> => {
   const res = await api.get<BackendCustomer[]>('/customers');

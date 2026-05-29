@@ -190,11 +190,13 @@ export const useUserManagement = (initialCustomers: Customer[] = []) => {
   };
 
   const handleDeleteCustomer = async (customerId: string, customerName: string) => {
-    if (window.confirm(`Are you sure you want to delete ${customerName}? This action cannot be undone.`)) {
+    if (window.confirm(`Are you sure you want to deactivate ${customerName}? This action can be reversed by reactivating the account.`)) {
       try {
         await deleteCustomer(customerId);
-        setCustomers(customers.filter(c => c.id !== customerId));
-        toast({ title: 'Deleted', description: `${customerName} has been deleted.` });
+        setCustomers(customers.map(c =>
+          c.id === customerId ? { ...c, status: 'INACTIVE', isDeleted: true } : c
+        ));
+        toast({ title: 'Customer Deactivated', description: `${customerName} has been deactivated.` });
       } catch (error: any) {
         console.error("Failed to delete customer:", error);
         toast({ title: 'Delete Failed', description: error?.response?.data?.message || "Failed to delete customer.", variant: 'destructive' });
