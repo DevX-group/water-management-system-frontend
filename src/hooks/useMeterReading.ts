@@ -50,7 +50,7 @@ export const useMeterReading = () => {
       readingDate: formData.readingDate, 
       notes: formData.notes,
     };
-    try {
+    try {             // Submits the reading to the backend
       const res = await fetch(`${API_BASE}/meter-readings`, {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 

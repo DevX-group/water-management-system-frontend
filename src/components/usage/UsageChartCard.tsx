@@ -23,8 +23,8 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
         <CardDescription>Hover over charts to see detailed data</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
-        // The buttons to switch between chart types, with dynamic styling based on the active chart
-
+        {/*The buttons to switch between chart types, with dynamic styling based on the active chart
+*/} 
         <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
           <BarChartHorizontal className="w-4 h-4" /> Bar
         </Button>

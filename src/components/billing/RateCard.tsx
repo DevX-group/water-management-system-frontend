@@ -46,9 +46,9 @@ export const RateCard: React.FC<RateCardProps> = ({          // Pass data types 
         )}
       </div>
 
-      // body of the rate card
-      <div className="px-5 py-4 space-y-3">
-        {editing ? (
+      
+      <div className="px-5 py-4 space-y-3">  
+        {editing ? (       //body of the rate card
           <>
             <div>
               <Label className="text-xs text-muted-foreground">Base Charge (LKR)</Label>

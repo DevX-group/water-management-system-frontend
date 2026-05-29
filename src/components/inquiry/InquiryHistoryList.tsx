@@ -45,7 +45,7 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
               <span className="text-xs font-semibold truncate">{inq.category || 'General'}</span>
               <StatusBadge status={inq.status} />
             </div>
-            <p className="text-[11px] text-muted-foreground truncate">{inq.messages[inq.messages.length - 1]?.text}</p> // Last message preview
+            <p className="text-[11px] text-muted-foreground truncate">{inq.messages[inq.messages.length - 1]?.text}</p> {/*Last message preview*/} 
             <p className="text-[10px] text-primary/60 mt-1">{inq.id}</p>
           </button>
         ))}
