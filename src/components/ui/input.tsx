@@ -1,7 +1,9 @@
+import '@/index.css';
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
+// Standard input styling wrapper.
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
     return (

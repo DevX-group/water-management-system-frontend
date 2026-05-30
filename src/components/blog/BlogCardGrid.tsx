@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
@@ -23,9 +24,9 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {blogs.map(blog => (
       <motion.div key={blog.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-        <Card className="border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-[32px] overflow-hidden bg-white group">
+        <Card className="border-none shadow-sm hover:shadow-xl transition-all duration-300 rounded-[32px] overflow-hidden bg-card group">
           <div className="relative h-56 overflow-hidden">
-            <img src={blog.imageUrl} alt={blog.title}
+            <img src={blog.imageUrl} alt={blog.title}       // Blog Image with hover zoom effect
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
             <Button variant="destructive" size="icon"
               className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity rounded-full shadow-lg"
@@ -36,7 +37,7 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
           <CardContent className="p-7">
             <div className="flex items-center gap-4 text-slate-400 text-sm mb-4">
               <div className="flex items-center gap-1.5">
-                <Calendar size={14} />
+                <Calendar size={14} /> // Display formatted date
                 <span>{new Date(blog.date).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center gap-1.5">
@@ -68,7 +69,7 @@ export const BlogPostModal: React.FC<BlogPostModalProps> = ({ blog, onClose }) =
         className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
         onClick={onClose}>
         <motion.div initial={{ scale: 0.9, y: 20 }} animate={{ scale: 1, y: 0 }} exit={{ scale: 0.9, y: 20 }}
-          className="bg-white rounded-[40px] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+          className="bg-card rounded-[40px] w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
           onClick={e => e.stopPropagation()}>
           <div className="relative h-[300px] sm:h-[400px]">
             <img src={blog.imageUrl} alt={blog.title} className="w-full h-full object-cover" />

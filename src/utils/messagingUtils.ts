@@ -1,5 +1,6 @@
 import type { TriggerType } from '@/types/messaging';
 
+// Shared formatting helpers for messaging UI.
 /**
  * Formats a trigger type enum value into a human-readable label.
  * e.g. 'PAYMENT_CONFIRMED' → 'Payment Confirmed'
@@ -12,7 +13,7 @@ export const formatTriggerType = (triggerType: TriggerType): string => {
 };
 
 /**
- * Replaces message template placeholders with mock preview values.
+ * Replaces message template placeholders with  preview values.
  */
 export const replacePlaceholders = (text: string): string => {
   let res = text || '';

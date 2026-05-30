@@ -39,7 +39,7 @@ git clone [https://github.com/kaweeshaweerasinghe/water-management-system-fronte
 src/
 ├── components/     # Reusable UI components (Layout, UI, Charts)
 ├── contexts/       # React Context providers (Auth, Admin)
-├── data/           # Mock data and constants
+├── data/           #  data and constants
 ├── hooks/          # Custom React hooks (useInquiries, useToast)
 ├── lib/            # Utility functions (shadcn/ui utils)
 ├── pages/          # Full page components

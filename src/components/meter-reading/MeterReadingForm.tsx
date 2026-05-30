@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -25,7 +26,7 @@ interface MeterReadingFormProps {
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
   formData, submitting, onChange, onSubmit, onClear,
 }) => {
-  const usage = formData.previousReading && formData.currentReading
+  const usage = formData.previousReading && formData.currentReading      //
     ? Math.max(0, Number(formData.currentReading) - Number(formData.previousReading))
     : 0;
 

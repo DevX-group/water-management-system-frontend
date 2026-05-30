@@ -31,7 +31,8 @@ export const useBilling = () => {
 
   const selectedRate = rates[selectedType];
 
-  // Fetch rates on mount
+ 
+  //  maps the backend 'metered' and 'non_metered' rates into the frontend state.
   useEffect(() => {
     const fetchRates = async () => {
       try {
@@ -73,6 +74,8 @@ export const useBilling = () => {
     }));
   };
 
+ 
+  //  updates the global rates that determine how all future water bills are calculated.
   const handleSaveRates = async (type: ConnectionType, typeMeta: { label: string }) => {
     const draft = editDraft[type];
     if (!draft) return;
@@ -97,7 +100,8 @@ export const useBilling = () => {
     }
   };
 
-  // Search bills
+  // Searches for a specific customer's billing history using their Subscription Number.
+  
   const handleSearch = async () => {
     const sub = searchQuery.trim();
     if (!sub) return;
@@ -116,6 +120,8 @@ export const useBilling = () => {
     }
   };
 
+  // Admin function to download a customer's generated PDF bill.
+ 
   const handleDownload = async (billId: number) => {
     try {
       const response = await fetch(`${API_BASE}/bills/${billId}/download`);

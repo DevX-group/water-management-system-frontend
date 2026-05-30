@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -37,8 +38,8 @@ export const LoginRightPanel: React.FC = () => (
           <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.5 + i * 0.1 }}
             className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/10">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/40 to-cyan-500/40 backdrop-blur flex items-center justify-center border border-white/20">
-              <f.icon className="w-5 h-5 text-cyan-300" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/40 to-accent/40 backdrop-blur flex items-center justify-center border border-white/20">
+              <f.icon className="w-5 h-5 text-accent" />
             </div>
             <span className="font-medium text-white/80">{f.text}</span>
           </motion.div>
@@ -80,7 +81,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
           <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onEmailChange(e.target.value); }}
             style={{ caretColor: 'black' }}
-            className="h-14 rounded-xl pl-12 input-premium text-base bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" />
+            className="h-14 rounded-xl pl-12 input-premium text-base bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" />
         </div>
       </div>
       <div className="space-y-2">
@@ -91,7 +92,7 @@ export const LoginForm: React.FC<LoginFormProps> = ({
             value={formData.password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onPasswordChange(e.target.value); }}
             style={{ caretColor: 'black' }}
-            className="h-14 rounded-xl pl-12 pr-14 input-premium text-base bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" />
+            className="h-14 rounded-xl pl-12 pr-14 input-premium text-base bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" />
           <button type="button" onClick={onTogglePassword}
             className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1">
             {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

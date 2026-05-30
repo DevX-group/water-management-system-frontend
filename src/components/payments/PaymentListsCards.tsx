@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';

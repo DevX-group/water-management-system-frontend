@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Search, Eye, Edit, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -148,7 +149,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 <td className="py-4">
                   <div className="flex gap-2">
                     <button onClick={() => onView(customer)} className="p-1 hover:bg-accent rounded" title="View">
-                      <Eye className="w-4 h-4 text-blue-600" />
+                      <Eye className="w-4 h-4 text-primary" />
                     </button>
                     <button onClick={() => onEdit(customer)} disabled={customer.isDeleted}
                       className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Edit">

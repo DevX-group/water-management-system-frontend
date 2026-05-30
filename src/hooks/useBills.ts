@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import type { BillResponse } from '@/types/billing';
+import { API_BASE } from '@/utils/billingUtils';
+import { CUSTOMER_SUBSCRIPTION_NUMBER } from '@/constants/customer';
 
-const SUBSCRIPTION_NUMBER = 'SK-2341';
+const SUBSCRIPTION_NUMBER = CUSTOMER_SUBSCRIPTION_NUMBER;
 
 export const useBills = () => {
   const [bills, setBills]           = useState<BillResponse[]>([]);
@@ -16,8 +18,10 @@ export const useBills = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
 
+ 
+  //  use the CUSTOMER_SUBSCRIPTION_NUMBER to pull their specific bills.
   useEffect(() => {
-    fetch(`http://localhost:8081/api/bills/customer/${SUBSCRIPTION_NUMBER}`)
+    fetch(`${API_BASE}/bills/customer/${encodeURIComponent(SUBSCRIPTION_NUMBER)}`)
       .then(r => r.ok ? r.json() : [])
       .then(setBills)
       .catch(console.error)
@@ -30,9 +34,11 @@ export const useBills = () => {
     return matchSearch && matchStatus;
   });
 
+  // Handles downloading the bill as a PDF directly from the backend.
+
   const handleDownload = async (bill: BillResponse) => {
     try {
-      const res = await fetch(`http://localhost:8081/api/bills/${bill.billId}/download`);
+      const res = await fetch(`${API_BASE}/bills/${bill.billId}/download`);
       if (res.ok) {
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);

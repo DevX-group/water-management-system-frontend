@@ -33,6 +33,8 @@ export const useCustomerInquiryPage = () => {
     return Object.keys(e).length === 0;
   };
 
+ 
+  // Generates a local INQ ID 
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
@@ -68,6 +70,8 @@ export const useCustomerInquiryPage = () => {
     }
   };
 
+
+  // Push the message to the backend which will appear on the Admin's screen.
   const sendMessage = async () => {
     if (!chatInput.trim() || !activeId) return;
     const newMsg = { 

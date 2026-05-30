@@ -5,7 +5,7 @@ import type { Inquiry } from '../types/inquiry';
 
 const API_BASE_URL = 'http://localhost:8081/api/inquiries';
 
-/** Polls all inquiries — use in admin dashboard */
+// Polls all inquiries — use in admin dashboard 
 export function useInquiries(pollMs = 1500) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
 
@@ -30,7 +30,7 @@ export function useInquiries(pollMs = 1500) {
   return { inquiries, refresh };
 }
 
-/** Polls a single inquiry by ID — use in customer chat view */
+// Polls a single inquiry by ID — use in customer chat view 
 export function useInquiry(id: string | null, pollMs = 1500) {
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
 

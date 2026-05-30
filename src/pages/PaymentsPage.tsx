@@ -1,3 +1,9 @@
+import '@/index.css';
+import React, { useMemo, useState } from 'react';
+import { mockPayments, mockCustomers, mockBankSlips } from '@/data/mockData';
+import { useNavigate } from 'react-router-dom';
+import { CustomerSearchCard, CustomerDetailsCard } from '@/components/payments/CustomerSearchCards';
+import { RecentlyAddedPayments, PendingBankSlips } from '@/components/payments/PaymentListsCards';
 import { PaymentCustomerSearch } from '@/components/payments/PaymentCustomerSearch';
 import { RecentPaymentsList } from '@/components/payments/RecentPaymentsList';
 import { PendingBankSlipsTable } from '@/components/payments/PendingBankSlipsTable';

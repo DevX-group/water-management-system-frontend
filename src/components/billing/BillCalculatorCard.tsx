@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Calculator } from 'lucide-react';
 import { Label } from '@/components/ui/label';
@@ -6,7 +7,7 @@ import { Slider } from '@/components/ui/slider';
 import type { ConnectionType, ConnectionRate } from '@/types/billing';
 import { TYPE_META } from '@/utils/billingUtils';
 
-interface BillCalculatorCardProps {
+interface BillCalculatorCardProps {        // Pass data types for the BillCalculatorCard component
   selectedType:    ConnectionType;
   setSelectedType: (type: ConnectionType) => void;
   usage:           number;
@@ -24,8 +25,7 @@ export const BillCalculatorCard: React.FC<BillCalculatorCardProps> = ({
         <h3 className="text-lg font-semibold text-foreground">Calculate Your Bill</h3>
       </div>
 
-      {/* Type selector */}
-      <div className="space-y-3 mb-6">
+      <div className="space-y-3 mb-6">   
         <Label>Connection Type</Label>
         <div className="grid grid-cols-2 gap-3">
           {(['metered', 'non_metered'] as ConnectionType[]).map((type) => {
@@ -48,8 +48,8 @@ export const BillCalculatorCard: React.FC<BillCalculatorCardProps> = ({
         </div>
       </div>
 
-      {/* Usage slider — metered only */}
-      {selectedType === 'metered' && (
+     
+      {selectedType === 'metered' && (         // Usage slider — metered only
         <div className="space-y-3 mb-6">
           <div className="flex justify-between items-center">
             <Label>Monthly Usage</Label>
@@ -66,7 +66,7 @@ export const BillCalculatorCard: React.FC<BillCalculatorCardProps> = ({
         </div>
       )}
 
-      {/* Rate structure */}
+        
       <div className="bg-secondary/50 rounded-xl p-4 mb-6">
         <h4 className="font-medium text-foreground mb-3">Rate Structure</h4>
         <div className="space-y-2 text-sm">
@@ -74,7 +74,7 @@ export const BillCalculatorCard: React.FC<BillCalculatorCardProps> = ({
             <span className="text-muted-foreground">Base Charge</span>
             <span className="font-medium">LKR {selectedRate.baseRate.toFixed(2)}</span>
           </div>
-          {selectedType === 'metered' && (
+          {selectedType === 'metered' && (   // Show tiered rates for metered connections
             <>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">0–{selectedRate.tier1Limit} units</span>
@@ -90,7 +90,7 @@ export const BillCalculatorCard: React.FC<BillCalculatorCardProps> = ({
               </div>
             </>
           )}
-          {selectedType === 'non_metered' && (
+         {selectedType === 'non_metered' && (               // Show fixed rate for non-metered connections
             <p className="text-xs text-muted-foreground italic">Fixed base charge — no tiered rates</p>
           )}
           <div className="flex justify-between pt-2 border-t border-border/50">

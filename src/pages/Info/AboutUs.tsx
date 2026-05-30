@@ -1,3 +1,4 @@
+import '@/index.css';
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
@@ -23,7 +24,7 @@ const itemVariants = {
 export const AboutUs = () => {
   const pillars = [
     {
-      icon: <Activity className="text-blue-500" size={24} />,
+      icon: <Activity className="text-primary" size={24} />,
       title: "Smart Monitoring",
       desc: "Automated tracking of meter readings to prevent manual errors and provide instant usage data."
     },
@@ -33,7 +34,7 @@ export const AboutUs = () => {
       desc: "Real-time notification systems that detect usage spikes, potential leaks, and overdue payments."
     },
     {
-      icon: <CreditCard className="text-emerald-500" size={24} />,
+      icon: <CreditCard className="text-success" size={24} />,
       title: "Transparent Billing",
       desc: "A secure, digital-first approach to financial management, allowing customers to view history and settle balances."
     },
@@ -70,7 +71,7 @@ export const AboutUs = () => {
               <CardContent className="p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
                 <div className="flex-1 space-y-4">
                   <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <ShieldCheck className="text-blue-600" /> Our Mission
+                    <ShieldCheck className="text-primary" /> Our Mission
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
                     We transform traditional utility management into a seamless digital experience. 
@@ -79,7 +80,7 @@ export const AboutUs = () => {
                     smart anomaly detection.
                   </p>
                 </div>
-                <div className="w-full md:w-1/3 h-48 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center text-white shadow-lg">
+                <div className="w-full md:w-1/3 h-48 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-white shadow-lg">
                    <Droplets size={64} className="animate-pulse" />
                 </div>
               </CardContent>
@@ -89,7 +90,7 @@ export const AboutUs = () => {
           {/* Pillars Grid */}
           <div className="space-y-8">
             <motion.h2 variants={itemVariants} className="text-3xl font-bold text-center">
-              Our Core <span className="text-blue-600">Pillars</span>
+              Our Core <span className="text-primary">Pillars</span>
             </motion.h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

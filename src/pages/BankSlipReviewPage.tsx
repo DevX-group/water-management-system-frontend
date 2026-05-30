@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { XCircle } from "lucide-react";

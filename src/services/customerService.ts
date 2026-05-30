@@ -1,5 +1,3 @@
-import { mockCustomers, mockCustomerBilling, Customer, CustomerBilling } from '@/data/mockData';
-
 import axios from 'axios';
 
 const api = axios.create({
@@ -7,29 +5,40 @@ const api = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-interface CustomerBillingResponse extends CustomerBilling {
-  customerId?: string;
-  customerName?: string;
+export interface Customer {
+  id: string;
+  subscriptionNumber: string;
+  name: string;
+  address?: string;
+  email?: string;
+  phone?: string;
 }
 
-export const getCustomers = (): Customer[] => {
-  return mockCustomers;
+export interface CustomerBillingResponse {
+  customerId?: string;
+  customerName?: string;
+  currentBill: number;
+  overdueAmount: number;
+  totalDue: number;
+}
+
+// Fetch all customers from backend
+export const getCustomers = async (): Promise<Customer[]> => {
+  const res = await api.get('/customers');
+  return res.data;
 };
 
-export const getCustomerById = (id: string): Customer | undefined => {
-  return mockCustomers.find(customer => customer.id === id);
+// Fetch customer by ID/SubscriptionNumber from backend
+export const getCustomerById = async (id: string): Promise<Customer> => {
+  const res = await api.get(`/customers/${id}`);
+  return res.data;
 };
 
-//search customers from mock data
-export const searchCustomers = (query: string): Customer[] => {
+//search customers from  data
+export const searchCustomers = async (query: string): Promise<Customer[]> => {
   if (!query) return [];
-  const lowerQuery = query.toLowerCase();
-  return mockCustomers.filter(
-    c => c.name.toLowerCase().includes(lowerQuery) ||
-         c.subscriptionNo.toLowerCase().includes(lowerQuery) ||
-         c.nic.includes(query) ||
-         c.id.includes(query)
-  );
+  const res = await api.get(`/customers/search?query=${query}`);
+  return res.data;
 };
 
 //search customers api

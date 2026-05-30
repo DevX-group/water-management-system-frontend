@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from "react";
 import { CreditCard, Clock, CheckCircle2, AlertTriangle, Wallet, Receipt, Landmark } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

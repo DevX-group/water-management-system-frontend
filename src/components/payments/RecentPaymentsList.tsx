@@ -1,3 +1,4 @@
+import '@/index.css';
 import { useState, useEffect } from 'react';
 import { toast } from '@/components/ui/sonner';
 import { formatDateTime } from "@/utils/dateUtils";

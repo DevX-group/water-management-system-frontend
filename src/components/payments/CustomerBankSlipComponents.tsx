@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { ChangeEvent, DragEvent, RefObject } from "react";
 import { Landmark, AlertTriangle, CheckCircle2, X, Upload, Receipt } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -397,7 +398,7 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl w-[90%] max-w-6xl max-h-[98vh] h-auto relative overflow-hidden shadow-2xl">
+      <div className="bg-card rounded-2xl w-[90%] max-w-6xl max-h-[98vh] h-auto relative overflow-hidden shadow-2xl">
         <button
           onClick={() => setSelectedSlip(null)}
           className="absolute top-4 right-4 z-10 rounded-full p-1.5 hover:bg-gray-100 transition"

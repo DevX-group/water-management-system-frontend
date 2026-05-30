@@ -20,6 +20,8 @@ export const useMeterReading = () => {
   const [loadingReadings, setLoadingReadings] = useState(false);
   const [submitting, setSubmitting]           = useState(false);
 
+  // Fetches a list of all meter readings  submitted today.
+ 
   const fetchTodaysReadings = async () => {
     setLoadingReadings(true);
     try {
@@ -35,6 +37,8 @@ export const useMeterReading = () => {
 
   useEffect(() => { fetchTodaysReadings(); }, []);
 
+ 
+  // and dynamically generates a new Bill based on the current rates in the database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -46,7 +50,7 @@ export const useMeterReading = () => {
       readingDate: formData.readingDate, 
       notes: formData.notes,
     };
-    try {
+    try {             // Submits the reading to the backend
       const res = await fetch(`${API_BASE}/meter-readings`, {
         method: 'POST', 
         headers: { 'Content-Type': 'application/json' }, 

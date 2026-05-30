@@ -1,0 +1,1 @@
+export const CUSTOMER_SUBSCRIPTION_NUMBER = "SK-2341";

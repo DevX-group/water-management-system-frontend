@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -21,7 +22,7 @@ interface InquiryFormCardProps {
 }
 
 export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm, errors, submitting, onSubmit }) => (
-  <Card className="shadow-card border-none overflow-hidden bg-white">
+  <Card className="shadow-card border-none overflow-hidden bg-card">
     <div className="p-6 bg-primary/5 border-b flex items-center gap-4 text-primary font-semibold">
       <HeadphonesIcon size={20} /> Submit a Support Inquiry
     </div>
@@ -29,18 +30,18 @@ export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm,
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <div className="space-y-2">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Full Name</label>
-          <Input placeholder="John Doe" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} className={errors.name ? "border-destructive/50" : ""} />
+          <Input placeholder="Kaweesha Weerasinghe" value={form.name} onChange={(e) => setForm({...form, name: e.target.value})} className={errors.name ? "border-destructive/50" : ""} />
           {errors.name && <p className="text-[10px] text-destructive font-medium">{errors.name}</p>}
         </div>
         <div className="space-y-2">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Email Address</label>
-          <Input type="email" placeholder="john@example.com" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className={errors.email ? "border-destructive/50" : ""} />
+          <Input type="email" placeholder="kawee@example.com" value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} className={errors.email ? "border-destructive/50" : ""} />
           {errors.email && <p className="text-[10px] text-destructive font-medium">{errors.email}</p>}
         </div>
       </div>
       <div className="space-y-2">
         <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Issue Category</label>
-        <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value})} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer appearance-none">
+        <select value={form.category} onChange={(e) => setForm({...form, category: e.target.value as "" | InquiryCategory})} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all cursor-pointer appearance-none">
           <option value="">Select a category...</option>
           {CATEGORIES.map((c) => <option key={c.value} value={c.value}>{c.icon} {c.label}</option>)}
         </select>

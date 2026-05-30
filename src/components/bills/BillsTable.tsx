@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Eye, Download, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -40,7 +41,7 @@ export const BillsTable: React.FC<BillsTableProps> = ({
             </tr>
           </thead>
           <tbody>
-            {page.map(bill => (
+            {page.map(bill => (        // Render each bill row with framer-motion for hover effect
               <motion.tr key={bill.billId} className="border-t border-border hover:bg-secondary/30 transition-colors group">
                 <td className="p-5 font-semibold">{bill.billingPeriod}</td>
                 <td className="p-5 font-bold text-lg">LKR {bill.totalAmount.toLocaleString()}</td>
@@ -64,7 +65,7 @@ export const BillsTable: React.FC<BillsTableProps> = ({
           </tbody>
         </table>
 
-        {bills.length > itemsPerPage && (
+        {bills.length > itemsPerPage && (        // Pagination Controls
           <div className="p-4 border-t bg-secondary/20 flex justify-center items-center gap-4">
             <Button variant="outline" size="sm"
               onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}

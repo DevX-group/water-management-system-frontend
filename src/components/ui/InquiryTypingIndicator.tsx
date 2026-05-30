@@ -1,3 +1,4 @@
+import '@/index.css';
 // src/components/inquiry/InquiryTypingIndicator.tsx
 
 import React from 'react';

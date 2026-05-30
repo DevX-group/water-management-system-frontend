@@ -1,7 +1,11 @@
 import { FailedRecipient, MessageHistoryRow, ScheduledMessage, TriggeredMessage } from '../types/messaging';
 
-const SCHEDULED_API_BASE = 'http://localhost:8081/api/scheduled-messages';
-const TRIGGERED_API_BASE = 'http://localhost:8081/api/triggered-messages';
+// Messaging API endpoints for scheduled and triggered templates.
+// const SCHEDULED_API_BASE = 'http://localhost:8081/api/scheduled-messages';
+// const TRIGGERED_API_BASE = 'http://localhost:8081/api/triggered-messages';
+
+const SCHEDULED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/scheduled-messages';
+const TRIGGERED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/triggered-messages';
 
 // The backend returns id as Long (number); normalise to string
 // to keep the rest of the frontend compatible with id: string
@@ -97,6 +101,7 @@ type SentMessageHistoryApi = {
 };
 
 const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
+  // Derive a human-friendly channel label from backend channel text.
   const channels = (item.channels ?? '').toLowerCase();
   let type = 'Message';
   if (channels.includes('sms') && channels.includes('email')) type = 'SMS & Email';
@@ -122,17 +127,75 @@ const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
   };
 };
 
-export const getMessageHistory = async (): Promise<MessageHistoryRow[]> => {
-  const res = await fetch(`${SCHEDULED_API_BASE}/history`);
-  if (!res.ok) throw new Error('Failed to fetch message history');
-  const data: SentMessageHistoryApi[] = await res.json();
-  return data.map(toHistoryRow);
+type MessageHistoryPageResponse = {
+  rows: MessageHistoryRow[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
 };
 
-export const getMessageFailures = async (sentMessageId: string): Promise<FailedRecipient[]> => {
-  const res = await fetch(`${SCHEDULED_API_BASE}/failures/${sentMessageId}`);
+type MessageFailuresPageResponse = {
+  rows: FailedRecipient[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+};
+
+export const getMessageHistory = async (
+  page = 0,
+  size = 10
+): Promise<MessageHistoryPageResponse> => {
+  // Paged history for sent scheduled messages.
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+  const res = await fetch(`${SCHEDULED_API_BASE}/history?${params.toString()}`);
+  if (!res.ok) throw new Error('Failed to fetch message history');
+  const data: {
+    content: SentMessageHistoryApi[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+  } = await res.json();
+  return {
+    rows: data.content.map(toHistoryRow),
+    page: data.number,
+    size: data.size,
+    totalPages: data.totalPages,
+    totalElements: data.totalElements,
+  };
+};
+
+export const getMessageFailures = async (
+  sentMessageId: string,
+  page = 0,
+  size = 5
+): Promise<MessageFailuresPageResponse> => {
+  // Paged failures for a specific sent message.
+  const params = new URLSearchParams({
+    page: String(page),
+    size: String(size),
+  });
+  const res = await fetch(`${SCHEDULED_API_BASE}/failures/${sentMessageId}?${params.toString()}`);
   if (!res.ok) throw new Error('Failed to fetch failed recipients');
-  return res.json();
+  const data: {
+    content: FailedRecipient[];
+    totalPages: number;
+    totalElements: number;
+    size: number;
+    number: number;
+  } = await res.json();
+  return {
+    rows: data.content,
+    page: data.number,
+    size: data.size,
+    totalPages: data.totalPages,
+    totalElements: data.totalElements,
+  };
 };
 
 export const getMessagePlaceholders = async (): Promise<string[]> => {

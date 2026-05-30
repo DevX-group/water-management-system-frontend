@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus } from 'lucide-react';
@@ -9,6 +10,7 @@ import { ScheduledMessageCard } from '@/components/messaging/ScheduledMessageCar
 import { MessageDialog } from '@/components/messaging/MessageDialog';
 
 export const ScheduledMessageSection = () => {
+  // Server-backed list of scheduled messages.
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
   const [isLoading, setIsLoading]                 = useState(true);
   const [isDialogOpen, setIsDialogOpen]           = useState(false);
@@ -18,6 +20,7 @@ export const ScheduledMessageSection = () => {
   const navigate   = useNavigate();
 
   useEffect(() => {
+    // Initial fetch of scheduled messages.
     const load = async () => {
       try {
         const scheduled = await messageApi.getAllScheduledMessages();
@@ -32,12 +35,14 @@ export const ScheduledMessageSection = () => {
   }, [toast]);
 
   useEffect(() => {
+    // Placeholder tokens used by the template editor.
     messageApi.getMessagePlaceholders()
       .then(setPlaceholders)
       .catch(() => toast({ title: 'Error', description: 'Failed to load placeholders.', variant: 'destructive' }));
   }, [toast]);
 
   const handleDelete = async (id: string) => {
+    // Delete and prune the list locally on success.
     try {
       await messageApi.deleteScheduledMessage(id);
       setScheduledMessages(prev => prev.filter(m => m.id !== id));
@@ -48,6 +53,7 @@ export const ScheduledMessageSection = () => {
   };
 
   const handleSave = async (message: ScheduledMessage) => {
+    // Create or update based on whether we're editing an existing message.
     try {
       if (editingMessage) {
         const updated = await messageApi.updateScheduledMessage(message.id, message);

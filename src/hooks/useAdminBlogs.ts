@@ -26,6 +26,8 @@ export const useAdminBlogs = () => {
 
   useEffect(() => { fetchBlogs(); }, []);
 
+  // Handles the creation of a new blog post. 
+  
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     setUploading(true);
@@ -59,6 +61,8 @@ export const useAdminBlogs = () => {
     }
   };
 
+  // Deletes a blog post by its ID using a DELETE request to the API.
+ 
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this post?")) return;
     try {

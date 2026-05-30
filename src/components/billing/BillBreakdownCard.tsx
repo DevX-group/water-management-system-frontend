@@ -1,14 +1,15 @@
+import '@/index.css';
 import React from 'react';
 import type { ConnectionType, ConnectionRate, BillBreakdown } from '@/types/billing';
 
-interface BillBreakdownCardProps {
+interface BillBreakdownCardProps {   // Pass data types for the BillBreakdownCard component
   selectedType: ConnectionType;
   selectedRate: ConnectionRate;
   usage:        number;
   bill:         BillBreakdown;
 }
 
-export const BillBreakdownCard: React.FC<BillBreakdownCardProps> = ({
+export const BillBreakdownCard: React.FC<BillBreakdownCardProps> = ({      
   selectedType, selectedRate, usage, bill,
 }) => {
   return (

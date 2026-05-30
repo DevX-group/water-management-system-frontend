@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import NotFound from '@/pages/NotFound';

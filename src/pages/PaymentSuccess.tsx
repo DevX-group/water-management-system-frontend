@@ -1,3 +1,4 @@
+import '@/index.css';
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";

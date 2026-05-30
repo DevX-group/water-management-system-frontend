@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { NotificationsStats, NotificationsFilter } from "@/components/notifications/NotificationsStats";

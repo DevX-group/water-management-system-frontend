@@ -1,3 +1,4 @@
+import '@/index.css';
 import React, { ReactNode } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAdmin } from '@/contexts/AdminContext';

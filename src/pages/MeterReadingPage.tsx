@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { MeterReadingForm }         from '@/components/meter-reading/MeterReadingForm';
 import { MeterReadingInstructions } from '@/components/meter-reading/MeterReadingInstructions';
@@ -34,7 +35,7 @@ export const MeterReadingPage = () => {
       </div>
 
       <MeterReadingsTable
-        readings={todaysReadings}
+        readings={todaysReadings as unknown as any}
         loading={loadingReadings}
         onRefresh={fetchTodaysReadings}
       />

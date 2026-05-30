@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -23,7 +24,7 @@ interface InquiryChatPanelsProps {
 export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
   inquiry, isHistory, onBack, chatInput, setChatInput, onSendMessage, showTyping, messagesEndRef
 }) => (
-  <Card className="shadow-card border-none overflow-hidden h-[600px] flex flex-col bg-white">
+  <Card className="shadow-card border-none overflow-hidden h-[600px] flex flex-col bg-card">
     <CardHeader className="bg-secondary/20 border-b flex flex-row items-center gap-4 py-4">
       {isHistory ? (
         <>
@@ -39,8 +40,8 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
           <InquiryAvatar name="S" size="sm" variant="admin" />
           <div>
             <CardTitle className="text-base">Live Support Session</CardTitle>
-            <p className="text-xs text-emerald-500 font-medium flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" /> Connected with Support Team
+            <p className="text-xs text-success font-medium flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" /> Connected with Support Team
             </p>
           </div>
           <Badge variant="secondary" className="ml-auto">ID: {inquiry.id}</Badge>
@@ -53,8 +54,8 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
       <div ref={messagesEndRef} />
     </CardContent>
     {isHistory ? (
-      inquiry.status === 'resolved' ? (
-        <div className="p-4 bg-emerald-500/5 border-t flex items-center justify-center gap-2 text-emerald-500">
+      inquiry.status === 'resolved' ? (  // Show resolved banner if inquiry is resolved
+        <div className="p-4 bg-success/5 border-t flex items-center justify-center gap-2 text-success">
           <CheckCircle size={16} /><span className="text-xs font-medium">This inquiry has been resolved.</span>
         </div>
       ) : (
@@ -67,7 +68,7 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
     ) : (
       <div className="p-4 bg-secondary/10 border-t">
         <div className="flex gap-2">
-          <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder="Type your message..." className="flex-1 bg-white border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
+          <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder="Type your message..." className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
           <Button onClick={onSendMessage} disabled={!chatInput?.trim()} className="h-auto px-6 rounded-xl gradient-primary">
             <Send size={18} />
           </Button>

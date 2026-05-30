@@ -7,9 +7,9 @@
 @layer base {
   :root {
     --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 22.2 84% 4.9%;
 
-    --card: 0 0% 100%;
+    --card:0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
@@ -18,14 +18,14 @@
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary:  210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 188.7 78.5% 41.2%;
-    --accent-foreground: 210 40% 98%;
+    --accent-foreground: 220 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
@@ -37,7 +37,7 @@
     --warning-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --input: 114.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
 
     --radius: 1rem;
@@ -52,13 +52,13 @@
     --sidebar-ring: 221.2 83.2% 53.3%;
 
     /* Premium gradients */
-    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-    --gradient-hero: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 50%, #f8fafc 100%);
-    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.4) 100%);
-    --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.2) 100%);
-    --gradient-shine: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
-    --gradient-dark: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    --gradient-mesh: radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(6, 182, 212, 0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 50%, hsl(var(--background)) 100%);
+    --gradient-card: linear-gradient(145deg, hsl(var(--card) / 0.9) 0%, hsl(var(--card) / 0.4) 100%);
+    --gradient-glass: linear-gradient(145deg, hsl(var(--card) / 0.8) 0%, hsl(var(--card) / 0.2) 100%);
+    --gradient-shine: linear-gradient(45deg, transparent 0%, hsl(var(--primary-foreground) / 0.3) 50%, transparent 100%);
+    --gradient-dark: linear-gradient(135deg, hsl(222.2 84% 4.9%) 0%, hsl(215 25% 25%) 100%);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(var(--primary) / 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, hsl(var(--accent) / 0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, hsl(var(--primary) / 0.05) 0px, transparent 50%);
   }
 
   .dark {
@@ -99,10 +99,10 @@
     --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 212.7 26.8% 83.9%;
 
-    --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
-    --gradient-hero: linear-gradient(180deg, #020617 0%, #0f172a 50%, #020617 100%);
-    --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
-    --gradient-mesh: radial-gradient(at 40% 20%, rgba(59, 130, 246, 0.2) 0px, transparent 50%), radial-gradient(at 80% 0%, rgba(6, 182, 212, 0.15) 0px, transparent 50%), radial-gradient(at 0% 50%, rgba(59, 130, 246, 0.1) 0px, transparent 50%);
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    --gradient-hero: linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--card)) 50%, hsl(var(--background)) 100%);
+    --gradient-glass: linear-gradient(145deg, hsl(var(--card) / 0.08) 0%, hsl(var(--card) / 0.02) 100%);
+    --gradient-mesh: radial-gradient(at 40% 20%, hsl(var(--primary) / 0.2) 0px, transparent 50%), radial-gradient(at 80% 0%, hsl(var(--accent) / 0.15) 0px, transparent 50%), radial-gradient(at 0% 50%, hsl(var(--primary) / 0.1) 0px, transparent 50%);
   }
 }
 
@@ -157,4 +157,4 @@
     color: #ffffff !important;
     border: 1px solid hsl(0 65% 35%) !important;
   }
-}
+}

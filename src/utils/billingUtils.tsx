@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Zap, ToggleLeft } from 'lucide-react';
 import type { ConnectionType, ConnectionRate, BillBreakdown } from '@/types/billing';
@@ -46,7 +47,7 @@ export const TYPE_META: Record<ConnectionType, { label: string; icon: React.Reac
   },
 };
 
-export const calculateBill = (
+export const calculateBill = (          // Function to calculate bill breakdown based on selected rate, type, and usage
   selectedRate: ConnectionRate,
   selectedType: ConnectionType,
   usage: number

@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { FileText, Eye, Download, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -19,14 +20,14 @@ interface BillSearchResultsProps {
   onDownload:     (billId: number) => void;
 }
 
-export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
+export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // Pass data types for the BillSearchResults component
   searchQuery, setSearchQuery, loadingBills, hasSearched,
   searchedSub, bills, billIndex, setBillIndex, billsPerPage,
   onSearch, onDownload,
 }) => {
   return (
     <div className="animate-fade-in space-y-6">
-      {/* Search input */}
+      // Search input 
       <div className="bg-card rounded-2xl p-6 shadow-md">
         <h3 className="text-base font-semibold text-foreground mb-4">Search Bills by Subscription Number</h3>
         <div className="flex gap-3">
@@ -45,7 +46,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
         </div>
       </div>
 
-      {/* Results */}
+      // show bill Results 
       {hasSearched && (
         <div className="bg-card rounded-2xl p-6 shadow-md">
           <div className="flex items-center gap-2 mb-6">
@@ -100,7 +101,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
                 </div>
               ))}
 
-              {bills.length > billsPerPage && (
+              {bills.length > billsPerPage && (       // Show pagination controls if there are more bills than the page size
                 <div className="flex justify-center items-center gap-4 mt-6">
                   <Button variant="outline" size="sm"
                     onClick={() => setBillIndex(prev => Math.max(0, prev - billsPerPage))}

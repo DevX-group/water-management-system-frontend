@@ -1,3 +1,4 @@
+import '@/index.css';
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -14,6 +15,7 @@ interface MessageDetailsDialogProps {
 export const MessageDetailsDialog: React.FC<MessageDetailsDialogProps> = ({
   row, open, onClose, onViewFailed,
 }) => {
+  // Details modal for a single sent message.
   if (!row) return null;
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -74,7 +76,13 @@ export const MessageDetailsDialog: React.FC<MessageDetailsDialogProps> = ({
 interface FailedRecipientsDialogProps {
   row:              MessageHistoryRow | null;
   open:             boolean;
-  failedRecipients: Record<string, FailedRecipient[]>;
+  failedRecipients: FailedRecipient[];
+  page:             number;
+  size:             number;
+  totalPages:       number;
+  totalElements:    number;
+  onPageChange:     (page: number) => void;
+  onSizeChange:     (size: number) => void;
   loadingFor:       string | null;
   failuresError:    string | null;
   onClose:          () => void;
@@ -82,10 +90,25 @@ interface FailedRecipientsDialogProps {
 }
 
 export const FailedRecipientsDialog: React.FC<FailedRecipientsDialogProps> = ({
-  row, open, failedRecipients, loadingFor, failuresError, onClose, onBack,
+  row,
+  open,
+  failedRecipients,
+  page,
+  size,
+  totalPages,
+  totalElements,
+  onPageChange,
+  onSizeChange,
+  loadingFor,
+  failuresError,
+  onClose,
+  onBack,
 }) => {
+  // Modal that lists failed recipients with independent paging.
   if (!row) return null;
-  const failures = failedRecipients[row.id];
+  const failures = failedRecipients;
+  const canGoBack = page > 0;
+  const canGoNext = page + 1 < totalPages;
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="sm:max-w-3xl">
@@ -123,6 +146,39 @@ export const FailedRecipientsDialog: React.FC<FailedRecipientsDialogProps> = ({
               </Table>
             </div>
           )}
+          <div className="mt-3 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-2 text-sm">
+              <span>Items per page</span>
+              <select
+                className="h-9 rounded-md border border-input bg-background px-2"
+                value={size}
+                onChange={event => onSizeChange(Number(event.target.value))}
+              >
+                {[5, 10, 20].map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <span className="text-muted-foreground">
+                {totalElements > 0
+                  ? `${page * size + 1}-${Math.min((page + 1) * size, totalElements)} of ${totalElements}`
+                  : '0 items'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => onPageChange(page - 1)} disabled={!canGoBack}>
+                Previous
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page {totalPages === 0 ? 0 : page + 1} of {Math.max(totalPages, 1)}
+              </span>
+              <Button variant="outline" size="sm" onClick={() => onPageChange(page + 1)} disabled={!canGoNext}>
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
