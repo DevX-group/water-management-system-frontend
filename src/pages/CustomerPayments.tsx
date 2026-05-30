@@ -4,9 +4,9 @@ import { useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
   getBankDetails,
-  getCurrentBill,
-  getOutstandingBillsSummary,
-  getPaymentHistory,
+  getCurrentBillForCustomer,
+  getOutstandingBillsForCustomer,
+  getPaymentHistoryForCustomer,
   initiatePayment,
 } from "@/services/paymentService";
 import { toast } from "@/components/ui/sonner";
@@ -96,8 +96,8 @@ export const CustomerPayments = () => {
 
     try {
       const [bill, outs, bank] = await Promise.all([
-        getCurrentBill(CUSTOMER_SUBSCRIPTION_NUMBER),
-        getOutstandingBillsSummary(CUSTOMER_SUBSCRIPTION_NUMBER),
+        getCurrentBillForCustomer(),
+        getOutstandingBillsForCustomer(),
         getBankDetails(),
       ]);
 
@@ -116,8 +116,7 @@ export const CustomerPayments = () => {
     setHistoryLoading(true);
 
     try {
-      const response = await getPaymentHistory(
-        CUSTOMER_SUBSCRIPTION_NUMBER,
+      const response = await getPaymentHistoryForCustomer(
         historyPage,
         historyPageSize,
         historyFilterYear,
