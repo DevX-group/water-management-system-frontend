@@ -1,7 +1,5 @@
-import '@/index.css';
-import React from 'react';
-import { PaymentCustomerInfoResponse } from '@/services/paymentService';
 import { User, Hash, CreditCard, MapPin, Zap } from 'lucide-react';
+import { PaymentCustomerInfoResponse } from '@/types/payment';
 
 export const CustomerDetailCard = ({ customerInfo }: { customerInfo: PaymentCustomerInfoResponse | null }) => {
   if (!customerInfo) return null;

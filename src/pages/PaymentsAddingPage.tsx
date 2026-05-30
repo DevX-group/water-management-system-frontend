@@ -9,18 +9,23 @@ import {
   addPayment,
   getCustomerPaymentSummary,
   getCurrentBill,
-  type CurrentBillResponse,
-  PaymentHistoryItemResponse,
   getPaymentHistory,
   getPaymentCustomerInfo,
-  type PaymentCustomerInfoResponse,
   updatePayment,
-  type OutstandingBillResponse,
-  type OutstandingBillsSummaryResponse,
   getOutstandingBillsSummary,
   deletePayment,
-  CustomerPaymentSummaryResponse,
 } from '@/services/paymentService';
+
+import type {
+  CurrentBillResponse,
+  PaymentHistoryItemResponse,
+  PaymentCustomerInfoResponse,
+  OutstandingBillResponse,
+  OutstandingBillsSummaryResponse,
+  CustomerPaymentSummaryResponse,
+  PaymentMethod,
+} from '@/types/payment';
+
 import { Label } from '@/components/ui/label';
 import { motion } from 'framer-motion';
 
@@ -66,6 +71,9 @@ export const PaymentsAddingPage = () => {
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
   const [outstandingBills, setOutstandingBills] = useState<OutstandingBillResponse[]>([]);
 
+  const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
+  const [historyFilterMethod, setHistoryFilterMethod] = useState<PaymentMethod | undefined>(undefined);
+
   const loadAll = async (subscriptionNumber: string) => {
     try {
       const [sum, bill, outs, customerInfo] = await Promise.all([
@@ -93,7 +101,9 @@ export const PaymentsAddingPage = () => {
     const history = await getPaymentHistory(
       subscriptionNumber,
       historyPage,
-      historyPageSize
+      historyPageSize,
+      historyFilterYear,
+      historyFilterMethod
     );
 
     setPaymentHistory(history.content ?? []);
@@ -234,7 +244,11 @@ export const PaymentsAddingPage = () => {
 
   useEffect(() => {
     loadHistory();
-  }, [historyPage, historyPageSize, subscriptionNumber]);
+  }, [historyPage, historyPageSize, subscriptionNumber, historyFilterYear, historyFilterMethod]);
+
+  const handleHistoryFilterChange = () => {
+    setHistoryPage(0);
+  };
 
   const handleAddMonthly = async () => {
     if (!customerInfo) return;
@@ -431,6 +445,11 @@ export const PaymentsAddingPage = () => {
         latestManualPaymentId={latestManualPaymentId}
         handleEdit={handleEdit}
         handleDelete={handleDelete}
+        filterYear={historyFilterYear}
+        setFilterYear={setHistoryFilterYear}
+        filterMethod={historyFilterMethod}
+        setFilterMethod={setHistoryFilterMethod}
+        onFilterChange={handleHistoryFilterChange}
       />
 
       {isEditOpen && (
@@ -493,11 +512,11 @@ export const PaymentsAddingPage = () => {
       )}
 
       {isDeleteOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
           onClick={cancelDelete}
         >
-          <div 
+          <div
             className="bg-card rounded-2xl p-6 w-[350px] shadow-xl border border-border/40 text-left"
             onClick={(e) => e.stopPropagation()}
           >

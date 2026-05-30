@@ -1,71 +1,7 @@
-import axios from 'axios';
+import { AdminBankSlipResponse, BankSlipActionRequest, BankSlipUploadRequest, BankSlipUploadResponse, PageResponse } from '@/types/bankSlip';
+import api from "@/lib/api";
+import { SlipStatus } from '@/types/payment';
 
-const api = axios.create({
-    //baseURL: "https://localhost:8081/api",
-    baseURL: "https://water-management-system-backend-0p2e.onrender.com/api",
-    headers: { "Content-Type": "application/json" },
-});
-
-export type PaymentStatus = "FULL" | "PARTIAL";
-export type PaymentType = "MONTHLY" | "OUTSTANDING";
-export type PaymentMethod = "ONLINE" | "BANK_TRANSFER" | "MANUAL";
-export type SlipStatus = "PENDING" | "APPROVED" | "REJECTED";
-
-export interface BankSlipUploadRequest {
-    amount: number;
-    bankPaymentDate: string;
-    bankReference: string;
-    file: File;
-}
-
-export interface BankSlipUploadResponse {
-    message: string;
-    slipId: number;
-    amount: number;
-    status: SlipStatus;
-    bankReference: string;
-    filePath: string;
-    uploadedAt: string;
-    bankPaymentDate: string;
-}
-
-export interface AdminBankSlipResponse {
-    slipId: number;
-    subscriptionNumber: string;
-    accountHolderName: string;
-    status: SlipStatus;
-    amount: number;
-    bankReference: string;
-    filePath: string;
-    uploadedAt: string;
-    bankPaymentDate: string;
-}
-
-export interface CustomerBankSlipResponse {
-    slipId: number;
-    amount: number;
-    bankReference: string;
-    filePath: string;
-    status: SlipStatus;
-    uploadedAt: string;
-    bankPaymentDate: string;
-    reviewedAt: string;
-    rejectionReason?: string;
-}
-
-export interface BankSlipActionRequest {
-    slipId: number;
-    action: SlipStatus;
-    rejectionReason?: string;
-}
-
-export interface PageResponse<T> {
-    content: T[];
-    totalPages: number;
-    totalElements: number;
-    number: number;
-    size: number;
-}
 
 export const uploadBankSlip = async (payload: BankSlipUploadRequest): Promise<BankSlipUploadResponse> => {
     const formData = new FormData();
@@ -83,14 +19,23 @@ export const uploadBankSlip = async (payload: BankSlipUploadRequest): Promise<Ba
     return res.data;
 }
 
-export const getMySlips = async (page = 0, size = 6) => {
-    const res = await api.get(`/slips/my?page=${page}&size=${size}`);
+export const getMySlips = async (page = 0, size = 6, year?: number, status?: SlipStatus) => {
+    let url = `/slips/my?page=${page}&size=${size}`;
+
+    if (year !== undefined) {
+        url += `&year=${year}`;
+    }
+
+    if (status) {
+        url += `&status=${status}`;
+    }
+    const res = await api.get(url);
     return res.data;
 }
 
 export const getPendingSlips = async (page: number, size: number, search?: string): Promise<PageResponse<AdminBankSlipResponse>> => {
     const res = await api.get("/slips/pending", {
-        params: {page, size, search}
+        params: { page, size, search }
     });
 
     return res.data;

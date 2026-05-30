@@ -4,8 +4,8 @@ import { ZoomIn, ZoomOut, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { AdminBankSlipResponse } from '@/services/bankSlipService';
-import { formatDateTime } from '@/util/dateUtils';
+import { AdminBankSlipResponse } from '@/types/bankSlip';
+import { formatDateTime } from '@/utils/dateUtils';
 
 interface SlipImageViewerProps {
   imageUrl: string;

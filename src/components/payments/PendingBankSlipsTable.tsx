@@ -4,9 +4,10 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { toast } from '@/components/ui/sonner';
-import { AdminBankSlipResponse, getAllPendingSlips, getPendingSlips } from '@/services/bankSlipService';
 import { connectAdminSlipSocket, disconnectAdminSlipSocket } from '@/services/websocketService';
-import { formatDateTime } from "@/util/dateUtils";
+import { formatDateTime } from "@/utils/dateUtils";
+import { AdminBankSlipResponse } from '@/types/bankSlip';
+import { getAllPendingSlips, getPendingSlips } from '@/services/bankSlipService';
 
 export const PendingBankSlipsTable = () => {
   const navigate = useNavigate();

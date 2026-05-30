@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
 import { searchCustomersApi } from '@/services/customerService';
-import { getPaymentCustomerInfo, PaymentCustomerInfoResponse } from '@/services/paymentService';
+import { PaymentCustomerInfoResponse } from '@/types/payment';
+import { getPaymentCustomerInfo } from '@/services/paymentService';
 
 export const PaymentCustomerSearch = () => {
   const navigate = useNavigate();
