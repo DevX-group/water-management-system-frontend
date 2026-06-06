@@ -15,6 +15,11 @@ export const createAdmin = async (data: AdminFormData): Promise<AdminUser> => {
   return res.data;
 };
 
+export const updateAdmin = async (id: string, data: AdminFormData): Promise<AdminUser> => {
+  const res = await api.put<AdminUser>(`/users/${id}`, data);
+  return res.data;
+};
+
 export const updateAdminStatus = async (id: string, status: AdminStatus): Promise<AdminUser> => {
   const res = await api.patch<AdminUser>(`/users/${id}/status?status=${status}`);
   return res.data;

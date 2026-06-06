@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useAdminManagement } from '@/hooks/useAdminManagement';
 import { AdminTable } from '@/components/user-management/AdminTable';
 import { AddAdminDialog } from '@/components/user-management/AddAdminDialog';
+import { EditAdminDialog } from '@/components/user-management/EditAdminDialog';
 
 export const AdminManagement: React.FC = () => {
   const am = useAdminManagement();
@@ -24,7 +25,8 @@ export const AdminManagement: React.FC = () => {
         ) : (
           <AdminTable 
             admins={am.admins} 
-            onStatusChange={am.handleStatusChange} 
+            onStatusChange={am.handleStatusChange}
+            onEdit={am.handleEditAdmin}
           />
         )}
       </div>
@@ -37,6 +39,15 @@ export const AdminManagement: React.FC = () => {
         onFieldChange={am.handleFieldChange}
         onAdd={am.handleAddAdmin}
         onReset={am.resetForm}
+      />
+
+      <EditAdminDialog
+        admin={am.editingAdmin}
+        formData={am.editFormData}
+        errors={am.editErrors}
+        onFieldChange={am.handleEditFieldChange}
+        onSave={am.handleSaveEdit}
+        onClose={am.handleCloseEdit}
       />
     </div>
   );

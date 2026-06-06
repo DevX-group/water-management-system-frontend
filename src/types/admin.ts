@@ -5,6 +5,7 @@ export type AdminStatus = 'PENDING_ACTIVATION' | 'ACTIVE' | 'INACTIVE' | 'SUSPEN
 export interface AdminUser {
   id: string;
   nic: string;
+  fullName?: string;
   email: string;
   phoneNumber: string;
   role: AdminRole;
@@ -15,6 +16,7 @@ export interface AdminUser {
 
 export interface AdminFormData {
   nic: string;
+  fullName: string;
   email: string;
   phoneNumber: string;
   role: AdminRole;
