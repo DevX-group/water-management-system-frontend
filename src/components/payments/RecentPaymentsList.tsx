@@ -1,9 +1,10 @@
 import '@/index.css';
 import { useState, useEffect } from 'react';
-import { getRecentPayments, RecentPaymentResponse } from '@/services/paymentService';
 import { toast } from '@/components/ui/sonner';
-import { formatDateTime } from "@/util/dateUtils";
-import { formatPaymentMethod } from "@/util/paymentUtils"
+import { formatDateTime } from "@/utils/dateUtils";
+import { formatPaymentMethod } from "@/utils/paymentUtils";
+import { RecentPaymentResponse } from '@/types/payment';
+import { getRecentPayments } from '@/services/paymentService';
 
 const statusStyles = {
   full: 'bg-success/10 text-success',

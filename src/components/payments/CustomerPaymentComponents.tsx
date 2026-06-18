@@ -5,9 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { CurrentBillResponse, OutstandingBillResponse } from "@/services/paymentService";
-
-export type PaymentMethod = "online" | "slip";
+import { CurrentBillResponse, OutstandingBillResponse, PaymentMethod } from "@/types/payment";
 
 interface MethodTabsProps {
   value: PaymentMethod;
@@ -36,8 +34,8 @@ export const MethodTabs = ({ value, onChange }: MethodTabsProps) => {
         Pay via
       </p>
       <div className="flex gap-2">
-        {tab("online", <Landmark className="w-3.5 h-3.5" />, "Online Banking")}
-        {tab("slip", <Receipt className="w-3.5 h-3.5" />, "Bank Slip")}
+        {tab("ONLINE", <Landmark className="w-3.5 h-3.5" />, "Online Banking")}
+        {tab("BANK_TRANSFER", <Receipt className="w-3.5 h-3.5" />, "Bank Slip")}
       </div>
     </div>
   );
@@ -150,7 +148,7 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
             {/* Pay button */}
             <div className="mt-auto">
               <Button className="gradient-primary w-full" onClick={handlePay}>
-                {paymentMethod === "slip" ? (
+                {paymentMethod === "BANK_TRANSFER" ? (
                   <><Receipt className="w-4 h-4 mr-2" />Upload Bank Slip</>
                 ) : (
                   <><Wallet className="w-4 h-4 mr-2" />Pay Now</>

@@ -3,10 +3,10 @@ import React, { RefObject } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Landmark, Receipt, HandCoins } from "lucide-react";
-import { PaymentHistoryItemResponse } from "@/services/paymentService";
-import { formatDateTime } from "@/util/dateUtils";
-import { formatPaymentMethod } from "@/util/paymentUtils";
+import { Landmark, Receipt, HandCoins, X } from "lucide-react";
+import { PaymentHistoryItemResponse, PaymentMethod } from "@/types/payment";
+import { formatDateTime } from "@/utils/dateUtils";
+import { formatPaymentMethod } from "@/utils/paymentUtils";
 
 interface CustomerPaymentHistoryTableProps {
   historyRef: RefObject<HTMLDivElement>;
@@ -20,12 +20,40 @@ interface CustomerPaymentHistoryTableProps {
   historyEnd: number;
   historyTotalItems: number;
   historyPage: number;
+  // Filter props
+  filterYear: number | undefined;
+  setFilterYear: (v: number | undefined) => void;
+  filterMethod: PaymentMethod | undefined;
+  setFilterMethod: (v: PaymentMethod | undefined) => void;
+  onFilterChange: () => void;
 }
+
+const currentYear = new Date().getFullYear();
+const yearOptions = Array.from({ length: 6 }, (_, i) => currentYear - i);
 
 export const CustomerPaymentHistoryTable: React.FC<CustomerPaymentHistoryTableProps> = ({
   historyRef, historyPageSize, setHistoryPageSize, setHistoryPage, historyLoading,
-  history, historyTotalPages, historyStart, historyEnd, historyTotalItems, historyPage
+  history, historyTotalPages, historyStart, historyEnd, historyTotalItems, historyPage,
+  filterYear, setFilterYear, filterMethod, setFilterMethod, onFilterChange
 }) => {
+  const hasActiveFilter = filterYear !== undefined || filterMethod !== undefined;
+
+  const handleYearChange = (val: string) => {
+    setFilterYear(val === 'all' ? undefined : Number(val));
+    onFilterChange();
+  };
+
+  const handleMethodChange = (val: string) => {
+    setFilterMethod(val === 'all' ? undefined : (val as PaymentMethod));
+    onFilterChange();
+  };
+
+  const clearFilters = () => {
+    setFilterYear(undefined);
+    setFilterMethod(undefined);
+    onFilterChange();
+  };
+
   const getPaymentIcon = (method: string) => {
     switch (method) {
       case "ONLINE": return <Landmark className="w-3 h-3" />;
@@ -37,14 +65,58 @@ export const CustomerPaymentHistoryTable: React.FC<CustomerPaymentHistoryTablePr
 
   return (
     <Card ref={historyRef} className="shadow-card border-none">
-      <CardHeader className="flex flex-row items-start justify-between gap-4">
+      <CardHeader className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
         <div>
           <CardTitle>Payment History</CardTitle>
           <p className="text-sm text-muted-foreground mt-1">
             View your completed and pending payment records
           </p>
         </div>
-        <div className="flex items-center gap-2 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          {/* Year filter */}
+          <Select
+            value={filterYear !== undefined ? String(filterYear) : 'all'}
+            onValueChange={handleYearChange}
+          >
+            <SelectTrigger className="h-9 w-[110px] rounded-lg bg-secondary/40 text-xs font-medium">
+              <SelectValue placeholder="All Years" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Years</SelectItem>
+              {yearOptions.map((y) => (
+                <SelectItem key={y} value={String(y)}>{y}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {/* Method filter */}
+          <Select
+            value={filterMethod ?? 'all'}
+            onValueChange={handleMethodChange}
+          >
+            <SelectTrigger className="h-9 w-[130px] rounded-lg bg-secondary/40 text-xs font-medium">
+              <SelectValue placeholder="All Methods" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Methods</SelectItem>
+              <SelectItem value="ONLINE">Online</SelectItem>
+              <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
+              <SelectItem value="MANUAL">Manual</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Clear */}
+          {hasActiveFilter && (
+            <button
+              onClick={clearFilters}
+              className="flex items-center gap-1 h-9 px-2.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors border border-border/50"
+            >
+              <X className="w-3 h-3" />
+              Clear
+            </button>
+          )}
+
+          {/* Page size */}
           <span className="text-sm text-muted-foreground">Items per page</span>
           <Select
             value={String(historyPageSize)}
