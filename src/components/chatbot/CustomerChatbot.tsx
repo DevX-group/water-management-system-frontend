@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageSquare, X, Send, Bot, User, Loader2 } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, User, Loader2, BookOpenText, Sparkles } from 'lucide-react';
 import { CUSTOMER_SUBSCRIPTION_NUMBER } from '../../constants/customer';
 
 interface ChatMessage {
@@ -74,12 +74,19 @@ export const CustomerChatbot = () => {
     <>
       {/* Floating Action Button */}
       <motion.button
-        className="fixed bottom-6 right-6 p-4 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors z-50 flex items-center justify-center"
+        className="fixed bottom-6 right-6 p-4 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-colors z-50 flex items-center justify-center group"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
         onClick={toggleChat}
       >
-        {isOpen ? <X className="w-6 h-6" /> : <MessageSquare className="w-6 h-6" />}
+        {isOpen ? (
+          <X className="w-6 h-6" />
+        ) : (
+          <div className="relative flex items-center justify-center">
+            <BookOpenText className="w-6 h-6" />
+            <Sparkles className="w-3 h-3 absolute -top-1 -right-1 text-yellow-300 animate-pulse" />
+          </div>
+        )}
       </motion.button>
 
       {/* Chat Window */}
