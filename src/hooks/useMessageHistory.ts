@@ -9,6 +9,7 @@ export const useMessageHistory = () => {
   const [size, setSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
+  const [historyError, setHistoryError] = useState<string | null>(null);
   // Failed-recipient dialog state.
   const [failedRecipients, setFailedRecipients] = useState<FailedRecipient[]>([]);
   const [failuresPage, setFailuresPage] = useState(0);
@@ -24,6 +25,7 @@ export const useMessageHistory = () => {
   useEffect(() => {
     // Fetch paged message history; cancel updates on unmount.
     let active = true;
+    setHistoryError(null);
     getMessageHistory(page, size)
       .then(data => {
         if (!active) return;
@@ -31,7 +33,13 @@ export const useMessageHistory = () => {
         setTotalPages(data.totalPages);
         setTotalElements(data.totalElements);
       })
-      .catch(console.error);
+      .catch((error) => {
+        if (!active) return;
+        const message = error instanceof Error
+          ? error.message
+          : 'Failed to load message history.';
+        setHistoryError(message);
+      });
     return () => {
       active = false;
     };
@@ -52,8 +60,12 @@ export const useMessageHistory = () => {
         setFailuresPage(data.page);
         setFailuresSize(data.size);
       })
-      .catch(() => {
-        if (active) setFailuresError('Failed to load failed recipients');
+      .catch((error) => {
+        if (!active) return;
+        const message = error instanceof Error
+          ? error.message
+          : 'Failed to load failed recipients.';
+        setFailuresError(message);
       })
       .finally(() => {
         if (active) setLoadingFailuresFor(null);
@@ -102,6 +114,7 @@ export const useMessageHistory = () => {
     size,
     totalPages,
     totalElements,
+    historyError,
     setPage,
     setSize: updateSize,
     failedRecipients,
