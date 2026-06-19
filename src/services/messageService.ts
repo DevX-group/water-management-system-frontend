@@ -15,7 +15,7 @@ import {
 const SCHEDULED_API_BASE = 'http://localhost:8081/api/scheduled-messages';
 const TRIGGERED_API_BASE = 'http://localhost:8081/api/triggered-messages';
 const ENUMS_API_BASE = 'http://localhost:8081/api/messaging/enums';
-//
+
 // const SCHEDULED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/scheduled-messages';
 // const TRIGGERED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/triggered-messages';
 // const ENUMS_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/messaging/enums';
