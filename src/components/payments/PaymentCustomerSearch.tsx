@@ -7,8 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { searchCustomersApi } from '@/services/customerService';
 import { PaymentCustomerInfoResponse } from '@/types/payment';
 import { getPaymentCustomerInfo } from '@/services/paymentService';
+import { useTranslation } from 'react-i18next';
 
 export const PaymentCustomerSearch = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<PaymentCustomerInfoResponse | null>(null);
@@ -48,11 +50,11 @@ export const PaymentCustomerSearch = () => {
     <>
       {/* Search */}
       <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up">
-        <h3 className="text-lg font-semibold text-foreground mb-4">Find Customer</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">{t('payments.customerSearch.findCustomer')}</h3>
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
-            placeholder="Enter Name / Subscription Number"
+            placeholder={t('payments.customerSearch.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -78,7 +80,7 @@ export const PaymentCustomerSearch = () => {
 
         {searchQuery && searchResults.length === 0 && (
           <p className="mt-2 text-sm text-muted-foreground">
-            No customers found
+            {t('payments.customerSearch.noCustomersFound')}
           </p>
         )}
       </div>
@@ -88,7 +90,7 @@ export const PaymentCustomerSearch = () => {
         <div className="bg-card rounded-2xl p-6 shadow-md animate-scale-in mt-6">
           <div className="flex items-start justify-between mb-6">
             <h3 className="text-lg font-semibold text-foreground">
-              Customer Details
+              {t('payments.customerDetails.title')}
             </h3>
 
             <span
@@ -98,14 +100,14 @@ export const PaymentCustomerSearch = () => {
                 }`}
             >
               {selectedCustomer.connectionType === 'metered'
-                ? 'With Meter'
-                : 'No Meter'}
+                ? t('payments.customerDetails.withMeter')
+                : t('payments.customerDetails.noMeter')}
             </span>
           </div>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div>
-              <p className="text-sm text-muted-foreground">Name</p>
+              <p className="text-sm text-muted-foreground">{t('payments.customerDetails.name')}</p>
               <p className="font-medium text-foreground">
                 {selectedCustomer.accountHolderName}
               </p>
@@ -113,7 +115,7 @@ export const PaymentCustomerSearch = () => {
 
             <div>
               <p className="text-sm text-muted-foreground">
-                Subscription No.
+                {t('payments.customerDetails.subscriptionNo')}
               </p>
               <p className="font-medium text-foreground">
                 {selectedCustomer.subscriptionNumber}
@@ -121,14 +123,14 @@ export const PaymentCustomerSearch = () => {
             </div>
 
             <div>
-              <p className="text-sm text-muted-foreground">NIC</p>
+              <p className="text-sm text-muted-foreground">{t('payments.customerDetails.nic')}</p>
               <p className="font-medium text-foreground">
                 {selectedCustomer.nic}
               </p>
             </div>
 
             <div>
-              <p className="text-sm text-muted-foreground">Region</p>
+              <p className="text-sm text-muted-foreground">{t('payments.customerDetails.region')}</p>
               <p className="font-medium text-foreground">
                 {selectedCustomer.region}
               </p>
@@ -138,7 +140,7 @@ export const PaymentCustomerSearch = () => {
 
           {/* Navigate to full payment page */}
           <Button className="w-full" onClick={() => navigate(`/admin/payments/customer/${selectedCustomer.subscriptionNumber}`)}>
-            Add Payment
+            {t('payments.adminPayments.addPayment')}
           </Button>
         </div>
       )}
