@@ -1,5 +1,6 @@
 import '@/index.css';
 import "./polyfills";
+import "./i18n";
 
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
