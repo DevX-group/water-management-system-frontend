@@ -27,7 +27,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // 
 }) => {
   return (
     <div className="animate-fade-in space-y-6">
-      // Search input 
+      {/*Search input  */} 
       <div className="bg-card rounded-2xl p-6 shadow-md">
         <h3 className="text-base font-semibold text-foreground mb-4">Search Bills by Subscription Number</h3>
         <div className="flex gap-3">
@@ -46,7 +46,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // 
         </div>
       </div>
 
-      // show bill Results 
+     {/*Show bill result  */} 
       {hasSearched && (
         <div className="bg-card rounded-2xl p-6 shadow-md">
           <div className="flex items-center gap-2 mb-6">

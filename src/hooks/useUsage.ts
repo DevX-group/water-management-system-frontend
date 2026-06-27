@@ -34,10 +34,10 @@ export const useUsage = () => {
 
   const monthlyData = data?.monthlyData ?? [];
   
-  const pieData = monthlyData.map((item) => ({
+  const pieData = monthlyData.map((item, index) => ({
     name: item.name,
     value: item.usage,
-    color: "#0ea5e9" 
+    color: `hsl(var(--primary) / ${1 - (index % 5) * 0.15})` 
   }));
 
   const stats = data

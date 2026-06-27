@@ -37,7 +37,7 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
           <CardContent className="p-7">
             <div className="flex items-center gap-4 text-slate-400 text-sm mb-4">
               <div className="flex items-center gap-1.5">
-                <Calendar size={14} /> // Display formatted date
+                <Calendar size={14} /> {/*Display formatted date*/}
                 <span>{new Date(blog.date).toLocaleDateString()}</span>
               </div>
               <div className="flex items-center gap-1.5">
