@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomerBankSlipResponse } from "@/types/bankSlip";
 import { SlipStatus } from "@/types/payment";
+import { useTranslation } from 'react-i18next';
 
 export interface BankSlipForm {
   amount: string;
@@ -38,15 +39,16 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
   slipSectionRef, bankDetails, slipForm, setSlipForm, dragging, setDragging, submitSuccess,
   uploading, fileInputRef, handleFileInput, handleDrop, removeFile, handleSlipSubmit
 }) => {
+  const { t } = useTranslation();
   return (
     <Card ref={slipSectionRef} className="shadow-card border-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Landmark className="w-5 h-5 text-success" />
-          Bank Slip Upload
+          {t('payments.bankSlipUpload.title')}
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Already paid at a bank branch? Upload your bank slip and we'll verify your account within 24 hours.
+          {t('payments.bankSlipUpload.subtitle')}
         </p>
       </CardHeader>
       <CardContent>
@@ -54,24 +56,24 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
           {/* Bank Details */}
           <div className="rounded-lg bg-secondary/40 p-5 space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-4">
-              Payment Details
+              {t('payments.bankSlipUpload.paymentDetails')}
             </h3>
             {bankDetails && (
               <>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Bank</span>
+                  <span className="text-muted-foreground">{t('payments.bankSlipUpload.bank')}</span>
                   <span className="font-semibold text-xs">{bankDetails.bankName}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Branch</span>
+                  <span className="text-muted-foreground">{t('payments.bankSlipUpload.branch')}</span>
                   <span className="font-semibold text-xs">{bankDetails.branch}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Account No.</span>
+                  <span className="text-muted-foreground">{t('payments.bankSlipUpload.accountNo')}</span>
                   <span className="font-semibold font-mono text-xs">{bankDetails.accountNumber}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Account Name</span>
+                  <span className="text-muted-foreground">{t('payments.bankSlipUpload.accountName')}</span>
                   <span className="font-semibold text-xs">{bankDetails.accountName}</span>
                 </div>
               </>
@@ -79,7 +81,7 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
             <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3">
               <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
               <span className="text-xs text-amber-700 leading-relaxed">
-                <strong>Important:</strong> Use your Subscription Number as the deposit remark to ensure correct allocation.
+                <strong>{t('payments.bankSlipUpload.important')}</strong> {t('payments.bankSlipUpload.depositRemark')}
               </span>
             </div>
           </div>
@@ -87,23 +89,23 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
           {/* Upload Form */}
           <div className="space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-              Upload Your Slip
+              {t('payments.bankSlipUpload.uploadYourSlip')}
             </h3>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="slipAmount">Amount Paid (Rs.)</Label>
+                <Label htmlFor="slipAmount">{t('payments.bankSlipUpload.amountPaid')}</Label>
                 <Input
                   id="slipAmount"
                   type="number"
                   min={0}
                   step={1}
-                  placeholder="e.g. 1350"
+                  placeholder={t('payments.bankSlipUpload.amountPlaceholder')}
                   value={slipForm.amount}
                   onChange={(e) => setSlipForm((p) => ({ ...p, amount: e.target.value }))}
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="slipDate">Bank Payment Date</Label>
+                <Label htmlFor="slipDate">{t('payments.bankSlipUpload.bankPaymentDate')}</Label>
                 <Input
                   id="slipDate"
                   type="date"
@@ -114,17 +116,17 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
               </div>
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="slipRef">Bank Reference / Slip No.</Label>
+              <Label htmlFor="slipRef">{t('payments.bankSlipUpload.bankReference')}</Label>
               <Input
                 id="slipRef"
                 type="text"
-                placeholder="e.g. BOC-20250225-0042"
+                placeholder={t('payments.bankSlipUpload.referencePlaceholder')}
                 value={slipForm.reference}
                 onChange={(e) => setSlipForm((p) => ({ ...p, reference: e.target.value }))}
               />
             </div>
             <div className="space-y-1.5">
-              <Label>Upload Bank Slip</Label>
+              <Label>{t('payments.bankSlipUpload.uploadBankSlip')}</Label>
               {slipForm.file ? (
                 <div className="flex items-center gap-3 rounded-lg border border-success/30 bg-success/10 px-4 py-3 text-sm">
                   <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
@@ -154,20 +156,20 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
                   />
                   <Upload className="w-7 h-7 text-muted-foreground" />
                   <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-success">Click to upload</span> or drag and drop
+                    <span className="font-semibold text-success">{t('payments.bankSlipUpload.clickToUpload')}</span> {t('payments.bankSlipUpload.orDragAndDrop')}
                   </p>
-                  <p className="text-xs text-muted-foreground">JPG, PNG or PDF · Max 5MB</p>
+                  <p className="text-xs text-muted-foreground">{t('payments.bankSlipUpload.fileTypes')}</p>
                 </button>
               )}
             </div>
             <Button className="w-full gradient-primary" onClick={handleSlipSubmit} disabled={uploading}>
               <Receipt className="w-4 h-4 mr-2" />
-              {uploading ? "Uploading..." : "Submit Bank Slip"}
+              {uploading ? t('payments.bankSlipUpload.uploading') : t('payments.bankSlipUpload.submitBankSlip')}
             </Button>
             {submitSuccess && (
               <p className="text-sm text-success flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4" />
-                Slip submitted! Verification within 24 hours.
+                {t('payments.bankSlipUpload.slipSubmitted')}
               </p>
             )}
           </div>
@@ -211,6 +213,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
   slipTotalPages, slipStart, slipEnd, slipTotalItems, slipPage,
   filterYear, setFilterYear, filterStatus, setFilterStatus, onFilterChange
 }) => {
+  const { t } = useTranslation();
   const hasActiveFilter = filterYear !== undefined || filterStatus !== undefined;
 
   const handleYearChange = (val: string) => {
@@ -233,7 +236,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
     if (bankSlips.length === 0) {
       return (
         <div className="text-sm text-muted-foreground text-center py-6">
-          No bank slips found.
+          {t('payments.bankSlipHistory.noSlipsFound')}
         </div>
       );
     }
@@ -242,11 +245,11 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
         <table className="w-full">
           <thead className="bg-secondary/50">
             <tr>
-              <th className="text-left p-3 text-sm">Uploaded At</th>
-              <th className="text-left p-3 text-sm">Amount</th>
-              <th className="text-left p-3 text-sm">Reference</th>
-              <th className="text-left p-3 text-sm">Status</th>
-              <th className="text-left p-3 text-sm">Slip</th>
+              <th className="text-left p-3 text-sm">{t('payments.bankSlipHistory.uploadedAt')}</th>
+              <th className="text-left p-3 text-sm">{t('payments.bankSlipHistory.amount')}</th>
+              <th className="text-left p-3 text-sm">{t('payments.bankSlipHistory.reference')}</th>
+              <th className="text-left p-3 text-sm">{t('payments.bankSlipHistory.status')}</th>
+              <th className="text-left p-3 text-sm">{t('payments.bankSlipHistory.slip')}</th>
             </tr>
           </thead>
           <tbody>
@@ -256,14 +259,16 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
                   {slip.uploadedAt?.split("T")[0]}
                 </td>
                 <td className="p-3 text-sm font-mono">
-                  Rs. {slip.amount?.toLocaleString()}
+                  {t("payments.billPayment.currency")} {slip.amount?.toLocaleString()}
                 </td>
                 <td className="p-3 text-sm">
                   {slip.bankReference}
                 </td>
                 <td className="p-3">
                   <Badge className={getStatusClass(slip.status)}>
-                    {slip.status}
+                    {slip.status === "PENDING" ? t('payments.filters.pending') :
+                      slip.status === "APPROVED" ? t('payments.filters.approved') :
+                        slip.status === "REJECTED" ? t('payments.filters.rejected') : slip.status}
                   </Badge>
                 </td>
                 <td className="p-3 text-sm">
@@ -271,7 +276,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
                     onClick={() => setSelectedSlip(slip)}
                     className="text-primary underline text-xs hover:text-primary/80"
                   >
-                    View
+                    {t('payments.bankSlipHistory.view')}
                   </button>
                 </td>
               </tr>
@@ -288,10 +293,10 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
         <div>
           <CardTitle className="flex items-center gap-2">
             <Receipt className="w-5 h-5 text-primary" />
-            Uploaded Bank Slips
+            {t('payments.bankSlipHistory.title')}
           </CardTitle>
           <p className="text-sm text-muted-foreground mt-1">
-            Track your submitted bank slips and verification status
+            {t('payments.bankSlipHistory.subtitle')}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 shrink-0">
@@ -304,7 +309,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
               <SelectValue placeholder="All Years" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="all">{t('payments.filters.allYears')}</SelectItem>
               {slipYearOptions.map((y) => (
                 <SelectItem key={y} value={String(y)}>{y}</SelectItem>
               ))}
@@ -320,10 +325,10 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
               <SelectValue placeholder="All Statuses" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="PENDING">Pending</SelectItem>
-              <SelectItem value="APPROVED">Approved</SelectItem>
-              <SelectItem value="REJECTED">Rejected</SelectItem>
+              <SelectItem value="all">{t('payments.filters.allStatuses')}</SelectItem>
+              <SelectItem value="PENDING">{t('payments.filters.pending')}</SelectItem>
+              <SelectItem value="APPROVED">{t('payments.filters.approved')}</SelectItem>
+              <SelectItem value="REJECTED">{t('payments.filters.rejected')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -334,12 +339,12 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
               className="flex items-center gap-1 h-9 px-2.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors border border-border/50"
             >
               <X className="w-3 h-3" />
-              Clear
+              {t('payments.filters.clear')}
             </button>
           )}
 
           {/* Page size */}
-          <span className="text-sm text-muted-foreground">Items per page</span>
+          <span className="text-sm text-muted-foreground">{t('payments.paymentHistory.itemsPerPage')}</span>
           <Select
             value={String(slipPageSize)}
             onValueChange={(value) => {
@@ -361,19 +366,19 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
 
       <CardContent>
         {slipsLoading ? (
-          <div className="text-sm text-muted-foreground">Loading slips...</div>
+          <div className="text-sm text-muted-foreground">{t('payments.bankSlipHistory.loadingSlips')}</div>
         ) : (
           renderBankSlipContent()
         )}
         {slipTotalPages > 1 && (
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-4">
             <div className="text-sm text-muted-foreground">
-              {slipStart}-{slipEnd} of {slipTotalItems} items
+              {slipStart}-{slipEnd} {t('payments.paymentHistory.of')} {slipTotalItems} {t('payments.paymentHistory.items')}
             </div>
             <div className="flex items-center gap-2">
               <button onClick={() => setSlipPage(0)} disabled={slipPage === 0} className="px-2 py-1 border rounded text-xs disabled:opacity-40">&lt;&lt;</button>
               <button onClick={() => setSlipPage((p) => Math.max(p - 1, 0))} disabled={slipPage === 0} className="px-2 py-1 border rounded text-xs disabled:opacity-40">&lt;</button>
-              <div className="text-sm px-3">Page {slipPage + 1} of {slipTotalPages}</div>
+              <div className="text-sm px-3">{t('payments.paymentHistory.page')} {slipPage + 1} {t('payments.paymentHistory.of')} {slipTotalPages}</div>
               <button onClick={() => setSlipPage((p) => Math.min(p + 1, slipTotalPages - 1))} disabled={slipPage === slipTotalPages - 1} className="px-2 py-1 border rounded text-xs disabled:opacity-40">&gt;</button>
               <button onClick={() => setSlipPage(slipTotalPages - 1)} disabled={slipPage === slipTotalPages - 1} className="px-2 py-1 border rounded text-xs disabled:opacity-40">&gt;&gt;</button>
             </div>
@@ -394,6 +399,7 @@ interface CustomerBankSlipModalProps {
 export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
   selectedSlip, setSelectedSlip, statusClass, handleDeleteSlip
 }) => {
+  const { t } = useTranslation();
   if (!selectedSlip) return null;
 
   return (
@@ -412,12 +418,12 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
               <iframe
                 src={selectedSlip.filePath}
                 className="w-full h-full rounded-lg shadow"
-                title="Bank Slip PDF"
+                title={t('payments.bankSlipModal.bankSlipPdf')}
               />
             ) : (
               <img
                 src={selectedSlip.filePath}
-                alt="Bank Slip"
+                alt={t('payments.bankSlipModal.bankSlipImage')}
                 className="max-h-full max-w-full object-contain rounded-lg shadow hover:scale-[1.02] transition"
               />
             )}
@@ -425,58 +431,60 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
           {/* RIGHT: DETAILS */}
           <div className="p-6 flex flex-col justify-between overflow-auto">
             <div>
-              <h2 className="text-xl font-semibold mb-4">Bank Slip Details</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('payments.bankSlipModal.title')}</h2>
               <div className="space-y-5 text-sm">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Amount</p>
-                    <p className="font-semibold text-base">Rs. {selectedSlip.amount?.toLocaleString()}</p>
+                    <p className="text-muted-foreground text-xs">{t('payments.bankSlipModal.amount')}</p>
+                    <p className="font-semibold text-base">{t("payments.billPayment.currency")} {selectedSlip.amount?.toLocaleString()}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Status</p>
+                    <p className="text-muted-foreground text-xs">{t('payments.bankSlipModal.status')}</p>
                     <p>
                       <span className={`inline-flex px-2 py-1 rounded-full text-xs font-semibold ${statusClass}`}>
-                        {selectedSlip.status}
+                        {selectedSlip.status === "PENDING" ? t('payments.filters.pending') :
+                          selectedSlip.status === "APPROVED" ? t('payments.filters.approved') :
+                            selectedSlip.status === "REJECTED" ? t('payments.filters.rejected') : selectedSlip.status}
                       </span>
                     </p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Uploaded At</p>
+                    <p className="text-muted-foreground text-xs">{t('payments.bankSlipModal.uploadedAt')}</p>
                     <p className="font-medium">{selectedSlip.uploadedAt?.split("T")[0] || "-"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Bank Payment Date</p>
+                    <p className="text-muted-foreground text-xs">{t('payments.bankSlipModal.bankPaymentDate')}</p>
                     <p className="font-medium">{selectedSlip.bankPaymentDate?.split("T")[0] || "-"}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-muted-foreground text-xs">Reviewed At</p>
-                    <p className="font-medium">{selectedSlip.reviewedAt?.split("T")[0] || "Not reviewed yet"}</p>
+                    <p className="text-muted-foreground text-xs">{t('payments.bankSlipModal.reviewedAt')}</p>
+                    <p className="font-medium">{selectedSlip.reviewedAt?.split("T")[0] || t('payments.bankSlipModal.notReviewedYet')}</p>
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-muted-foreground text-xs">Reference</p>
+                  <p className="text-muted-foreground text-xs">{t('payments.bankSlipModal.reference')}</p>
                   <p className="font-mono text-sm bg-gray-50 px-2 py-1 rounded">{selectedSlip.bankReference}</p>
                 </div>
               </div>
               {selectedSlip.status === "REJECTED" && (
                 <div className="mt-5 rounded-lg border border-red-200 bg-red-50 p-3">
-                  <p className="text-xs text-red-600 font-medium mb-1">Rejection Reason</p>
-                  <p className="text-sm text-red-700">{(selectedSlip as any).rejectionReason || "Not specified"}</p>
+                  <p className="text-xs text-red-600 font-medium mb-1">{t('payments.bankSlipModal.rejectionReason')}</p>
+                  <p className="text-sm text-red-700">{(selectedSlip as any).rejectionReason || t('payments.bankSlipModal.notSpecified')}</p>
                 </div>
               )}
             </div>
             <div className="mt-6 flex justify-between items-center">
               <a href={selectedSlip.filePath} target="_blank" rel="noopener noreferrer" className="text-sm text-primary underline">
-                View / Download Slip
+                {t('payments.bankSlipModal.viewDownloadSlip')}
               </a>
               {selectedSlip.status === "PENDING" && (
                 <button
                   onClick={() => handleDeleteSlip(selectedSlip.slipId)}
                   className="px-4 py-2 bg-red-500 text-white text-sm rounded-md hover:bg-red-600 transition"
                 >
-                  Delete
+                  {t('payments.bankSlipModal.delete')}
                 </button>
               )}
             </div>
