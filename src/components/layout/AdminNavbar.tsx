@@ -6,6 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { NAV_ITEMS, SECTION_PATH_MAP } from '@/constants/adminNav';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -36,12 +37,15 @@ const ROLE_DEFAULT_PATHS: Record<string, string> = {
   payment_handler: '/admin/payments',
 };
 
-
-
-
+const languages = [
+  { code: "en", name: "English" },
+  { code: "si", name: "සිංහල" },
+  { code: "ta", name: "தமிழ்" },
+];
 
 export const AdminNavbar: React.FC = () => {
   const { currentAdmin, setCurrentRole, admins } = useAdmin();
+  const { i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -52,6 +56,12 @@ export const AdminNavbar: React.FC = () => {
 
   const activeSection = getSectionFromPath(location.pathname);
   const filteredNavItems = NAV_ITEMS.filter(item => item.roles.includes(currentAdmin.role));
+
+  const adminLanguage = localStorage.getItem("admin_language") || "en";
+  const changeAdminLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("admin_language", lang);
+  };
 
   return (
     <header className="h-16 bg-card border-b border-border px-4 sm:px-6 lg:px-8 xl:px-12 flex items-center justify-between gap-4">
@@ -118,13 +128,21 @@ export const AdminNavbar: React.FC = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="sm" className="gap-2">
               <Globe className="w-4 h-4" />
-              <span className="hidden sm:inline">English</span>
+              <span className="hidden sm:inline">
+                {languages.find(l => l.code === adminLanguage)?.name || "English"}
+              </span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>English</DropdownMenuItem>
-            <DropdownMenuItem>සිංහල</DropdownMenuItem>
-            <DropdownMenuItem>தமிழ்</DropdownMenuItem>
+            {languages.map((lang) => (
+              <DropdownMenuItem
+                key={lang.code}
+                onClick={() => changeAdminLanguage(lang.code)}
+                className={adminLanguage === lang.code ? "bg-secondary" : ""}
+              >
+                {lang.name}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
 
