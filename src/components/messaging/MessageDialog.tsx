@@ -1,24 +1,26 @@
 import '@/index.css';
-import React, { useState, useEffect } from 'react';
-import { PlusCircle, X, ChevronUp, ChevronDown } from 'lucide-react';
+import React from 'react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Switch } from '@/components/ui/switch';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { useToast } from '@/hooks/use-toast';
 import type {
-  ScheduledMessage, TriggeredMessage, TriggerType,
-  MessageChannel, MessageTemplate,
+  MessagingEnumResponse,
+  RecipientType,
+  ScheduleType,
+  ScheduledMessage,
+  TriggeredMessage,
+  TriggerType,
+  MessageChannel,
 } from '@/types/messaging';
-import { replacePlaceholders } from '@/utils/messagingUtils';
+import { TemplateEditor } from './TemplateEditor';
+import { useMessageForm } from '../../hooks/useMessageForm';
 
 interface MessageDialogProps {
   isOpen:      boolean;
@@ -26,238 +28,40 @@ interface MessageDialogProps {
   onClose:     () => void;
   initialData: ScheduledMessage | TriggeredMessage | null;
   onSave:      (m: ScheduledMessage | TriggeredMessage) => void;
-  placeholders: string[];
+  enumOptions?: MessagingEnumResponse | null;
 }
 
-const defaultScheduledMessage: ScheduledMessage = {
-  id: '',
-  name: '',
-  channels: ['SMS'],
-  schedule: { type: 'One-Time', time: '10:00', date: new Date().toISOString().split('T')[0] },
-  recipients: 'All Customers',
-  templates: {
-    sms:   { isCustom: true, sections: [], content: '' },
-    email: { isCustom: true, sections: [], content: '' },
-  },
-  isDefault: false,
-};
-
-const defaultTriggeredMessage: TriggeredMessage = {
-  id: '',
-  name: '',
-  channels: ['SMS'],
-  recipients: 'All Customers',
-  templates: {
-    sms:   { isCustom: true, sections: [], content: '' },
-    email: { isCustom: true, sections: [], content: '' },
-  },
-  isDefault: false,
-  triggerType: 'PAYMENT_CONFIRMED',
-  active: true,
-};
-
 export const MessageDialog: React.FC<MessageDialogProps> = ({
-  isOpen, mode, onClose, initialData, onSave, placeholders,
+  isOpen, mode, onClose, initialData, onSave, enumOptions,
 }) => {
-  const { toast } = useToast();
-
-  // Local working copy of the message for the editor form.
-  const [formData, setFormData] = useState<ScheduledMessage | TriggeredMessage>(
-    initialData ? JSON.parse(JSON.stringify(initialData)) : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage)
-  );
-  const [activeTab, setActiveTab]             = useState<'SMS' | 'Email'>('SMS');
-  // Track focus to insert placeholders into the right section.
-  const [lastFocusedInput, setLastFocusedInput] = useState<{
-    sectionId: string | null;
-    templateType: 'sms' | 'email';
-  } | null>(null);
-
-  useEffect(() => {
-    // Reset form state when switching mode or editing a new message.
-    const seed = initialData
-      ? JSON.parse(JSON.stringify(initialData))
-      : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
-    setFormData(seed);
-    setActiveTab('SMS');
-    setLastFocusedInput(null);
-  }, [initialData, mode]);
-
-  const handleInputChange = (field: string, value: any) => {
-    setFormData({ ...formData, [field]: value });
-  };
-
-  const handleScheduleChange = (field: string, value: any) => {
-    // Only scheduled messages have schedule fields.
-    if (mode !== 'scheduled') return;
-    const scheduled = formData as ScheduledMessage;
-    setFormData({ ...scheduled, schedule: { ...scheduled.schedule, [field]: value } });
-  };
-
-  const handleTriggeredChange = (field: 'triggerType' | 'active', value: any) => {
-    // Only triggered messages have trigger configuration.
-    if (mode !== 'triggered') return;
-    const triggered = formData as TriggeredMessage;
-    setFormData({ ...triggered, [field]: value });
-  };
-
-  const handleChannelChange = (channel: MessageChannel, checked: boolean) => {
-    // Enforce at least one delivery channel.
-    let newChannels = [...formData.channels];
-    if (checked) {
-      if (!newChannels.includes(channel)) newChannels.push(channel);
-    } else {
-      newChannels = newChannels.filter(c => c !== channel);
-      if (newChannels.length === 0) newChannels = channel === 'SMS' ? ['Email'] : ['SMS'];
-    }
-    setFormData({ ...formData, channels: newChannels });
-  };
-
-  const updateTemplate = (type: 'sms' | 'email', updates: Partial<MessageTemplate>) => {
-    // Merge template updates into the selected channel.
-    setFormData({
-      ...formData,
-      templates: {
-        ...formData.templates,
-        [type]: { ...formData.templates[type], ...updates } as MessageTemplate,
-      },
-    });
-  };
-
-  const moveSection = (type: 'sms' | 'email', fromIndex: number, toIndex: number) => {
-    // Reorder multi-section templates in non-custom mode.
-    const sections = [...(formData.templates[type]?.sections || [])];
-    if (toIndex < 0 || toIndex >= sections.length) return;
-    const [moved] = sections.splice(fromIndex, 1);
-    sections.splice(toIndex, 0, moved);
-    updateTemplate(type, { sections });
-  };
-
-  const insertPlaceholder = (placeholder: string) => {
-    // Insert placeholders into either the custom body or the focused section.
-    const templateType = activeTab === 'SMS' ? 'sms' : 'email';
-    const template = formData.templates[templateType];
-    if (template?.isCustom) {
-      const content = template.content || '';
-      updateTemplate(templateType, { content: content + `{${placeholder}}` });
-    } else {
-      if (lastFocusedInput && lastFocusedInput.templateType === templateType && lastFocusedInput.sectionId) {
-        const sections = template?.sections || [];
-        const newSections = sections.map(s => {
-          if (s.id === lastFocusedInput.sectionId) {
-            return { ...s, content: s.content + `{${placeholder}}` };
-          }
-          return s;
-        });
-        updateTemplate(templateType, { sections: newSections });
-      } else {
-        toast({ description: 'Please click on a text area first.' });
-      }
-    }
-  };
-
-  const renderEditor = (type: 'sms' | 'email') => {
-    // Editor view for custom vs. sectioned templates.
-    const t = formData.templates[type];
-    if (!t) return null;
-    if (t.isCustom) {
-      return (
-        <Textarea
-          placeholder="Type your message here..."
-          value={t.content}
-          onChange={(e) => updateTemplate(type, { content: e.target.value })}
-          className="min-h-[200px]"
-          onFocus={() => setLastFocusedInput({ sectionId: null, templateType: type })}
-        />
-      );
-    }
-    return (
-      <div className="space-y-4">
-        {t.sections?.map((section, idx) => (
-          <div key={section.id} className="border p-2 rounded relative group">
-            <div className="flex justify-between items-center mb-1">
-              <Input
-                className="h-6 w-1/2 text-xs font-bold border-none p-0 focus-visible:ring-0"
-                value={section.name}
-                onChange={(e) => {
-                  const newSections = [...(t.sections || [])];
-                  newSections[idx].name = e.target.value;
-                  updateTemplate(type, { sections: newSections });
-                }}
-              />
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100">
-                <Button variant="ghost" size="icon" className="h-6 w-6"
-                  onClick={() => moveSection(type, idx, idx - 1)} disabled={idx === 0} title="Move up">
-                  <ChevronUp className="h-3 w-3" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6"
-                  onClick={() => moveSection(type, idx, idx + 1)} disabled={idx === (t.sections?.length || 0) - 1} title="Move down">
-                  <ChevronDown className="h-3 w-3" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-red-400"
-                  onClick={() => {
-                    const newSections = t.sections?.filter(s => s.id !== section.id);
-                    updateTemplate(type, { sections: newSections });
-                  }} title="Delete section">
-                  <X className="h-3 w-3" />
-                </Button>
-              </div>
-            </div>
-            <Textarea
-              value={section.content}
-              onChange={(e) => {
-                const newSections = [...(t.sections || [])];
-                newSections[idx].content = e.target.value;
-                updateTemplate(type, { sections: newSections });
-              }}
-              className="text-sm min-h-[60px]"
-              onFocus={() => setLastFocusedInput({ sectionId: section.id, templateType: type })}
-            />
-          </div>
-        ))}
-        <Button variant="outline" size="sm" className="w-full border-dashed"
-          onClick={() => {
-            const newSections = [...(t.sections || []), { id: Date.now().toString(), name: 'New Section', content: '' }];
-            updateTemplate(type, { sections: newSections });
-          }}>
-          <PlusCircle className="mr-2 h-3 w-3" /> Add Section
-        </Button>
-      </div>
-    );
-  };
-
-  const renderPreview = (type: 'sms' | 'email') => {
-    // Read-only preview of the current template content.
-    const t = formData.templates[type];
-    if (!t) return <div className="text-muted-foreground italic">No template configured</div>;
-    if (t.isCustom) {
-      return (
-        <div>
-          {type === 'email' && t.subject && (
-            <div className="mb-3 pb-2 border-b">
-              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
-              <span className="font-semibold text-sm">{replacePlaceholders(t.subject)}</span>
-            </div>
-          )}
-          <div className="whitespace-pre-wrap">{replacePlaceholders(t.content || '')}</div>
-        </div>
-      );
-    }
-    return (
-      <div>
-        {type === 'email' && t.subject && (
-          <div className="mb-3 pb-2 border-b">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
-            <span className="font-semibold text-sm">{replacePlaceholders(t.subject)}</span>
-          </div>
-        )}
-        <div className="whitespace-pre-wrap space-y-2">
-          {t.sections?.map(s => (
-            <div key={s.id}>{replacePlaceholders(s.content)}</div>
-          ))}
-        </div>
-      </div>
-    );
-  };
+  const channelOptions: MessageChannel[] = (enumOptions?.channels?.length
+    ? enumOptions.channels
+    : ['SMS', 'Email']);
+  const recipientOptions: RecipientType[] = (enumOptions?.recipientTypes?.length
+    ? enumOptions.recipientTypes
+    : ['All Customers', 'Overdue Customers']);
+  const scheduleTypeOptions: ScheduleType[] = (enumOptions?.scheduleTypes?.length
+    ? enumOptions.scheduleTypes
+    : ['Recurring', 'One-Time']);
+  const placeholders = enumOptions?.placeholders ?? [];
+  const {
+    formData,
+    activeTab,
+    setActiveTab,
+    setLastFocusedInput,
+    handleInputChange,
+    handleScheduleChange,
+    handleTriggeredChange,
+    handleChannelChange,
+    updateTemplate,
+    moveSection,
+    insertPlaceholder,
+  } = useMessageForm({
+    initialData,
+    mode,
+    recipientOptions,
+    scheduleTypeOptions,
+  });
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -287,16 +91,13 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                 <div className="space-y-2">
                   <Label>Send As</Label>
                   <div className="flex space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="chk-sms" checked={formData.channels.includes('SMS')}
-                        onCheckedChange={(c) => handleChannelChange('SMS', c as boolean)} />
-                      <Label htmlFor="chk-sms">SMS</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="chk-email" checked={formData.channels.includes('Email')}
-                        onCheckedChange={(c) => handleChannelChange('Email', c as boolean)} />
-                      <Label htmlFor="chk-email">Email</Label>
-                    </div>
+                    {channelOptions.map((channel) => (
+                      <div key={channel} className="flex items-center space-x-2">
+                        <Checkbox id={`chk-${channel.toLowerCase()}`} checked={formData.channels.includes(channel)}
+                          onCheckedChange={(c) => handleChannelChange(channel, c as boolean)} />
+                        <Label htmlFor={`chk-${channel.toLowerCase()}`}>{channel}</Label>
+                      </div>
+                    ))}
                   </div>
                 </div>
 
@@ -305,9 +106,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                   <Select value={formData.recipients} onValueChange={(val) => handleInputChange('recipients', val)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="All Customers">All Customers</SelectItem>
-                      <SelectItem value="Overdue Customers">Overdue Customers</SelectItem>
-                      <SelectItem value="Selected Customers">Selected Customers</SelectItem>
+                      {recipientOptions.map((recipient) => (
+                        <SelectItem key={recipient} value={recipient}>{recipient}</SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -320,8 +121,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                         onValueChange={(val) => handleScheduleChange('type', val)}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Recurring">Recurring</SelectItem>
-                          <SelectItem value="One-Time">One-Time</SelectItem>
+                          {scheduleTypeOptions.map((scheduleType) => (
+                            <SelectItem key={scheduleType} value={scheduleType}>{scheduleType}</SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -385,67 +187,16 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
             </TabsContent>
 
             <TabsContent value="template" className="py-4 flex-1 min-h-0 flex flex-col">
-              <div className="flex flex-col border rounded-md bg-card h-full">
-                <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'SMS' | 'Email')} className="flex flex-col flex-1 min-h-0">
-                  <div className="bg-slate-50 p-2 border-b flex justify-between items-center flex-none">
-                    <TabsList>
-                      <TabsTrigger value="SMS" disabled={!formData.channels.includes('SMS')}>SMS</TabsTrigger>
-                      <TabsTrigger value="Email" disabled={!formData.channels.includes('Email')}>Email</TabsTrigger>
-                    </TabsList>
-                    <div className="flex items-center space-x-2">
-                      <Label htmlFor="custom-mode" className="text-xs">Custom Mode</Label>
-                      <Switch id="custom-mode"
-                        checked={formData.templates[activeTab === 'SMS' ? 'sms' : 'email']?.isCustom}
-                        onCheckedChange={(chk) => updateTemplate(activeTab === 'SMS' ? 'sms' : 'email', { isCustom: chk })} />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 bg-card flex-1 overflow-y-auto">
-                    {/* Editor */}
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="text-xs text-muted-foreground">Placeholders (Click to copy/insert)</Label>
-                        <div className="flex flex-wrap gap-2">
-                          {placeholders.length === 0 ? (
-                            <div className="text-xs text-muted-foreground">No placeholders available.</div>
-                          ) : (
-                            placeholders.map(p => (
-                              <Button key={p} variant="outline" size="sm"
-                                onClick={() => insertPlaceholder(p)} className="h-6 text-[10px] px-2">
-                                {p}
-                              </Button>
-                            ))
-                          )}
-                        </div>
-                      </div>
-                      {activeTab === 'Email' && (
-                        <div className="space-y-2">
-                          <Label htmlFor="email-subject" className="text-xs font-medium">Subject</Label>
-                          <Input id="email-subject" placeholder="e.g. Your Monthly Water Bill"
-                            value={formData.templates.email?.subject || ''}
-                            onChange={(e) => updateTemplate('email', { subject: e.target.value })} />
-                        </div>
-                      )}
-                      <div className="h-[300px] border rounded-md p-2">
-                        <TabsContent value="SMS" className="mt-0 h-full">
-                          <ScrollArea className="h-full">{renderEditor('sms')}</ScrollArea>
-                        </TabsContent>
-                        <TabsContent value="Email" className="mt-0 h-full">
-                          <ScrollArea className="h-full">{renderEditor('email')}</ScrollArea>
-                        </TabsContent>
-                      </div>
-                    </div>
-
-                    {/* Preview */}
-                    <div className="border rounded-md bg-stone-50 p-4 h-[440px] flex flex-col">
-                      <Label className="mb-2 block text-muted-foreground flex-none">{activeTab} Preview</Label>
-                      <div className="bg-card p-4 rounded shadow-sm border text-sm flex-1 overflow-y-auto w-full break-words">
-                        {renderPreview(activeTab === 'SMS' ? 'sms' : 'email')}
-                      </div>
-                    </div>
-                  </div>
-                </Tabs>
-              </div>
+              <TemplateEditor
+                formData={formData}
+                activeTab={activeTab}
+                onTabChange={setActiveTab}
+                placeholders={placeholders}
+                onInsertPlaceholder={insertPlaceholder}
+                onUpdateTemplate={updateTemplate}
+                onMoveSection={moveSection}
+                onFocusSection={setLastFocusedInput}
+              />
             </TabsContent>
           </Tabs>
         </div>

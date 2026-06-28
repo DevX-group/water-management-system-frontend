@@ -3,18 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import type { TriggeredMessage } from '@/types/messaging';
+import type { MessagingEnumResponse, TriggeredMessage } from '@/types/messaging';
 import * as messageApi from '@/services/messageService';
 import { TriggeredMessageCard } from '@/components/messaging/TriggeredMessageCard';
 import { MessageDialog } from '@/components/messaging/MessageDialog';
 
-export const TriggeredMessageSection = () => {
+type TriggeredMessageSectionProps = {
+  enumOptions: MessagingEnumResponse | null;
+};
+
+export const TriggeredMessageSection: React.FC<TriggeredMessageSectionProps> = ({ enumOptions }) => {
   // Server-backed list of triggered message templates.
   const [triggeredMessages, setTriggeredMessages] = useState<TriggeredMessage[]>([]);
   const [isLoading, setIsLoading]                 = useState(true);
   const [isDialogOpen, setIsDialogOpen]           = useState(false);
   const [editingMessage, setEditingMessage]       = useState<TriggeredMessage | null>(null);
-  const [placeholders, setPlaceholders]           = useState<string[]>([]);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -23,20 +26,16 @@ export const TriggeredMessageSection = () => {
       try {
         const triggered = await messageApi.getAllTriggeredMessages();
         setTriggeredMessages(triggered);
-      } catch {
-        toast({ title: 'Error', description: 'Failed to load messages.', variant: 'destructive' });
+      } catch (error) {
+        const message = error instanceof Error
+          ? error.message
+          : 'Failed to load messages.';
+        toast({ title: 'Error', description: message, variant: 'destructive' });
       } finally {
         setIsLoading(false);
       }
     };
     load();
-  }, [toast]);
-
-  useEffect(() => {
-    // Placeholder tokens used by the template editor.
-    messageApi.getMessagePlaceholders()
-      .then(setPlaceholders)
-      .catch(() => toast({ title: 'Error', description: 'Failed to load placeholders.', variant: 'destructive' }));
   }, [toast]);
 
   const handleDelete = async (id: string) => {
@@ -45,8 +44,11 @@ export const TriggeredMessageSection = () => {
       await messageApi.deleteTriggeredMessage(id);
       setTriggeredMessages(prev => prev.filter(m => m.id !== id));
       toast({ title: 'Message deleted', description: 'The triggered message has been successfully deleted.' });
-    } catch {
-      toast({ title: 'Error', description: 'Failed to delete message.', variant: 'destructive' });
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : 'Failed to delete message.';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
   };
 
@@ -62,8 +64,11 @@ export const TriggeredMessageSection = () => {
         setTriggeredMessages(prev => [...prev, created]);
         toast({ title: 'Message created', description: 'New triggered message has been created.' });
       }
-    } catch {
-      toast({ title: 'Error', description: 'Failed to save message.', variant: 'destructive' });
+    } catch (error) {
+      const message = error instanceof Error
+        ? error.message
+        : 'Failed to save message.';
+      toast({ title: 'Error', description: message, variant: 'destructive' });
     }
     setIsDialogOpen(false);
     setEditingMessage(null);
@@ -102,7 +107,7 @@ export const TriggeredMessageSection = () => {
           onClose={() => setIsDialogOpen(false)}
           initialData={editingMessage}
           onSave={handleSave as any}
-          placeholders={placeholders}
+          enumOptions={enumOptions}
         />
       )}
     </div>

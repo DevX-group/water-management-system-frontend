@@ -1,11 +1,24 @@
-import { FailedRecipient, MessageHistoryRow, ScheduledMessage, TriggeredMessage } from '../types/messaging';
+import {
+  FailedRecipient,
+  MessageHistoryRow,
+  MessagingEnumResponse,
+  ScheduledMessage,
+  TriggeredMessage,
+  SentMessageHistoryApi,
+  MessageHistoryPageResponse,
+  MessageFailuresPageResponse,
+  ApiError,
+  ApiErrorPayload
+} from '../types/messaging';
 
 // Messaging API endpoints for scheduled and triggered templates.
-// const SCHEDULED_API_BASE = 'http://localhost:8081/api/scheduled-messages';
-// const TRIGGERED_API_BASE = 'http://localhost:8081/api/triggered-messages';
+const SCHEDULED_API_BASE = 'http://localhost:8081/api/scheduled-messages';
+const TRIGGERED_API_BASE = 'http://localhost:8081/api/triggered-messages';
+const ENUMS_API_BASE = 'http://localhost:8081/api/messaging/enums';
 
-const SCHEDULED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/scheduled-messages';
-const TRIGGERED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/triggered-messages';
+// const SCHEDULED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/scheduled-messages';
+// const TRIGGERED_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/triggered-messages';
+// const ENUMS_API_BASE = 'https://water-management-system-backend-0p2e.onrender.com/api/messaging/enums';
 
 // The backend returns id as Long (number); normalise to string
 // to keep the rest of the frontend compatible with id: string
@@ -19,9 +32,38 @@ const normaliseTriggered = (data: any): TriggeredMessage => ({
   id: String(data.id),
 });
 
+const getErrorPayload = async (res: Response, fallback: string): Promise<ApiErrorPayload> => {
+  try {
+    const data: ApiErrorPayload = await res.json();
+    if (data && typeof data.message === 'string' && data.message.trim()) {
+      return { ...data, message: data.message.trim() };
+    }
+  } catch {
+    // Ignore JSON parsing errors and fall back to text.
+  }
+
+  try {
+    const text = await res.text();
+    if (text && text.trim()) {
+      return { message: text.trim() };
+    }
+  } catch {
+    // Ignore text parsing errors and fall back to default.
+  }
+
+  return { message: fallback };
+};
+
+const assertOk = async (res: Response, fallback: string): Promise<void> => {
+  if (!res.ok) {
+    const payload = await getErrorPayload(res, fallback);
+    throw new ApiError(payload.message ?? fallback, payload);
+  }
+};
+
 export const getAllScheduledMessages = async (): Promise<ScheduledMessage[]> => {
   const res = await fetch(SCHEDULED_API_BASE);
-  if (!res.ok) throw new Error('Failed to fetch scheduled messages');
+  await assertOk(res, 'Failed to fetch scheduled messages');
   const data: any[] = await res.json();
   return data.map(normaliseScheduled);
 };
@@ -32,7 +74,7 @@ export const createScheduledMessage = async (message: Omit<ScheduledMessage, 'id
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message),
   });
-  if (!res.ok) throw new Error('Failed to create scheduled message');
+  await assertOk(res, 'Failed to create scheduled message');
   return normaliseScheduled(await res.json());
 };
 
@@ -42,18 +84,18 @@ export const updateScheduledMessage = async (id: string, message: ScheduledMessa
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message),
   });
-  if (!res.ok) throw new Error('Failed to update scheduled message');
+  await assertOk(res, 'Failed to update scheduled message');
   return normaliseScheduled(await res.json());
 };
 
 export const deleteScheduledMessage = async (id: string): Promise<void> => {
   const res = await fetch(`${SCHEDULED_API_BASE}/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Failed to delete scheduled message');
+  await assertOk(res, 'Failed to delete scheduled message');
 };
 
 export const getAllTriggeredMessages = async (): Promise<TriggeredMessage[]> => {
   const res = await fetch(TRIGGERED_API_BASE);
-  if (!res.ok) throw new Error('Failed to fetch triggered messages');
+  await assertOk(res, 'Failed to fetch triggered messages');
   const data: any[] = await res.json();
   return data.map(normaliseTriggered);
 };
@@ -64,7 +106,7 @@ export const createTriggeredMessage = async (message: Omit<TriggeredMessage, 'id
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message),
   });
-  if (!res.ok) throw new Error('Failed to create triggered message');
+  await assertOk(res, 'Failed to create triggered message');
   return normaliseTriggered(await res.json());
 };
 
@@ -74,35 +116,18 @@ export const updateTriggeredMessage = async (id: string, message: TriggeredMessa
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(message),
   });
-  if (!res.ok) throw new Error('Failed to update triggered message');
+  await assertOk(res, 'Failed to update triggered message');
   return normaliseTriggered(await res.json());
 };
 
 export const deleteTriggeredMessage = async (id: string): Promise<void> => {
   const res = await fetch(`${TRIGGERED_API_BASE}/${id}`, { method: 'DELETE' });
-  if (!res.ok) throw new Error('Failed to delete triggered message');
-};
-
-type SentMessageHistoryApi = {
-  id: number;
-  name: string;
-  channels: string;
-  recipients: string;
-  sentDate: string;
-  sentTime: string;
-  emailSuccessRate: number | null;
-  smsSuccessRate: number | null;
-  totalEmailsSent: number | null;
-  totalEmailsFailed: number | null;
-  totalEmailsDelivered: number | null;
-  totalSMSsSent: number | null;
-  totalSMSsFailed: number | null;
-  totalSMSsDelivered: number | null;
+  await assertOk(res, 'Failed to delete triggered message');
 };
 
 const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
   // Derive a human-friendly channel label from backend channel text.
-  const channels = (item.channels ?? '').toLowerCase();
+  const channels = (item.channels ?? []).map((channel) => channel.toLowerCase());
   let type = 'Message';
   if (channels.includes('sms') && channels.includes('email')) type = 'SMS & Email';
   else if (channels.includes('email')) type = 'Email';
@@ -127,22 +152,6 @@ const toHistoryRow = (item: SentMessageHistoryApi): MessageHistoryRow => {
   };
 };
 
-type MessageHistoryPageResponse = {
-  rows: MessageHistoryRow[];
-  page: number;
-  size: number;
-  totalPages: number;
-  totalElements: number;
-};
-
-type MessageFailuresPageResponse = {
-  rows: FailedRecipient[];
-  page: number;
-  size: number;
-  totalPages: number;
-  totalElements: number;
-};
-
 export const getMessageHistory = async (
   page = 0,
   size = 10
@@ -153,7 +162,7 @@ export const getMessageHistory = async (
     size: String(size),
   });
   const res = await fetch(`${SCHEDULED_API_BASE}/history?${params.toString()}`);
-  if (!res.ok) throw new Error('Failed to fetch message history');
+  await assertOk(res, 'Failed to fetch message history');
   const data: {
     content: SentMessageHistoryApi[];
     totalPages: number;
@@ -181,7 +190,7 @@ export const getMessageFailures = async (
     size: String(size),
   });
   const res = await fetch(`${SCHEDULED_API_BASE}/failures/${sentMessageId}?${params.toString()}`);
-  if (!res.ok) throw new Error('Failed to fetch failed recipients');
+  await assertOk(res, 'Failed to fetch failed recipients');
   const data: {
     content: FailedRecipient[];
     totalPages: number;
@@ -198,8 +207,8 @@ export const getMessageFailures = async (
   };
 };
 
-export const getMessagePlaceholders = async (): Promise<string[]> => {
-  const res = await fetch(`${SCHEDULED_API_BASE}/placeholders`);
-  if (!res.ok) throw new Error('Failed to fetch placeholders');
+export const getMessagingEnums = async (): Promise<MessagingEnumResponse> => {
+  const res = await fetch(ENUMS_API_BASE);
+  await assertOk(res, 'Failed to fetch messaging enums');
   return res.json();
 };
