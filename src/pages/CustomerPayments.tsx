@@ -26,8 +26,10 @@ import type {
 import { CustomerPaymentCard } from "@/components/payments/CustomerPaymentComponents";
 import { CustomerBankSlipSection, CustomerBankSlipHistory, CustomerBankSlipModal, BankSlipForm } from "@/components/payments/CustomerBankSlipComponents";
 import { CustomerPaymentHistoryTable } from "@/components/payments/CustomerPaymentHistoryTable";
+import { useTranslation } from "react-i18next";
 
 export const CustomerPayments = () => {
+  const { t } = useTranslation();
 
   const [currentBill, setCurrentBill] = useState<CurrentBillResponse | null>(null);
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
@@ -106,7 +108,7 @@ export const CustomerPayments = () => {
       setOutstandingBills(outs.outstandingBills);
       setBankDetails(bank);
     } catch {
-      toast.error("Failed to load payment data");
+      toast.error(t("payments.paymentHistory.failedToLoadData"));
     } finally {
       setLoadingData(false);
     }
@@ -127,7 +129,7 @@ export const CustomerPayments = () => {
       setHistoryTotalPages(response.totalPages);
       setHistoryTotalItems(response.totalElements);
     } catch {
-      toast.error("Failed to load payment history");
+      toast.error(t("payments.paymentHistory.failedToLoadHistory"));
     } finally {
       setHistoryLoading(false);
     }
@@ -148,7 +150,7 @@ export const CustomerPayments = () => {
       setSlipTotalPages(response.totalPages);
       setSlipTotalItems(response.totalElements);
     } catch {
-      toast.error("Failed to load slips");
+      toast.error(t("payments.pendingSlips.failedToLoad"));
     } finally {
       setSlipsLoading(false);
     }
@@ -233,13 +235,13 @@ export const CustomerPayments = () => {
   const handlePay = async () => {
     if (paymentMethod === "BANK_TRANSFER") {
       goToTab("slip");
-      showToast("📋 Please fill in the bank slip upload form below.");
+      showToast(t("payments.billPayment.fillBankSlipForm"));
       return;
     }
 
     const enteredAmount = Number(paymentAmount);
     if (!paymentAmount || !Number.isFinite(enteredAmount) || enteredAmount <= 0) {
-      showToast("⚠️ Please enter a valid amount");
+      showToast(t("payments.billPayment.enterValidAmount"));
       return;
     }
 
@@ -252,7 +254,7 @@ export const CustomerPayments = () => {
     } catch (e: any) {
       const data = e?.response?.data;
       const msg =
-        (typeof data === "object" ? data?.message || data?.error : data) || "Failed to add payment";
+        (typeof data === "object" ? data?.message || data?.error : data) || t("payments.billPayment.failedToAddPayment");
       showToast(`❌ ${msg}`);
     }
   };
@@ -272,8 +274,8 @@ export const CustomerPayments = () => {
   const handleFile = (file: File) => {
     const maxSize = 5 * 1024 * 1024;
     const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-    if (file.size > maxSize) { removeFile(); showToast("Max file size is 5MB."); return; }
-    if (!allowedTypes.includes(file.type)) { removeFile(); showToast("Only JPG, PNG, PDF allowed."); return; }
+    if (file.size > maxSize) { removeFile(); showToast(t("payments.bankSlipUpload.maxFileSize")); return; }
+    if (!allowedTypes.includes(file.type)) { removeFile(); showToast(t("payments.bankSlipUpload.allowedFileTypes")); return; }
     setSlipForm((p) => ({ ...p, file }));
   };
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
@@ -292,9 +294,9 @@ export const CustomerPayments = () => {
   };
 
   const handleSlipSubmit = async () => {
-    if (!slipForm.file) { showToast("Please upload a bank slip image or PDF."); return; }
+    if (!slipForm.file) { showToast(t("payments.bankSlipUpload.uploadSlipImage")); return; }
     if (!slipForm.amount || !slipForm.reference || !slipForm.date) {
-      showToast("Please fill all required fields."); return;
+      showToast(t("payments.bankSlipUpload.fillAllFields")); return;
     }
     try {
       setUploading(true);
@@ -319,9 +321,9 @@ export const CustomerPayments = () => {
       setBankSlips((prev) => [newSlip, ...prev]);
       setSubmitSuccess(true);
       setSlipForm({ amount: "", date: "", reference: "", file: null });
-      showToast("Bank slip uploaded successfully!");
+      showToast(t("payments.bankSlipUpload.uploadSuccess"));
     } catch (err: any) {
-      showToast(err?.response?.data?.message || "Failed to upload bank slip");
+      showToast(err?.response?.data?.message || t("payments.bankSlipUpload.uploadFailed"));
     } finally {
       setUploading(false);
     }
@@ -349,9 +351,9 @@ export const CustomerPayments = () => {
       await deleteSlip(slipId);
       setBankSlips((prev) => prev.filter((s) => s.slipId !== slipId));
       setSelectedSlip(null);
-      toast.success("Slip deleted successfully");
+      toast.success(t("payments.bankSlipHistory.slipDeleteSuccess"));
     } catch (err: any) {
-      toast.error(err?.response?.data?.message || "Failed to delete slip");
+      toast.error(err?.response?.data?.message || t("payments.bankSlipHistory.slipDeleteFailed"));
     }
   };
 
@@ -372,9 +374,9 @@ export const CustomerPayments = () => {
         <div className="container mx-auto px-4 py-8 space-y-6">
           {/* ── Header ── */}
           <div className="mb-2">
-            <h1 className="text-3xl font-bold">Payments</h1>
+            <h1 className="text-3xl font-bold">{t("payments.title")}</h1>
             <p className="text-muted-foreground mt-1">
-              Manage your water bill payments
+              {t("payments.subtitle")}
             </p>
           </div>
 

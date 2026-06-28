@@ -5,6 +5,7 @@ import { formatDateTime } from "@/utils/dateUtils";
 import { formatPaymentMethod } from "@/utils/paymentUtils";
 import { RecentPaymentResponse } from '@/types/payment';
 import { getRecentPayments } from '@/services/paymentService';
+import { useTranslation } from 'react-i18next';
 
 const statusStyles = {
   full: 'bg-success/10 text-success',
@@ -12,6 +13,7 @@ const statusStyles = {
 } as const;
 
 export const RecentPaymentsList = () => {
+  const { t, i18n } = useTranslation();
   const [recentPayments, setRecentPayments] = useState<RecentPaymentResponse[]>([]);
 
   useEffect(() => {
@@ -21,7 +23,7 @@ export const RecentPaymentsList = () => {
         setRecentPayments(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Failed to load recent payments:", err);
-        toast.error("Failed to load recent payments");
+        toast.error(t('payments.recentPayments.failedToLoad'));
       }
     }
 
@@ -30,25 +32,33 @@ export const RecentPaymentsList = () => {
 
   return (
     <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up bg-primary/5">
-      <h3 className="text-lg font-semibold text-foreground mb-4">Recently Added</h3>
+      <h3 className="text-lg font-semibold text-foreground mb-4">{t('payments.recentPayments.title')}</h3>
       {recentPayments.length === 0 ? (
         <p className="text-sm text-muted-foreground">
-          No recent payments.
+          {t('payments.recentPayments.noRecentPayments')}
         </p>
       ) : (
         <div className="space-y-3">
           {Array.isArray(recentPayments) && recentPayments.map((payment) => {
             const statusKey = payment.status.toLowerCase();
             const statusClass = statusStyles[statusKey as keyof typeof statusStyles] || 'bg-muted text-muted-foreground';
-            const formattedStatus = statusKey.charAt(0).toUpperCase() + statusKey.slice(1);
+            const translatedStatus = t(`payments.filters.${statusKey}`, { defaultValue: statusKey.charAt(0).toUpperCase() + statusKey.slice(1) });
 
             const paymentType =
               payment.paymentMethod === "MANUAL" && payment.paymentType
                 ? payment.paymentType?.toLowerCase()
                 : null;
-            const formattedPaymentType = paymentType
-              ? paymentType.charAt(0).toUpperCase() + paymentType.slice(1)
+            const translatedPaymentType = paymentType
+              ? t(`payments.filters.${paymentType}`, { defaultValue: paymentType.charAt(0).toUpperCase() + paymentType.slice(1) })
               : "";
+
+            const methodMap: Record<string, string> = {
+              'BANK_TRANSFER': 'bankTransfer',
+              'ONLINE': 'online',
+              'MANUAL': 'manual'
+            };
+            const methodKey = payment.paymentMethod ? methodMap[payment.paymentMethod] : null;
+            const translatedMethod = methodKey ? t(`payments.filters.${methodKey}`) : formatPaymentMethod(payment.paymentMethod);
 
             return (
               <div
@@ -74,18 +84,27 @@ export const RecentPaymentsList = () => {
                     className={`inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-medium uppercase tracking-wider ${statusClass}`}
                   >
                     {payment.paymentMethod === "MANUAL" && payment.paymentType
-                      ? `${formattedPaymentType}.${formattedStatus}`
-                      : formattedStatus}
+                      ? `${translatedPaymentType}.${translatedStatus}`
+                      : translatedStatus}
                   </span>
                 </div>
 
                 {/* Bottom Row: Date & Method */}
                 <div className="flex items-center justify-between pt-2 border-t border-border/40">
                   <p className="text-[11px] font-medium text-muted-foreground">
-                    {formatDateTime(payment.createdAt)}
+                    {(() => {
+                      const dt = formatDateTime(payment.createdAt);
+                      if (dt === "-") return dt;
+                      const [datePart, timePart, ampmPart] = dt.split(' ');
+                      const translatedAmPm = ampmPart === 'AM' ? t('payments.filters.am') : t('payments.filters.pm');
+                      if (i18n.language === 'si') {
+                        return `${datePart} ${translatedAmPm} ${timePart}`;
+                      }
+                      return `${datePart} ${timePart} ${translatedAmPm}`;
+                    })()}
                   </p>
                   <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-secondary/80 text-secondary-foreground">
-                    {formatPaymentMethod(payment.paymentMethod)}
+                    {translatedMethod}
                   </span>
                 </div>
               </div>

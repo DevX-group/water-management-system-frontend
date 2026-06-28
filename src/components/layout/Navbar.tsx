@@ -15,21 +15,22 @@ import {
   SheetContent,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { 
-  Droplets, 
-  Menu, 
-  Globe, 
-  Home, 
-  FileText, 
-  CreditCard, 
-  BarChart3, 
-  Bell, 
+import {
+  Droplets,
+  Menu,
+  Globe,
+  Home,
+  FileText,
+  CreditCard,
+  BarChart3,
+  Bell,
   User,
   LogOut,
   Settings,
   ChevronRight,
   Sparkles
 } from "lucide-react";
+import { useTranslation } from 'react-i18next';
 
 const navLinks = [
   { name: "Dashboard", path: "/customer/dashboard", icon: Home },
@@ -52,8 +53,16 @@ interface NavbarProps {
 
 export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
   const location = useLocation();
-  const [language, setLanguage] = useState("en");
   const [isOpen, setIsOpen] = useState(false);
+
+  const { i18n } = useTranslation();
+  const language = i18n.language;
+
+  const changeLanguage = (lang: string) => {
+    i18n.changeLanguage(lang);
+    localStorage.setItem("language", lang);
+  };
+
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -74,7 +83,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
 
   if (!isAuthenticated) {
     return (
-      <motion.header 
+      <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className="fixed top-0 left-0 right-0 z-50"
@@ -83,14 +92,14 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
           <nav className="glass rounded-2xl px-6 py-3 flex items-center justify-between max-w-7xl mx-auto">
             {/* Logo */}
             <Link to="/" className="flex items-center gap-3 group">
-              <motion.div 
+              <motion.div
                 whileHover={{ scale: 1.05, rotate: 5 }}
                 whileTap={{ scale: 0.95 }}
                 className="w-11 h-11 rounded-xl gradient-primary flex items-center justify-center shadow-soft"
               >
                 <Droplets className="w-6 h-6 text-primary-foreground" />
               </motion.div>
-              
+
               {/* UPDATED: 3-Language Text Block */}
               <CompanyNameBlock />
             </Link>
@@ -108,7 +117,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                   {languages.map((lang) => (
                     <DropdownMenuItem
                       key={lang.code}
-                      onClick={() => setLanguage(lang.code)}
+                      onClick={() => changeLanguage(lang.code)}
                       className={`gap-3 rounded-lg ${language === lang.code ? "bg-secondary" : ""}`}
                     >
                       <span>{lang.flag}</span>
@@ -136,7 +145,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
   }
 
   return (
-    <motion.header 
+    <motion.header
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       className="fixed top-0 left-0 right-0 z-50"
@@ -145,14 +154,14 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
         <nav className="glass rounded-2xl px-4 lg:px-6 py-3 flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
           <Link to="/customer/dashboard" className="flex items-center gap-3 group">
-            <motion.div 
+            <motion.div
               whileHover={{ scale: 1.05, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
               className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft"
             >
               <Droplets className="w-5 h-5 text-primary-foreground" />
             </motion.div>
-            
+
             {/* UPDATED: 3-Language Text Block */}
             <CompanyNameBlock />
           </Link>
@@ -171,11 +180,10 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className={`gap-2 rounded-lg relative transition-all duration-300 ${
-                        active 
-                          ? "bg-background text-foreground shadow-sm" 
-                          : "text-muted-foreground hover:text-foreground hover:bg-transparent"
-                      }`}
+                      className={`gap-2 rounded-lg relative transition-all duration-300 ${active
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:text-foreground hover:bg-transparent"
+                        }`}
                     >
                       <Icon className="w-4 h-4" />
                       {link.name}
@@ -198,7 +206,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 {languages.map((lang) => (
                   <DropdownMenuItem
                     key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
+                    onClick={() => changeLanguage(lang.code)}
                     className={`gap-3 rounded-lg ${language === lang.code ? "bg-secondary" : ""}`}
                   >
                     <span>{lang.flag}</span>
@@ -211,7 +219,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
             {/* Profile Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <motion.button 
+                <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft cursor-pointer"
@@ -261,13 +269,13 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                   <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
                     <Droplets className="w-5 h-5 text-primary-foreground" />
                   </div>
-                  
+
                   {/* Company Name in Mobile Menu (Optional, using stacked logic or simple name) */}
-                   <div className="flex flex-col items-start justify-center gap-[1px]">
-                      <span className="text-[10px] font-semibold leading-none text-muted-foreground">ජාතික ජල සම්පාදන මණ්ඩලය</span>
-                      <span className="text-sm font-bold leading-none text-gradient py-[1px]">Water Supply Board</span>
-                      <span className="text-[15px] font-semibold leading-none text-muted-foreground">தேசிய நீர் வழங்கல் சபை</span>
-                   </div>
+                  <div className="flex flex-col items-start justify-center gap-[1px]">
+                    <span className="text-[10px] font-semibold leading-none text-muted-foreground">ජාතික ජල සම්පාදන මණ්ඩලය</span>
+                    <span className="text-sm font-bold leading-none text-gradient py-[1px]">Water Supply Board</span>
+                    <span className="text-[15px] font-semibold leading-none text-muted-foreground">தேசிய நீர் வழங்கல் சபை</span>
+                  </div>
                 </div>
                 <nav className="space-y-2">
                   {navLinks.map((link, index) => {
