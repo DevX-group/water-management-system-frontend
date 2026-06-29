@@ -5,12 +5,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Customer } from '@/types/user';
+import type { Customer, CustomerFormData } from '@/types/user';
 
 interface EditCustomerDialogProps {
   customer:       Customer | null;
-  editFormData:   Customer | null;
-  setEditFormData:(data: Customer) => void;
+  editFormData:   CustomerFormData | null;
+  setEditFormData:(data: CustomerFormData) => void;
   onClose:        () => void;
   onSave:         () => void;
 }
@@ -51,7 +51,7 @@ export const EditCustomerDialog: React.FC<EditCustomerDialogProps> = ({
                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="metered">Metered Customer</SelectItem>
-                  <SelectItem value="non-metered">Non Metered Customer</SelectItem>
+                  <SelectItem value="non_metered">Non Metered Customer</SelectItem>
                 </SelectContent>
               </Select>
             </div>
