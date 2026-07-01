@@ -95,7 +95,7 @@ const Bills = () => {
       </div>
 
       <BillImageViewer
-        bill={viewingBill ? { ...viewingBill, billId: String((viewingBill as any).billId) } : undefined}
+        bill={viewingBill ? { ...viewingBill, billId: String((viewingBill as any).billId) } : null}
         zoom={zoom} rotation={rotation}
         imageLoading={imageLoading} imageError={imageError}
         onClose={handleCloseView}

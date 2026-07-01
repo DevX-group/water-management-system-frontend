@@ -1,10 +1,4 @@
-import axios from 'axios';
-
-const api = axios.create({
-    baseURL: "http://localhost:8081/api",
-    //baseURL: "http://water-management-system-backend-0p2e.onrender.com/api",
-    headers: { "Content-Type": "application/json" },
-});
+import { api } from './api';
 
 export type PaymentStatus = "FULL" | "PARTIAL";
 export type PaymentType = "MONTHLY" | "OUTSTANDING";
