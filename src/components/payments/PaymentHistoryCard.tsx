@@ -4,6 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { PaymentHistoryItemResponse, PaymentMethod } from '@/types/payment';
 import { formatPaymentMethod } from '@/utils/paymentUtils';
 import { formatDateTime } from '@/utils/dateUtils';
+import { useTranslation } from 'react-i18next';
 
 interface PaymentHistoryCardProps {
   paymentHistory: PaymentHistoryItemResponse[];
@@ -57,6 +58,7 @@ export const PaymentHistoryCard = ({
   setFilterMethod,
   onFilterChange,
 }: PaymentHistoryCardProps) => {
+  const { t, i18n } = useTranslation();
   const hasActiveFilter = filterYear !== undefined || filterMethod !== undefined;
 
   const handleYearChange = (val: string) => {
@@ -83,9 +85,9 @@ export const PaymentHistoryCard = ({
           </div>
           <div>
             <h3 className="text-xl font-bold text-foreground">
-              Payment History
+              {t('payments.paymentHistory.title')}
             </h3>
-            <p className="text-xs text-muted-foreground mt-0.5">Recent transactions</p>
+            <p className="text-xs text-muted-foreground mt-0.5">{t('payments.paymentHistory.adminSubtitle')}</p>
           </div>
         </div>
 
@@ -96,10 +98,10 @@ export const PaymentHistoryCard = ({
             onValueChange={handleYearChange}
           >
             <SelectTrigger className="h-8 w-[110px] bg-secondary/50 border-none rounded-lg text-xs font-medium">
-              <SelectValue placeholder="All Years" />
+              <SelectValue placeholder={t('payments.filters.allYears')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Years</SelectItem>
+              <SelectItem value="all">{t('payments.filters.allYears')}</SelectItem>
               {yearOptions.map((y) => (
                 <SelectItem key={y} value={String(y)}>{y}</SelectItem>
               ))}
@@ -112,13 +114,13 @@ export const PaymentHistoryCard = ({
             onValueChange={handleMethodChange}
           >
             <SelectTrigger className="h-8 w-[130px] bg-secondary/50 border-none rounded-lg text-xs font-medium">
-              <SelectValue placeholder="All Methods" />
+              <SelectValue placeholder={t('payments.filters.allMethods')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Methods</SelectItem>
-              <SelectItem value="ONLINE">Online</SelectItem>
-              <SelectItem value="BANK_TRANSFER">Bank Transfer</SelectItem>
-              <SelectItem value="MANUAL">Manual</SelectItem>
+              <SelectItem value="all">{t('payments.filters.allMethods')}</SelectItem>
+              <SelectItem value="ONLINE">{t('payments.filters.online')}</SelectItem>
+              <SelectItem value="BANK_TRANSFER">{t('payments.filters.bankTransfer')}</SelectItem>
+              <SelectItem value="MANUAL">{t('payments.filters.manual')}</SelectItem>
             </SelectContent>
           </Select>
 
@@ -129,13 +131,13 @@ export const PaymentHistoryCard = ({
               className="flex items-center gap-1 h-8 px-2.5 rounded-lg text-xs font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors border border-border/50"
             >
               <X className="w-3 h-3" />
-              Clear
+              {t('payments.filters.clear')}
             </button>
           )}
 
           {/* Page size */}
           <div className="flex items-center gap-1.5 bg-secondary/50 p-1 rounded-xl">
-            <span className="text-xs text-muted-foreground pl-2 pr-1 font-medium">Show</span>
+            <span className="text-xs text-muted-foreground pl-2 pr-1 font-medium">{t('payments.paymentHistory.show')}</span>
             <Select
               value={String(historyPageSize)}
               onValueChange={(value) => {
@@ -158,7 +160,7 @@ export const PaymentHistoryCard = ({
 
       {paymentHistory.length === 0 ? (
         <div className="text-center py-10 bg-secondary/20 rounded-xl border border-dashed border-border/50">
-          <p className="text-sm text-muted-foreground">No payments found for this customer.</p>
+          <p className="text-sm text-muted-foreground">{t('payments.paymentHistory.noPaymentsForCustomer')}</p>
         </div>
       ) : (
         <>
@@ -166,20 +168,30 @@ export const PaymentHistoryCard = ({
             <table className="w-full table-fixed">
               <thead className="bg-secondary/40">
                 <tr className="text-left">
-                  <th className="py-3 px-4 text-sm font-bold text-foreground">Date</th>
-                  <th className="py-3 px-4 text-sm font-bold text-foreground">Amount</th>
-                  <th className="py-3 px-4 text-sm font-bold text-foreground">Method</th>
-                  <th className="py-3 px-4 w-[220px] text-sm font-bold text-foreground">Status</th>
+                  <th className="py-3 px-4 text-sm font-bold text-foreground">{t('payments.paymentHistory.date')}</th>
+                  <th className="py-3 px-4 text-sm font-bold text-foreground">{t('payments.paymentHistory.amount')}</th>
+                  <th className="py-3 px-4 text-sm font-bold text-foreground">{t('payments.paymentHistory.method')}</th>
+                  <th className="py-3 px-4 w-[220px] text-sm font-bold text-foreground">{t('payments.paymentHistory.status')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
                 {paymentHistory.map((p) => (
                   <tr key={p.paymentId} className="hover:bg-primary/[0.02] transition-colors">
                     <td className="py-3.5 px-4 text-sm font-medium text-foreground">
-                      {formatDateTime(p.createdAt).split(' ')[0]}
-                      <span className="text-xs text-muted-foreground block font-normal mt-0.5">
-                        {formatDateTime(p.createdAt).split(' ').slice(1).join(' ')}
-                      </span>
+                      {(() => {
+                        const dt = formatDateTime(p.createdAt);
+                        if (dt === "-") return dt;
+                        const [datePart, timePart, ampmPart] = dt.split(' ');
+                        const translatedAmPm = ampmPart === 'AM' ? t('payments.filters.am') : t('payments.filters.pm');
+                        return (
+                          <>
+                            {datePart}
+                            <span className="text-xs text-muted-foreground block font-normal mt-0.5">
+                              {i18n.language === 'si' ? `${translatedAmPm} ${timePart}` : `${timePart} ${translatedAmPm}`}
+                            </span>
+                          </>
+                        );
+                      })()}
                     </td>
                     <td className="py-3.5 px-4 font-mono font-medium text-foreground">
                       Rs. {Number(p.amount).toLocaleString()}
@@ -187,7 +199,9 @@ export const PaymentHistoryCard = ({
                     <td className="py-3.5 px-4">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-secondary text-xs font-medium text-muted-foreground border border-border/50">
                         {getPaymentIcon(p.paymentMethod)}
-                        {formatPaymentMethod(p.paymentMethod)}
+                        {p.paymentMethod === 'ONLINE' ? t('payments.filters.online') :
+                         p.paymentMethod === 'BANK_TRANSFER' ? t('payments.filters.bankTransfer') :
+                         t('payments.filters.manual')}
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
@@ -198,7 +212,9 @@ export const PaymentHistoryCard = ({
                             : "bg-warning/10 text-warning border border-warning/20"
                             }`}
                         >
-                          {p.paymentMethod === "MANUAL" ? `${p.paymentType}.${p.status}` : p.status}
+                          {p.paymentMethod === "MANUAL" && p.paymentType
+                            ? `${t(`payments.filters.${p.paymentType.toLowerCase()}`, { defaultValue: p.paymentType })}.${t(`payments.filters.${p.status.toLowerCase()}`, { defaultValue: p.status })}` 
+                            : t(`payments.filters.${p.status.toLowerCase()}`, { defaultValue: p.status })}
                         </span>
                         {p.paymentMethod === "MANUAL" && (
                           <DropdownMenu>
@@ -211,7 +227,7 @@ export const PaymentHistoryCard = ({
                               {p.paymentId === latestManualPaymentId && (
                                 <DropdownMenuItem onClick={() => handleEdit(p)} className="cursor-pointer">
                                   <Pencil className="w-4 h-4 mr-2" />
-                                  Edit
+                                  {t('payments.adminPayments.edit')}
                                 </DropdownMenuItem>
                               )}
                               <DropdownMenuItem
@@ -219,7 +235,7 @@ export const PaymentHistoryCard = ({
                                 className="text-red-600 focus:text-red-600 cursor-pointer"
                               >
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                Delete
+                                {t('payments.adminPayments.delete')}
                               </DropdownMenuItem>
                             </DropdownMenuContent>
                           </DropdownMenu>
@@ -235,7 +251,7 @@ export const PaymentHistoryCard = ({
           {totalHistoryPages > 1 && (
             <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-5">
               <div className="text-xs font-medium text-muted-foreground bg-secondary/50 px-3 py-1.5 rounded-full">
-                Showing <span className="text-foreground">{historyStart}-{historyEnd}</span> of <span className="text-foreground">{historyTotalItems}</span>
+                {t('payments.paymentHistory.showing')} <span className="text-foreground">{historyStart}-{historyEnd}</span> {t('payments.paymentHistory.of')} <span className="text-foreground">{historyTotalItems}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <button
@@ -253,7 +269,7 @@ export const PaymentHistoryCard = ({
                   {"<"}
                 </button>
                 <div className="text-xs font-medium text-foreground px-3 py-1 bg-secondary/40 rounded-lg border border-border/50">
-                  Page {historyPage + 1} of {totalHistoryPages}
+                  {t('payments.paymentHistory.page')} {historyPage + 1} {t('payments.paymentHistory.of')} {totalHistoryPages}
                 </div>
                 <button
                   onClick={() => setHistoryPage((p) => Math.min(p + 1, totalHistoryPages - 1))}

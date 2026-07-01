@@ -1,6 +1,7 @@
 import '@/index.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
@@ -39,6 +40,7 @@ type TabKey = 'monthly' | 'outstanding';
 export const PaymentsAddingPage = () => {
   const navigate = useNavigate();
   const { subscriptionNumber } = useParams<{ subscriptionNumber: string }>();
+  const { t } = useTranslation();
 
   const [activeTab, setActiveTab] = useState<TabKey>('monthly');
   const [monthlyAmount, setMonthlyAmount] = useState('');
@@ -91,7 +93,7 @@ export const PaymentsAddingPage = () => {
 
     } catch (e) {
       console.error("loadAll failed:", e);
-      toast.error('Failed to load payment data');
+      toast.error(t('payments.adminPayments.failedToLoadData'));
     }
   };
 
@@ -164,7 +166,7 @@ export const PaymentsAddingPage = () => {
       if (responseMessage) {
         setAmountError(responseMessage);
       } else {
-        setAmountError("Something went wrong");
+        setAmountError(t('payments.adminPayments.somethingWentWrong'));
       }
     }
   };
@@ -189,7 +191,7 @@ export const PaymentsAddingPage = () => {
     try {
       await deletePayment(selectedDeleteId);
 
-      toast.success("Payment deleted successfully");
+      toast.success(t('payments.adminPayments.paymentDeleteSuccess'));
 
       setIsDeleteOpen(false);
       setSelectedDeleteId(null);
@@ -199,7 +201,7 @@ export const PaymentsAddingPage = () => {
 
     } catch (error: any) {
       const msg =
-        error?.response?.data?.message || "Failed to delete payment";
+        error?.response?.data?.message || t('payments.adminPayments.paymentDeleteFailed');
 
       toast.error(msg);
     }
@@ -214,15 +216,15 @@ export const PaymentsAddingPage = () => {
     const num = Number(value);
 
     if (!value) {
-      setAmountError("Amount is required");
+      setAmountError(t('payments.adminPayments.amountRequired'));
     } else if (num <= 0) {
-      setAmountError("Enter a valid amount");
+      setAmountError(t('payments.adminPayments.enterValidAmount'));
     } else if (
       summary &&
       selectedPayment &&
       num > (summary.totalDue + selectedPayment.amount)
     ) {
-      setAmountError("Amount exceeds due balance");
+      setAmountError(t('payments.adminPayments.amountExceedsDue'));
     } else {
       setAmountError("");
     }
@@ -255,7 +257,7 @@ export const PaymentsAddingPage = () => {
 
     const amount = Number(monthlyAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
-      toast.error('Enter a valid amount', { className: "toast-error" });
+      toast.error(t('payments.adminPayments.enterValidAmount'), { className: "toast-error" });
       return;
     }
 
@@ -267,7 +269,7 @@ export const PaymentsAddingPage = () => {
         paymentMethod: 'MANUAL'
       });
 
-      toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
+      toast.success(res.message || t('payments.adminPayments.paymentAddedSuccess'), { className: "toast-success" });
       setMonthlyAmount('');
 
       await loadAll(customerInfo.subscriptionNumber);
@@ -276,7 +278,7 @@ export const PaymentsAddingPage = () => {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to add payment';
+        t('payments.adminPayments.failedToAddPayment');
       toast.error(msg, { className: "toast-error" });
     }
   };
@@ -286,7 +288,7 @@ export const PaymentsAddingPage = () => {
 
     const amount = Number(outstandingAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
-      toast.error('Enter a valid amount', { className: "toast-error" });
+      toast.error(t('payments.adminPayments.enterValidAmount'), { className: "toast-error" });
       return;
     }
 
@@ -298,7 +300,7 @@ export const PaymentsAddingPage = () => {
         paymentMethod: 'MANUAL'
       });
 
-      toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
+      toast.success(res.message || t('payments.adminPayments.paymentAddedSuccess'), { className: "toast-success" });
       setOutstandingAmount('');
 
       await loadAll(customerInfo.subscriptionNumber);
@@ -307,7 +309,7 @@ export const PaymentsAddingPage = () => {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to add payment';
+        t('payments.adminPayments.failedToAddPayment');
       toast.error(msg, { className: "toast-error" });
     }
   };
@@ -326,12 +328,12 @@ export const PaymentsAddingPage = () => {
     return (
       <div className="p-6">
         <div className="bg-card rounded-2xl p-6 shadow-md">
-          <h2 className="text-lg font-semibold text-foreground">Customer not found</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('payments.adminPayments.customerNotFound')}</h2>
           <p className="text-sm text-muted-foreground mt-2">
-            The selected customer does not exist.
+            {t('payments.adminPayments.customerNotExist')}
           </p>
           <Button className="mt-4" onClick={() => navigate(-1)}>
-            Go Back
+            {t('payments.adminPayments.goBack')}
           </Button>
         </div>
       </div>
@@ -360,13 +362,13 @@ export const PaymentsAddingPage = () => {
       <div className="animate-fade-in">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Add Payment</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('payments.adminPayments.addPayment')}</h1>
             <p className="text-muted-foreground">
-              {customerInfo?.accountHolderName ?? "Customer"} • {customerInfo?.subscriptionNumber}
+              {customerInfo?.accountHolderName ?? t('payments.adminPayments.customer')} • {customerInfo?.subscriptionNumber}
             </p>
           </div>
           <Button variant="secondary" onClick={() => navigate(-1)}>
-            Back
+            {t('payments.adminPayments.back')}
           </Button>
         </div>
       </div>
@@ -384,7 +386,7 @@ export const PaymentsAddingPage = () => {
                   : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                Monthly Payments
+                {t('payments.adminPayments.monthlyPayments')}
               </button>
               <button
                 onClick={() => setActiveTab('outstanding')}
@@ -393,7 +395,7 @@ export const PaymentsAddingPage = () => {
                   : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                Outstanding Payments
+                {t('payments.adminPayments.outstandingPayments')}
               </button>
             </div>
 
@@ -462,20 +464,20 @@ export const PaymentsAddingPage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold text-foreground mb-1">
-              Edit Payment
+              {t('payments.adminPayments.editPayment')}
             </h2>
-            <p className="text-xs text-muted-foreground mb-5">Update the manual payment amount.</p>
+            <p className="text-xs text-muted-foreground mb-5">{t('payments.adminPayments.editPaymentSubtitle')}</p>
 
             <div className="mb-6">
               <Label className="text-sm font-medium text-foreground mb-1.5 block">
-                Amount (Rs.)
+                {t('payments.adminPayments.amountLabel')}
               </Label>
               <Input
                 type="number"
                 value={updatedAmount}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 className="w-full text-foreground border-border/50 rounded-xl focus-visible:ring-primary/20 bg-background"
-                placeholder="Enter amount"
+                placeholder={t('payments.adminPayments.enterAmountPlaceholder')}
               />
 
               {isTouched && amountError && (
@@ -496,7 +498,7 @@ export const PaymentsAddingPage = () => {
                 className="flex-1 rounded-xl"
                 onClick={handleCancel}
               >
-                Cancel
+                {t('payments.adminPayments.cancel')}
               </Button>
 
               <Button
@@ -504,7 +506,7 @@ export const PaymentsAddingPage = () => {
                 onClick={handleUpdate}
                 disabled={!updatedAmount || !!amountError}
               >
-                Save Changes
+                {t('payments.adminPayments.saveChanges')}
               </Button>
             </div>
           </div>
@@ -521,10 +523,10 @@ export const PaymentsAddingPage = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-xl font-bold text-foreground mb-1">
-              Delete Payment
+              {t('payments.adminPayments.deletePayment')}
             </h2>
             <p className="text-sm text-muted-foreground mb-6">
-              Are you sure you want to delete this payment? This action cannot be undone.
+              {t('payments.adminPayments.deleteConfirmation')}
             </p>
 
             <div className="flex justify-end gap-3">
@@ -533,7 +535,7 @@ export const PaymentsAddingPage = () => {
                 className="flex-1 rounded-xl"
                 onClick={cancelDelete}
               >
-                Cancel
+                {t('payments.adminPayments.cancel')}
               </Button>
 
               <Button
@@ -541,7 +543,7 @@ export const PaymentsAddingPage = () => {
                 className="flex-1 rounded-xl"
                 onClick={confirmDelete}
               >
-                Delete
+                {t('payments.adminPayments.delete')}
               </Button>
             </div>
           </div>

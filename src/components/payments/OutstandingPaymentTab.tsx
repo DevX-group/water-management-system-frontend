@@ -3,6 +3,7 @@ import { Wallet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { OutstandingBillResponse } from '@/types/payment';
+import { useTranslation } from 'react-i18next';
 
 interface OutstandingPaymentTabProps {
   outstandingBills: OutstandingBillResponse[];
@@ -27,20 +28,21 @@ export const OutstandingPaymentTab = ({
   setOutstandingAmount,
   handleAddOutstanding,
 }: OutstandingPaymentTabProps) => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       <div className="bg-secondary/40 rounded-xl p-4">
         <div className="flex items-center justify-between">
-          <h4 className="font-medium text-foreground">Outstanding Payment Summary</h4>
+          <h4 className="font-medium text-foreground">{t('payments.outstandingTab.title')}</h4>
           <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-foreground">
-            {outstandingBills.length} items
+            {outstandingBills.length} {t('payments.outstandingTab.items')}
           </span>
         </div>
 
         <div className="mt-3 space-y-2 text-sm">
           {outstandingBills.length === 0 ? (
             <p className="text-sm text-muted-foreground">
-              No outstanding bills found.
+              {t('payments.outstandingTab.noOutstandingBills')}
             </p>
           ) : (
             <>
@@ -48,26 +50,26 @@ export const OutstandingPaymentTab = ({
                 <div key={b.billId} className="space-y-1 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">
-                      Bill Id: {b.billId} • {b.billingPeriod}
+                      {t('payments.outstandingTab.billId')} {b.billId} • {b.billingPeriod}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Total Bill</span>
+                    <span className="text-muted-foreground">{t('payments.outstandingTab.totalBill')}</span>
                     <span className="font-medium text-foreground">
                       Rs. {Number(b.totalAmount ?? 0).toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Already Paid</span>
+                    <span className="text-muted-foreground">{t('payments.outstandingTab.alreadyPaid')}</span>
                     <span className="font-medium text-success">
                       Rs. {Number(b.paidAmount ?? 0).toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="font-medium text-foreground">Balance Due</span>
+                    <span className="font-medium text-foreground">{t('payments.outstandingTab.balanceDue')}</span>
                     <span className="font-bold text-primary">
                       Rs. {Number(b.balanceDue ?? 0).toLocaleString()}
                     </span>
@@ -108,7 +110,7 @@ export const OutstandingPaymentTab = ({
               )}
 
               <div className="flex justify-between pt-2 border-t border-none">
-                <span className="font-medium text-foreground">Total Due</span>
+                <span className="font-medium text-foreground">{t('payments.outstandingTab.totalDue')}</span>
                 <span className="text-xl font-bold text-primary">
                   Rs. {totalOutstandingAmount.toLocaleString()}
                 </span>
@@ -121,17 +123,17 @@ export const OutstandingPaymentTab = ({
       <div className="bg-secondary/40 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <Wallet className="w-4 h-4 text-muted-foreground" />
-          <h4 className="font-medium text-foreground">Add Payment</h4>
+          <h4 className="font-medium text-foreground">{t('payments.outstandingTab.addPayment')}</h4>
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
           <Input
-            placeholder="Payment amount"
+            placeholder={t('payments.outstandingTab.paymentAmount')}
             value={outstandingAmount}
             onChange={(e) => setOutstandingAmount(e.target.value)}
           />
           <Button className="sm:w-[180px]" onClick={handleAddOutstanding}>
-            Add Payment
+            {t('payments.outstandingTab.addPayment')}
           </Button>
         </div>
       </div>

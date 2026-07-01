@@ -3,7 +3,6 @@
     "title": "Payments",
     "subtitle": "Manage your water bill payments",
     "adminSubtitle": "Manage customer payments and collections",
-
     "billPayment": {
       "title": "Bill Payment",
       "makePayment": "Make a Payment",
@@ -21,7 +20,6 @@
       "enterValidAmount": "⚠️ Please enter a valid amount",
       "failedToAddPayment": "Failed to add payment"
     },
-
     "billSummary": {
       "title": "Bill Summary",
       "monthlyBill": "Monthly Bill",
@@ -38,7 +36,6 @@
       "totalDue": "Total Due",
       "monthlyPlusOutstanding": "monthly + outstanding"
     },
-
     "bankSlipUpload": {
       "title": "Bank Slip Upload",
       "subtitle": "Already paid at a bank branch? Upload your bank slip and we'll verify your account within 24 hours.",
@@ -69,7 +66,6 @@
       "uploadSuccess": "Bank slip uploaded successfully!",
       "uploadFailed": "Failed to upload bank slip"
     },
-
     "bankSlipHistory": {
       "title": "Uploaded Bank Slips",
       "subtitle": "Track your submitted bank slips and verification status",
@@ -84,7 +80,6 @@
       "slipDeleteSuccess": "Slip deleted successfully",
       "slipDeleteFailed": "Failed to delete slip"
     },
-
     "bankSlipModal": {
       "title": "Bank Slip Details",
       "amount": "Amount",
@@ -101,7 +96,6 @@
       "bankSlipPdf": "Bank Slip PDF",
       "bankSlipImage": "Bank Slip"
     },
-
     "paymentHistory": {
       "title": "Payment History",
       "subtitle": "View your completed and pending payment records",
@@ -122,7 +116,6 @@
       "failedToLoadHistory": "Failed to load payment history",
       "failedToLoadData": "Failed to load payment data"
     },
-
     "filters": {
       "allYears": "All Years",
       "allMethods": "All Methods",
@@ -137,11 +130,11 @@
       "partial": "Partial",
       "monthly": "Monthly",
       "outstanding": "Outstanding",
+      "paid": "Paid",
       "am": "AM",
       "pm": "PM",
       "clear": "Clear"
     },
-
     "adminPayments": {
       "addPayment": "Add Payment",
       "back": "Back",
@@ -171,7 +164,6 @@
       "edit": "Edit",
       "customer": "Customer"
     },
-
     "monthlyTab": {
       "currentMonthSummary": "Current Month Summary",
       "month": "Month",
@@ -182,7 +174,6 @@
       "addPayment": "Add Payment",
       "paymentAmount": "Payment amount"
     },
-
     "outstandingTab": {
       "title": "Outstanding Payment Summary",
       "items": "items",
@@ -195,7 +186,6 @@
       "addPayment": "Add Payment",
       "paymentAmount": "Payment amount"
     },
-
     "customerDetails": {
       "title": "Customer Details",
       "accountInformation": "Account Information",
@@ -207,20 +197,17 @@
       "withMeter": "With Meter",
       "noMeter": "No Meter"
     },
-
     "customerSearch": {
       "findCustomer": "Find Customer",
       "searchPlaceholder": "Enter Name / Subscription Number",
       "noCustomersFound": "No customers found",
       "addPayment": "Add Payment"
     },
-
     "recentPayments": {
       "title": "Recently Added",
       "noRecentPayments": "No recent payments.",
       "failedToLoad": "Failed to load recent payments"
     },
-
     "pendingSlips": {
       "title": "Pending Bank Slips",
       "subtitle": "Review uploaded customer bank slips",
@@ -240,13 +227,12 @@
       "page": "Page",
       "of": "of"
     },
-
     "slipReview": {
       "title": "Review Bank Slip",
       "subtitle": "Verify and approve customer bank slips",
       "slipDetails": "Slip Details",
       "customer": "Customer",
-      "subscription": "Subscription",
+      "subscriptionNo": "Subscription Number",
       "reference": "Reference",
       "amount": "Amount",
       "uploadedAt": "Uploaded At",
@@ -267,7 +253,6 @@
       "failedToLoadPending": "Failed to load pending slips",
       "addRejectionReason": "Please add a rejection reason."
     },
-
     "rejectDialog": {
       "title": "Reject Bank Slip",
       "description": "Please add a reason. This message will be shown to the customer.",
@@ -276,7 +261,6 @@
       "cancel": "Cancel",
       "rejectAndNotify": "Reject & Notify"
     },
-
     "paymentResult": {
       "verifyingPayment": "Verifying Payment...",
       "pleaseWait": "Please wait while we confirm your payment.",
