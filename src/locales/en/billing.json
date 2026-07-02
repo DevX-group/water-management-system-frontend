@@ -1,0 +1,9 @@
+{
+  "title": "Billing",
+  "subtitle": "Calculate bills and manage invoices",
+  "tabs": {
+    "calculator": "Bill Calculator",
+    "viewBills": "View Bills"
+  },
+  "manageRates": "Manage Rates"
+}
