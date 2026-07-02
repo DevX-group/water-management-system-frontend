@@ -1,10 +1,9 @@
 import axios from 'axios';
+import { API_BASE_URL } from '@/config/api';
 import { getToken, removeToken } from '../utils/authUtils';
 
-const BASE_URL = 'http://localhost:8081/api';
-
 export const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -13,8 +12,26 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     const token = getToken();
+    const isFormData = typeof FormData !== 'undefined' && config.data instanceof FormData;
+
+    if (isFormData && config.headers) {
+      const headers = config.headers as any;
+      if (typeof headers.delete === 'function') {
+        headers.delete('Content-Type');
+        headers.delete('content-type');
+      } else {
+        delete headers['Content-Type'];
+        delete headers['content-type'];
+      }
+    }
+
     if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
+      const headers = config.headers as any;
+      if (typeof headers.set === 'function') {
+        headers.set('Authorization', `Bearer ${token}`);
+      } else {
+        headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

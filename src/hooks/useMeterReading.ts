@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
-
-const API_BASE = 'http://localhost:8081/api';
+import { api } from '@/services/api';
 
 const defaultForm = (): MeterReadingFormData => ({
   meterNumber: '', 
@@ -25,9 +24,8 @@ export const useMeterReading = () => {
   const fetchTodaysReadings = async () => {
     setLoadingReadings(true);
     try {
-      const res = await fetch(`${API_BASE}/meter-readings/today`);
-      if (!res.ok) throw new Error('Failed to load readings');
-      setTodaysReadings(await res.json());
+      const res = await api.get<MeterReading[]>('/meter-readings/today');
+      setTodaysReadings(res.data);
     } catch {
       toast({ title: 'Error', description: "Could not load today's readings.", variant: 'destructive' });
     } finally {
@@ -51,13 +49,8 @@ export const useMeterReading = () => {
       notes: formData.notes,
     };
     try {             // Submits the reading to the backend
-      const res = await fetch(`${API_BASE}/meter-readings`, {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(await res.text() || 'Submission failed');
-      const result = await res.json();
+      const res = await api.post('/meter-readings', payload);
+      const result = res.data;
       toast({ 
         title: 'Reading Submitted ✓', 
         description: `Meter ${formData.meterNumber} — Usage: ${result.usageUnits} units | Bill #${result.billId}: LKR ${Number(result.totalAmount).toFixed(2)}` 

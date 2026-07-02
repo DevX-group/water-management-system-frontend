@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { BlogPost, BlogFormData } from '@/types/blog';
-
-const API_URL = "http://localhost:8081/api/blogs";
+import { api } from '@/services/api';
 
 export const useAdminBlogs = () => {
   const [blogs, setBlogs] = useState<BlogPost[]>([]);
@@ -14,9 +13,8 @@ export const useAdminBlogs = () => {
 
   const fetchBlogs = async () => {
     try {
-      const response = await fetch(API_URL);
-      const data = await response.json();
-      setBlogs(data);
+      const response = await api.get<BlogPost[]>('/blogs');
+      setBlogs(response.data);
     } catch (error) {
       console.error("Error fetching blogs:", error);
     } finally {
@@ -37,23 +35,19 @@ export const useAdminBlogs = () => {
       const uploadData = new FormData();
       uploadData.append('file', imageFile);
       try {
-        const uploadRes = await fetch(`${API_URL}/upload-image`, { method: 'POST', body: uploadData });
-        if (uploadRes.ok) imageUrl = (await uploadRes.json()).imageUrl;
-        else { setUploading(false); return; }
+        const uploadRes = await api.post<{ imageUrl: string }>('/blogs/upload-image', uploadData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        imageUrl = uploadRes.data.imageUrl;
       } catch (err) { setUploading(false); return; }
     }
 
     try {
-      const response = await fetch(API_URL, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title: formData.title, category: formData.category, imageUrl, content: formData.content }),
-      });
-      if (response.ok) {
-        setShowForm(false);
-        setFormData({ title: '', category: '', image: '', content: '' });
-        setImageFile(null);
-        fetchBlogs();
-      }
+      await api.post('/blogs', { title: formData.title, category: formData.category, imageUrl, content: formData.content });
+      setShowForm(false);
+      setFormData({ title: '', category: '', image: '', content: '' });
+      setImageFile(null);
+      fetchBlogs();
     } catch (error) {
       console.error("Error creating blog:", error);
     } finally {
@@ -66,7 +60,7 @@ export const useAdminBlogs = () => {
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this post?")) return;
     try {
-      await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+      await api.delete(`/blogs/${id}`);
       fetchBlogs();
     } catch (error) {
       console.error("Error deleting blog:", error);

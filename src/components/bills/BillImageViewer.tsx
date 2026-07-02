@@ -1,9 +1,11 @@
 import '@/index.css';
 import React from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { FileText, Loader2, Download, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { api } from '@/services/api';
 
 interface Bill {
   billId:        string;
@@ -29,15 +31,45 @@ interface BillImageViewerProps {
   onImageError: () => void;
 }
 
-const getBillImageUrl = (billId: string) =>
-  `http://localhost:8081/api/bills/${billId}/image`;   // Replace with actual API endpoint
-
 export const BillImageViewer: React.FC<BillImageViewerProps> = ({
   bill, zoom, rotation, imageLoading, imageError,
   onClose, onDownload, onZoomIn, onZoomOut, onRotate, onImageLoad, onImageError,
-}) => (
-  <AnimatePresence>
-    {bill && (
+}) => {
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    let objectUrl: string | null = null;
+
+    const loadImage = async () => {
+      if (!bill) {
+        setImageUrl(null);
+        return;
+      }
+
+      try {
+        const response = await api.get(`/bills/${bill.billId}/image`, { responseType: 'blob' });
+        if (!active) return;
+        objectUrl = window.URL.createObjectURL(response.data as Blob);
+        setImageUrl(objectUrl);
+      } catch {
+        if (active) onImageError();
+      }
+    };
+
+    loadImage();
+
+    return () => {
+      active = false;
+      if (objectUrl) {
+        window.URL.revokeObjectURL(objectUrl);
+      }
+    };
+  }, [bill?.billId, onImageError]);
+
+  return (
+    <AnimatePresence>
+      {bill && (
       <motion.div
         key="bill-modal"
         initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
@@ -75,7 +107,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
           ) : (
             <motion.img
               key={bill.billId}
-              src={getBillImageUrl(bill.billId)}
+              src={imageUrl ?? undefined}
               alt={`Bill ${bill.billingPeriod}`}
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: imageLoading ? 0 : 1, scale: 1 }}
@@ -104,4 +136,5 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
       </motion.div>
     )}
   </AnimatePresence>
-);
+  );
+};

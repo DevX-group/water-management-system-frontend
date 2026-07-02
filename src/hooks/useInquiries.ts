@@ -2,8 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Inquiry } from '../types/inquiry';
-
-const API_BASE_URL = 'http://localhost:8081/api/inquiries';
+import { api } from '@/services/api';
 
 // Polls all inquiries — use in admin dashboard 
 export function useInquiries(pollMs = 1500) {
@@ -11,11 +10,8 @@ export function useInquiries(pollMs = 1500) {
 
   const refresh = useCallback(async () => {
     try {
-      const response = await fetch(API_BASE_URL);
-      if (response.ok) {
-        const data = await response.json();
-        setInquiries(data);
-      }
+      const response = await api.get<Inquiry[]>('/inquiries');
+      setInquiries(response.data);
     } catch (error) {
       console.error("Error fetching inquiries:", error);
     }
@@ -37,14 +33,9 @@ export function useInquiry(id: string | null, pollMs = 1500) {
   const refresh = useCallback(async () => {
     if (!id) { setInquiry(null); return; }
     try {
-      const response = await fetch(API_BASE_URL);
-      if (response.ok) {
-        const data: Inquiry[] = await response.json();
-        const found = data.find(t => t.id === id);
-        setInquiry(found || null);
-      } else {
-        setInquiry(null);
-      }
+      const response = await api.get<Inquiry[]>('/inquiries');
+      const found = response.data.find(t => t.id === id);
+      setInquiry(found || null);
     } catch (error) {
       console.error("Error fetching inquiry:", error);
     }
