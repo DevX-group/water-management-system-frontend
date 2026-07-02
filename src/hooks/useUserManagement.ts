@@ -11,11 +11,11 @@ import {
 } from '@/validations/userValidations';
 
 export const REGION_CONFIG = {
-  north:  { code: 'NOR', label: 'North' },
-  south:  { code: 'SOU', label: 'South' },
-  east:   { code: 'EAS', label: 'East' },
-  west:   { code: 'WES', label: 'West' },
-  center: { code: 'CEN', label: 'Center' },
+  north:  { code: 'R001', label: 'North' },
+  south:  { code: 'R002', label: 'South' },
+  east:   { code: 'R003', label: 'East' },
+  west:   { code: 'R004', label: 'West' },
+  center: { code: 'R005', label: 'Center' },
 };
 
 const EMPTY_FORM: CustomerFormData = {
