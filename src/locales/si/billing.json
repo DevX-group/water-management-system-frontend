@@ -78,5 +78,42 @@
     "PAID": "ගෙවා ඇත",
     "PENDING": "අපේක්ෂිත",
     "OVERDUE": "කල් ඉකුත්"
+  },
+  "history": {
+    "title": "බිල්පත්",
+    "titleHighlight": "ඉතිහාසය",
+    "subtitle": "{{sub}} සඳහා ඔබගේ සියලුම ජල බිල්පත් බලන්න සහ කළමනාකරණය කරන්න",
+    "stats": {
+      "totalPaid": "ගෙවූ මුළු මුදල",
+      "outstanding": "හිඟ මුදල",
+      "avgMonthly": "මාසික සාමාන්‍යය"
+    },
+    "filter": {
+      "searchPlaceholder": "කාලය අනුව සොයන්න (උදා. 2026-04)...",
+      "status": "තත්වය",
+      "allStatus": "සියලු තත්වයන්",
+      "paid": "ගෙවා ඇත",
+      "pending": "අපේක්ෂිත"
+    },
+    "table": {
+      "billingPeriod": "බිල්පත් කාලය",
+      "amount": "මුදල",
+      "usage": "භාවිතය",
+      "status": "තත්වය",
+      "dueDate": "ගෙවීම් දිනය",
+      "units": "ඒකක",
+      "showing": "පෙන්වමින්",
+      "of": "න්",
+      "previous": "පෙර",
+      "next": "ඊළඟ",
+      "noBills": "බිල්පත් හමු නොවීය."
+    },
+    "viewer": {
+      "bill": "බිල්පත",
+      "units": "ඒකක",
+      "due": "ගෙවිය යුතු දිනය:",
+      "id": "අංකය:",
+      "imageNotAvailable": "බිල්පත් රූපය ලබා ගත නොහැක"
+    }
   }
 }

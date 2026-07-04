@@ -1,6 +1,7 @@
 import '@/index.css';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { FileText, Loader2, Download, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -35,7 +36,9 @@ const getBillImageUrl = (billId: string) =>
 export const BillImageViewer: React.FC<BillImageViewerProps> = ({
   bill, zoom, rotation, imageLoading, imageError,
   onClose, onDownload, onZoomIn, onZoomOut, onRotate, onImageLoad, onImageError,
-}) => (
+}) => {
+  const { t } = useTranslation('billing');
+  return (
   <AnimatePresence>
     {bill && (
       <motion.div
@@ -47,8 +50,8 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
          // Header
         <div className="flex items-center justify-between px-6 py-4 bg-black/60 border-b border-white/10 flex-shrink-0">
           <div>
-            <p className="text-white font-bold text-base">Bill — {bill.billingPeriod}</p>
-            <p className="text-white/50 text-xs mt-0.5">LKR {bill.totalAmount?.toLocaleString()} · {bill.usageUnits} units</p>
+            <p className="text-white font-bold text-base">{t('history.viewer.bill')} — {bill.billingPeriod}</p>
+            <p className="text-white/50 text-xs mt-0.5">{t('currency')} {bill.totalAmount?.toLocaleString()} · {bill.usageUnits} {t('history.viewer.units')}</p>
           </div>
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={onZoomOut}><ZoomOut className="w-4 h-4" /></Button>
@@ -70,7 +73,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
           {imageError ? (
             <div className="text-center text-white/40">
               <FileText className="w-16 h-16 mx-auto mb-3 opacity-30" />
-              <p className="text-sm">Bill image not available</p>
+              <p className="text-sm">{t('history.viewer.imageNotAvailable')}</p>
             </div>
           ) : (
             <motion.img
@@ -97,11 +100,12 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
         <div className="flex items-center justify-center gap-6 px-6 py-3 bg-black/60 border-t border-white/10 flex-shrink-0">
           <Badge variant="secondary" className={`rounded-full px-3 py-1 ${
             bill.status?.toLowerCase() === 'paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
-          }`}>{bill.status}</Badge>
-          <span className="text-white/40 text-xs">Due: {bill.dueDate}</span>
-          <span className="text-white/40 text-xs">ID: {bill.billId}</span>
+          }`}>{bill.status ? t(`status.${bill.status.toUpperCase()}`, { defaultValue: bill.status }) : ''}</Badge>
+          <span className="text-white/40 text-xs">{t('history.viewer.due')} {bill.dueDate}</span>
+          <span className="text-white/40 text-xs">{t('history.viewer.id')} {bill.billId}</span>
         </div>
       </motion.div>
     )}
   </AnimatePresence>
-);
+  );
+};

@@ -84,5 +84,42 @@
     "PAID": "PAID",
     "PENDING": "PENDING",
     "OVERDUE": "OVERDUE"
+  },
+  "history": {
+    "title": "Billing",
+    "titleHighlight": "History",
+    "subtitle": "View and manage all your water bills for {{sub}}",
+    "stats": {
+      "totalPaid": "Total Paid",
+      "outstanding": "Outstanding",
+      "avgMonthly": "Avg Monthly"
+    },
+    "filter": {
+      "searchPlaceholder": "Search by period (e.g. 2026-04)...",
+      "status": "Status",
+      "allStatus": "All Status",
+      "paid": "Paid",
+      "pending": "Pending"
+    },
+    "table": {
+      "billingPeriod": "Billing Period",
+      "amount": "Amount",
+      "usage": "Usage",
+      "status": "Status",
+      "dueDate": "Due Date",
+      "units": "units",
+      "showing": "Showing",
+      "of": "of",
+      "previous": "Previous",
+      "next": "Next",
+      "noBills": "No bills found."
+    },
+    "viewer": {
+      "bill": "Bill",
+      "units": "units",
+      "due": "Due:",
+      "id": "ID:",
+      "imageNotAvailable": "Bill image not available"
+    }
   }
 }
