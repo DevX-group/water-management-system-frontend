@@ -5,5 +5,78 @@
     "calculator": "බිල්පත් ගණනය",
     "viewBills": "බිල්පත් බලන්න"
   },
-  "manageRates": "ගාස්තු කළමනාකරණය"
+  "manageRates": "ගාස්තු කළමනාකරණය",
+  "currency": "රු.",
+  "connectionType": {
+    "label": "සම්බන්ධතා වර්ගය",
+    "metered": {
+      "label": "මීටර සහිත",
+      "description": "ස්ථර ඒකක ගාස්තු සහිත භාවිත පාදක බිල්පත් කිරීම"
+    },
+    "nonMetered": {
+      "label": "මීටර රහිත",
+      "description": "භාවිතය නොසලකා ස්ථාවර ගාස්තු බිල්පත් කිරීම"
+    }
+  },
+  "calculator": {
+    "title": "ඔබේ බිල්පත ගණනය කරන්න",
+    "monthlyUsage": "මාසික භාවිතය",
+    "units": "ඒකක",
+    "enterUsage": "ඒකක වලින් භාවිතය ඇතුළත් කරන්න",
+    "rateStructure": "ගාස්තු ව්‍යුහය",
+    "baseCharge": "මූලික ගාස්තුව",
+    "taxRate": "බදු අනුපාතය",
+    "perUnit": "/ඒකකය",
+    "fixedBaseNote": "ස්ථාවර මූලික ගාස්තුව — ස්ථර ගාස්තු නැත"
+  },
+  "breakdown": {
+    "title": "බිල්පත් විස්තරය",
+    "baseCharge": "මූලික ගාස්තුව",
+    "usageCharge": "භාවිත ගාස්තුව (ඒකක {{units}})",
+    "subtotal": "උප එකතුව",
+    "tax": "බදු ({{rate}}%)",
+    "totalAmount": "මුළු මුදල"
+  },
+  "search": {
+    "title": "දායක අංකය මගින් බිල්පත් සොයන්න",
+    "placeholder": "උදා., SUB-0001",
+    "searching": "සොයමින්...",
+    "searchBtn": "සොයන්න",
+    "billsFor": "{{sub}} සඳහා බිල්පත්",
+    "loading": "පූරණය වෙමින්...",
+    "loadingBills": "බිල්පත් පූරණය වෙමින්...",
+    "billsFound": "බිල්පත් {{count}}ක් හමු විය",
+    "billsFound_plural": "බිල්පත් {{count}}ක් හමු විය",
+    "noBills": "මෙම දායක අංකයට බිල්පත් හමු නොවීය.",
+    "billId": "බිල්පත #{{id}}",
+    "period": "කාලය: {{period}}",
+    "billDate": "බිල්පත් දිනය",
+    "dueDate": "ගෙවීම් දිනය",
+    "usage": "භාවිතය",
+    "balanceDue": "ගෙවිය යුතු ශේෂය",
+    "viewDetails": "විස්තර බලන්න",
+    "previous": "පෙර",
+    "next": "ඊළඟ"
+  },
+  "rateCard": {
+    "edit": "සංස්කරණය",
+    "cancel": "අවලංගු",
+    "save": "සුරකින්න",
+    "baseChargeLKR": "මූලික ගාස්තුව (රු.)",
+    "taxRatePercent": "බදු අනුපාතය (%)",
+    "tierLimits": "ස්ථර සීමා",
+    "tier1Limit": "ස්ථරය 1 සීමාව (ඒකක)",
+    "tier2Limit": "ස්ථරය 2 සීමාව (ඒකක)",
+    "tierRates": "ස්ථර ගාස්තු (රු. / ඒකකය)",
+    "tierLabel": "ස්ථරය {{tier}} — ඒකක {{range}}",
+    "baseCharge": "මූලික ගාස්තුව",
+    "taxRate": "බදු අනුපාතය",
+    "tierRatesTitle": "ස්ථර ගාස්තු",
+    "fixedBaseNote": "ස්ථාවර මූලික ගාස්තුව පමණි — ස්ථර ඒකක ගාස්තු නැත"
+  },
+  "status": {
+    "PAID": "ගෙවා ඇත",
+    "PENDING": "අපේක්ෂිත",
+    "OVERDUE": "කල් ඉකුත්"
+  }
 }

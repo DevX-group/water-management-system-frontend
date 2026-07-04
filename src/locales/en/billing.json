@@ -5,5 +5,84 @@
     "calculator": "Bill Calculator",
     "viewBills": "View Bills"
   },
-  "manageRates": "Manage Rates"
+  "manageRates": "Manage Rates",
+  "currency": "LKR",
+
+  "connectionType": {
+    "label": "Connection Type",
+    "metered": {
+      "label": "Metered",
+      "description": "Usage-based billing with tiered unit rates"
+    },
+    "nonMetered": {
+      "label": "Non-Metered",
+      "description": "Fixed-rate billing regardless of usage"
+    }
+  },
+
+  "calculator": {
+    "title": "Calculate Your Bill",
+    "monthlyUsage": "Monthly Usage",
+    "units": "units",
+    "enterUsage": "Enter usage in units",
+    "rateStructure": "Rate Structure",
+    "baseCharge": "Base Charge",
+    "taxRate": "Tax Rate",
+    "perUnit": "/unit",
+    "fixedBaseNote": "Fixed base charge — no tiered rates"
+  },
+
+  "breakdown": {
+    "title": "Bill Breakdown",
+    "baseCharge": "Base Charge",
+    "usageCharge": "Usage Charge ({{units}} units)",
+    "subtotal": "Subtotal",
+    "tax": "Tax ({{rate}}%)",
+    "totalAmount": "Total Amount"
+  },
+
+  "search": {
+    "title": "Search Bills by Subscription Number",
+    "placeholder": "e.g., SUB-0001",
+    "searching": "Searching...",
+    "searchBtn": "Search",
+    "billsFor": "Bills for {{sub}}",
+    "loading": "Loading...",
+    "loadingBills": "Loading bills...",
+    "billsFound": "{{count}} bill found",
+    "billsFound_plural": "{{count}} bills found",
+    "noBills": "No bills found for this subscription number.",
+    "billId": "Bill #{{id}}",
+    "period": "Period: {{period}}",
+    "billDate": "Bill Date",
+    "dueDate": "Due Date",
+    "usage": "Usage",
+    "balanceDue": "Balance Due",
+    "viewDetails": "View Details",
+    "previous": "Previous",
+    "next": "Next"
+  },
+
+  "rateCard": {
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "baseChargeLKR": "Base Charge (LKR)",
+    "taxRatePercent": "Tax Rate (%)",
+    "tierLimits": "Tier Limits",
+    "tier1Limit": "Tier 1 limit (units)",
+    "tier2Limit": "Tier 2 limit (units)",
+    "tierRates": "Tier Rates (LKR / unit)",
+    "tierLabel": "Tier {{tier}} — {{range}} units",
+    "baseCharge": "Base Charge",
+    "taxRate": "Tax Rate",
+    "tierRatesTitle": "Tier Rates",
+    "fixedBaseNote": "Fixed base charge only — no tiered unit rates"
+  },
+
+  "status": {
+    "PAID": "PAID",
+    "PENDING": "PENDING",
+    "OVERDUE": "OVERDUE"
+  }
 }
