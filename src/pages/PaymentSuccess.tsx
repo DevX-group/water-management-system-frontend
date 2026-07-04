@@ -1,6 +1,7 @@
 import '@/index.css';
 import { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { getPaymentStatus } from "@/services/paymentService";
 import { PaymentResultCard, PaymentStatus } from "@/components/payments/PaymentResultComponents";
@@ -8,6 +9,7 @@ import { PaymentResultCard, PaymentStatus } from "@/components/payments/PaymentR
 export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation('payments');
 
   const orderId = searchParams.get("order_id");
   const [status, setStatus] = useState<PaymentStatus>("VERIFYING");
@@ -52,9 +54,9 @@ export default function PaymentSuccess() {
           status={status}
           orderId={orderId}
           onPrimaryClick={() => navigate("/customer/payments?tab=history")}
-          primaryLabel="View History"
+          primaryLabel={t("payments.paymentResult.viewHistory")}
           onSecondaryClick={() => navigate("/customer/dashboard")}
-          secondaryLabel="Dashboard"
+          secondaryLabel={t("payments.paymentResult.dashboard")}
         />
       </div>
     </MainLayout>
