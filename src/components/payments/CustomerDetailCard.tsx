@@ -3,7 +3,7 @@ import { PaymentCustomerInfoResponse } from '@/types/payment';
 import { useTranslation } from 'react-i18next';
 
 export const CustomerDetailCard = ({ customerInfo }: { customerInfo: PaymentCustomerInfoResponse | null }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   if (!customerInfo) return null;
 
   return (

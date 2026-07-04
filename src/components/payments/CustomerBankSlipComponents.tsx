@@ -39,7 +39,7 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
   slipSectionRef, bankDetails, slipForm, setSlipForm, dragging, setDragging, submitSuccess,
   uploading, fileInputRef, handleFileInput, handleDrop, removeFile, handleSlipSubmit
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <Card ref={slipSectionRef} className="shadow-card border-none">
       <CardHeader>
@@ -213,7 +213,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
   slipTotalPages, slipStart, slipEnd, slipTotalItems, slipPage,
   filterYear, setFilterYear, filterStatus, setFilterStatus, onFilterChange
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   const hasActiveFilter = filterYear !== undefined || filterStatus !== undefined;
 
   const handleYearChange = (val: string) => {
@@ -399,7 +399,7 @@ interface CustomerBankSlipModalProps {
 export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
   selectedSlip, setSelectedSlip, statusClass, handleDeleteSlip
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   if (!selectedSlip) return null;
 
   return (

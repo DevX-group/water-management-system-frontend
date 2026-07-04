@@ -40,7 +40,7 @@ type TabKey = 'monthly' | 'outstanding';
 export const PaymentsAddingPage = () => {
   const navigate = useNavigate();
   const { subscriptionNumber } = useParams<{ subscriptionNumber: string }>();
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
 
   const [activeTab, setActiveTab] = useState<TabKey>('monthly');
   const [monthlyAmount, setMonthlyAmount] = useState('');

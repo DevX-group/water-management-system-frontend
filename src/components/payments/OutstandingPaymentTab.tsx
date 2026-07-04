@@ -28,7 +28,7 @@ export const OutstandingPaymentTab = ({
   setOutstandingAmount,
   handleAddOutstanding,
 }: OutstandingPaymentTabProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <div className="space-y-4">
       <div className="bg-secondary/40 rounded-xl p-4">
@@ -57,21 +57,21 @@ export const OutstandingPaymentTab = ({
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t('payments.outstandingTab.totalBill')}</span>
                     <span className="font-medium text-foreground">
-                      Rs. {Number(b.totalAmount ?? 0).toLocaleString()}
+                      {t('payments.billPayment.currency')} {Number(b.totalAmount ?? 0).toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">{t('payments.outstandingTab.alreadyPaid')}</span>
                     <span className="font-medium text-success">
-                      Rs. {Number(b.paidAmount ?? 0).toLocaleString()}
+                      {t('payments.billPayment.currency')} {Number(b.paidAmount ?? 0).toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="font-medium text-foreground">{t('payments.outstandingTab.balanceDue')}</span>
                     <span className="font-bold text-primary">
-                      Rs. {Number(b.balanceDue ?? 0).toLocaleString()}
+                      {t('payments.billPayment.currency')} {Number(b.balanceDue ?? 0).toLocaleString()}
                     </span>
                   </div>
 
@@ -112,7 +112,7 @@ export const OutstandingPaymentTab = ({
               <div className="flex justify-between pt-2 border-t border-none">
                 <span className="font-medium text-foreground">{t('payments.outstandingTab.totalDue')}</span>
                 <span className="text-xl font-bold text-primary">
-                  Rs. {totalOutstandingAmount.toLocaleString()}
+                  {t('payments.billPayment.currency')} {totalOutstandingAmount.toLocaleString()}
                 </span>
               </div>
             </>

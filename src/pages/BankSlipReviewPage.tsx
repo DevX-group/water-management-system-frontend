@@ -10,7 +10,7 @@ import { useTranslation } from "react-i18next";
 import { SlipImageViewer, SlipDetailsCard, RejectDialog } from "@/components/payments/SlipReviewComponents";
 
 export const BankSlipReviewPage: React.FC = () => {
-    const { t } = useTranslation();
+    const { t } = useTranslation('payments');
     const [comment, setComment] = useState("");
     const navigate = useNavigate();
     const { slipId } = useParams<{ slipId: string }>();

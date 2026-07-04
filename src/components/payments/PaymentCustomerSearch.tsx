@@ -10,7 +10,7 @@ import { getPaymentCustomerInfo } from '@/services/paymentService';
 import { useTranslation } from 'react-i18next';
 
 export const PaymentCustomerSearch = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCustomer, setSelectedCustomer] = useState<PaymentCustomerInfoResponse | null>(null);

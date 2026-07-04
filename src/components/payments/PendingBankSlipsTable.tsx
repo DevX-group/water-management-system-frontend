@@ -11,7 +11,7 @@ import { getAllPendingSlips, getPendingSlips } from '@/services/bankSlipService'
 import { useTranslation } from 'react-i18next';
 
 export const PendingBankSlipsTable = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('payments');
   const navigate = useNavigate();
   const [slipPage, setSlipPage] = useState(0);
   const [slipSearch, setSlipSearch] = useState('');

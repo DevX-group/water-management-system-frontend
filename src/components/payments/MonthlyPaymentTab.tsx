@@ -25,7 +25,7 @@ export const MonthlyPaymentTab = ({
   setMonthlyAmount,
   handleAddMonthly,
 }: MonthlyPaymentTabProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <div className="space-y-4">
       <div className="bg-secondary/40 rounded-xl p-4">
@@ -45,21 +45,21 @@ export const MonthlyPaymentTab = ({
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t('payments.monthlyTab.monthlyBill')}</span>
             <span className="font-medium text-foreground">
-              Rs. {monthlyBill.toLocaleString()}
+              {t('payments.billPayment.currency')} {monthlyBill.toLocaleString()}
             </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-muted-foreground">{t('payments.monthlyTab.alreadyPaid')}</span>
             <span className="font-medium text-success">
-              Rs. {alreadyPaid.toLocaleString()}
+              {t('payments.billPayment.currency')} {alreadyPaid.toLocaleString()}
             </span>
           </div>
 
           <div className="flex justify-between pt-2 border-t border-border">
             <span className="font-medium text-foreground">{t('payments.monthlyTab.totalDue')}</span>
             <span className="text-xl font-bold text-primary">
-              Rs. {monthlyDue.toLocaleString()}
+              {t('payments.billPayment.currency')} {monthlyDue.toLocaleString()}
             </span>
           </div>
 

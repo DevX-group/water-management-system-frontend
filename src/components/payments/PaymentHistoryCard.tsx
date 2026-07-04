@@ -58,7 +58,7 @@ export const PaymentHistoryCard = ({
   setFilterMethod,
   onFilterChange,
 }: PaymentHistoryCardProps) => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('payments');
   const hasActiveFilter = filterYear !== undefined || filterMethod !== undefined;
 
   const handleYearChange = (val: string) => {
@@ -194,14 +194,14 @@ export const PaymentHistoryCard = ({
                       })()}
                     </td>
                     <td className="py-3.5 px-4 font-mono font-medium text-foreground">
-                      Rs. {Number(p.amount).toLocaleString()}
+                      {t('payments.billPayment.currency')} {Number(p.amount).toLocaleString()}
                     </td>
                     <td className="py-3.5 px-4">
                       <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-secondary text-xs font-medium text-muted-foreground border border-border/50">
                         {getPaymentIcon(p.paymentMethod)}
                         {p.paymentMethod === 'ONLINE' ? t('payments.filters.online') :
-                         p.paymentMethod === 'BANK_TRANSFER' ? t('payments.filters.bankTransfer') :
-                         t('payments.filters.manual')}
+                          p.paymentMethod === 'BANK_TRANSFER' ? t('payments.filters.bankTransfer') :
+                            t('payments.filters.manual')}
                       </span>
                     </td>
                     <td className="py-3.5 px-4">
@@ -213,7 +213,7 @@ export const PaymentHistoryCard = ({
                             }`}
                         >
                           {p.paymentMethod === "MANUAL" && p.paymentType
-                            ? `${t(`payments.filters.${p.paymentType.toLowerCase()}`, { defaultValue: p.paymentType })}.${t(`payments.filters.${p.status.toLowerCase()}`, { defaultValue: p.status })}` 
+                            ? `${t(`payments.filters.${p.paymentType.toLowerCase()}`, { defaultValue: p.paymentType })}.${t(`payments.filters.${p.status.toLowerCase()}`, { defaultValue: p.status })}`
                             : t(`payments.filters.${p.status.toLowerCase()}`, { defaultValue: p.status })}
                         </span>
                         {p.paymentMethod === "MANUAL" && (

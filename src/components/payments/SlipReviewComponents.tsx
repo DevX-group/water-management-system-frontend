@@ -65,7 +65,7 @@ interface SlipDetailsCardProps {
 }
 
 export const SlipDetailsCard: React.FC<SlipDetailsCardProps> = ({ slip, isReviewed, handleApprove, onRejectClick }) => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('payments');
   return (
     <div className="lg:w-[40%] h-[calc(100vh-260px)]">
       <div className="bg-card p-6 rounded-xl h-full flex flex-col">
@@ -152,7 +152,7 @@ interface RejectDialogProps {
 }
 
 export const RejectDialog: React.FC<RejectDialogProps> = ({ rejectOpen, setRejectOpen, comment, setComment, handleReject }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
       <DialogContent className="sm:max-w-[520px]">

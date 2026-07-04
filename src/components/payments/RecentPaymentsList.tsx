@@ -13,7 +13,7 @@ const statusStyles = {
 } as const;
 
 export const RecentPaymentsList = () => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('payments');
   const [recentPayments, setRecentPayments] = useState<RecentPaymentResponse[]>([]);
 
   useEffect(() => {
@@ -71,7 +71,7 @@ export const RecentPaymentsList = () => {
                     {payment.accountHolderName}
                   </p>
                   <span className="font-medium text-primary shrink-0 text-sm">
-                    Rs. {payment.amountPaid.toLocaleString()}
+                    {t('payments.billPayment.currency')} {payment.amountPaid.toLocaleString()}
                   </span>
                 </div>
 

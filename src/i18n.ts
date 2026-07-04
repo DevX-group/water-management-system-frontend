@@ -2,8 +2,8 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import enTranslation from "./locales/en/payments.json";
-import siTranslation from "./locales/si/payments.json";
+import enPayments from "./locales/en/payments.json";
+import siPayments from "./locales/si/payments.json";
 import enBilling from "./locales/en/billing.json";
 import siBilling from "./locales/si/billing.json";
 
@@ -13,11 +13,11 @@ i18n
   .init({
     resources: {
       en: {
-        translation: enTranslation,
+        payments: enPayments,
         billing: enBilling,
       },
       si: {
-        translation: siTranslation,
+        payments: siPayments,
         billing: siBilling,
       },
     },
