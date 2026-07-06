@@ -130,13 +130,13 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 
                     {(formData as ScheduledMessage).schedule.type === 'Recurring' ? (
                       <div className="space-y-2">
-                        <Label>Day of Month</Label>
+                        <Label>Recurring Day of Each Month</Label>
                         <Select value={(formData as ScheduledMessage).schedule.dayOfMonth?.toString()}
                           onValueChange={(val) => handleScheduleChange('dayOfMonth', parseInt(val))}>
                           <SelectTrigger><SelectValue placeholder="Select day" /></SelectTrigger>
                           <SelectContent className="max-h-48">
                             {Array.from({ length: 28 }, (_, i) => i + 1).map(d => (
-                              <SelectItem key={d} value={d.toString()}>{d}th of every month</SelectItem>
+                              <SelectItem key={d} value={d.toString()}>{d}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
