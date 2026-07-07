@@ -13,8 +13,10 @@ const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 
 
 
 import { useCustomerInquiryPage } from '@/hooks/useCustomerInquiryPage';
+import { useTranslation } from 'react-i18next';
 
 export const CustomerInquiryPage: React.FC = () => {
+  const { t } = useTranslation('inquiry');
   const {
     form,
     errors,
@@ -42,8 +44,8 @@ export const CustomerInquiryPage: React.FC = () => {
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         <motion.div variants={containerVariants} initial="hidden" animate="visible">
           <motion.div variants={itemVariants} className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Support <span className="text-gradient">Center</span></h1>
-            <p className="text-muted-foreground text-lg">We're here to help with your water management needs</p>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('title')} <span className="text-gradient">{t('titleHighlight')}</span></h1>
+            <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
           </motion.div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {inquiries.length > 0 && (
@@ -64,7 +66,7 @@ export const CustomerInquiryPage: React.FC = () => {
                 ) : (
                   <motion.div key="form" variants={itemVariants}>
                     <InquiryFormCard form={form} setForm={setForm} errors={errors} submitting={submitting} onSubmit={handleSubmit} />
-                    <p className="text-center text-xs text-muted-foreground mt-6 italic">Average response time: 5-10 minutes during business hours.</p>
+                    <p className="text-center text-xs text-muted-foreground mt-6 italic">{t('avgResponseTime')}</p>
                   </motion.div>
                 )}
               </AnimatePresence>

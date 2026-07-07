@@ -1,0 +1,47 @@
+{
+  "title": "Support",
+  "titleHighlight": "Center",
+  "subtitle": "We're here to help with your water management needs",
+  "avgResponseTime": "Average response time: 5-10 minutes during business hours.",
+  "history": {
+    "title": "Previous Inquiries",
+    "general": "General"
+  },
+  "form": {
+    "title": "Submit a Support Inquiry",
+    "fullName": "Full Name",
+    "namePlaceholder": "Kaweesha Weerasinghe",
+    "email": "Email Address",
+    "emailPlaceholder": "kawee@example.com",
+    "category": "Issue Category",
+    "categorySelect": "Select a category...",
+    "message": "Message Details",
+    "messagePlaceholder": "Please provide details about the issue...",
+    "submitting": "Sending Inquiry...",
+    "submit": "Submit Support Request"
+  },
+  "categories": {
+    "Billing": "Billing & Payments",
+    "Technical": "Technical Issue",
+    "Account": "Account & Access",
+    "General": "General Inquiry"
+  },
+  "chat": {
+    "historyTitle": "{{category}} Inquiry",
+    "liveSupportTitle": "Live Support Session",
+    "connected": "Connected with Support Team",
+    "resolvedBanner": "This inquiry has been resolved.",
+    "statusBanner": "This inquiry is currently <1>{{status}}</1>. Our team will respond shortly.",
+    "typePlaceholder": "Type your message..."
+  },
+  "status": {
+    "open": "Open",
+    "pending": "Pending",
+    "resolved": "Resolved"
+  },
+  "validation": {
+    "nameRequired": "Name is required",
+    "emailRequired": "Valid email required",
+    "messageRequired": "Please describe your issue"
+  }
+}

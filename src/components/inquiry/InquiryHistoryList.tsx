@@ -6,13 +6,18 @@ import { Button } from '@/components/ui/button';
 import { History, ArrowLeft, ArrowRight } from 'lucide-react';
 import type { Inquiry } from '@/types/inquiry';
 
+import { useTranslation } from 'react-i18next';
+
 export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
-  const config = {
-    open:     { label: 'Open',     className: 'bg-primary/10 text-blue-400 border-primary/20' },
-    pending:  { label: 'Pending',  className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
-    resolved: { label: 'Resolved', className: 'bg-success/10 text-emerald-400 border-success/20' },
-  }[status] ?? { label: status, className: 'bg-secondary text-muted-foreground' };
-  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${config.className}`}>{config.label}</span>;
+  const { t } = useTranslation('inquiry');
+  const config: Record<string, { labelKey: string; className: string }> = {
+    open:     { labelKey: 'status.open',     className: 'bg-primary/10 text-blue-400 border-primary/20' },
+    pending:  { labelKey: 'status.pending',  className: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
+    resolved: { labelKey: 'status.resolved', className: 'bg-success/10 text-emerald-400 border-success/20' },
+  };
+  const badgeConfig = config[status.toLowerCase()] ?? { labelKey: status, className: 'bg-secondary text-muted-foreground' };
+  const label = config[status.toLowerCase()] ? t(badgeConfig.labelKey) : status;
+  return <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${badgeConfig.className}`}>{label}</span>;
 };
 
 interface InquiryHistoryListProps {
@@ -27,11 +32,13 @@ interface InquiryHistoryListProps {
 export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
   inquiries, historyIndex, itemsPerPage, viewingHistoryId, setViewingHistoryId, setHistoryIndex,
 }) => {
+  const { t } = useTranslation('inquiry');
+  
   if (inquiries.length === 0) return null;
   return (
     <Card className="shadow-card border-none overflow-hidden bg-card">
       <div className="p-4 bg-primary/5 border-b flex items-center gap-2 text-primary font-semibold text-sm">
-        <History size={16} />  Previous Inquiries
+        <History size={16} />  {t('history.title')}
       </div>
       <CardContent className="p-2 space-y-1 max-h-[600px] overflow-y-auto">
         {inquiries.slice(historyIndex, historyIndex + itemsPerPage).map((inq) => (
@@ -42,7 +49,7 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
             )}
           >
             <div className="flex items-center justify-between mb-1 gap-2">
-              <span className="text-xs font-semibold truncate">{inq.category || 'General'}</span>
+              <span className="text-xs font-semibold truncate">{inq.category ? t(`categories.${inq.category}`) : t('history.general')}</span>
               <StatusBadge status={inq.status} />
             </div>
             <p className="text-[11px] text-muted-foreground truncate">{inq.messages[inq.messages.length - 1]?.text}</p> {/*Last message preview*/} 

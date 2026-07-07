@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { InquiryFormData, InquiryFormErrors } from '@/types/inquiry';
 import { useInquiry, useInquiries } from '@/hooks/useInquiries';
+import { useTranslation } from 'react-i18next';
 
 const API_BASE_URL = 'http://localhost:8081/api/inquiries';
 
@@ -24,11 +25,13 @@ export const useCustomerInquiryPage = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); 
   }, [inquiry?.messages.length, showTyping, historyInquiry?.messages.length]);
 
+  const { t } = useTranslation('inquiry');
+
   const validate = (): boolean => {
     const e: InquiryFormErrors = {};
-    if (!form.name.trim()) e.name = 'Name is required';
-    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = 'Valid email required';
-    if (!form.message.trim()) e.message = 'Please describe your issue';
+    if (!form.name.trim()) e.name = t('validation.nameRequired');
+    if (!form.email.trim() || !/\S+@\S+\.\S+/.test(form.email)) e.email = t('validation.emailRequired');
+    if (!form.message.trim()) e.message = t('validation.messageRequired');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
