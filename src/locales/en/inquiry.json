@@ -43,5 +43,22 @@
     "nameRequired": "Name is required",
     "emailRequired": "Valid email required",
     "messageRequired": "Please describe your issue"
+  },
+  "admin": {
+    "title": "Customer",
+    "titleHighlight": "Inquiries",
+    "open": "Open",
+    "resolved": "Resolved",
+    "search": "Search tickets...",
+    "filter": {
+      "all": "all",
+      "open": "open",
+      "pending": "pending",
+      "resolved": "resolved"
+    },
+    "noInquirySelected": "No Inquiry Selected",
+    "noInquiryDesc": "Select a conversation from the list to view history and respond.",
+    "resolveBtn": "Resolve",
+    "writeResponse": "Write your response..."
   }
 }

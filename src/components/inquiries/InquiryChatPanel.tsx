@@ -17,17 +17,20 @@ interface InquiryChatPanelProps {
   onResolve:       (id: string) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
   selectedInquiry, replyText, setReplyText,
   messagesEndRef, onSendReply, onResolve,
 }) => {
+  const { t } = useTranslation('inquiry');
   return (
     <Card className="shadow-card border-none h-full flex flex-col overflow-hidden bg-card">
       {!selectedInquiry ? (    // Empty State when no inquiry is selected
         <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground p-12 text-center">
           <MessageSquare size={48} className="opacity-10 mb-4" />
-          <h3 className="text-lg font-medium">No Inquiry Selected</h3>
-          <p className="text-sm max-w-xs">Select a conversation from the list to view history and respond.</p>
+          <h3 className="text-lg font-medium">{t('admin.noInquirySelected')}</h3>
+          <p className="text-sm max-w-xs">{t('admin.noInquiryDesc')}</p>
         </div>
       ) : (
         <>
@@ -43,7 +46,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
             <div className="flex gap-2">
               {selectedInquiry.status !== 'resolved' && (  // Show Resolve button only if inquiry is not already resolved
                 <Button variant="outline" size="sm" onClick={() => onResolve(selectedInquiry.id)}>
-                  <CheckCircle className="w-3 h-3 mr-1" /> Resolve
+                  <CheckCircle className="w-3 h-3 mr-1" /> {t('admin.resolveBtn')}
                 </Button>
               )}
               <Badge className={selectedInquiry.status === 'open' ? 'bg-primary' : 'bg-success'}>
@@ -72,7 +75,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
                 <textarea
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
-                  placeholder="Write your response..."
+                  placeholder={t('admin.writeResponse')}
                   rows={2}
                   className="w-full rounded-xl border-none bg-background p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none shadow-inner"
                 />
