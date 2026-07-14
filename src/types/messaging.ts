@@ -2,7 +2,7 @@
 export type MessageChannel = 'SMS' | 'Email';
 export type ScheduleType = 'Recurring' | 'One-Time';
 export type RecipientType = 'All Customers' | 'Overdue Customers';
-export type TriggerType = 'PAYMENT_CONFIRMED' | 'EMAIL_VERIFICATION' | 'PHONE_VERIFICATION';
+export type TriggerType = 'Payment Confirmed' | 'Email Verification' | 'Phone Verification';
 
 export interface TemplateSection {
   id: string;

@@ -43,7 +43,7 @@ const defaultTriggeredMessage: TriggeredMessage = {
     email: { isCustom: true, sections: [], content: '' },
   },
   isDefault: false,
-  triggerType: 'PAYMENT_CONFIRMED',
+  triggerType: 'Payment Confirmed',
   active: true,
 };
 

@@ -2,14 +2,12 @@ import type { TriggerType } from '@/types/messaging';
 
 // Shared formatting helpers for messaging UI.
 /**
- * Formats a trigger type enum value into a human-readable label.
- * e.g. 'PAYMENT_CONFIRMED' → 'Payment Confirmed'
+ * Returns the human-readable label for a trigger type.
+ * Values are already labels (e.g. 'Payment Confirmed') as serialised
+ * by the backend @JsonValue, so no transformation is required.
  */
 export const formatTriggerType = (triggerType: TriggerType): string => {
-  return triggerType
-    .split('_')
-    .map(word => word.charAt(0) + word.slice(1).toLowerCase())
-    .join(' ');
+  return triggerType;
 };
 
 /**

@@ -45,7 +45,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
     : ['Recurring', 'One-Time']);
   const triggerTypeOptions: TriggerType[] = (enumOptions?.triggerTypes?.length
     ? enumOptions.triggerTypes
-    : ['PAYMENT_CONFIRMED', 'EMAIL_VERIFICATION', 'PHONE_VERIFICATION']);
+    : ['Payment Confirmed', 'Email Verification', 'Phone Verification']);
   const placeholders = enumOptions?.placeholders ?? [];
   const {
     formData,
@@ -171,7 +171,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                         <SelectContent>
                           {triggerTypeOptions.map((trigger) => (
                             <SelectItem key={trigger} value={trigger}>
-                              {trigger.split('_').map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ')}
+                              {trigger}
                             </SelectItem>
                           ))}
                         </SelectContent>
