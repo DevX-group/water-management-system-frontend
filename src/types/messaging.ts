@@ -52,6 +52,7 @@ export interface MessagingEnumResponse {
   scheduleTypes: ScheduleType[];
   recipientTypes: RecipientType[];
   placeholders: string[];
+  triggerTypes: TriggerType[];
 }
 
 export type SentMessageHistoryApi = {
