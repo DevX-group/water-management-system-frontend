@@ -9,21 +9,24 @@ import { AddCustomerDialog } from '@/components/user-management/AddCustomerDialo
 import { ViewCustomerDialog } from '@/components/user-management/ViewCustomerDialog';
 import { EditCustomerDialog } from '@/components/user-management/EditCustomerDialog';
 
+import { useTranslation } from 'react-i18next';
+
 export const UserManagementPage = () => {
+  const { t } = useTranslation('userManagement');
   const um = useUserManagement(mockCustomers);
 
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
-        <h1 className="text-2xl font-bold text-foreground">User Management</h1>
-        <p className="text-muted-foreground">Manage all customer accounts and personal details</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
+        <p className="text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Table with header actions */}
       <div className="relative">
         <div className="absolute top-6 right-6 z-10">
           <Button onClick={() => um.setShowAddDialog(true)}>
-            <Plus className="w-4 h-4 mr-2" />Add Customer
+            <Plus className="w-4 h-4 mr-2" />{t('addCustomer')}
           </Button>
         </div>
 

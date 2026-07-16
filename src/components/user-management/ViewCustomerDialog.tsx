@@ -11,23 +11,26 @@ interface ViewCustomerDialogProps {
   onEdit:      (c: Customer) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const ViewCustomerDialog: React.FC<ViewCustomerDialogProps> = ({ customer, onClose, onEdit }) => {
+  const { t } = useTranslation('userManagement');
   return (
     <Dialog open={!!customer} onOpenChange={onClose}>
       <DialogContent className="admin-wrapper max-w-md max-h-[90vh] flex flex-col">
-        <DialogHeader><DialogTitle>Customer Profile</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t('customerProfile')}</DialogTitle></DialogHeader>
         {customer && (
           <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
             {[
-              { label: 'Name',              value: customer.name },
-              { label: 'NIC',               value: customer.nic },
-              { label: 'Subscription Number', value: customer.subscriptionNo },
-              { label: 'Phone',             value: customer.phone },
-              { label: 'Email',             value: customer.email || 'N/A' },
-              { label: 'Address',           value: customer.address },
-              { label: 'Region',            value: customer.region },
-              { label: 'Connection Type',   value: customer.connectionType },
-              { label: 'Status',            value: customer.status },
+              { label: t('name'),              value: customer.name },
+              { label: t('nic'),               value: customer.nic },
+              { label: t('subscriptionNo'), value: customer.subscriptionNo },
+              { label: t('phone'),             value: customer.phone },
+              { label: t('email'),             value: customer.email || t('na') },
+              { label: t('addressLabel'),           value: customer.address },
+              { label: t('region'),            value: customer.region },
+              { label: t('connectionTypeLabel'),   value: customer.connectionType === 'metered' ? t('metered') : customer.connectionType === 'non-metered' ? t('nonMetered') : customer.connectionType },
+              { label: t('status'),            value: customer.status === 'active' ? t('active') : customer.status === 'inactive' ? t('inactive') : customer.status },
             ].map(({ label, value }) => (
               <div key={label} className="space-y-1">
                 <Label className="text-xs text-muted-foreground">{label}</Label>
@@ -36,11 +39,11 @@ export const ViewCustomerDialog: React.FC<ViewCustomerDialogProps> = ({ customer
             ))}
           </div>
         )}
-        <div className="flex gap-3 mt-4">
-          <Button className="flex-1" onClick={() => { if (customer) { onEdit(customer); onClose(); } }}>
-            Edit Details
+        <div className="flex flex-col sm:flex-row gap-3 mt-4 w-full">
+          <Button className="flex-1 h-auto py-2 whitespace-normal text-center" onClick={() => { if (customer) { onEdit(customer); onClose(); } }}>
+            {t('editDetails')}
           </Button>
-          <Button variant="outline" className="flex-1" onClick={onClose}>Go to Profile</Button>
+          <Button variant="outline" className="flex-1 h-auto py-2 whitespace-normal text-center" onClick={onClose}>{t('goToProfile')}</Button>
         </div>
       </DialogContent>
     </Dialog>

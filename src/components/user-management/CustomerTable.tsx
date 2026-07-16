@@ -32,6 +32,8 @@ interface CustomerTableProps {
   onClearFilters:         () => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const CustomerTable: React.FC<CustomerTableProps> = ({
   searchQuery, setSearchQuery,
   filterStatus, setFilterStatus,
@@ -42,13 +44,24 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
   sortBy, sortOrder, totalCount,
   onSort, onView, onEdit, onDelete, onClearFilters,
 }) => {
+  const { t, i18n } = useTranslation('userManagement');
+  const siMonths = ['ජනවාරි', 'පෙබරවාරි', 'මාර්තු', 'අප්‍රේල්', 'මැයි', 'ජූනි', 'ජූලි', 'අගෝස්තු', 'සැප්තැම්බර්', 'ඔක්තෝබර්', 'නොවැම්බර්', 'දෙසැම්බර්'];
+  
+  const formatDate = (dateString: string) => {
+    const d = new Date(dateString);
+    if (i18n.language?.startsWith('si')) {
+      return `${d.getFullYear()} ${siMonths[d.getMonth()]} ${d.getDate()}`;
+    }
+    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+  };
+
   return (
     <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">All Customers</h3>
+          <h3 className="text-lg font-semibold text-foreground">{t('allCustomers')}</h3>
           <p className="text-sm text-muted-foreground">
-            Showing {processedCustomers.length} of {totalCount} customers
+            {t('showing', { count: processedCustomers.length, total: totalCount })}
           </p>
         </div>
       </div>
@@ -56,7 +69,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       <div className="relative mb-4">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
-          placeholder="Search by name, NIC, or subscription number..."
+          placeholder={t('searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
           className="pl-10 bg-accent/30"
@@ -66,22 +79,22 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       {/* Filters */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <div className="space-y-1">
-          <Label className="text-xs font-semibold">Filter by Status</Label>
+          <Label className="text-xs font-semibold">{t('filterByStatus')}</Label>
           <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Status" /></SelectTrigger>
+            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allStatus')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="all">{t('allStatus')}</SelectItem>
+              <SelectItem value="active">{t('active')}</SelectItem>
+              <SelectItem value="inactive">{t('inactive')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs font-semibold">Filter by Region</Label>
+          <Label className="text-xs font-semibold">{t('filterByRegion')}</Label>
           <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Regions" /></SelectTrigger>
+            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allRegions')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
+              <SelectItem value="all">{t('allRegions')}</SelectItem>
               {Object.entries(REGION_CONFIG).map(([key, val]) => (
                 <SelectItem key={key} value={key}>{val.label}</SelectItem>
               ))}
@@ -89,13 +102,13 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           </Select>
         </div>
         <div className="space-y-1">
-          <Label className="text-xs font-semibold">Filter by Connection Type</Label>
+          <Label className="text-xs font-semibold">{t('filterByConnectionType')}</Label>
           <Select value={filterConnectionType} onValueChange={(v) => { setFilterConnectionType(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Types" /></SelectTrigger>
+            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allTypes')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="metered">Metered</SelectItem>
-              <SelectItem value="non-metered">Non Metered</SelectItem>
+              <SelectItem value="all">{t('allTypes')}</SelectItem>
+              <SelectItem value="metered">{t('metered')}</SelectItem>
+              <SelectItem value="non-metered">{t('nonMetered')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -105,7 +118,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="mb-4">
           <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-foreground"
             onClick={onClearFilters}>
-            Clear all filters
+            {t('clearAllFilters')}
           </Button>
         </div>
       )}
@@ -116,18 +129,18 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <tr className="text-left border-b border-border">
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
                 onClick={() => onSort('name')}>
-                Name {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}
+                {t('name')} {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">NIC</th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Subscription No</th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Phone</th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Region</th>
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('nic')}</th>
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('subscriptionNo')}</th>
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('phone')}</th>
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('region')}</th>
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
                 onClick={() => onSort('registeredDate')}>
-                Registered {sortBy === 'registeredDate' && (sortOrder === 'asc' ? '▲' : '▼')}
+                {t('registered')} {sortBy === 'registeredDate' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Status</th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">Actions</th>
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('status')}</th>
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('actions')}</th>
             </tr>
           </thead>
           <tbody>
@@ -139,24 +152,24 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
                 <td className="py-4 text-sm text-muted-foreground capitalize">{customer.region}</td>
                 <td className="py-4 text-sm text-muted-foreground">
-                  {new Date(customer.registeredDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  {formatDate(customer.registeredDate)}
                 </td>
                 <td className="py-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'active' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
-                    {customer.status}
+                    {customer.status === 'active' ? t('active') : customer.status === 'inactive' ? t('inactive') : customer.status}
                   </span>
                 </td>
                 <td className="py-4">
                   <div className="flex gap-2">
-                    <button onClick={() => onView(customer)} className="p-1 hover:bg-accent rounded" title="View">
+                    <button onClick={() => onView(customer)} className="p-1 hover:bg-accent rounded" title={t('view')}>
                       <Eye className="w-4 h-4 text-primary" />
                     </button>
                     <button onClick={() => onEdit(customer)} disabled={customer.isDeleted}
-                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Edit">
+                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title={t('edit')}>
                       <Edit className="w-4 h-4 text-green-600" />
                     </button>
                     <button onClick={() => onDelete(customer.id, customer.name)} disabled={customer.isDeleted}
-                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Delete">
+                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title={t('delete')}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>
@@ -170,7 +183,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border">
-          <p className="text-sm text-muted-foreground">Page {currentPage} of {totalPages}</p>
+          <p className="text-sm text-muted-foreground">{t('page', { current: currentPage, total: totalPages })}</p>
           <div className="flex items-center gap-2">
             <Button variant="outline" size="sm" disabled={currentPage === 1}
               onClick={() => setCurrentPage(currentPage - 1)}>

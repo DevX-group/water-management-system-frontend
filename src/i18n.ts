@@ -12,6 +12,8 @@ import enInquiry from "./locales/en/inquiry.json";
 import siInquiry from "./locales/si/inquiry.json";
 import enAdminBlog from "./locales/en/adminBlog.json";
 import siAdminBlog from "./locales/si/adminBlog.json";
+import enUserManagement from "./locales/en/userManagement.json";
+import siUserManagement from "./locales/si/userManagement.json";
 
 i18n
   .use(LanguageDetector)
@@ -24,6 +26,7 @@ i18n
         meterReading: enMeterReading,
         inquiry: enInquiry,
         adminBlog: enAdminBlog,
+        userManagement: enUserManagement,
       },
       si: {
         payments: siPayments,
@@ -31,6 +34,7 @@ i18n
         meterReading: siMeterReading,
         inquiry: siInquiry,
         adminBlog: siAdminBlog,
+        userManagement: siUserManagement,
       },
     },
 

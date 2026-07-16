@@ -20,64 +20,67 @@ interface AddCustomerDialogProps {
   onRegionChange:    (value: string) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
   open, onOpenChange, formData, setFormData, errors,
   onAdd, onReset, onFieldChange, onRegionChange,
 }) => {
+  const { t } = useTranslation('userManagement');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="admin-wrapper max-w-md max-h-[90vh] flex flex-col">
-        <DialogHeader><DialogTitle>Register Customer</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{t('registerCustomerTitle')}</DialogTitle></DialogHeader>
         <div className="space-y-4 pt-4 overflow-y-auto flex-1 px-1">
           <div className="space-y-2">
-            <Label>Customer Name *</Label>
-            <Input placeholder="Enter Customer Name" value={formData.name}
+            <Label>{t('customerName')}</Label>
+            <Input placeholder={t('enterCustomerName')} value={formData.name}
               onChange={(e) => { setFormData({ ...formData, name: e.target.value }); onFieldChange('name', e.target.value); }}
               className={errors.name ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>NIC Number *</Label>
-            <Input placeholder="Enter Customer NIC Number" value={formData.nic}
+            <Label>{t('nicNumber')}</Label>
+            <Input placeholder={t('enterNIC')} value={formData.nic}
               onChange={(e) => { setFormData({ ...formData, nic: e.target.value }); onFieldChange('nic', e.target.value); }}
               className={errors.nic ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>Address *</Label>
-            <Input placeholder="Enter Address" value={formData.address}
+            <Label>{t('address')}</Label>
+            <Input placeholder={t('enterAddress')} value={formData.address}
               onChange={(e) => { setFormData({ ...formData, address: e.target.value }); onFieldChange('address', e.target.value); }}
               className={errors.address ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>Mobile Number *</Label>
-            <Input placeholder="Enter Mobile Number" value={formData.phone}
+            <Label>{t('mobileNumber')}</Label>
+            <Input placeholder={t('enterMobile')} value={formData.phone}
               onChange={(e) => { setFormData({ ...formData, phone: e.target.value }); onFieldChange('phone', e.target.value); }}
               className={errors.phone ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>Email (Optional)</Label>
-            <Input placeholder="Enter Email" value={formData.email}
+            <Label>{t('emailOptional')}</Label>
+            <Input placeholder={t('enterEmail')} value={formData.email}
               onChange={(e) => { setFormData({ ...formData, email: e.target.value }); onFieldChange('email', e.target.value); }}
               className={errors.email ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>Connection Type *</Label>
+            <Label>{t('connectionType')}</Label>
             <Select value={formData.connectionType}
               onValueChange={(v) => { setFormData({ ...formData, connectionType: v }); onFieldChange('connectionType', v); }}>
               <SelectTrigger className={errors.connectionType ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Select Type" />
+                <SelectValue placeholder={t('selectType')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="metered">Metered Customer</SelectItem>
-                <SelectItem value="non-metered">Non Metered Customer</SelectItem>
+                <SelectItem value="metered">{t('meteredCustomer')}</SelectItem>
+                <SelectItem value="non-metered">{t('nonMeteredCustomer')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Region *</Label>
+            <Label>{t('regionLabel')}</Label>
             <Select value={formData.region}
               onValueChange={(v) => { onRegionChange(v); onFieldChange('region', v); }}>
               <SelectTrigger className={errors.region ? 'border-red-500' : ''}>
-                <SelectValue placeholder="Select Region" />
+                <SelectValue placeholder={t('selectRegion')} />
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(REGION_CONFIG).map(([key, value]) => (
@@ -87,15 +90,15 @@ export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Subscription Number</Label>
-            <Input placeholder="Auto-generated" value={formData.subscriptionNumber} disabled
+            <Label>{t('subscriptionNumber')}</Label>
+            <Input placeholder={t('autoGenerated')} value={formData.subscriptionNumber} disabled
               className="bg-accent/30 cursor-not-allowed" />
           </div>
-          <p className="text-xs text-muted-foreground">Subscription number generated automatically</p>
+          <p className="text-xs text-muted-foreground">{t('subscriptionHint')}</p>
         </div>
         <div className="flex gap-3 mt-4">
-          <Button className="flex-1" onClick={onAdd}>Register Customer</Button>
-          <Button variant="outline" className="flex-1" onClick={onReset}>Clear</Button>
+          <Button className="flex-1" onClick={onAdd}>{t('registerCustomerBtn')}</Button>
+          <Button variant="outline" className="flex-1" onClick={onReset}>{t('clear')}</Button>
         </div>
       </DialogContent>
     </Dialog>
