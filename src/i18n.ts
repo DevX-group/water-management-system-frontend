@@ -10,6 +10,8 @@ import enMeterReading from "./locales/en/meterReading.json";
 import siMeterReading from "./locales/si/meterReading.json";
 import enInquiry from "./locales/en/inquiry.json";
 import siInquiry from "./locales/si/inquiry.json";
+import enAdminBlog from "./locales/en/adminBlog.json";
+import siAdminBlog from "./locales/si/adminBlog.json";
 
 i18n
   .use(LanguageDetector)
@@ -21,12 +23,14 @@ i18n
         billing: enBilling,
         meterReading: enMeterReading,
         inquiry: enInquiry,
+        adminBlog: enAdminBlog,
       },
       si: {
         payments: siPayments,
         billing: siBilling,
         meterReading: siMeterReading,
         inquiry: siInquiry,
+        adminBlog: siAdminBlog,
       },
     },
 
