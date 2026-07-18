@@ -1,13 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
 import { api } from '@/services/api';
 
-const getLocalDateString = () => {
-  const date = new Date();
-  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
-  return date.toISOString().split('T')[0];
-};
+const API_BASE = 'http://localhost:8081/api';
+const OFFLINE_STORAGE_KEY = 'offline_meter_readings';
 
 const defaultForm = (): MeterReadingFormData => ({
   meterNumber: '', 
@@ -24,14 +21,105 @@ export const useMeterReading = () => {
   const [todaysReadings, setTodaysReadings] = useState<MeterReading[]>([]);
   const [loadingReadings, setLoadingReadings] = useState(false);
   const [submitting, setSubmitting]           = useState(false);
+  const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
+  const [isManualOffline, setIsManualOffline] = useState(false);
+  const [pendingCount, setPendingCount] = useState<number>(0);
 
-  // Fetches a list of all meter readings  submitted today.
- 
+  const effectiveIsOnline = isOnline && !isManualOffline;
+
+  // Load pending offline readings from local storage
+  const getOfflineReadings = () => {
+    const saved = localStorage.getItem(OFFLINE_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  };
+
+  const updatePendingCount = useCallback(() => {
+    setPendingCount(getOfflineReadings().length);
+  }, []);
+
+  // Sync offline readings to the backend
+  const syncOfflineReadings = useCallback(async () => {
+    const offlineReadings = getOfflineReadings();
+    if (offlineReadings.length === 0) return;
+
+    toast({ title: 'Syncing...', description: `Uploading ${offlineReadings.length} saved readings.` });
+
+    let successCount = 0;
+    const failedReadings = [];
+
+    for (const payload of offlineReadings) {
+      try {
+        const res = await fetch(`${API_BASE}/meter-readings`, {
+          method: 'POST', 
+          headers: { 'Content-Type': 'application/json' }, 
+          body: JSON.stringify(payload),
+        });
+        if (res.ok) {
+          successCount++;
+        } else {
+          failedReadings.push(payload);
+        }
+      } catch (err) {
+        failedReadings.push(payload);
+      }
+    }
+
+    if (failedReadings.length < offlineReadings.length) {
+      localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(failedReadings));
+      updatePendingCount();
+      fetchTodaysReadings();
+      toast({ title: 'Sync Complete', description: `Successfully uploaded ${successCount} readings.` });
+    } else if (offlineReadings.length > 0 && failedReadings.length === 0) {
+      // All successful
+      localStorage.removeItem(OFFLINE_STORAGE_KEY);
+      updatePendingCount();
+      fetchTodaysReadings();
+      toast({ title: 'Sync Complete', description: `Successfully uploaded ${successCount} readings.` });
+    }
+  }, [toast, updatePendingCount]);
+
+  // Handle online/offline events
+  useEffect(() => {
+    const handleOnline = () => {
+      setIsOnline(true);
+      toast({ title: 'Back Online', description: 'Internet connection restored.' });
+      syncOfflineReadings();
+    };
+    const handleOffline = () => {
+      setIsOnline(false);
+      toast({ title: 'Offline Mode Active', description: 'Readings will be saved locally.', variant: 'destructive' });
+    };
+
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    updatePendingCount();
+
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, [syncOfflineReadings, toast, updatePendingCount]);
+
+  // Fetches a list of all meter readings submitted today.
   const fetchTodaysReadings = async () => {
+    if (!isOnline) return; // Don't try to fetch if offline
+    
     setLoadingReadings(true);
     try {
-      const res = await api.get<MeterReading[]>('/meter-readings/today');
-      setTodaysReadings(res.data);
+      const res = await fetch(`${API_BASE}/meter-readings/today`);
+      if (!res.ok) throw new Error('Failed to load readings');
+      const data = await res.json();
+      
+      // Merge offline mock readings with real online readings for display
+      const offline = getOfflineReadings().map((r: any, i: number) => ({
+        ...r,
+        id: `offline-${Date.now()}-${i}`,
+        usageUnits: Number(r.currentReading) - Number(r.previousReading),
+        totalAmount: (Number(r.currentReading) - Number(r.previousReading)) * 50,
+        status: 'PENDING SYNC (OFFLINE)'
+      }));
+      
+      setTodaysReadings([...offline, ...data]);
     } catch {
       toast({ title: 'Error', description: "Could not load today's readings.", variant: 'destructive' });
     } finally {
@@ -39,10 +127,8 @@ export const useMeterReading = () => {
     }
   };
 
-  useEffect(() => { fetchTodaysReadings(); }, []);
+  useEffect(() => { fetchTodaysReadings(); }, [isOnline]);
 
- 
-  // and dynamically generates a new Bill based on the current rates in the database
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -54,9 +140,48 @@ export const useMeterReading = () => {
       readingDate: formData.readingDate, 
       notes: formData.notes,
     };
-    try {             // Submits the reading to the backend
-      const res = await api.post('/meter-readings', payload);
-      const result = res.data;
+
+    if (!isOnline) {
+      // OFFLINE MODE: Save to local storage
+      const offlineReadings = getOfflineReadings();
+      offlineReadings.push(payload);
+      localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
+      updatePendingCount();
+      
+      // Calculate offline bill
+      const usageUnits = payload.currentReading - payload.previousReading;
+      const estimatedTotal = usageUnits * 50; // Simple flat rate for offline mode
+
+      toast({ 
+        title: 'Saved Offline 📶', 
+        description: `Meter ${formData.meterNumber} — Usage: ${usageUnits} units | Est. Bill: LKR ${estimatedTotal.toFixed(2)}` 
+      });
+      
+      setFormData(defaultForm());
+      setSubmitting(false);
+      
+      // Add immediately to UI
+      const mockReading = {
+        ...payload,
+        id: `offline-${Date.now()}`,
+        usageUnits,
+        totalAmount: estimatedTotal,
+        status: 'PENDING SYNC (OFFLINE)'
+      };
+      setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
+      
+      return;
+    }
+
+    try {
+      // ONLINE MODE: Submit to the backend
+      const res = await fetch(`${API_BASE}/meter-readings`, {
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' }, 
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text() || 'Submission failed');
+      const result = await res.json();
       toast({ 
         title: 'Reading Submitted ✓', 
         description: `Meter ${formData.meterNumber} — Usage: ${result.usageUnits} units | Bill #${result.billId}: LKR ${Number(result.totalAmount).toFixed(2)}` 
@@ -65,6 +190,11 @@ export const useMeterReading = () => {
       fetchTodaysReadings();
     } catch (err: any) {
       toast({ title: 'Submission Failed', description: 'Something went wrong.', variant: 'destructive' });
+      // If network fails unexpectedly while "online", fallback to offline save
+      const offlineReadings = getOfflineReadings();
+      offlineReadings.push(payload);
+      localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
+      updatePendingCount();
     } finally {
       setSubmitting(false);
     }
@@ -77,9 +207,12 @@ export const useMeterReading = () => {
     todaysReadings,
     loadingReadings,
     submitting,
+    isOnline,
+    pendingCount,
     setFormData,
     handleSubmit,
     clearForm,
-    fetchTodaysReadings
+    fetchTodaysReadings,
+    syncOfflineReadings
   };
 };
