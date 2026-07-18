@@ -45,7 +45,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
     : ['Recurring', 'One-Time']);
   const triggerTypeOptions: TriggerType[] = (enumOptions?.triggerTypes?.length
     ? enumOptions.triggerTypes
-    : ['Payment Confirmed', 'Email Verification', 'Phone Verification']);
+    : ['Payment Confirmed', 'Bank Slip Rejected', 'Email Verification', 'Phone Verification']);
   const placeholders = enumOptions?.placeholders ?? [];
   const {
     formData,
