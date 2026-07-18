@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { ConnectionType, ConnectionRate, BillResponse, BillingPageTab } from '@/types/billing';
-import { INITIAL_RATES, API_BASE } from '@/utils/billingUtils';
+import { INITIAL_RATES } from '@/utils/billingUtils';
+import { api } from '@/services/api';
 
 export const useBilling = () => {
   const { toast } = useToast();
@@ -36,9 +37,9 @@ export const useBilling = () => {
   useEffect(() => {
     const fetchRates = async () => {
       try {
-        const res = await fetch(`${API_BASE}/rates`);
-        if (res.ok) {
-          const data: ConnectionRate[] = await res.json();
+        const res = await api.get<ConnectionRate[]>('/rates');
+        if (res.status >= 200 && res.status < 300) {
+          const data = res.data;
           const newRates = { ...INITIAL_RATES };
           data.forEach(rate => {
             if (rate.connectionType === 'metered' || rate.connectionType === 'non_metered') {
@@ -81,13 +82,9 @@ export const useBilling = () => {
     if (!draft) return;
     const updatedRate = { ...rates[type], ...draft };
     try {
-      const res = await fetch(`${API_BASE}/rates`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedRate),
-      });
-      if (res.ok) {
-        const savedRate = await res.json();
+      const res = await api.post<ConnectionRate>('/rates', updatedRate);
+      if (res.status >= 200 && res.status < 300) {
+        const savedRate = res.data;
         setRates(prev => ({ ...prev, [type]: savedRate }));
         cancelEditing(type);
         toast({ title: 'Success', description: `${typeMeta.label} rates updated in database!` });
@@ -109,9 +106,8 @@ export const useBilling = () => {
     setHasSearched(true);
     setSearchedSub(sub);
     try {
-      const res = await fetch(`${API_BASE}/bills/customer/${encodeURIComponent(sub)}`);
-      if (!res.ok) throw new Error('Customer not found');
-      setBills(await res.json());
+      const res = await api.get<BillResponse[]>(`/bills/customer/${encodeURIComponent(sub)}`);
+      setBills(res.data);
     } catch (err: any) {
       toast({ title: 'Error', description:  'Could not fetch bills.', variant: 'destructive' });
       setBills([]);
@@ -124,17 +120,15 @@ export const useBilling = () => {
  
   const handleDownload = async (billId: number) => {
     try {
-      const response = await fetch(`${API_BASE}/bills/${billId}/download`);
-      if (response.ok) {
-        const blob = await response.blob();
-        const url  = window.URL.createObjectURL(blob);
-        const a    = document.createElement('a');
-        a.href     = url;
-        a.download = `bill-${billId}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-      }
+      const response = await api.get(`/bills/${billId}/download`, { responseType: 'blob' });
+      const blob = response.data as Blob;
+      const url  = window.URL.createObjectURL(blob);
+      const a    = document.createElement('a');
+      a.href     = url;
+      a.download = `bill-${billId}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Download failed', error);
       toast({ title: 'Error', description: 'Failed to download bill.', variant: 'destructive' });

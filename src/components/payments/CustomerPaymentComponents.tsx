@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { CurrentBillResponse, OutstandingBillResponse, PaymentMethod } from "@/types/payment";
+import { useTranslation } from "react-i18next";
 
 interface MethodTabsProps {
   value: PaymentMethod;
@@ -13,6 +14,7 @@ interface MethodTabsProps {
 }
 
 export const MethodTabs = ({ value, onChange }: MethodTabsProps) => {
+  const { t } = useTranslation();
   const activeClass = "border-primary bg-primary/10 text-primary";
   const inactiveClass = "border-border text-muted-foreground hover:border-primary/40";
 
@@ -31,11 +33,11 @@ export const MethodTabs = ({ value, onChange }: MethodTabsProps) => {
   return (
     <div>
       <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-        Pay via
+        {t("payments.billPayment.payVia")}
       </p>
       <div className="flex gap-2">
-        {tab("ONLINE", <Landmark className="w-3.5 h-3.5" />, "Online Banking")}
-        {tab("BANK_TRANSFER", <Receipt className="w-3.5 h-3.5" />, "Bank Slip")}
+        {tab("ONLINE", <Landmark className="w-3.5 h-3.5" />, t("payments.billPayment.onlineBanking"))}
+        {tab("BANK_TRANSFER", <Receipt className="w-3.5 h-3.5" />, t("payments.billPayment.bankSlip"))}
       </div>
     </div>
   );
@@ -84,12 +86,13 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
   outstandingPage,
   setOutstandingPage,
 }) => {
+  const { t } = useTranslation();
   return (
     <Card ref={paymentCardRef} className="shadow-card border-none">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Wallet className="w-5 h-5 text-primary" />
-          Bill Payment
+          {t("payments.billPayment.title")}
         </CardTitle>
       </CardHeader>
 
@@ -99,16 +102,16 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
           {/* ── LEFT: Payment Action ── */}
           <div className="flex flex-col gap-5 lg:pl-6 lg:pr-6 lg:w-1/2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-              Make a Payment
+              {t("payments.billPayment.makePayment")}
             </p>
 
             {/* Total due callout */}
             <div className="relative rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 px-5 py-5 overflow-hidden">
               <div className="absolute -right-5 -top-5 w-28 h-28 rounded-full bg-white/10" />
               <div className="absolute right-4 bottom-0 w-14 h-14 rounded-full bg-white/5" />
-              <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider relative z-10">Due Now</p>
+              <p className="text-xs font-semibold text-foreground/60 uppercase tracking-wider relative z-10">{t("payments.billPayment.dueNow")}</p>
               <p className="text-3xl font-bold text-foreground tracking-tight mt-1 relative z-10">
-                Rs. {totalDue.toLocaleString()}
+                {t("payments.billPayment.currency")} {totalDue.toLocaleString()}
               </p>
             </div>
 
@@ -117,7 +120,7 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
               <div className="flex items-start gap-2.5 rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3">
                 <AlertTriangle className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-700 leading-relaxed">
-                  Payment applied to outstanding balance first, then monthly bill.
+                  {t("payments.billPayment.outstandingNotice")}
                 </p>
               </div>
             )}
@@ -127,9 +130,9 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
 
             {/* Amount input */}
             <div className="space-y-2">
-              <Label className="text-xs text-muted-foreground">Enter Amount</Label>
+              <Label className="text-xs text-muted-foreground">{t("payments.billPayment.enterAmount")}</Label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">Rs.</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground font-medium">{t("payments.billPayment.currency")}</span>
                 <Input
                   type="number"
                   min={0}
@@ -141,7 +144,7 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
                 />
               </div>
               <p className="text-xs text-muted-foreground">
-                Partial payments accepted, up to Rs. {totalDue.toLocaleString()}.
+                {t("payments.billPayment.partialPaymentsAccepted", { amount: totalDue.toLocaleString() })}
               </p>
             </div>
 
@@ -149,9 +152,9 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
             <div className="mt-auto">
               <Button className="gradient-primary w-full" onClick={handlePay}>
                 {paymentMethod === "BANK_TRANSFER" ? (
-                  <><Receipt className="w-4 h-4 mr-2" />Upload Bank Slip</>
+                  <><Receipt className="w-4 h-4 mr-2" />{t("payments.billPayment.uploadBankSlip")}</>
                 ) : (
-                  <><Wallet className="w-4 h-4 mr-2" />Pay Now</>
+                  <><Wallet className="w-4 h-4 mr-2" />{t("payments.billPayment.payNow")}</>
                 )}
               </Button>
             </div>
@@ -160,7 +163,7 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
           {/* ── RIGHT: Bill Breakdown ── */}
           <div className="flex flex-col gap-2.5 lg:pr-6 lg:pl-6 lg:w-1/2">
             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-              Bill Summary
+              {t("payments.billSummary.title")}
             </p>
 
             {/* Monthly Bill Row */}
@@ -172,22 +175,22 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
                     <CreditCard className="w-3.5 h-3.5 text-primary" />
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">Monthly Bill</p>
+                    <p className="text-sm font-semibold">{t("payments.billSummary.monthlyBill")}</p>
                     {currentBill?.alreadyPaid != null && currentBill.alreadyPaid > 0 ? (
                       <p className="text-xs text-muted-foreground mt-0.5">
                         <span className="inline-flex items-center gap-1 text-success">
                           <CheckCircle2 className="w-3 h-3" />
-                          Rs. {currentBill.alreadyPaid.toLocaleString()} paid
+                          {t("payments.billSummary.paid", { amount: currentBill.alreadyPaid.toLocaleString() })}
                         </span>
-                        {" "}of Rs. {(currentBill.totalAmount ?? 0).toLocaleString()}
+                        {" "}{t("payments.billSummary.ofTotal", { amount: (currentBill.totalAmount ?? 0).toLocaleString() })}
                       </p>
                     ) : (
-                      <p className="text-xs text-muted-foreground mt-0.5">balance due this month</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t("payments.billSummary.balanceDueThisMonth")}</p>
                     )}
                   </div>
                 </div>
                 <p className="text-base font-bold text-foreground tracking-tight relative z-10 shrink-0 ml-2">
-                  Rs. {monthlyDue.toLocaleString()}
+                  {t("payments.billPayment.currency")} {monthlyDue.toLocaleString()}
                 </p>
               </div>
             </div>
@@ -206,22 +209,22 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
                       : <CheckCircle2 className="w-3.5 h-3.5 text-success" />}
                   </div>
                   <div>
-                    <p className="text-sm font-semibold">Outstanding</p>
+                    <p className="text-sm font-semibold">{t("payments.billSummary.outstanding")}</p>
                     {hasOutstanding ? (
                       <button
                         type="button"
                         onClick={() => setOutstandingExpanded((v) => !v)}
                         className="text-xs text-destructive/70 hover:text-destructive underline underline-offset-2 transition-colors mt-0.5 block"
                       >
-                        {totalOutstandingBills} bill{isSingle ? "" : "s"} · {outstandingExpanded ? "hide" : "details"}
+                        {totalOutstandingBills} {isSingle ? t("payments.billSummary.bill") : t("payments.billSummary.bills")} · {outstandingExpanded ? t("payments.billSummary.hide") : t("payments.billSummary.details")}
                       </button>
                     ) : (
-                      <p className="text-xs text-muted-foreground mt-0.5">all clear</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{t("payments.billSummary.allClear")}</p>
                     )}
                   </div>
                 </div>
                 <p className={`text-base font-bold tracking-tight relative z-10 shrink-0 ml-2 ${hasOutstanding ? "text-destructive" : "text-success"}`}>
-                  {hasOutstanding ? `Rs. ${outstandingDue.toLocaleString()}` : "Rs. 0"}
+                  {hasOutstanding ? `${t("payments.billPayment.currency")} ${outstandingDue.toLocaleString()}` : `${t("payments.billPayment.currency")} 0`}
                 </p>
               </div>
 
@@ -234,12 +237,12 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
                         <p className="text-xs font-semibold">{item.billingPeriod}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           #{item.billId}
-                          {item.paidAmount > 0 && <span className="text-success ml-1.5">· Paid Rs. {item.paidAmount.toLocaleString()}</span>}
+                          {item.paidAmount > 0 && <span className="text-success ml-1.5">· {t("payments.billSummary.paidAmount", { amount: item.paidAmount.toLocaleString() })}</span>}
                         </p>
                       </div>
                       <div className="text-right shrink-0 ml-2">
-                        <p className="text-xs font-bold text-destructive">Rs. {(item.balanceDue ?? 0).toLocaleString()}</p>
-                        <p className="text-xs text-muted-foreground">of Rs. {(item.totalAmount ?? 0).toLocaleString()}</p>
+                        <p className="text-xs font-bold text-destructive">{t("payments.billPayment.currency")} {(item.balanceDue ?? 0).toLocaleString()}</p>
+                        <p className="text-xs text-muted-foreground">{t("payments.billSummary.ofTotal", { amount: (item.totalAmount ?? 0).toLocaleString() })}</p>
                       </div>
                     </div>
                   ))}
@@ -259,11 +262,11 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
             {/* Total row */}
             <div className="flex items-center justify-between rounded-xl bg-secondary/50 border border-border px-4 py-3">
               <div>
-                <p className="text-sm font-semibold">Total Due</p>
-                <p className="text-xs text-muted-foreground mt-0.5">monthly + outstanding</p>
+                <p className="text-sm font-semibold">{t("payments.billSummary.totalDue")}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{t("payments.billSummary.monthlyPlusOutstanding")}</p>
               </div>
               <p className="text-lg font-bold text-primary tracking-tight shrink-0 ml-2">
-                Rs. {totalDue.toLocaleString()}
+                {t("payments.billPayment.currency")} {totalDue.toLocaleString()}
               </p>
             </div>
           </div>

@@ -59,9 +59,8 @@ export const BillingPage = () => {
                 bill={bill}
               />
             </div>
-
-            {/* Right: Manage Rates (main_admin only) */}
-            {currentAdmin.role === 'main_admin' && (
+            
+            {currentAdmin.role === 'SUPER_ADMIN' && (
               <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '100ms' }}>
                 <div className="flex items-center gap-2 mb-6">
                   <Settings2 className="w-5 h-5 text-primary" />

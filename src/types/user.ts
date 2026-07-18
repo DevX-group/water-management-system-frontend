@@ -21,7 +21,6 @@ export interface CustomerFormData {
   email:              string;
   region:             string;
   connectionType:     string;
-  subscriptionNumber: string;
 }
 
 export type SortOrder = 'asc' | 'desc';

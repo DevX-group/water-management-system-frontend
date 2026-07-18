@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
+import { api } from '@/services/api';
 
 const API_BASE = 'http://localhost:8081/api';
 const OFFLINE_STORAGE_KEY = 'offline_meter_readings';
@@ -10,7 +11,7 @@ const defaultForm = (): MeterReadingFormData => ({
   subscriptionNumber: '',
   previousReading: '', 
   currentReading: '',
-  readingDate: new Date().toISOString().split('T')[0],
+  readingDate: getLocalDateString(),
   notes: '',
 });
 

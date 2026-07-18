@@ -1,19 +1,16 @@
 import '@/index.css';
-import React, { useMemo, useState } from 'react';
-import { mockPayments, mockCustomers, mockBankSlips } from '@/data/mockData';
-import { useNavigate } from 'react-router-dom';
-import { CustomerSearchCard, CustomerDetailsCard } from '@/components/payments/CustomerSearchCards';
-import { RecentlyAddedPayments, PendingBankSlips } from '@/components/payments/PaymentListsCards';
 import { PaymentCustomerSearch } from '@/components/payments/PaymentCustomerSearch';
 import { RecentPaymentsList } from '@/components/payments/RecentPaymentsList';
 import { PendingBankSlipsTable } from '@/components/payments/PendingBankSlipsTable';
+import { useTranslation } from 'react-i18next';
 
 export const PaymentsPage = () => {
+  const { t } = useTranslation();
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
-        <h1 className="text-2xl font-bold text-foreground">Payments</h1>
-        <p className="text-muted-foreground">Manage customer payments and collections</p>
+        <h1 className="text-2xl font-bold text-foreground">{t('payments.title')}</h1>
+        <p className="text-muted-foreground">{t('payments.adminSubtitle')}</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">

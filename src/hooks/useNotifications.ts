@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { Notification } from '@/types/notification';
+import { api } from '@/services/api';
 
 export const useNotifications = () => {
   const [alerts, setAlerts] = useState<Notification[]>([]);
@@ -12,11 +13,8 @@ export const useNotifications = () => {
  
   const fetchAlerts = async () => {
     try {
-      const res = await fetch(`http://localhost:8081/api/alerts`);
-      if (res.ok) {
-        const data = await res.json();
-        setAlerts(data);
-      }
+      const res = await api.get<Notification[]>('/alerts');
+      setAlerts(res.data);
     } catch (err) { 
       console.error(err); 
     } finally { 
@@ -28,10 +26,8 @@ export const useNotifications = () => {
   
   const handleDismiss = async (id: number) => {
     try {
-      const res = await fetch(`http://localhost:8081/api/alerts/${id}/dismiss`, { method: 'PATCH' });
-      if (res.ok) {
-        setAlerts(prev => prev.filter(a => a.id !== id));
-      }
+      await api.patch(`/alerts/${id}/dismiss`);
+      setAlerts(prev => prev.filter(a => a.id !== id));
     } catch (err) { 
       console.error(err); 
     }
