@@ -3,12 +3,18 @@ import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
 import { api } from '@/services/api';
 
+const getLocalDateString = () => {
+  const date = new Date();
+  date.setMinutes(date.getMinutes() - date.getTimezoneOffset());
+  return date.toISOString().split('T')[0];
+};
+
 const defaultForm = (): MeterReadingFormData => ({
   meterNumber: '', 
   subscriptionNumber: '',
   previousReading: '', 
   currentReading: '',
-  readingDate: new Date().toISOString().split('T')[0],
+  readingDate: getLocalDateString(),
   notes: '',
 });
 

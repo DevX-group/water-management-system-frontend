@@ -18,10 +18,9 @@ export const useBills = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
 
- 
-  //  use the CUSTOMER_SUBSCRIPTION_NUMBER to pull their specific bills.
+  // Fetch the specific bills for the logged in customer.
   useEffect(() => {
-    api.get<BillResponse[]>(`/bills/customer/${encodeURIComponent(SUBSCRIPTION_NUMBER)}`)
+    api.get<BillResponse[]>(`/bills/customer/me`)
       .then(response => setBills(response.data))
       .catch(console.error)
       .finally(() => setLoading(false));
