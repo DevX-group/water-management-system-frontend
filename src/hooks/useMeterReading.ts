@@ -5,6 +5,13 @@ import { api } from '@/services/api';
 
 const API_BASE = 'http://localhost:8081/api';
 const OFFLINE_STORAGE_KEY = 'offline_meter_readings';
+const OFFLINE_RATES_KEY = 'offline_rates';
+
+const getLocalDateString = () => {
+  const d = new Date();
+  d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+  return d.toISOString().split('T')[0];
+};
 
 const defaultForm = (): MeterReadingFormData => ({
   meterNumber: '', 
@@ -37,6 +44,38 @@ export const useMeterReading = () => {
     setPendingCount(getOfflineReadings().length);
   }, []);
 
+  // Calculate bill using tiers based on cached rates
+  const calculateEstimatedBill = (usageUnits: number) => {
+    try {
+      const ratesStr = localStorage.getItem(OFFLINE_RATES_KEY);
+      if (!ratesStr) return usageUnits * 50; // Fallback
+      
+      const ratesList = JSON.parse(ratesStr);
+      const rate = ratesList.find((r: any) => r.connectionType === 'metered') || ratesList[0];
+      
+      if (!rate) return usageUnits * 50;
+
+      const base = Number(rate.baseRate || 0);
+      const r1 = Number(rate.unitRateTier1 || 0);
+      const r2 = Number(rate.unitRateTier2 || 0);
+      const r3 = Number(rate.unitRateTier3 || 0);
+      const limit1 = Number(rate.tier1Limit || 50);
+      const limit2 = Number(rate.tier2Limit || 100);
+
+      const tier1Units = Math.min(usageUnits, limit1);
+      const tier2Units = Math.min(Math.max(usageUnits - limit1, 0), limit2 - limit1);
+      const tier3Units = Math.max(usageUnits - limit2, 0);
+
+      const usageCharge = (r1 * tier1Units) + (r2 * tier2Units) + (r3 * tier3Units);
+      const subtotal = base + usageCharge;
+      const tax = subtotal * Number(rate.taxRate || 0);
+
+      return subtotal + tax;
+    } catch (e) {
+      return usageUnits * 50;
+    }
+  };
+
   // Sync offline readings to the backend
   const syncOfflineReadings = useCallback(async () => {
     const offlineReadings = getOfflineReadings();
@@ -49,12 +88,8 @@ export const useMeterReading = () => {
 
     for (const payload of offlineReadings) {
       try {
-        const res = await fetch(`${API_BASE}/meter-readings`, {
-          method: 'POST', 
-          headers: { 'Content-Type': 'application/json' }, 
-          body: JSON.stringify(payload),
-        });
-        if (res.ok) {
+        const res = await api.post('/meter-readings', payload);
+        if (res.status === 200 || res.status === 201) {
           successCount++;
         } else {
           failedReadings.push(payload);
@@ -106,18 +141,25 @@ export const useMeterReading = () => {
     
     setLoadingReadings(true);
     try {
-      const res = await fetch(`${API_BASE}/meter-readings/today`);
-      if (!res.ok) throw new Error('Failed to load readings');
-      const data = await res.json();
+      // Also fetch and cache latest rates for offline mode
+      api.get('/rates').then(res => {
+        localStorage.setItem(OFFLINE_RATES_KEY, JSON.stringify(res.data));
+      }).catch(() => {});
+
+      const res = await api.get('/meter-readings/today');
+      const data = res.data;
       
       // Merge offline mock readings with real online readings for display
-      const offline = getOfflineReadings().map((r: any, i: number) => ({
-        ...r,
-        id: `offline-${Date.now()}-${i}`,
-        usageUnits: Number(r.currentReading) - Number(r.previousReading),
-        totalAmount: (Number(r.currentReading) - Number(r.previousReading)) * 50,
-        status: 'PENDING SYNC (OFFLINE)'
-      }));
+      const offline = getOfflineReadings().map((r: any, i: number) => {
+        const usage = Number(r.currentReading) - Number(r.previousReading);
+        return {
+          ...r,
+          id: `offline-${Date.now()}-${i}`,
+          usageUnits: usage,
+          totalAmount: calculateEstimatedBill(usage),
+          status: 'PENDING SYNC (OFFLINE)'
+        };
+      });
       
       setTodaysReadings([...offline, ...data]);
     } catch {
@@ -150,7 +192,7 @@ export const useMeterReading = () => {
       
       // Calculate offline bill
       const usageUnits = payload.currentReading - payload.previousReading;
-      const estimatedTotal = usageUnits * 50; // Simple flat rate for offline mode
+      const estimatedTotal = calculateEstimatedBill(usageUnits);
 
       toast({ 
         title: 'Saved Offline 📶', 
@@ -175,13 +217,8 @@ export const useMeterReading = () => {
 
     try {
       // ONLINE MODE: Submit to the backend
-      const res = await fetch(`${API_BASE}/meter-readings`, {
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload),
-      });
-      if (!res.ok) throw new Error(await res.text() || 'Submission failed');
-      const result = await res.json();
+      const res = await api.post('/meter-readings', payload);
+      const result = res.data;
       toast({ 
         title: 'Reading Submitted ✓', 
         description: `Meter ${formData.meterNumber} — Usage: ${result.usageUnits} units | Bill #${result.billId}: LKR ${Number(result.totalAmount).toFixed(2)}` 
