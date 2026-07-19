@@ -16,7 +16,7 @@ export const useUsage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await api.get<AnalyticsData>(`/analytics/usage?year=${year}`);
+        const res = await api.get<AnalyticsData>(`/analytics/usage/me?year=${year}`);
         setData(res.data);
       } catch (err: any) {
         setError(err.message ?? "Failed to load usage data.");

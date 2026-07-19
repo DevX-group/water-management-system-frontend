@@ -60,7 +60,6 @@ const Bills = () => {
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
               Billing <span className="text-gradient">History</span>
             </h1>
-            <p className="text-muted-foreground text-lg">View and manage all your water bills for {SUBSCRIPTION_NUMBER}</p>
           </motion.div>
 
           {/* normalize billId to string to satisfy BillsSummaryStats Bill type */}
