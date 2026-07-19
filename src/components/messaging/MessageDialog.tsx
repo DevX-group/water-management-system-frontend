@@ -43,6 +43,9 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
   const scheduleTypeOptions: ScheduleType[] = (enumOptions?.scheduleTypes?.length
     ? enumOptions.scheduleTypes
     : ['Recurring', 'One-Time']);
+  const triggerTypeOptions: TriggerType[] = (enumOptions?.triggerTypes?.length
+    ? enumOptions.triggerTypes
+    : ['Payment Confirmed', 'Bank Slip Rejected', 'Email Verification', 'Phone Verification']);
   const placeholders = enumOptions?.placeholders ?? [];
   const {
     formData,
@@ -61,6 +64,7 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
     mode,
     recipientOptions,
     scheduleTypeOptions,
+    triggerTypeOptions,
   });
 
   return (
@@ -130,13 +134,13 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 
                     {(formData as ScheduledMessage).schedule.type === 'Recurring' ? (
                       <div className="space-y-2">
-                        <Label>Day of Month</Label>
+                        <Label>Recurring Day of Each Month</Label>
                         <Select value={(formData as ScheduledMessage).schedule.dayOfMonth?.toString()}
                           onValueChange={(val) => handleScheduleChange('dayOfMonth', parseInt(val))}>
                           <SelectTrigger><SelectValue placeholder="Select day" /></SelectTrigger>
                           <SelectContent className="max-h-48">
                             {Array.from({ length: 28 }, (_, i) => i + 1).map(d => (
-                              <SelectItem key={d} value={d.toString()}>{d}th of every month</SelectItem>
+                              <SelectItem key={d} value={d.toString()}>{d}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
@@ -165,9 +169,11 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                         onValueChange={(val) => handleTriggeredChange('triggerType', val as TriggerType)}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="PAYMENT_CONFIRMED">Payment Confirmed</SelectItem>
-                          <SelectItem value="EMAIL_VERIFICATION">Email Verification</SelectItem>
-                          <SelectItem value="PHONE_VERIFICATION">Phone Verification</SelectItem>
+                          {triggerTypeOptions.map((trigger) => (
+                            <SelectItem key={trigger} value={trigger}>
+                              {trigger}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>

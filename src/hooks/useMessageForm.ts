@@ -7,6 +7,7 @@ import type {
   ScheduleType,
   ScheduledMessage,
   TriggeredMessage,
+  TriggerType,
 } from '@/types/messaging';
 
 type MessageFormMode = 'scheduled' | 'triggered';
@@ -16,6 +17,7 @@ type UseMessageFormParams = {
   mode: MessageFormMode;
   recipientOptions: RecipientType[];
   scheduleTypeOptions: ScheduleType[];
+  triggerTypeOptions: TriggerType[];
 };
 
 const defaultScheduledMessage: ScheduledMessage = {
@@ -41,7 +43,7 @@ const defaultTriggeredMessage: TriggeredMessage = {
     email: { isCustom: true, sections: [], content: '' },
   },
   isDefault: false,
-  triggerType: 'PAYMENT_CONFIRMED',
+  triggerType: 'Payment Confirmed',
   active: true,
 };
 
@@ -54,6 +56,7 @@ export const useMessageForm = ({
   mode,
   recipientOptions,
   scheduleTypeOptions,
+  triggerTypeOptions,
 }: UseMessageFormParams) => {
   const { toast } = useToast();
   const seed = initialData
@@ -96,6 +99,18 @@ export const useMessageForm = ({
       }));
     }
   }, [mode, scheduleTypeOptions, selectedScheduleType]);
+
+  useEffect(() => {
+    // Keep the default triggerType in sync with what the backend exposes.
+    if (mode !== 'triggered' || !triggerTypeOptions.length) return;
+    const current = (formData as TriggeredMessage).triggerType;
+    if (!triggerTypeOptions.includes(current as TriggerType)) {
+      setFormData(prev => ({
+        ...(prev as TriggeredMessage),
+        triggerType: triggerTypeOptions[0],
+      } as TriggeredMessage));
+    }
+  }, [mode, triggerTypeOptions]);
 
   const handleInputChange = (field: string, value: unknown) => {
     setFormData({ ...formData, [field]: value });
