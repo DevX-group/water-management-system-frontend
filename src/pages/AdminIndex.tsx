@@ -17,6 +17,7 @@ import NotFound from './NotFound';
 import '../admin.css';
 import { BankSlipReviewPage } from './BankSlipReviewPage';
 import { AdminBlogPage } from './AdminBlogPage';
+import { AdminSettings } from './AdminSettings';
 import type { AdminRole, Section } from '@/types/admin';
 
 const sectionPathMap: Record<Section, string> = {
@@ -64,6 +65,7 @@ const DashboardContent: React.FC = () => {
           <Route path="reports" element={<ReportsPage />} />
           <Route path="predictions" element={<PredictionsPage />} />
           <Route path="blog" element={<AdminBlogPage />} />
+          <Route path="settings" element={<AdminSettings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AdminLayout>

@@ -24,15 +24,20 @@ import CustomerPayments from "./pages/CustomerPayments";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
 
+import { ThemeProvider } from "./contexts/ThemeProvider";
+import { FontSizeProvider } from "./contexts/FontSizeProvider";
+
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
+  <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme" attribute="class" disableTransitionOnChange>
+    <FontSizeProvider defaultSize="medium" storageKey="vite-ui-font-size">
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
           {/* Public Routes */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
@@ -63,6 +68,8 @@ const App = () => (
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
+    </FontSizeProvider>
+  </ThemeProvider>
 );
 
 export default App;
