@@ -3,7 +3,6 @@ import { useState, useRef, DragEvent, ChangeEvent, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
-  getBankDetails,
   getCurrentBillForCustomer,
   getOutstandingBillsForCustomer,
   getPaymentHistoryForCustomer,
@@ -26,6 +25,8 @@ import type {
 import { CustomerPaymentCard } from "@/components/payments/CustomerPaymentComponents";
 import { CustomerBankSlipSection, CustomerBankSlipHistory, CustomerBankSlipModal, BankSlipForm } from "@/components/payments/CustomerBankSlipComponents";
 import { CustomerPaymentHistoryTable } from "@/components/payments/CustomerPaymentHistoryTable";
+import { SystemDetailsResponse } from '@/types/systemSettings';
+import { getSystemDetails } from '@/services/systemSettingsService';
 
 export const CustomerPayments = () => {
 
@@ -47,12 +48,12 @@ export const CustomerPayments = () => {
   const [slipPageSize, setSlipPageSize] = useState(5);
   const [slipTotalItems, setSlipTotalItems] = useState(0);
 
-  const [selectedSlip, setSelectedSlip] = useState<any | null>(null);
+  const [selectedSlip, setSelectedSlip] = useState<CustomerBankSlipResponse | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "payment";
 
-  const [bankDetails, setBankDetails] = useState<any>(null);
+  const [systemDetails, setSystemDetails] = useState<SystemDetailsResponse | null>(null);
 
   // Filter state
   const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
@@ -95,16 +96,16 @@ export const CustomerPayments = () => {
     setLoadingData(true);
 
     try {
-      const [bill, outs, bank] = await Promise.all([
+      const [bill, outs, system] = await Promise.all([
         getCurrentBillForCustomer(),
         getOutstandingBillsForCustomer(),
-        getBankDetails(),
+        getSystemDetails(),
       ]);
 
       setCurrentBill(bill);
       setOutstandingBillsSummary(outs);
       setOutstandingBills(outs.outstandingBills);
-      setBankDetails(bank);
+      setSystemDetails(system);
     } catch {
       toast.error("Failed to load payment data");
     } finally {
@@ -402,7 +403,7 @@ export const CustomerPayments = () => {
 
           <CustomerBankSlipSection
             slipSectionRef={slipSectionRef}
-            bankDetails={bankDetails}
+            bankDetails={systemDetails}
             slipForm={slipForm}
             setSlipForm={setSlipForm}
             dragging={dragging}

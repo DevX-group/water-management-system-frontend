@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomerBankSlipResponse } from "@/types/bankSlip";
 import { SlipStatus } from "@/types/payment";
+import { SystemDetailsResponse } from '@/types/systemSettings';
 
 export interface BankSlipForm {
   amount: string;
@@ -19,7 +20,7 @@ export interface BankSlipForm {
 
 interface CustomerBankSlipSectionProps {
   slipSectionRef: RefObject<HTMLDivElement>;
-  bankDetails: any;
+  bankDetails: SystemDetailsResponse;
   slipForm: BankSlipForm;
   setSlipForm: React.Dispatch<React.SetStateAction<BankSlipForm>>;
   dragging: boolean;
