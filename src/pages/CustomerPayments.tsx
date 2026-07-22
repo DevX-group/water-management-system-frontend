@@ -3,6 +3,7 @@ import { useState, useRef, DragEvent, ChangeEvent, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import {
+  getBankDetails,
   getCurrentBillForCustomer,
   getOutstandingBillsForCustomer,
   getPaymentHistoryForCustomer,
@@ -17,6 +18,7 @@ import type {
   OutstandingBillsSummaryResponse,
   PaymentMethod,
   SlipStatus,
+  BankDetailsResponse,
 } from "@/types/payment";
 import type {
   CustomerBankSlipResponse,
@@ -26,8 +28,6 @@ import { CustomerPaymentCard } from "@/components/payments/CustomerPaymentCompon
 import { CustomerBankSlipSection, CustomerBankSlipHistory, CustomerBankSlipModal, BankSlipForm } from "@/components/payments/CustomerBankSlipComponents";
 import { CustomerPaymentHistoryTable } from "@/components/payments/CustomerPaymentHistoryTable";
 import { useTranslation } from "react-i18next";
-import { SystemDetailsResponse } from '@/types/systemSettings';
-import { getSystemDetails } from '@/services/systemSettingsService';
 
 export const CustomerPayments = () => {
   const { t } = useTranslation();
@@ -55,7 +55,7 @@ export const CustomerPayments = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "payment";
 
-  const [systemDetails, setSystemDetails] = useState<SystemDetailsResponse | null>(null);
+  const [bankDetails, setBankDetails] = useState<BankDetailsResponse | null>(null);
 
   // Filter state
   const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
@@ -96,18 +96,25 @@ export const CustomerPayments = () => {
 
   const loadInitialData = async () => {
     setLoadingData(true);
+    console.log("loadInitialData started");
 
     try {
-      const [bill, outs, system] = await Promise.all([
-        getCurrentBillForCustomer(),
-        getOutstandingBillsForCustomer(),
-        getSystemDetails(),
-      ]);
+      console.log("Calling current bill...");
+    const bill = await getCurrentBillForCustomer();
+    console.log("Current bill response:", bill);
+
+    console.log("Calling outstanding bills...");
+    const outs = await getOutstandingBillsForCustomer();
+    console.log("Outstanding bills response:", outs);
+
+    console.log("Calling bank details...");
+    const bank = await getBankDetails();
+    console.log("Bank details response:", bank);
 
       setCurrentBill(bill);
       setOutstandingBillsSummary(outs);
       setOutstandingBills(outs.outstandingBills);
-      setSystemDetails(system);
+      setBankDetails(bank);
     } catch {
       toast.error(t("payments.paymentHistory.failedToLoadData"));
     } finally {
@@ -405,7 +412,7 @@ export const CustomerPayments = () => {
 
           <CustomerBankSlipSection
             slipSectionRef={slipSectionRef}
-            bankDetails={systemDetails}
+            bankDetails={bankDetails}
             slipForm={slipForm}
             setSlipForm={setSlipForm}
             dragging={dragging}
