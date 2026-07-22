@@ -14,7 +14,7 @@ export type SignupFormErrors = {
 };
 
 export interface LoginFormData {
-  email:      string;
+  nic:        string;
   password:   string;
   rememberMe: boolean;
 }

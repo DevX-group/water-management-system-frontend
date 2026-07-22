@@ -31,7 +31,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
         </div>
       ) : (
         <>
-          // Header 
+          {/*Header  */} 
           <div className="p-4 border-b flex items-center justify-between bg-secondary/20">
             <div className="flex items-center gap-3">
               <InquiryAvatar name={selectedInquiry.name} size="sm" variant="user" />
@@ -52,7 +52,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
             </div>
           </div>
 
-           // Messages 
+           {/*Messages */} 
           <div className="flex-1 overflow-y-auto p-6 flex flex-col gap-4">
             {selectedInquiry.messages.map((msg, index) => (
               <InquiryChatMessage
@@ -65,7 +65,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          // Reply input 
+          {/*Reply input  */} 
           <div className="p-4 border-t bg-secondary/10">
             <div className="flex items-end gap-2">
               <div className="flex-1 relative">

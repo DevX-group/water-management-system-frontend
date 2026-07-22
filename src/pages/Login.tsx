@@ -11,7 +11,7 @@ const Login = () => {
     showPassword,
     loginError,
     handleSubmit,
-    handleEmailChange,
+    handleNicChange,
     handlePasswordChange,
     togglePasswordVisibility,
     handleRememberChange
@@ -37,7 +37,7 @@ const Login = () => {
             </motion.div>
             <LoginForm
               formData={formData} showPassword={showPassword} loginError={loginError}
-              onEmailChange={handleEmailChange}
+              onNicChange={handleNicChange}
               onPasswordChange={handlePasswordChange}
               onTogglePassword={togglePasswordVisibility}
               onRememberChange={handleRememberChange}

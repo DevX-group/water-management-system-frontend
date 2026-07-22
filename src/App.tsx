@@ -24,6 +24,10 @@ import CustomerPayments from "./pages/CustomerPayments";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
 
+// Auth integrations
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/routes/ProtectedRoute";
+
 import { ThemeProvider } from "./contexts/ThemeProvider";
 import { FontSizeProvider } from "./contexts/FontSizeProvider";
 
@@ -33,40 +37,46 @@ const App = () => (
   <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme" attribute="class" disableTransitionOnChange>
     <FontSizeProvider defaultSize="medium" storageKey="vite-ui-font-size">
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          
-          {/* Customer Routes */}
-          <Route path="/customer/dashboard" element={<Dashboard />} />
-          <Route path="/customer/bills" element={<Bills />} />
-          <Route path="/customer/payments" element={<CustomerPayments />} />
-          <Route path="/customer/payments/success" element={<PaymentSuccess />} />
-          <Route path="/customer/payments/failed" element={<PaymentFailed />} />
-          <Route path="/customer/usage" element={<Usage />} />
-          <Route path="/customer/notifications" element={<Notifications />} />
-          <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
-          <Route path="/customer/profile" element={<Profile />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/about" element={<AboutUs />} />
-          <Route path="/privacy" element={<PrivacyPolicy />} />
-          <Route path="/terms" element={<TermsOfService />} />
-          <Route path="/cookies" element={<CookiePolicy />} />
-          <Route path="/blog" element={<Blog />} />
-          
-          {/* Admin Routes */}
-          <Route path="/admin/*" element={<AdminIndex />} />
-          
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+        <AuthProvider>
+      <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+            {/* Public Routes */}
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/activate" element={<Signup />} />
+            <Route path="/about" element={<AboutUs />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
+            <Route path="/cookies" element={<CookiePolicy />} />
+            <Route path="/blog" element={<Blog />} />
+            
+            {/* Customer Routes */}
+            <Route element={<ProtectedRoute allowedRoles={['CUSTOMER']} />}>
+              <Route path="/customer/dashboard" element={<Dashboard />} />
+              <Route path="/customer/bills" element={<Bills />} />
+              <Route path="/customer/payments" element={<CustomerPayments />} />
+              <Route path="/customer/payments/success" element={<PaymentSuccess />} />
+              <Route path="/customer/payments/failed" element={<PaymentFailed />} />
+              <Route path="/customer/usage" element={<Usage />} />
+              <Route path="/customer/notifications" element={<Notifications />} />
+              <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
+              <Route path="/customer/profile" element={<Profile />} />
+            </Route>
+
+            {/* Admin Routes */}
+            <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'SYSTEM_ADMIN', 'PAYMENT_HANDLER', 'METER_READER']} />}>
+              <Route path="/admin/*" element={<AdminIndex />} />
+            </Route>
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
     </FontSizeProvider>
   </ThemeProvider>

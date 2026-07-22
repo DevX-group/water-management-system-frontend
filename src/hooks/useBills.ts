@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { BillResponse } from '@/types/billing';
-import { API_BASE } from '@/utils/billingUtils';
 import { CUSTOMER_SUBSCRIPTION_NUMBER } from '@/constants/customer';
+import { api } from '@/services/api';
 
 const SUBSCRIPTION_NUMBER = CUSTOMER_SUBSCRIPTION_NUMBER;
 
@@ -18,12 +18,10 @@ export const useBills = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
 
- 
-  //  use the CUSTOMER_SUBSCRIPTION_NUMBER to pull their specific bills.
+  // Fetch the specific bills for the logged in customer.
   useEffect(() => {
-    fetch(`${API_BASE}/bills/customer/${encodeURIComponent(SUBSCRIPTION_NUMBER)}`)
-      .then(r => r.ok ? r.json() : [])
-      .then(setBills)
+    api.get<BillResponse[]>(`/bills/customer/me`)
+      .then(response => setBills(response.data))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, []);
@@ -38,14 +36,12 @@ export const useBills = () => {
 
   const handleDownload = async (bill: BillResponse) => {
     try {
-      const res = await fetch(`${API_BASE}/bills/${bill.billId}/download`);
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = `bill-${bill.billingPeriod}.pdf`; a.click();
-        window.URL.revokeObjectURL(url);
-      }
+      const res = await api.get(`/bills/${bill.billId}/download`, { responseType: 'blob' });
+      const blob = res.data as Blob;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `bill-${bill.billingPeriod}.pdf`; a.click();
+      window.URL.revokeObjectURL(url);
     } catch (e) { console.error(e); }
   };
 

@@ -1,14 +1,19 @@
 import '@/index.css';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageHistoryPage } from '@/pages/messageHistoryPage';
 import { ScheduledMessageSection } from '@/components/messaging/ScheduledMessageSection';
 import { TriggeredMessageSection } from '@/components/messaging/TriggeredMessageSection';
+import { useToast } from '@/hooks/use-toast';
+import type { MessagingEnumResponse } from '@/types/messaging';
+import * as messageApi from '@/services/messageService';
 
 export const MessagingPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { toast } = useToast();
+  const [enumOptions, setEnumOptions] = useState<MessagingEnumResponse | null>(null);
   // Switch between list tabs and history view based on the URL.
   const isHistory = location.pathname.includes('/admin/messaging/history');
   const activeTab = location.pathname.includes('/admin/messaging/triggered') ? 'triggered' : 'scheduled';
@@ -19,6 +24,18 @@ export const MessagingPage = () => {
       navigate('/admin/messaging/scheduled', { replace: true });
     }
   }, [location.pathname, navigate]);
+
+  useEffect(() => {
+    // Enum values (channels, schedule types, recipients, placeholders) shared by dialogs.
+    messageApi.getMessagingEnums()
+      .then(setEnumOptions)
+      .catch((error) => {
+        const message = error instanceof Error
+          ? error.message
+          : 'Failed to load message options.';
+        toast({ title: 'Error', description: message, variant: 'destructive' });
+      });
+  }, [toast]);
 
   return (
     <div className="space-y-6 p-6 pb-24 px-24">
@@ -38,10 +55,10 @@ export const MessagingPage = () => {
         {!isHistory && (
           <>
             <TabsContent value="scheduled" className="mt-6">
-              <ScheduledMessageSection />
+              <ScheduledMessageSection enumOptions={enumOptions} />
             </TabsContent>
             <TabsContent value="triggered" className="mt-6">
-              <TriggeredMessageSection />
+              <TriggeredMessageSection enumOptions={enumOptions} />
             </TabsContent>
           </>
         )}

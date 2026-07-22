@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { InquiryFormData, InquiryFormErrors } from '@/types/inquiry';
 import { useInquiry, useInquiries } from '@/hooks/useInquiries';
-
-const API_BASE_URL = 'http://localhost:8081/api/inquiries';
+import { api } from '@/services/api';
 
 export const useCustomerInquiryPage = () => {
   const [form, setForm] = useState<InquiryFormData>({ name: '', email: '', category: '', message: '' });
@@ -53,16 +52,10 @@ export const useCustomerInquiryPage = () => {
       status: 'open'
     };
     try {
-      const res = await fetch(API_BASE_URL, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload) 
-      });
-      if (res.ok) { 
-        setActiveId(id); 
-        setViewingHistoryId(null); 
-        setForm({ name: '', email: '', category: '', message: '' }); 
-      }
+      await api.post('/inquiries', payload);
+      setActiveId(id); 
+      setViewingHistoryId(null); 
+      setForm({ name: '', email: '', category: '', message: '' }); 
     } catch (err) { 
       console.error(err); 
     } finally { 
@@ -81,12 +74,8 @@ export const useCustomerInquiryPage = () => {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
     };
     try {
-      const res = await fetch(`${API_BASE_URL}/${activeId}/messages`, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(newMsg) 
-      });
-      if (res.ok) setChatInput('');
+      await api.post(`/inquiries/${activeId}/messages`, newMsg); 
+      setChatInput('');
     } catch (err) { 
       console.error(err); 
     }

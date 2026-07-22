@@ -8,8 +8,10 @@ import { connectAdminSlipSocket, disconnectAdminSlipSocket } from '@/services/we
 import { formatDateTime } from "@/utils/dateUtils";
 import { AdminBankSlipResponse } from '@/types/bankSlip';
 import { getAllPendingSlips, getPendingSlips } from '@/services/bankSlipService';
+import { useTranslation } from 'react-i18next';
 
 export const PendingBankSlipsTable = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [slipPage, setSlipPage] = useState(0);
   const [slipSearch, setSlipSearch] = useState('');
@@ -23,7 +25,7 @@ export const PendingBankSlipsTable = () => {
       const data = await getAllPendingSlips();
 
       if (!data || data.length === 0) {
-        toast.info("No pending slips to review.");
+        toast.info(t('payments.pendingSlips.noPendingSlipsToReview'));
         return;
       }
 
@@ -34,7 +36,7 @@ export const PendingBankSlipsTable = () => {
 
     } catch (err) {
       console.error("Failed to load slips for review:", err);
-      toast.error("Failed to load slips for review");
+      toast.error(t('payments.pendingSlips.failedToLoadReview'));
     }
   };
 
@@ -49,7 +51,7 @@ export const PendingBankSlipsTable = () => {
 
       } catch (err) {
         console.error("Failed to load pending slips:", err);
-        toast.error("Failed to load pending slips");
+        toast.error(t('payments.pendingSlips.failedToLoad'));
       } finally {
         setLoadingSlips(false);
       }
@@ -80,11 +82,11 @@ export const PendingBankSlipsTable = () => {
       <div className="flex items-start justify-between mb-5 gap-4">
         <div>
           <h3 className="text-lg font-semibold text-foreground">
-            Pending Bank Slips
+            {t('payments.pendingSlips.title')}
           </h3>
 
           <p className="text-sm text-muted-foreground mt-1">
-            Review uploaded customer bank slips
+            {t('payments.pendingSlips.subtitle')}
           </p>
         </div>
 
@@ -116,7 +118,7 @@ export const PendingBankSlipsTable = () => {
                     setShowSlipSearch(false);
                   }
                 }}
-                placeholder="Enter Name / Subscription Number"
+                placeholder={t('payments.customerSearch.searchPlaceholder')}
                 className="ml-3 w-full bg-transparent outline-none text-sm placeholder:text-muted-foreground"
               />
             )}
@@ -128,7 +130,7 @@ export const PendingBankSlipsTable = () => {
             onClick={handleReviewAll}
             className="rounded-xl h-11 px-4 border-primary/20 hover:bg-primary hover:text-primary-foreground transition-colors"
           >
-            Review All
+            {t('payments.pendingSlips.reviewAll')}
           </Button>
         </div>
       </div>
@@ -137,23 +139,23 @@ export const PendingBankSlipsTable = () => {
       <div className="border border-border rounded-xl overflow-hidden">
         {/* Table Header */}
         <div className="grid grid-cols-12 px-6 py-3 bg-secondary/50 text-xs font-semibold text-muted-foreground">
-          <div className="col-span-4">Customer</div>
-          <div className="col-span-3">Ref No</div>
-          <div className="col-span-2 text-left">Amount</div>
-          <div className="col-span-3 text-center">Action</div>
+          <div className="col-span-4">{t('payments.pendingSlips.customer')}</div>
+          <div className="col-span-3">{t('payments.pendingSlips.refNo')}</div>
+          <div className="col-span-2 text-left">{t('payments.pendingSlips.amount')}</div>
+          <div className="col-span-3 text-center">{t('payments.pendingSlips.action')}</div>
         </div>
 
         {/* Table Body */}
         <div>
           {loadingSlips && (
             <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
-              Loading pending slips...
+              {t('payments.pendingSlips.loadingPendingSlips')}
             </div>
           )}
 
           {!loadingSlips && slipData.length === 0 && (
             <div className="flex items-center justify-center py-12 text-sm text-muted-foreground">
-              No pending slips found
+              {t('payments.pendingSlips.noPendingSlips')}
             </div>
           )}
 
@@ -175,7 +177,16 @@ export const PendingBankSlipsTable = () => {
                   </p>
 
                   <p className="text-[11px] text-muted-foreground mt-1">
-                    {formatDateTime(slip.uploadedAt)}
+                    {(() => {
+                      const dt = formatDateTime(slip.uploadedAt);
+                      if (dt === "-") return dt;
+                      const [datePart, timePart, ampmPart] = dt.split(' ');
+                      const translatedAmPm = ampmPart === 'AM' ? t('payments.filters.am') : t('payments.filters.pm');
+                      if (i18n.language === 'si') {
+                        return `${datePart} ${translatedAmPm} ${timePart}`;
+                      }
+                      return `${datePart} ${timePart} ${translatedAmPm}`;
+                    })()}
                   </p>
                 </div>
 
@@ -186,7 +197,7 @@ export const PendingBankSlipsTable = () => {
 
                 {/* Amount */}
                 <div className="col-span-2 text-left font-semibold text-foreground pr-4">
-                  Rs. {slip.amount.toLocaleString()}
+                  {t('payments.billPayment.currency')} {slip.amount.toLocaleString()}
                 </div>
 
                 {/* Action */}
@@ -198,7 +209,7 @@ export const PendingBankSlipsTable = () => {
                       navigate(`/admin/payments/slip/${slip.slipId}`)
                     }
                   >
-                    Review
+                    {t('payments.pendingSlips.review')}
                   </Button>
                 </div>
               </div>
@@ -220,7 +231,7 @@ export const PendingBankSlipsTable = () => {
           </button>
 
           <span className="text-sm font-medium text-foreground">
-            Page {slipPage + 1} of {totalPages}
+            {t('payments.pendingSlips.page')} {slipPage + 1} {t('payments.pendingSlips.of')} {totalPages}
           </span>
 
           <button

@@ -2,7 +2,11 @@ import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Droplets, Shield, Zap, Bell } from 'lucide-react';
+import { Droplets, Shield, Zap, Bell, Eye, EyeOff, User, Lock, ArrowRight } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const features = [
   { icon: Shield, text: 'Secure & encrypted' },
@@ -50,10 +54,10 @@ export const LoginRightPanel: React.FC = () => (
 );
 
 interface LoginFormProps {
-  formData:     { email: string; password: string; rememberMe: boolean };
+  formData:     { nic: string; password: string; rememberMe: boolean };
   showPassword: boolean;
   loginError:   string;
-  onEmailChange:    (v: string) => void;
+  onNicChange:      (v: string) => void;
   onPasswordChange: (v: string) => void;
   onTogglePassword: () => void;
   onRememberChange: (v: boolean) => void;
@@ -62,24 +66,19 @@ interface LoginFormProps {
 
 export const LoginForm: React.FC<LoginFormProps> = ({
   formData, showPassword, loginError,
-  onEmailChange, onPasswordChange, onTogglePassword, onRememberChange, onSubmit,
+  onNicChange, onPasswordChange, onTogglePassword, onRememberChange, onSubmit,
 }) => {
-  // Lazy imports to keep bundle clean
-  const { Input }    = require('@/components/ui/input');
-  const { Label }    = require('@/components/ui/label');
-  const { Button }   = require('@/components/ui/button');
-  const { Checkbox } = require('@/components/ui/checkbox');
-  const { Eye, EyeOff, Mail, Lock, ArrowRight } = require('lucide-react');
+
 
   return (
     <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }} onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email" className="text-sm font-medium">Email</Label>
+        <Label htmlFor="nic" className="text-sm font-medium">NIC Number</Label>
         <div className="relative">
-          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-          <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onEmailChange(e.target.value); }}
+          <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+          <Input id="nic" type="text" placeholder="Enter your NIC" value={formData.nic}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onNicChange(e.target.value); }}
             style={{ caretColor: 'black' }}
             className="h-14 rounded-xl pl-12 input-premium text-base bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" />
         </div>

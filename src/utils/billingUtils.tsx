@@ -1,9 +1,10 @@
 import '@/index.css';
 import React from 'react';
 import { Zap, ToggleLeft } from 'lucide-react';
+import { API_BASE_URL } from '@/config/api';
 import type { ConnectionType, ConnectionRate, BillBreakdown } from '@/types/billing';
 
-export const API_BASE = 'http://localhost:8081/api';
+export const API_BASE = API_BASE_URL;
 
 export const INITIAL_RATES: Record<ConnectionType, ConnectionRate> = {
   metered: {

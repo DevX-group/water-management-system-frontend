@@ -7,8 +7,6 @@ import type { Inquiry } from '@/types/inquiry';
 import { InquiryList } from '@/components/inquiries/InquiryList';
 import { InquiryChatPanel } from '@/components/inquiries/InquiryChatPanel';
 
-const API_BASE_URL = 'http://localhost:8081/api/inquiries';
-
 const containerVariants = {
   hidden:  { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.08 } },

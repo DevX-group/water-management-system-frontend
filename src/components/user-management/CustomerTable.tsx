@@ -71,8 +71,10 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
+              <SelectItem value="ACTIVE">Active</SelectItem>
+              <SelectItem value="INACTIVE">Inactive</SelectItem>
+              <SelectItem value="PENDING_ACTIVATION">Pending</SelectItem>
+              <SelectItem value="SUSPENDED">Suspended</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -82,8 +84,8 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <SelectTrigger className="bg-accent/30"><SelectValue placeholder="All Regions" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Regions</SelectItem>
-              {Object.entries(REGION_CONFIG).map(([key, val]) => (
-                <SelectItem key={key} value={key}>{val.label}</SelectItem>
+              {Object.values(REGION_CONFIG).map((val) => (
+                <SelectItem key={val.code} value={val.code}>{val.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -95,7 +97,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
             <SelectContent>
               <SelectItem value="all">All Types</SelectItem>
               <SelectItem value="metered">Metered</SelectItem>
-              <SelectItem value="non-metered">Non Metered</SelectItem>
+              <SelectItem value="non_metered">Non Metered</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -137,12 +139,14 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 <td className="py-4 text-sm text-muted-foreground">{customer.nic}</td>
                 <td className="py-4 text-sm text-muted-foreground">{customer.subscriptionNo}</td>
                 <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
-                <td className="py-4 text-sm text-muted-foreground capitalize">{customer.region}</td>
+                <td className="py-4 text-sm text-muted-foreground">
+                  {Object.values(REGION_CONFIG).find(r => r.code === customer.region)?.label || customer.region}
+                </td>
                 <td className="py-4 text-sm text-muted-foreground">
                   {new Date(customer.registeredDate).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </td>
                 <td className="py-4">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'active' ? 'bg-success/10 text-success' : 'bg-muted text-muted-foreground'}`}>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'ACTIVE' ? 'bg-success/10 text-success' : customer.status === 'INACTIVE' ? 'bg-muted text-muted-foreground' : 'bg-blue-500/10 text-blue-500'}`}>
                     {customer.status}
                   </span>
                 </td>
@@ -156,7 +160,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                       <Edit className="w-4 h-4 text-green-600" />
                     </button>
                     <button onClick={() => onDelete(customer.id, customer.name)} disabled={customer.isDeleted}
-                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Delete">
+                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Deactivate">
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>
