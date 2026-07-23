@@ -19,11 +19,12 @@ import '../admin.css';
 import { BankSlipReviewPage } from './BankSlipReviewPage';
 import { AdminBlogPage } from './AdminBlogPage';
 import { AdminSettings } from './AdminSettings';
+import { SystemSettingsPage } from './SystemSettingsPage';
 import type { Section } from '@/types/admin';
 import { canAccessSection, getDefaultAdminPath, isAdminRole } from '@/utils/adminAccess';
 
 const getSectionFromPath = (pathname: string): Section => {
-  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog'];
+  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'system-settings'];
   return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
 };
 
@@ -56,6 +57,7 @@ const DashboardContent: React.FC = () => {
           <Route path="predictions" element={<PredictionsPage />} />
           <Route path="blog" element={<AdminBlogPage />} />
           <Route path="settings" element={<AdminSettings />} />
+          <Route path="system-settings" element={<SystemSettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AdminLayout>

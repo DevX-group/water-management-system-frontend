@@ -1,4 +1,4 @@
-import { LayoutDashboard, Users, Gauge, Receipt, CreditCard, MessageSquare, BarChart3, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, Users, Gauge, Receipt, CreditCard, MessageSquare, BarChart3, TrendingUp, Settings } from 'lucide-react';
 import type { AdminRole } from '@/types/admin';
 
 export interface NavItem {
@@ -20,6 +20,7 @@ export const NAV_ITEMS: NavItem[] = [
   { icon: BarChart3, label: 'Reports', id: 'reports', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: TrendingUp, label: 'Predictions', id: 'predictions', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: MessageSquare, label: 'Blog', id: 'blog', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
+  { icon: Settings, label: 'System Settings', id: 'system-settings', roles: ['SUPER_ADMIN'] },
 ];
 
 export const SECTION_PATH_MAP: Record<string, string> = {
@@ -33,4 +34,5 @@ export const SECTION_PATH_MAP: Record<string, string> = {
   reports: '/admin/reports',
   predictions: '/admin/predictions',
   blog: '/admin/blog',
+  'system-settings': '/admin/system-settings',
 };
