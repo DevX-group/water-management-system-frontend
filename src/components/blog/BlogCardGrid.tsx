@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Trash2, Calendar, User, ArrowRight, X } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface Blog {
   id:       number;
@@ -20,7 +21,10 @@ interface BlogCardGridProps {
   onExpand:    (blog: Blog) => void;
 }
 
-export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onExpand }) => (
+export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onExpand }) => {
+  const { t } = useTranslation('adminBlog');
+
+  return (
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
     {blogs.map(blog => (
       <motion.div key={blog.id} layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -48,14 +52,15 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
             <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-8">{blog.title}</h3>
             <div className="flex items-center gap-2 text-primary font-bold cursor-pointer hover:gap-4 transition-all"
               onClick={() => onExpand(blog)}>
-              <span>Read More</span><ArrowRight size={18} />
+              <span>{t('readMore')}</span><ArrowRight size={18} />
             </div>
           </CardContent>
         </Card>
       </motion.div>
     ))}
   </div>
-);
+  );
+};
 
 interface BlogPostModalProps {
   blog:    Blog | null;

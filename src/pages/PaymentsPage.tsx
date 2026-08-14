@@ -5,7 +5,7 @@ import { PendingBankSlipsTable } from '@/components/payments/PendingBankSlipsTab
 import { useTranslation } from 'react-i18next';
 
 export const PaymentsPage = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">

@@ -6,8 +6,10 @@ import { MeterReadingInstructions } from '@/components/meter-reading/MeterReadin
 import { MeterReadingsTable } from '@/components/meter-reading/MeterReadingsTable';
 
 import { useMeterReading } from '@/hooks/useMeterReading';
+import { useTranslation } from 'react-i18next';
 
 export const MeterReadingPage = () => {
+  const { t } = useTranslation('meterReading');
   const {
     formData,
     todaysReadings,

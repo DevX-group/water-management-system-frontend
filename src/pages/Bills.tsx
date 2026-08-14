@@ -1,22 +1,24 @@
 import '@/index.css';
 import React from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { Loader2 } from 'lucide-react';
 import { BillsSummaryStats } from '@/components/bills/BillsSummaryStats';
-import { BillsFilterBar }   from '@/components/bills/BillsFilterBar';
-import { BillsTable }       from '@/components/bills/BillsTable';
-import { BillImageViewer }  from '@/components/bills/BillImageViewer';
+import { BillsFilterBar } from '@/components/bills/BillsFilterBar';
+import { BillsTable } from '@/components/bills/BillsTable';
+import { BillImageViewer } from '@/components/bills/BillImageViewer';
 
 import { useBills } from '@/hooks/useBills';
 
 const containerVariants = {
-  hidden:  { opacity: 0 },
+  hidden: { opacity: 0 },
   visible: { opacity: 1, transition: { staggerChildren: 0.08 } },
 };
 const itemVariants = { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } };
 
 const Bills = () => {
+  const { t } = useTranslation('billing');
   const {
     bills,
     loading,
@@ -58,7 +60,7 @@ const Bills = () => {
 
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              Billing <span className="text-gradient">History</span>
+              {t('history.title')} <span className="text-gradient">{t('history.titleHighlight')}</span>
             </h1>
           </motion.div>
 

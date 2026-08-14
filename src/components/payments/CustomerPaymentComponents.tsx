@@ -14,7 +14,7 @@ interface MethodTabsProps {
 }
 
 export const MethodTabs = ({ value, onChange }: MethodTabsProps) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   const activeClass = "border-primary bg-primary/10 text-primary";
   const inactiveClass = "border-border text-muted-foreground hover:border-primary/40";
 
@@ -86,7 +86,7 @@ export const CustomerPaymentCard: React.FC<CustomerPaymentCardProps> = ({
   outstandingPage,
   setOutstandingPage,
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <Card ref={paymentCardRef} className="shadow-card border-none">
       <CardHeader>

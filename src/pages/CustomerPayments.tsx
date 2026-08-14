@@ -30,7 +30,7 @@ import { CustomerPaymentHistoryTable } from "@/components/payments/CustomerPayme
 import { useTranslation } from "react-i18next";
 
 export const CustomerPayments = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
 
   const [currentBill, setCurrentBill] = useState<CurrentBillResponse | null>(null);
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);

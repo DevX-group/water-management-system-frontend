@@ -1,5 +1,6 @@
 import '@/index.css';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -27,27 +28,30 @@ interface MeterReadingsTableProps {
   onRefresh:      () => void;
 }
 
-export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh }) => (
+export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh }) => {
+  const { t } = useTranslation('meterReading');
+  
+  return (
   <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '200ms' }}>
     <div className="flex items-center justify-between mb-4">
-      <h3 className="text-lg font-semibold text-foreground">Today's Readings</h3>
+      <h3 className="text-lg font-semibold text-foreground">{t('table.title')}</h3>
       <Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading}>
-        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Refresh'}
+        {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('table.refresh')}
       </Button>
     </div>
 
     {loading ? (
       <div className="flex items-center justify-center py-10 text-muted-foreground gap-2">
-        <Loader2 className="w-5 h-5 animate-spin" /> Loading readings...
+        <Loader2 className="w-5 h-5 animate-spin" /> {t('table.loading')}
       </div>
     ) : readings.length === 0 ? (
-      <p className="text-center text-muted-foreground py-10">No readings submitted today yet.</p>
+      <p className="text-center text-muted-foreground py-10">{t('table.noReadings')}</p>
     ) : (
       <div className="overflow-x-auto">
         <table className="w-full">      {/* Table of today's meter readings */} 
           <thead>
             <tr className="text-left border-b border-border">
-              {['Meter No.', 'Customer', 'Subscription', 'Previous', 'Current', 'Usage', 'Bill Amount', 'Status'].map(h => (
+              {[t('table.headers.meterNo'), t('table.headers.customer'), t('table.headers.subscription'), t('table.headers.previous'), t('table.headers.current'), t('table.headers.usage'), t('table.headers.billAmount'), t('table.headers.status')].map(h => (
                 <th key={h} className="pb-3 text-sm font-medium text-muted-foreground">{h}</th>
               ))}
             </tr>
@@ -62,7 +66,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
                 <td className="py-4 text-sm text-muted-foreground">{r.currentReading}</td>
                 <td className="py-4">
                   <span className="px-2 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                    {r.usageUnits} units
+                    {r.usageUnits} {t('table.units')}
                   </span>
                 </td>
                 <td className="py-4 text-sm text-foreground">
@@ -71,7 +75,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
                 <td className="py-4">
                   {r.billStatus ? (
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[r.billStatus] ?? 'bg-gray-100 text-gray-600'}`}>
-                      {r.billStatus}
+                      {t(`status.${r.billStatus.toUpperCase()}`, { defaultValue: r.billStatus })}
                     </span>
                   ) : '-'}
                 </td>
@@ -82,4 +86,5 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
       </div>
     )}
   </div>
-);
+  );
+};
