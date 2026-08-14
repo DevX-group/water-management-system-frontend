@@ -186,7 +186,9 @@ export const AdminNavbar: React.FC = () => {
               <p className="text-xs text-muted-foreground">Role: {roleLabel}</p>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
+              Profile Settings
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -18,6 +18,7 @@ import type {
   OutstandingBillsSummaryResponse,
   PaymentMethod,
   SlipStatus,
+  BankDetailsResponse,
 } from "@/types/payment";
 import type {
   CustomerBankSlipResponse,
@@ -49,12 +50,12 @@ export const CustomerPayments = () => {
   const [slipPageSize, setSlipPageSize] = useState(5);
   const [slipTotalItems, setSlipTotalItems] = useState(0);
 
-  const [selectedSlip, setSelectedSlip] = useState<any | null>(null);
+  const [selectedSlip, setSelectedSlip] = useState<CustomerBankSlipResponse | null>(null);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get("tab") || "payment";
 
-  const [bankDetails, setBankDetails] = useState<any>(null);
+  const [bankDetails, setBankDetails] = useState<BankDetailsResponse | null>(null);
 
   // Filter state
   const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
@@ -95,13 +96,20 @@ export const CustomerPayments = () => {
 
   const loadInitialData = async () => {
     setLoadingData(true);
+    console.log("loadInitialData started");
 
     try {
-      const [bill, outs, bank] = await Promise.all([
-        getCurrentBillForCustomer(),
-        getOutstandingBillsForCustomer(),
-        getBankDetails(),
-      ]);
+      console.log("Calling current bill...");
+    const bill = await getCurrentBillForCustomer();
+    console.log("Current bill response:", bill);
+
+    console.log("Calling outstanding bills...");
+    const outs = await getOutstandingBillsForCustomer();
+    console.log("Outstanding bills response:", outs);
+
+    console.log("Calling bank details...");
+    const bank = await getBankDetails();
+    console.log("Bank details response:", bank);
 
       setCurrentBill(bill);
       setOutstandingBillsSummary(outs);
