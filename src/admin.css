@@ -82,7 +82,7 @@
   width: 100%;
 }
 
-.admin-wrapper.dark {
+.dark .admin-wrapper {
   --background: 215 30% 8%;
   --foreground: 210 20% 95%;
 
