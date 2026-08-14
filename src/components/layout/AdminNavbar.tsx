@@ -18,6 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 
 // Role labels and colors
 const ROLE_LABELS: Record<string, string> = {
@@ -132,6 +133,9 @@ export const AdminNavbar: React.FC = () => {
 
       {/* Right Actions */}
       <div className="flex items-center gap-4">
+        {/* PWA Install Button for Meter Readers */}
+        <PWAInstallButton size="sm" />
+
         {/* Language Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

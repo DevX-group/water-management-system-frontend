@@ -24,7 +24,7 @@ import type { Section } from '@/types/admin';
 import { canAccessSection, getDefaultAdminPath, isAdminRole } from '@/utils/adminAccess';
 
 const getSectionFromPath = (pathname: string): Section => {
-  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'system-settings'];
+  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'settings', 'system-settings'];
   return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
 };
 

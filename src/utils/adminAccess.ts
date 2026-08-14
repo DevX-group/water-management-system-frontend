@@ -22,6 +22,7 @@ const sectionRoleMap = NAV_ITEMS.reduce<Record<Section, Set<AdminRole>>>((acc, i
 }, {} as Record<Section, Set<AdminRole>>);
 
 export const canAccessSection = (role: AdminRole, section: Section): boolean => {
+  if (section === 'settings') return true;
   const roles = sectionRoleMap[section];
   return roles ? roles.has(role) : false;
 };
