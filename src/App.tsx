@@ -1,3 +1,4 @@
+import React, { useEffect } from 'react';
 import '@/index.css';
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -25,14 +26,49 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
 
 // Auth integrations
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
+
+const PWAManifestController: React.FC = () => {
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const isMeterReader = user?.role === "METER_READER";
+    const existingManifest = document.querySelector('link[rel="manifest"]');
+
+    if (isMeterReader) {
+      if (!existingManifest) {
+        const link = document.createElement("link");
+        link.rel = "manifest";
+        link.href = "/manifest.webmanifest";
+        document.head.appendChild(link);
+      }
+      if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
+        navigator.serviceWorker.register("/sw.js").catch(() => {});
+      }
+    } else {
+      if (existingManifest) {
+        existingManifest.remove();
+      }
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.getRegistrations().then((registrations) => {
+          registrations.forEach((reg) => reg.unregister());
+        });
+      }
+    }
+  }, [user?.role]);
+
+  return null;
+};
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
+      <PWAManifestController />
       <TooltipProvider>
         <Toaster />
         <Sonner />
