@@ -48,18 +48,18 @@ const mapBackendToFrontend = (b: BackendCustomer): Customer => {
   const status = b.user.status;
   const isDeleted = status === 'INACTIVE' || status === 'SUSPENDED';
   return {
-  id: b.subscriptionNumber, // Use subscriptionNumber as the unique ID for frontend components
-  name: b.accountHolderName,
-  nic: b.user.nic,
-  subscriptionNo: b.subscriptionNumber,
-  address: b.address,
-  phone: b.user.phoneNumber,
-  email: b.user.email,
-  region: b.region.regionCode,
-  connectionType: b.connectionType.toLowerCase(), // Backend stores enum, frontend uses lowercase
-  registeredDate: new Date(b.user.createdAt).toISOString().split('T')[0],
-  status,
-  isDeleted,
+    id: b.subscriptionNumber, // Use subscriptionNumber as the unique ID for frontend components
+    name: b.accountHolderName,
+    nic: b.user.nic,
+    subscriptionNo: b.subscriptionNumber,
+    address: b.address,
+    phone: b.user.phoneNumber,
+    email: b.user.email,
+    region: b.region.regionCode,
+    connectionType: b.connectionType.toLowerCase(), // Backend stores enum, frontend uses lowercase
+    registeredDate: new Date(b.user.createdAt).toISOString().split('T')[0],
+    status,
+    isDeleted,
   };
 };
 
@@ -83,7 +83,7 @@ export const createCustomer = async (data: CustomerFormData): Promise<Customer> 
     connectionType: normalizeConnectionType(data.connectionType),
     regionCode: data.region,
   };
-  
+
   const res = await api.post<BackendCustomer>('/customers', request);
   return mapBackendToFrontend(res.data);
 };
@@ -98,9 +98,15 @@ export const searchCustomersApi = async (query: string): Promise<Customer[]> => 
   const lowerQuery = query.toLowerCase();
   return all.filter(
     c => c.name.toLowerCase().includes(lowerQuery) ||
-         c.subscriptionNo.toLowerCase().includes(lowerQuery) ||
-         c.nic.toLowerCase().includes(lowerQuery)
+      c.subscriptionNo.toLowerCase().includes(lowerQuery) ||
+      c.nic.toLowerCase().includes(lowerQuery)
   );
+};
+
+// search customers for add
+export const searchCustomersForPayment = async (query: string) => {
+  const res = await api.get(`/customers/search?query=${query}`);
+  return res.data;
 };
 
 export const updateCustomer = async (subscriptionNumber: string, data: CustomerFormData): Promise<Customer> => {
@@ -113,7 +119,7 @@ export const updateCustomer = async (subscriptionNumber: string, data: CustomerF
     connectionType: normalizeConnectionType(data.connectionType),
     regionCode: data.region,
   };
-  
+
   const res = await api.put<BackendCustomer>(`/customers/${subscriptionNumber}`, request);
   return mapBackendToFrontend(res.data);
 };

@@ -4,7 +4,7 @@ import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useNavigate } from 'react-router-dom';
-import { searchCustomersApi } from '@/services/customerService';
+import { searchCustomersForPayment } from '@/services/customerService';
 import { PaymentCustomerInfoResponse } from '@/types/payment';
 import { getPaymentCustomerInfo } from '@/services/paymentService';
 import { useTranslation } from 'react-i18next';
@@ -24,7 +24,7 @@ export const PaymentCustomerSearch = () => {
 
     const timeout = setTimeout(async () => {
       try {
-        const data = await searchCustomersApi(searchQuery);
+        const data = await searchCustomersForPayment(searchQuery);
         setSearchResults(Array.isArray(data) ? data : []);
       } catch (err) {
         console.error("Error searching customers:", err);
