@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import type { MonthlyDataPoint, AnalyticsData } from '@/types/usage';
 import { Activity, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
-
-const API_BASE = "http://localhost:8081/api";
+import { api } from '@/services/api';
 
 export const useUsage = () => {
   const [activeChart, setActiveChart] = useState<"bar" | "pie" | "mix">("bar");
@@ -17,11 +16,8 @@ export const useUsage = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(`${API_BASE}/analytics/usage?year=${year}`);
-        if (!res.ok) throw new Error(`Server error: ${res.status}`);
-        
-        const json: AnalyticsData = await res.json();
-        setData(json);
+        const res = await api.get<AnalyticsData>(`/analytics/usage/me?year=${year}`);
+        setData(res.data);
       } catch (err: any) {
         setError(err.message ?? "Failed to load usage data.");
       } finally {

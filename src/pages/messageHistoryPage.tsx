@@ -17,6 +17,7 @@ export const MessageHistoryPage = () => {
     size,
     totalPages,
     totalElements,
+    historyError,
     setPage,
     setSize,
     failedRecipients,
@@ -53,6 +54,11 @@ export const MessageHistoryPage = () => {
 
       <Card>
         <CardContent>
+          {historyError && (
+            <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              {historyError}
+            </div>
+          )}
           <div className="w-full overflow-x-auto">
             <Table>
               <TableHeader>

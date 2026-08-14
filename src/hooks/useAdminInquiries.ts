@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import type { Inquiry } from '@/types/inquiry';
-
-const API_BASE_URL = 'http://localhost:8081/api/inquiries';
+import { api } from '@/services/api';
 
 export const useAdminInquiries = () => {
   const [inquiries, setInquiries]   = useState<Inquiry[]>([]);
@@ -20,11 +19,8 @@ export const useAdminInquiries = () => {
 
   const fetchAllInquiries = async () => {
     try {
-      const response = await fetch(API_BASE_URL);
-      if (response.ok) {
-        const data = await response.json();
-        setInquiries(data);
-      }
+      const response = await api.get<Inquiry[]>('/inquiries');
+      setInquiries(response.data);
     } catch (error) {
       console.error('Error fetching inquiries:', error);
     } finally {
@@ -53,15 +49,9 @@ export const useAdminInquiries = () => {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
     try {
-      const response = await fetch(`${API_BASE_URL}/${selectedId}/messages`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMessage),
-      });
-      if (response.ok) {
-        setReplyText('');
-        fetchAllInquiries();
-      }
+      await api.post(`/inquiries/${selectedId}/messages`, newMessage);
+      setReplyText('');
+      fetchAllInquiries();
     } catch (error) {
       console.error('Error sending reply:', error);
     }
@@ -70,8 +60,8 @@ export const useAdminInquiries = () => {
   // Marks a support ticket as resolved by hitting the backend PATCH endpoint.
   const resolveInquiry = async (id: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/${id}/status?status=resolved`, { method: 'PATCH' });
-      if (response.ok) fetchAllInquiries();
+      await api.patch(`/inquiries/${id}/status?status=resolved`);
+      fetchAllInquiries();
     } catch (error) {
       console.error('Error resolving inquiry:', error);
     }

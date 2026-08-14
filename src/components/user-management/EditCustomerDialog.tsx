@@ -5,14 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import type { Customer } from '@/types/user';
+import type { Customer, CustomerFormData } from '@/types/user';
 
 interface EditCustomerDialogProps {
-  customer:       Customer | null;
-  editFormData:   Customer | null;
-  setEditFormData:(data: Customer) => void;
-  onClose:        () => void;
-  onSave:         () => void;
+  customer: Customer | null;
+  editFormData: CustomerFormData | null;
+  setEditFormData: (data: CustomerFormData) => void;
+  onClose: () => void;
+  onSave: () => void;
 }
 
 import { useTranslation } from 'react-i18next';
@@ -54,7 +54,7 @@ export const EditCustomerDialog: React.FC<EditCustomerDialogProps> = ({
                 <SelectTrigger><SelectValue placeholder={t('selectType')} /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="metered">{t('meteredCustomer')}</SelectItem>
-                  <SelectItem value="non-metered">{t('nonMeteredCustomer')}</SelectItem>
+                  <SelectItem value="non_metered">{t('nonMeteredCustomer')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>

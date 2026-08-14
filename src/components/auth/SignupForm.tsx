@@ -18,6 +18,8 @@ interface SignupFormProps {
   onToggleConfirm:      () => void;
   onChangeField: (field: keyof SignupFormData, value: string) => void;
   onSubmit:      (e: React.FormEvent) => void;
+  activationMode?: boolean;
+  submitLabel?: string;
 }
 
 const ErrorMsg: React.FC<{ msg?: string }> = ({ msg }) =>
@@ -31,45 +33,50 @@ const ErrorMsg: React.FC<{ msg?: string }> = ({ msg }) =>
 export const SignupForm: React.FC<SignupFormProps> = ({
   formData, formErrors, showPassword, showConfirmPassword,
   onTogglePassword, onToggleConfirm, onChangeField, onSubmit,
+  activationMode = false, submitLabel,
 }) => (
   <motion.form
     initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
     onSubmit={onSubmit} className="space-y-5"
   >
-    {/* Account Holder */}
-    <div className="space-y-2">
-      <Label htmlFor="accountHolder">Account Holder Name</Label>
-      <div className="relative">
-        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-        <Input id="accountHolder" placeholder="Enter account holder name" value={formData.accountHolder}
-          onChange={(e) => onChangeField('accountHolder', e.target.value)}
-          className="h-12 pl-12 bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
-      </div>
-    </div>
+    {!activationMode && (
+      <>
+        {/* Account Holder */}
+        <div className="space-y-2">
+          <Label htmlFor="accountHolder">Account Holder Name</Label>
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+            <Input id="accountHolder" placeholder="Enter account holder name" value={formData.accountHolder}
+              onChange={(e) => onChangeField('accountHolder', e.target.value)}
+              className="h-12 pl-12 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+          </div>
+        </div>
 
-    {/* Email */}
-    <div className="space-y-2">
-      <Label htmlFor="email">Email</Label>
-      <div className="relative">
-        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-        <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
-          onChange={(e) => onChangeField('email', e.target.value)}
-          className="h-12 pl-12 bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
-      </div>
-      <ErrorMsg msg={formErrors.email} />
-    </div>
+        {/* Email */}
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <div className="relative">
+            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+            <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
+              onChange={(e) => onChangeField('email', e.target.value)}
+              className="h-12 pl-12 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+          </div>
+          <ErrorMsg msg={formErrors.email} />
+        </div>
 
-    {/* NIC */}
-    <div className="space-y-2">
-      <Label htmlFor="nic">NIC Number</Label>
-      <div className="relative">
-        <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-        <Input id="nic" placeholder="Enter your NIC (e.g., 123456789V)" value={formData.nic}
-          onChange={(e) => onChangeField('nic', e.target.value)}
-          className="h-12 pl-12 bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
-      </div>
-      <ErrorMsg msg={formErrors.nic} />
-    </div>
+        {/* NIC */}
+        <div className="space-y-2">
+          <Label htmlFor="nic">NIC Number</Label>
+          <div className="relative">
+            <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+            <Input id="nic" placeholder="Enter your NIC (e.g., 123456789V)" value={formData.nic}
+              onChange={(e) => onChangeField('nic', e.target.value)}
+              className="h-12 pl-12 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+          </div>
+          <ErrorMsg msg={formErrors.nic} />
+        </div>
+      </>
+    )}
 
     {/* Password */}
     <div className="space-y-2">
@@ -104,7 +111,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
     </div>
 
     <Button type="submit" className="w-full h-12 gradient-primary shadow-soft hover:opacity-90 transition-opacity">
-      Register
+      {submitLabel || (activationMode ? 'Activate Account' : 'Register')}
     </Button>
 
     <p className="text-center text-muted-foreground">

@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, User, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { api } from '@/services/api';
 
 export const Blog = () => {
   const [selectedPost, setSelectedPost] = useState<any>(null);
@@ -14,9 +15,8 @@ export const Blog = () => {
   useEffect(() => {
     const fetchBlogs = async () => {
       try {
-        const response = await fetch("http://localhost:8081/api/blogs");
-        const data = await response.json();
-        setPosts(data);
+        const response = await api.get('/blogs');
+        setPosts(response.data);
       } catch (error) {
         console.error("Error fetching blogs:", error);
       } finally {

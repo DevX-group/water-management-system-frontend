@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import type { InquiryFormData, InquiryFormErrors } from '@/types/inquiry';
 import { useInquiry, useInquiries } from '@/hooks/useInquiries';
 import { useTranslation } from 'react-i18next';
-
-const API_BASE_URL = 'http://localhost:8081/api/inquiries';
+import { api } from '@/services/api';
 
 export const useCustomerInquiryPage = () => {
   const [form, setForm] = useState<InquiryFormData>({ name: '', email: '', category: '', message: '' });
@@ -21,8 +20,8 @@ export const useCustomerInquiryPage = () => {
   const { inquiry: historyInquiry } = useInquiry(viewingHistoryId, 5000);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => { 
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' }); 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [inquiry?.messages.length, showTyping, historyInquiry?.messages.length]);
 
   const { t } = useTranslation('inquiry');
@@ -36,40 +35,34 @@ export const useCustomerInquiryPage = () => {
     return Object.keys(e).length === 0;
   };
 
- 
+
   // Generates a local INQ ID 
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
     const id = `INQ-${Math.floor(1000 + Math.random() * 9000)}`;
     const payload = {
-      id, 
-      name: form.name.trim(), 
-      email: form.email.trim(), 
+      id,
+      name: form.name.trim(),
+      email: form.email.trim(),
       category: form.category || 'General',
-      messages: [{ 
-        msgId: `MSG-${Date.now()}`, 
-        user: 'user', 
-        text: form.message.trim(), 
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+      messages: [{
+        msgId: `MSG-${Date.now()}`,
+        user: 'user',
+        text: form.message.trim(),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
       }],
       status: 'open'
     };
     try {
-      const res = await fetch(API_BASE_URL, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(payload) 
-      });
-      if (res.ok) { 
-        setActiveId(id); 
-        setViewingHistoryId(null); 
-        setForm({ name: '', email: '', category: '', message: '' }); 
-      }
-    } catch (err) { 
-      console.error(err); 
-    } finally { 
-      setSubmitting(false); 
+      await api.post('/inquiries', payload);
+      setActiveId(id);
+      setViewingHistoryId(null);
+      setForm({ name: '', email: '', category: '', message: '' });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -77,21 +70,17 @@ export const useCustomerInquiryPage = () => {
   // Push the message to the backend which will appear on the Admin's screen.
   const sendMessage = async () => {
     if (!chatInput.trim() || !activeId) return;
-    const newMsg = { 
-      msgId: `MSG-${Date.now()}`, 
-      user: 'user', 
-      text: chatInput.trim(), 
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) 
+    const newMsg = {
+      msgId: `MSG-${Date.now()}`,
+      user: 'user',
+      text: chatInput.trim(),
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     try {
-      const res = await fetch(`${API_BASE_URL}/${activeId}/messages`, { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' }, 
-        body: JSON.stringify(newMsg) 
-      });
-      if (res.ok) setChatInput('');
-    } catch (err) { 
-      console.error(err); 
+      await api.post(`/inquiries/${activeId}/messages`, newMsg);
+      setChatInput('');
+    } catch (err) {
+      console.error(err);
     }
   };
 

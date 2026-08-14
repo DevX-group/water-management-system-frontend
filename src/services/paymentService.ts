@@ -1,5 +1,5 @@
 import { AddPaymentRequest, AddPaymentResponse, BankDetailsResponse, CurrentBillResponse, CustomerAddPaymentRequest, CustomerPaymentResponse, CustomerPaymentSummaryResponse, OutstandingBillsSummaryResponse, PaymentMethod, RecentPaymentResponse } from '@/types/payment';
-import api from "@/lib/api";
+import { api } from '@/services/api';
 
 
 export const getCustomerPaymentSummary = async (
