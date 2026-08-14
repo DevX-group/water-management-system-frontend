@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => ({
         background_color: "#ffffff",
         display: "standalone",
         start_url: "/admin/meter",
-        scope: "/admin/meter",
+        scope: "/admin",
         orientation: "portrait",
 
         icons: [
