@@ -2,14 +2,19 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import type { Inquiry } from '../types/inquiry';
-import { inquiryService } from '../services/inquiryService';
+import { api } from '@/services/api';
 
-/** Polls all inquiries — use in admin dashboard */
+// Polls all inquiries — use in admin dashboard 
 export function useInquiries(pollMs = 1500) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
 
-  const refresh = useCallback(() => {
-    setInquiries(inquiryService.getAll());
+  const refresh = useCallback(async () => {
+    try {
+      const response = await api.get<Inquiry[]>('/inquiries');
+      setInquiries(response.data);
+    } catch (error) {
+      console.error("Error fetching inquiries:", error);
+    }
   }, []);
 
   useEffect(() => {
@@ -21,20 +26,27 @@ export function useInquiries(pollMs = 1500) {
   return { inquiries, refresh };
 }
 
-/** Polls a single inquiry by ID — use in customer chat view */
+// Polls a single inquiry by ID — use in customer chat view 
 export function useInquiry(id: string | null, pollMs = 1500) {
   const [inquiry, setInquiry] = useState<Inquiry | null>(null);
 
-  const refresh = useCallback(() => {
+  const refresh = useCallback(async () => {
     if (!id) { setInquiry(null); return; }
-    setInquiry(inquiryService.getById(id) ?? null);
+    try {
+      const response = await api.get<Inquiry[]>('/inquiries');
+      const found = response.data.find(t => t.id === id);
+      setInquiry(found || null);
+    } catch (error) {
+      console.error("Error fetching inquiry:", error);
+    }
   }, [id]);
 
   useEffect(() => {
     refresh();
+    if (!id) return;
     const interval = setInterval(refresh, pollMs);
     return () => clearInterval(interval);
-  }, [refresh, pollMs]);
+  }, [refresh, pollMs, id]);
 
   return { inquiry, refresh };
 }

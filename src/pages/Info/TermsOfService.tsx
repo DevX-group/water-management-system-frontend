@@ -1,3 +1,4 @@
+import '@/index.css';
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";

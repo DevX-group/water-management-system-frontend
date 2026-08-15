@@ -1,3 +1,4 @@
+import '@/index.css';
 interface ModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;

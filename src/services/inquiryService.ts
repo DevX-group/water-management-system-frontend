@@ -1,4 +1,4 @@
-// src/services/inquiryService.ts
+
 // Drop-in service — swap localStorage calls with your real API later
 
 import type { Inquiry, InquiryMessage } from '../types/inquiry';

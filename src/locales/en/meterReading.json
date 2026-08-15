@@ -1,0 +1,52 @@
+{
+  "page": {
+    "title": "Meter Reading",
+    "subtitle": "Submit a water meter reading"
+  },
+  "form": {
+    "meterNumber": "Meter Number",
+    "meterNumberPlaceholder": "e.g., MTR-001",
+    "subscriptionNumber": "Subscription Number",
+    "subscriptionNumberPlaceholder": "e.g., SUB-0001",
+    "readingDate": "Reading Date",
+    "previousReading": "Previous Reading",
+    "currentReading": "Current Reading",
+    "usage": "Usage (units)",
+    "additionalNotes": "Additional Notes",
+    "notesPlaceholder": "Any observations or issues...",
+    "clearForm": "Clear form",
+    "submitReading": "Submit Reading",
+    "submitting": "Submitting..."
+  },
+  "instructions": {
+    "title": "How to read your meter",
+    "tips": [
+      "Record all visible digits including zeros",
+      "Ignore the red dial if present",
+      "Read from left to right",
+      "Take a photo for your records"
+    ]
+  },
+  "table": {
+    "title": "Today's Readings",
+    "refresh": "Refresh",
+    "loading": "Loading readings...",
+    "noReadings": "No readings submitted today yet.",
+    "headers": {
+      "meterNo": "Meter No.",
+      "customer": "Customer",
+      "subscription": "Subscription",
+      "previous": "Previous",
+      "current": "Current",
+      "usage": "Usage",
+      "billAmount": "Bill Amount",
+      "status": "Status"
+    },
+    "units": "units"
+  },
+  "status": {
+    "PENDING": "PENDING",
+    "PAID": "PAID",
+    "OVERDUE": "OVERDUE"
+  }
+}

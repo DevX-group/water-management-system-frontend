@@ -1,6 +1,8 @@
+// Core types for scheduled and triggered messaging.
 export type MessageChannel = 'SMS' | 'Email';
 export type ScheduleType = 'Recurring' | 'One-Time';
-export type RecipientType = 'All Customers' | 'Overdue Customers' | 'Selected Customers';
+export type RecipientType = 'All Customers' | 'Overdue Customers';
+export type TriggerType = 'Payment Confirmed' | 'Bank Slip Rejected' | 'Email Verification' | 'Phone Verification';
 
 export interface TemplateSection {
   id: string;
@@ -22,11 +24,10 @@ export interface MessageSchedule {
   time: string; // HH:mm
 }
 
-export interface Message {
+export interface MessageBase {
   id: string;
   name: string;
   channels: MessageChannel[]; 
-  schedule: MessageSchedule;
   recipients: RecipientType;
   templates: {
     sms: MessageTemplate;
@@ -35,6 +36,58 @@ export interface Message {
   isDefault: boolean;
 }
 
+export interface ScheduledMessage extends MessageBase {
+  schedule: MessageSchedule;
+}
+
+export interface TriggeredMessage extends MessageBase {
+  triggerType: TriggerType;
+  active: boolean;
+}
+
+export type Message = ScheduledMessage;
+
+export interface MessagingEnumResponse {
+  channels: MessageChannel[];
+  scheduleTypes: ScheduleType[];
+  recipientTypes: RecipientType[];
+  placeholders: string[];
+  triggerTypes: TriggerType[];
+}
+
+export type SentMessageHistoryApi = {
+  id: number;
+  name: string;
+  channels: string[];
+  recipients: string;
+  sentDate: string;
+  sentTime: string;
+  emailSuccessRate: number | null;
+  smsSuccessRate: number | null;
+  totalEmailsSent: number | null;
+  totalEmailsFailed: number | null;
+  totalEmailsDelivered: number | null;
+  totalSMSsSent: number | null;
+  totalSMSsFailed: number | null;
+  totalSMSsDelivered: number | null;
+};
+
+export type MessageHistoryPageResponse = {
+  rows: MessageHistoryRow[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+};
+
+export type MessageFailuresPageResponse = {
+  rows: FailedRecipient[];
+  page: number;
+  size: number;
+  totalPages: number;
+  totalElements: number;
+};
+
 export interface MessageHistoryRow {
   id: string;
   messageName: string;
@@ -42,28 +95,43 @@ export interface MessageHistoryRow {
   date: string;
   time: string;
   successRate: number;
-  totalSent: number;
-  totalFailed: number;
-  totalDelivered: number;
+  emailSuccessRate: number;
+  smsSuccessRate: number;
+  totalEmailsSent: number;
+  totalEmailsFailed: number;
+  totalEmailsDelivered: number;
+  totalSmsSent: number;
+  totalSmsFailed: number;
+  totalSmsDelivered: number;
   recipients: string;
 }
 
-export const PLACEHOLDERS = [
-  "customer_name",
-  "customer_number",
-  "billing_period",
-  "bill_date",
-  "base_charge",
-  "usage_units",
-  "usage_charge",
-  "tax_amount",
-  "monthly_fee",
-  "outstanding_balance",
-  "total_balance",
-  "due_date",
-  "overdue_threshold_(LKR)",
-  "reconnection_fee_(LKR)",
-  "pradeshiya_sabha_acc_no",
-  "whatsApp_number",
-  "online_bill_portal_link"
-];
+export interface FailedRecipient {
+  subscriptionNumber: string;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  smsFailed: boolean;
+  emailFailed: boolean;
+}
+
+export type ApiErrorPayload = {
+  message?: string;
+  code?: string;
+  status?: number;
+  timestamp?: number;
+};
+
+export class ApiError extends Error {
+  code?: string;
+  status?: number;
+  timestamp?: number;
+
+  constructor(message: string, payload?: ApiErrorPayload) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = payload?.code;
+    this.status = payload?.status;
+    this.timestamp = payload?.timestamp;
+  }
+}

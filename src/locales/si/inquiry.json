@@ -1,0 +1,64 @@
+{
+  "title": "සහාය",
+  "titleHighlight": "මධ්‍යස්ථානය",
+  "subtitle": "ඔබේ ජල කළමනාකරණ අවශ්‍යතා සඳහා උදව් කිරීමට අපි මෙහි සිටිමු",
+  "avgResponseTime": "සාමාන්‍ය ප්‍රතිචාර කාලය: කාර්යාල වේලාවන් තුළ විනාඩි 5-10 යි.",
+  "history": {
+    "title": "පෙර විමසීම්",
+    "general": "සාමාන්‍ය"
+  },
+  "form": {
+    "title": "සහාය විමසුමක් ඉදිරිපත් කරන්න",
+    "fullName": "සම්පූර්ණ නම",
+    "namePlaceholder": "කවීෂ වීරසිංහ",
+    "email": "විද්‍යුත් තැපැල් ලිපිනය",
+    "emailPlaceholder": "kawee@example.com",
+    "category": "ගැටළු වර්ගය",
+    "categorySelect": "වර්ගයක් තෝරන්න...",
+    "message": "පණිවිඩයේ විස්තර",
+    "messagePlaceholder": "කරුණාකර ගැටළුව පිළිබඳ විස්තර සපයන්න...",
+    "submitting": "විමසුම යවමින්...",
+    "submit": "සහාය ඉල්ලීම ඉදිරිපත් කරන්න"
+  },
+  "categories": {
+    "Billing": "බිල්පත් සහ ගෙවීම්",
+    "Technical": "තාක්ෂණික ගැටළු",
+    "Account": "ගිණුම් සහ ප්‍රවේශ",
+    "General": "සාමාන්‍ය විමසීම්"
+  },
+  "chat": {
+    "historyTitle": "{{category}} විමසුම",
+    "liveSupportTitle": "සජීවී සහාය සැසිය",
+    "connected": "සහාය කණ්ඩායම සමඟ සම්බන්ධ විය",
+    "resolvedBanner": "මෙම විමසුම විසඳා ඇත.",
+    "statusBanner": "මෙම විමසුම දැනට <1>{{status}}</1>. අපගේ කණ්ඩායම කෙටි වේලාවකින් ප්‍රතිචාර දක්වනු ඇත.",
+    "typePlaceholder": "ඔබගේ පණිවිඩය ටයිප් කරන්න..."
+  },
+  "status": {
+    "open": "විවෘත",
+    "pending": "පොරොත්තු",
+    "resolved": "විසඳා ඇත"
+  },
+  "validation": {
+    "nameRequired": "නම අනිවාර්ය වේ",
+    "emailRequired": "වලංගු විද්‍යුත් තැපැල් ලිපිනයක් අනිවාර්ය වේ",
+    "messageRequired": "කරුණාකර ඔබගේ ගැටළුව විස්තර කරන්න"
+  },
+  "admin": {
+    "title": "පාරිභෝගික",
+    "titleHighlight": "විමසීම්",
+    "open": "විවෘත",
+    "resolved": "විසඳා ඇත",
+    "search": "ටිකට් සොයන්න...",
+    "filter": {
+      "all": "සියල්ල",
+      "open": "විවෘත",
+      "pending": "පොරොත්තු",
+      "resolved": "විසඳා ඇත"
+    },
+    "noInquirySelected": "විමසුමක් තෝරා නැත",
+    "noInquiryDesc": "ඉතිහාසය බැලීමට සහ ප්‍රතිචාර දැක්වීමට ලැයිස්තුවෙන් සංවාදයක් තෝරන්න.",
+    "resolveBtn": "විසඳන්න",
+    "writeResponse": "ඔබගේ ප්‍රතිචාරය ලියන්න..."
+  }
+}

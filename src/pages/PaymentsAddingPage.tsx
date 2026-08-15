@@ -1,167 +1,339 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import '@/index.css';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckCircle, Clock, AlertCircle, Wallet, CalendarDays } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { mockCustomers } from '@/data/mockData';
 import { toast } from 'sonner';
 
 import {
   addPayment,
   getCustomerPaymentSummary,
   getCurrentBill,
-  getOutstandingBills,
-  type CurrentBillResponse,
-  type OutstandingBillItemResponse,
-  PaymentHistoryItemResponse,
   getPaymentHistory,
+  getPaymentCustomerInfo,
+  updatePayment,
+  getOutstandingBillsSummary,
+  deletePayment,
 } from '@/services/paymentService';
+
+import type {
+  CurrentBillResponse,
+  PaymentHistoryItemResponse,
+  PaymentCustomerInfoResponse,
+  OutstandingBillResponse,
+  OutstandingBillsSummaryResponse,
+  CustomerPaymentSummaryResponse,
+  PaymentMethod,
+} from '@/types/payment';
+
+import { Label } from '@/components/ui/label';
+import { motion } from 'framer-motion';
+
+import { CustomerDetailCard } from '@/components/payments/CustomerDetailCard';
+import { MonthlyPaymentTab } from '@/components/payments/MonthlyPaymentTab';
+import { OutstandingPaymentTab } from '@/components/payments/OutstandingPaymentTab';
+import { PaymentHistoryCard } from '@/components/payments/PaymentHistoryCard';
 
 type TabKey = 'monthly' | 'outstanding';
 
-type UiStatus = 'paid' | 'partial' | 'overdue';
-
 export const PaymentsAddingPage = () => {
   const navigate = useNavigate();
-  const { subscriptionNo } = useParams<{ subscriptionNo: string }>();
-  console.log("subscriptionNo param =", subscriptionNo);
-
-  const customer = useMemo(() => {
-    return mockCustomers.find((c) => c.subscriptionNo === subscriptionNo) || null;
-  }, [subscriptionNo]);
+  const { subscriptionNumber } = useParams<{ subscriptionNumber: string }>();
+  const { t } = useTranslation('payments');
 
   const [activeTab, setActiveTab] = useState<TabKey>('monthly');
-
   const [monthlyAmount, setMonthlyAmount] = useState('');
   const [outstandingAmount, setOutstandingAmount] = useState('');
   const [paymentHistory, setPaymentHistory] = useState<PaymentHistoryItemResponse[]>([]);
+  const [customerInfo, setCustomerInfo] = useState<PaymentCustomerInfoResponse | null>(null);
 
-  const [summary, setSummary] = useState<null | {
-    subscriptionNumber: string;
-    monthlyDue: number;
-    outstandingBalance: number;
-    totalDue: number;
-    billStatus: string;
-  }>(null);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<PaymentHistoryItemResponse | null>(null);
+  const [updatedAmount, setUpdatedAmount] = useState("");
+
+  const [amountError, setAmountError] = useState("");
+  const [isTouched, setIsTouched] = useState(false);
+
+  const [outstandingPage, setOutstandingPage] = useState(1);
+  const billsPerPage = 6;
+
+  const [historyPage, setHistoryPage] = useState(0);
+  const [historyPageSize, setHistoryPageSize] = useState(5);
+
+  const [totalHistoryPages, setTotalHistoryPages] = useState(1);
+  const [historyTotalItems, setHistoryTotalItems] = useState(0);
+
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [selectedDeleteId, setSelectedDeleteId] = useState<string | null>(null);
+
+  const [summary, setSummary] = useState<null | CustomerPaymentSummaryResponse>(null);
 
   const [currentBill, setCurrentBill] = useState<CurrentBillResponse | null>(null);
-  const [outstandingBills, setOutstandingBills] = useState<OutstandingBillItemResponse[]>([]);
+  const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
+  const [outstandingBills, setOutstandingBills] = useState<OutstandingBillResponse[]>([]);
 
-  const statusStyles = {
-    paid: 'bg-success/10 text-success',
-    partial: 'bg-warning/10 text-warning',
-    overdue: 'bg-destructive/10 text-destructive',
-  } as const;
+  const [historyFilterYear, setHistoryFilterYear] = useState<number | undefined>(undefined);
+  const [historyFilterMethod, setHistoryFilterMethod] = useState<PaymentMethod | undefined>(undefined);
 
-  const statusIcons = {
-    paid: CheckCircle,
-    partial: Clock,
-    overdue: AlertCircle,
-  } as const;
-
-  const loadAll = async (subscriptionNo: string) => {
+  const loadAll = async (subscriptionNumber: string) => {
     try {
-      const [sum, bill, outs, history] = await Promise.all([
-        getCustomerPaymentSummary(subscriptionNo),
-        getCurrentBill(subscriptionNo),
-        getOutstandingBills(subscriptionNo),
-        getPaymentHistory(subscriptionNo),
+      const [sum, bill, outs, customerInfo] = await Promise.all([
+        getCustomerPaymentSummary(subscriptionNumber),
+        getCurrentBill(subscriptionNumber),
+        getOutstandingBillsSummary(subscriptionNumber),
+        getPaymentCustomerInfo(subscriptionNumber),
       ]);
 
       setSummary(sum);
       setCurrentBill(bill);
-      setOutstandingBills(outs);
-      setPaymentHistory(history);
+      setOutstandingBills(outs.outstandingBills);
+      setOutstandingBillsSummary(outs);
+      setCustomerInfo(customerInfo);
+
     } catch (e) {
-      toast.error('Failed to load payment data');
+      console.error("loadAll failed:", e);
+      toast.error(t('payments.adminPayments.failedToLoadData'));
+    }
+  };
+
+  const loadHistory = async () => {
+    if (!subscriptionNumber) return;
+
+    const history = await getPaymentHistory(
+      subscriptionNumber,
+      historyPage,
+      historyPageSize,
+      historyFilterYear,
+      historyFilterMethod
+    );
+
+    setPaymentHistory(history.content ?? []);
+    setTotalHistoryPages(history.totalPages ?? 1);
+    setHistoryTotalItems(history.totalElements ?? 0);
+  };
+
+  const handleEdit = (payment: PaymentHistoryItemResponse) => {
+    setSelectedPayment(payment);
+    setUpdatedAmount(payment.amount.toString());
+    setIsEditOpen(true);
+  }
+
+  const handleUpdate = async () => {
+    if (!subscriptionNumber) return;
+    setIsTouched(true);
+    if (!updatedAmount || !selectedPayment) return;
+
+    validateAmount(updatedAmount);
+
+    if (amountError) return;
+
+    try {
+      await updatePayment(
+        selectedPayment.paymentId,
+        Number(updatedAmount)
+      );
+
+      // Fetch fresh data
+      const history = await getPaymentHistory(
+        subscriptionNumber,
+        historyPage,
+        historyPageSize
+      );
+
+      setPaymentHistory(history.content ?? []);
+      setTotalHistoryPages(history.totalPages ?? 1);
+      setHistoryTotalItems(history.totalElements ?? 0);
+
+      const summaryData = await getCustomerPaymentSummary(subscriptionNumber);
+      setSummary(summaryData);
+
+      const current = await getCurrentBill(subscriptionNumber);
+      setCurrentBill(current);
+
+      const outstanding = await getOutstandingBillsSummary(subscriptionNumber);
+      setOutstandingBillsSummary(outstanding);
+      setOutstandingBills(outstanding.outstandingBills);
+
+      // Reset UI
+      setIsEditOpen(false);
+      setSelectedPayment(null);
+      setUpdatedAmount("");
+
+    } catch (error: any) {
+      const responseMessage = error?.response?.data?.message;
+
+      if (responseMessage) {
+        setAmountError(responseMessage);
+      } else {
+        setAmountError(t('payments.adminPayments.somethingWentWrong'));
+      }
+    }
+  };
+
+  const handleCancel = () => {
+    setIsEditOpen(false);
+    setSelectedPayment(null);
+
+    setUpdatedAmount("");
+    setAmountError("");
+    setIsTouched(false);
+  };
+
+  const handleDelete = (paymentId: string) => {
+    setSelectedDeleteId(paymentId);
+    setIsDeleteOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!selectedDeleteId || !subscriptionNumber) return;
+
+    try {
+      await deletePayment(selectedDeleteId);
+
+      toast.success(t('payments.adminPayments.paymentDeleteSuccess'));
+
+      setIsDeleteOpen(false);
+      setSelectedDeleteId(null);
+
+      await loadAll(subscriptionNumber);
+      await loadHistory();
+
+    } catch (error: any) {
+      const msg =
+        error?.response?.data?.message || t('payments.adminPayments.paymentDeleteFailed');
+
+      toast.error(msg);
+    }
+  };
+
+  const cancelDelete = () => {
+    setIsDeleteOpen(false);
+    setSelectedDeleteId(null);
+  };
+
+  const validateAmount = (value: string) => {
+    const num = Number(value);
+
+    if (!value) {
+      setAmountError(t('payments.adminPayments.amountRequired'));
+    } else if (num <= 0) {
+      setAmountError(t('payments.adminPayments.enterValidAmount'));
+    } else if (
+      summary &&
+      selectedPayment &&
+      num > (summary.totalDue + selectedPayment.amount)
+    ) {
+      setAmountError(t('payments.adminPayments.amountExceedsDue'));
+    } else {
+      setAmountError("");
+    }
+  };
+
+  const handleAmountChange = (value: string) => {
+    setUpdatedAmount(value);
+    setAmountError("");
+
+    if (isTouched) {
+      validateAmount(value);
     }
   };
 
   useEffect(() => {
-    if (!subscriptionNo) return;
-    loadAll(subscriptionNo);
-  }, [subscriptionNo]);
+    if (!subscriptionNumber) return;
+    loadAll(subscriptionNumber);
+  }, [subscriptionNumber]);
+
+  useEffect(() => {
+    loadHistory();
+  }, [historyPage, historyPageSize, subscriptionNumber, historyFilterYear, historyFilterMethod]);
+
+  const handleHistoryFilterChange = () => {
+    setHistoryPage(0);
+  };
 
   const handleAddMonthly = async () => {
-    if (!customer) return;
+    if (!customerInfo) return;
 
     const amount = Number(monthlyAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
-      toast.error('Enter a valid amount', { className: "toast-error" });
+      toast.error(t('payments.adminPayments.enterValidAmount'), { className: "toast-error" });
       return;
     }
 
-    const due = Number(monthlyDue ?? 0);
-
-    const isFull = Math.abs(amount - due) < 0.0001;
-    const status = isFull ? 'FULL' : 'PARTIAL';
-
     try {
       const res = await addPayment({
-        subscriptionNumber: customer.subscriptionNo,
+        subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
-        status,
         paymentType: 'MONTHLY',
+        paymentMethod: 'MANUAL'
       });
 
-      toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
+      toast.success(res.message || t('payments.adminPayments.paymentAddedSuccess'), { className: "toast-success" });
       setMonthlyAmount('');
 
-      await loadAll(customer.subscriptionNo);
+      await loadAll(customerInfo.subscriptionNumber);
+      await loadHistory();
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to add payment';
+        t('payments.adminPayments.failedToAddPayment');
       toast.error(msg, { className: "toast-error" });
     }
   };
 
   const handleAddOutstanding = async () => {
-    if (!customer) return;
+    if (!customerInfo) return;
 
     const amount = Number(outstandingAmount);
     if (!Number.isFinite(amount) || amount <= 0) {
-      toast.error('Enter a valid amount', { className: "toast-error" });
+      toast.error(t('payments.adminPayments.enterValidAmount'), { className: "toast-error" });
       return;
     }
 
-    const due = Number(totalOutstanding ?? 0);
-
-    const isFull = Math.abs(amount - due) < 0.0001;
-    const status = isFull ? 'FULL' : 'PARTIAL';
-
     try {
       const res = await addPayment({
-        subscriptionNumber: customer.subscriptionNo,
+        subscriptionNumber: customerInfo.subscriptionNumber,
         amount,
-        status,
         paymentType: 'OUTSTANDING',
+        paymentMethod: 'MANUAL'
       });
 
-      toast.success(res.message || 'Payment added successfully!', { className: "toast-success" });
+      toast.success(res.message || t('payments.adminPayments.paymentAddedSuccess'), { className: "toast-success" });
       setOutstandingAmount('');
 
-      await loadAll(customer.subscriptionNo);
+      await loadAll(customerInfo.subscriptionNumber);
+      await loadHistory();
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to add payment';
+        t('payments.adminPayments.failedToAddPayment');
       toast.error(msg, { className: "toast-error" });
     }
   };
 
-  if (!customer) {
+  const historyStart =
+    paymentHistory.length === 0
+      ? 0
+      : historyPage * historyPageSize + 1;
+
+  const historyEnd = Math.min(
+    (historyPage + 1) * historyPageSize,
+    historyTotalItems
+  );
+
+  if (!customerInfo) {
     return (
       <div className="p-6">
         <div className="bg-card rounded-2xl p-6 shadow-md">
-          <h2 className="text-lg font-semibold text-foreground">Customer not found</h2>
+          <h2 className="text-lg font-semibold text-foreground">{t('payments.adminPayments.customerNotFound')}</h2>
           <p className="text-sm text-muted-foreground mt-2">
-            The selected customer does not exist in mock data.
+            {t('payments.adminPayments.customerNotExist')}
           </p>
           <Button className="mt-4" onClick={() => navigate(-1)}>
-            Go Back
+            {t('payments.adminPayments.goBack')}
           </Button>
         </div>
       </div>
@@ -175,23 +347,14 @@ export const PaymentsAddingPage = () => {
 
   const monthlyBill = currentBill?.totalAmount ?? 0;
   const monthlyDue = currentBill?.balanceDue ?? summary?.monthlyDue ?? 0;
-  const alreadyPaid = Math.max(monthlyBill - monthlyDue, 0);
+  const alreadyPaid = currentBill?.alreadyPaid ?? 0;
 
-  const billStatus = (currentBill?.status ?? summary?.billStatus ?? '').toUpperCase();
+  const indexOfLastBill = outstandingPage * billsPerPage;
+  const indexOfFirstBill = indexOfLastBill - billsPerPage;
+  const currentBills = outstandingBills.slice(indexOfFirstBill, indexOfLastBill);
+  const totalPages = Math.ceil(outstandingBills.length / billsPerPage);
 
-  const monthlyStatus: UiStatus =
-    monthlyDue === 0
-      ? 'paid'
-      : billStatus === 'OVERDUE'
-        ? 'overdue'
-        : alreadyPaid > 0
-          ? 'partial'
-          : 'overdue';
-
-  const MonthlyIcon = statusIcons[monthlyStatus];
-
-  //Outstanding tab values
-  const totalOutstanding = outstandingBills.reduce((sum, b) => sum + (b.balanceDue ?? 0), 0);
+  const latestManualPaymentId = paymentHistory.find((p) => p.paymentMethod === "MANUAL")?.paymentId;
 
   return (
     <div className="space-y-6">
@@ -199,19 +362,19 @@ export const PaymentsAddingPage = () => {
       <div className="animate-fade-in">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Add Payment</h1>
+            <h1 className="text-2xl font-bold text-foreground">{t('payments.adminPayments.addPayment')}</h1>
             <p className="text-muted-foreground">
-              {customer?.name ?? "Customer"} • {subscriptionNo}
+              {customerInfo?.accountHolderName ?? t('payments.adminPayments.customer')} • {customerInfo?.subscriptionNumber}
             </p>
           </div>
           <Button variant="secondary" onClick={() => navigate(-1)}>
-            Back
+            {t('payments.adminPayments.back')}
           </Button>
         </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Tabs section */}
+        {/* Left: Tab panel */}
         <div className="lg:w-[65%] space-y-6">
           <div className="bg-card rounded-2xl p-6 shadow-md">
             {/* Tabs header */}
@@ -223,7 +386,7 @@ export const PaymentsAddingPage = () => {
                   : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                Monthly Payments
+                {t('payments.adminPayments.monthlyPayments')}
               </button>
               <button
                 onClick={() => setActiveTab('outstanding')}
@@ -232,224 +395,161 @@ export const PaymentsAddingPage = () => {
                   : 'text-muted-foreground hover:text-foreground'
                   }`}
               >
-                Outstanding Payments
+                {t('payments.adminPayments.outstandingPayments')}
               </button>
             </div>
 
             {/* Tab content */}
             <div className="mt-6">
               {activeTab === 'monthly' ? (
-                <div className="space-y-4">
-                  {/* Monthly Summary */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays className="w-4 h-4 text-muted-foreground" />
-                        <h4 className="font-medium text-foreground">Current Month Summary</h4>
-                      </div>
-                      
-                    </div>
-
-                    <div className="mt-3 space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Month</span>
-                        <span className="font-medium text-foreground">{currentMonthLabel}</span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Monthly Bill</span>
-                        <span className="font-medium text-foreground">
-                          Rs. {monthlyBill.toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Already Paid</span>
-                        <span className="font-medium text-success">
-                          Rs. {alreadyPaid.toLocaleString()}
-                        </span>
-                      </div>
-
-                      <div className="flex justify-between pt-2 border-t border-border">
-                        <span className="font-medium text-foreground">Total Due</span>
-                        <span className="text-xl font-bold text-primary">
-                          Rs. {monthlyDue.toLocaleString()}
-                        </span>
-                      </div>
-
-                      {currentBill?.status && (
-                        <p className="text-xs text-muted-foreground mt-2">
-                          Bill Status: {currentBill.status}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Add Payment Form */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <h4 className="font-medium text-foreground">Add Payment</h4>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Input
-                        placeholder="Payment amount"
-                        value={monthlyAmount}
-                        onChange={(e) => setMonthlyAmount(e.target.value)}
-                      />
-                      <Button className="sm:w-[180px]" onClick={handleAddMonthly}>
-                        Add Payment
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <MonthlyPaymentTab
+                  currentMonthLabel={currentMonthLabel}
+                  monthlyBill={monthlyBill}
+                  alreadyPaid={alreadyPaid}
+                  monthlyDue={monthlyDue}
+                  currentBillStatus={currentBill?.status}
+                  monthlyAmount={monthlyAmount}
+                  setMonthlyAmount={setMonthlyAmount}
+                  handleAddMonthly={handleAddMonthly}
+                />
               ) : (
-                <div className="space-y-4">
-                  {/* Outstanding Summary */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center justify-between">
-                      <h4 className="font-medium text-foreground">Outstanding Payment Summary</h4>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-foreground">
-                        {outstandingBills.length} items
-                      </span>
-                    </div>
-
-                    <div className="mt-3 space-y-2 text-sm">
-                      {outstandingBills.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">No outstanding bills found.</p>
-                      ) : (
-                        outstandingBills.slice(0, 6).map((b) => (
-                          <div key={b.billId} className="flex justify-between">
-                            <span className="text-muted-foreground">
-                              Bill Id:{b.billId} • {b.billingPeriod}
-                            </span>
-                            <span className="font-medium text-foreground">
-                              Rs. {Number(b.balanceDue ?? 0).toLocaleString()}
-                            </span>
-                          </div>
-                        ))
-                      )}
-
-                      <div className="flex justify-between pt-2 border-t border-border">
-                        <span className="font-medium text-foreground">Total Due</span>
-                        <span className="text-xl font-bold text-primary">
-                          Rs. {totalOutstanding.toLocaleString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Add Payment Form */}
-                  <div className="bg-secondary/40 rounded-xl p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Wallet className="w-4 h-4 text-muted-foreground" />
-                      <h4 className="font-medium text-foreground">Add Payment</h4>
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <Input
-                        placeholder="Payment amount"
-                        value={outstandingAmount}
-                        onChange={(e) => setOutstandingAmount(e.target.value)}
-                      />
-                      <Button className="sm:w-[180px]" onClick={handleAddOutstanding}>
-                        Add Payment
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                <OutstandingPaymentTab
+                  outstandingBills={outstandingBills}
+                  currentBills={currentBills}
+                  totalPages={totalPages}
+                  outstandingPage={outstandingPage}
+                  setOutstandingPage={setOutstandingPage}
+                  totalOutstandingAmount={outstandingBillsSummary?.totalOutstandingAmount ?? 0}
+                  outstandingAmount={outstandingAmount}
+                  setOutstandingAmount={setOutstandingAmount}
+                  handleAddOutstanding={handleAddOutstanding}
+                />
               )}
             </div>
           </div>
         </div>
 
-
-        <div className="lg:w-[35%] space-y-6">
-          {/* Customer Details (from mock customer) */}
-          <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Customer Details</h3>
-              <span
-                className={`px-3 py-1 rounded-full text-xs font-medium ${customer.customerType === 'with_meter'
-                  ? 'bg-success/10 text-success'
-                  : 'bg-warning/10 text-warning'
-                  }`}
-              >
-                {customer.customerType === 'with_meter' ? 'With Meter' : 'No Meter'}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-muted-foreground">Name</p>
-                <p className="font-medium text-foreground">{customer.name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Subscription No.</p>
-                <p className="font-medium text-foreground">{customer.subscriptionNo}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">NIC</p>
-                <p className="font-medium text-foreground">{customer.nic}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Region</p>
-                <p className="font-medium text-foreground capitalize">{customer.region}</p>
-              </div>
-            </div>
-          </div>
-
-
-          <div className="bg-card rounded-2xl p-6 shadow-md bg-primary/5">
-            <div className="flex items-start justify-between mb-4">
-              <h3 className="text-lg font-semibold text-foreground">Payment History</h3>
-              <span className="text-sm text-muted-foreground">
-                {paymentHistory.length}
-              </span>
-            </div>
-
-            {paymentHistory.length === 0 ? (
-              <p className="text-sm text-muted-foreground">No payments found.</p>
-            ) : (
-              <div className="space-y-3">
-                {paymentHistory.map((p) => (
-                  <div
-                    key={p.paymentId}
-                    className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all flex items-center justify-between"
-                  >
-                    <div>
-                      <p className="text-lg font-semibold text-foreground">
-                        Rs. {Number(p.amount).toLocaleString()}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {p.subscriptionNumber}
-                      </p>
-                    </div>
-
-                    <div className="text-right">
-                      <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${p.status === "FULL"
-                            ? "bg-success/10 text-success"
-                            : "bg-warning/10 text-warning"
-                          }`}
-                      >
-                        {p.status.toLowerCase()}
-                      </span>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {new Date(p.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-
-          </div>
-
+        <div className="lg:w-[35%]">
+          <CustomerDetailCard customerInfo={customerInfo} />
         </div>
       </div>
+
+      <PaymentHistoryCard
+        paymentHistory={paymentHistory}
+        historyPageSize={historyPageSize}
+        setHistoryPageSize={setHistoryPageSize}
+        setHistoryPage={setHistoryPage}
+        totalHistoryPages={totalHistoryPages}
+        historyStart={historyStart}
+        historyEnd={historyEnd}
+        historyTotalItems={historyTotalItems}
+        historyPage={historyPage}
+        latestManualPaymentId={latestManualPaymentId}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+        filterYear={historyFilterYear}
+        setFilterYear={setHistoryFilterYear}
+        filterMethod={historyFilterMethod}
+        setFilterMethod={setHistoryFilterMethod}
+        onFilterChange={handleHistoryFilterChange}
+      />
+
+      {isEditOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
+          onClick={() => setIsEditOpen(false)}
+        >
+          <div
+            className="bg-card rounded-2xl p-6 w-[350px] shadow-xl border border-border/40 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold text-foreground mb-1">
+              {t('payments.adminPayments.editPayment')}
+            </h2>
+            <p className="text-xs text-muted-foreground mb-5">{t('payments.adminPayments.editPaymentSubtitle')}</p>
+
+            <div className="mb-6">
+              <Label className="text-sm font-medium text-foreground mb-1.5 block">
+                {t('payments.adminPayments.amountLabel')}
+              </Label>
+              <Input
+                type="number"
+                value={updatedAmount}
+                onChange={(e) => handleAmountChange(e.target.value)}
+                className="w-full text-foreground border-border/50 rounded-xl focus-visible:ring-primary/20 bg-background"
+                placeholder={t('payments.adminPayments.enterAmountPlaceholder')}
+              />
+
+              {isTouched && amountError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start gap-2 text-xs font-medium text-destructive bg-destructive/10 border border-destructive/20 rounded-lg px-3 py-2 mt-2"
+                >
+                  <span className="mt-0.5">⚠️</span>
+                  <span>{amountError}</span>
+                </motion.div>
+              )}
+            </div>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-xl"
+                onClick={handleCancel}
+              >
+                {t('payments.adminPayments.cancel')}
+              </Button>
+
+              <Button
+                className="flex-1 rounded-xl"
+                onClick={handleUpdate}
+                disabled={!updatedAmount || !!amountError}
+              >
+                {t('payments.adminPayments.saveChanges')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isDeleteOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 transition-all duration-200"
+          onClick={cancelDelete}
+        >
+          <div
+            className="bg-card rounded-2xl p-6 w-[350px] shadow-xl border border-border/40 text-left"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-xl font-bold text-foreground mb-1">
+              {t('payments.adminPayments.deletePayment')}
+            </h2>
+            <p className="text-sm text-muted-foreground mb-6">
+              {t('payments.adminPayments.deleteConfirmation')}
+            </p>
+
+            <div className="flex justify-end gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 rounded-xl"
+                onClick={cancelDelete}
+              >
+                {t('payments.adminPayments.cancel')}
+              </Button>
+
+              <Button
+                variant="destructive"
+                className="flex-1 rounded-xl"
+                onClick={confirmDelete}
+              >
+                {t('payments.adminPayments.delete')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

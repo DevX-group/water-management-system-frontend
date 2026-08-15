@@ -1,3 +1,4 @@
+import '@/index.css';
 interface TableProps {
   children: React.ReactNode;
   className?: string;

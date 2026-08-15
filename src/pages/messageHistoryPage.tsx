@@ -1,54 +1,64 @@
-import React, { useEffect, useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getMessageHistory } from "../services/messageService";
-import { MessageHistoryRow } from "../types/messaging";
+import '@/index.css';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { MessageDetailsDialog, FailedRecipientsDialog } from '@/components/messaging/MessageHistoryDialogs';
+
+import { useMessageHistory } from '@/hooks/useMessageHistory';
 
 export const MessageHistoryPage = () => {
-  const [rows, setRows] = useState<MessageHistoryRow[]>([]);
+  const navigate = useNavigate();
+  // Hook centralizes paging, dialog state, and API calls for history/failures.
+  const {
+    rows,
+    page,
+    size,
+    totalPages,
+    totalElements,
+    historyError,
+    setPage,
+    setSize,
+    failedRecipients,
+    failuresPage,
+    failuresSize,
+    failuresTotalPages,
+    failuresTotalElements,
+    setFailuresPage,
+    setFailuresSize,
+    loadingFailuresFor,
+    failuresError,
+    openDetailsId,
+    openFailuresId,
+    selectedRow,
+    selectedFailedRow,
+    handleViewFailed,
+    closeDetails,
+    closeFailures,
+    openDetails,
+    backToDetails
+  } = useMessageHistory();
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const data = await getMessageHistory();
-        setRows(data);
-      } catch (error) {
-        console.error("Failed to load message history", error);
-      }
-    };
-
-    load();
-  }, []);
+  // Pagination controls for the main history table.
+  const canGoBack = page > 0;
+  const canGoNext = page + 1 < totalPages;
 
   return (
     <div className="space-y-6 p-6 pb-24 px-0">
-      {/* <div>
-        <h1 className="text-3xl font-bold tracking-tight">Message History</h1>
-        <p className="text-muted-foreground">
-          Review delivery results for sent messages.
-        </p>
-      </div> */}
+      <div>
+        <Button variant="outline" onClick={() => navigate('/admin/messaging/scheduled')}>
+          Back to Scheduled Messages
+        </Button>
+      </div>
 
       <Card>
-        {/* <CardHeader>
-          <CardTitle>History</CardTitle>
-        </CardHeader> */}
         <CardContent>
+          {historyError && (
+            <div className="mb-4 rounded-md border border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">
+              {historyError}
+            </div>
+          )}
           <div className="w-full overflow-x-auto">
             <Table>
               <TableHeader>
@@ -57,81 +67,87 @@ export const MessageHistoryPage = () => {
                   <TableHead>Type</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Time</TableHead>
-                  <TableHead className="text-right">Success Rate</TableHead>
+                  <TableHead className="text-right">Email Success Rate</TableHead>
+                  <TableHead className="text-right">SMS Success Rate</TableHead>
                   <TableHead className="text-right">Details</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {rows.map((row) => (
+                {rows.map(row => (
                   <TableRow key={row.id}>
                     <TableCell className="font-medium">{row.messageName}</TableCell>
                     <TableCell>{row.type}</TableCell>
                     <TableCell>{row.date}</TableCell>
                     <TableCell>{row.time}</TableCell>
-                    <TableCell className="text-right">{row.successRate}%</TableCell>
+                    <TableCell className="text-right">{row.emailSuccessRate}%</TableCell>
+                    <TableCell className="text-right">{row.smsSuccessRate}%</TableCell>
                     <TableCell className="text-right">
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline" size="sm">
-                            View Details
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-xl">
-                          <DialogHeader>
-                            <DialogTitle>Message Details</DialogTitle>
-                          </DialogHeader>
-                          <div className="space-y-3 text-sm">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <div className="text-muted-foreground">Message</div>
-                                <div className="font-medium">{row.messageName}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Type</div>
-                                <div className="font-medium">{row.type}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Date</div>
-                                <div className="font-medium">{row.date}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Time</div>
-                                <div className="font-medium">{row.time}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Recipients</div>
-                                <div className="font-medium">{row.recipients}</div>
-                              </div>
-                              <div>
-                                <div className="text-muted-foreground">Success Rate</div>
-                                <div className="font-medium">{row.successRate}%</div>
-                              </div>
-                            </div>
-                            <div className="grid grid-cols-3 gap-3">
-                              <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Total Sent</div>
-                                <div className="text-lg font-semibold">{row.totalSent}</div>
-                              </div>
-                              <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Failed</div>
-                                <div className="text-lg font-semibold">{row.totalFailed}</div>
-                              </div>
-                              <div className="rounded-md border p-3">
-                                <div className="text-muted-foreground">Delivered</div>
-                                <div className="text-lg font-semibold">{row.totalDelivered}</div>
-                              </div>
-                            </div>
-                          </div>
-                        </DialogContent>
-                      </Dialog>
+                      <Button variant="outline" size="sm" onClick={() => openDetails(row.id)}>
+                        View Details
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
+
+          <div className="mt-4 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
+            <div className="flex items-center gap-2 text-sm">
+              <span>Items per page</span>
+              <select
+                className="h-9 rounded-md border border-input bg-background px-2"
+                value={size}
+                onChange={event => setSize(Number(event.target.value))}
+              >
+                {[10, 20, 50].map(option => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              <span className="text-muted-foreground">
+                {totalElements > 0
+                  ? `${page * size + 1}-${Math.min((page + 1) * size, totalElements)} of ${totalElements}`
+                  : '0 items'}
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button variant="outline" size="sm" onClick={() => setPage(page - 1)} disabled={!canGoBack}>
+                Previous
+              </Button>
+              <span className="text-sm text-muted-foreground">
+                Page {totalPages === 0 ? 0 : page + 1} of {Math.max(totalPages, 1)}
+              </span>
+              <Button variant="outline" size="sm" onClick={() => setPage(page + 1)} disabled={!canGoNext}>
+                Next
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
+
+      <MessageDetailsDialog
+        row={selectedRow} open={!!openDetailsId}
+        onClose={closeDetails}
+        onViewFailed={handleViewFailed}
+      />
+      {/* Failed recipients dialog uses separate paging state. */}
+      <FailedRecipientsDialog
+        row={selectedFailedRow} open={!!openFailuresId}
+        failedRecipients={failedRecipients}
+        page={failuresPage}
+        size={failuresSize}
+        totalPages={failuresTotalPages}
+        totalElements={failuresTotalElements}
+        onPageChange={setFailuresPage}
+        onSizeChange={setFailuresSize}
+        loadingFor={loadingFailuresFor}
+        failuresError={failuresError}
+        onClose={closeFailures}
+        onBack={backToDetails}
+      />
     </div>
   );
-}
+};

@@ -1,0 +1,86 @@
+import { useState, useEffect } from 'react';
+import type { BillResponse } from '@/types/billing';
+import { CUSTOMER_SUBSCRIPTION_NUMBER } from '@/constants/customer';
+import { api } from '@/services/api';
+
+const SUBSCRIPTION_NUMBER = CUSTOMER_SUBSCRIPTION_NUMBER;
+
+export const useBills = () => {
+  const [bills, setBills]           = useState<BillResponse[]>([]);
+  const [loading, setLoading]       = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [viewingBill, setViewingBill]   = useState<BillResponse | null>(null);
+  const [zoom, setZoom]             = useState(1);
+  const [rotation, setRotation]     = useState(0);
+  const [imageLoading, setImageLoading] = useState(false);
+  const [imageError, setImageError]     = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const itemsPerPage = 5;
+
+  // Fetch the specific bills for the logged in customer.
+  useEffect(() => {
+    api.get<BillResponse[]>(`/bills/customer/me`)
+      .then(response => setBills(response.data))
+      .catch(console.error)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filteredBills = bills.filter(b => {
+    const matchSearch = b.billingPeriod.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchStatus = statusFilter === 'all' || b.status.toLowerCase() === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  // Handles downloading the bill as a PDF directly from the backend.
+
+  const handleDownload = async (bill: BillResponse) => {
+    try {
+      const res = await api.get(`/bills/${bill.billId}/download`, { responseType: 'blob' });
+      const blob = res.data as Blob;
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = `bill-${bill.billingPeriod}.pdf`; a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (e) { console.error(e); }
+  };
+
+  const handleCloseView = () => { 
+    setViewingBill(null); 
+    setZoom(1); 
+    setRotation(0); 
+    setImageError(false); 
+  };
+
+  const handleView = (bill: BillResponse) => {
+    setViewingBill(bill);
+    setImageLoading(true);
+    setImageError(false);
+  };
+
+  return {
+    bills,
+    loading,
+    searchTerm,
+    statusFilter,
+    viewingBill,
+    zoom,
+    rotation,
+    imageLoading,
+    imageError,
+    currentIndex,
+    itemsPerPage,
+    setSearchTerm,
+    setStatusFilter,
+    setCurrentIndex,
+    setZoom,
+    setRotation,
+    setImageLoading,
+    setImageError,
+    filteredBills,
+    handleDownload,
+    handleCloseView,
+    handleView,
+    SUBSCRIPTION_NUMBER
+  };
+};

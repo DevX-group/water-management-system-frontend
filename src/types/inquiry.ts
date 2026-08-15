@@ -3,6 +3,8 @@
 export type MessageSender = 'user' | 'admin' | 'system';
 
 export interface InquiryMessage {
+  sender: string;
+  sender_role: string;
   id: string;
   from: MessageSender;
   text: string;
@@ -36,3 +38,6 @@ export interface InquiryFormData {
   category: InquiryCategory | '';
   message: string;
 }
+
+export type InquiryFormErrors = Partial<Record<keyof InquiryFormData, string>>;
+

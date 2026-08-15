@@ -1,6 +1,8 @@
+import '@/index.css';
 import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AdminProvider, useAdmin } from '@/contexts/AdminContext';
+import { useAuth } from '@/contexts/AuthContext';
 import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardPage } from './DashboardPage';
 import { MeterReadingPage } from './MeterReadingPage';
@@ -15,65 +17,47 @@ import { UserManagementPage } from './UserManagementPage';
 import NotFound from './NotFound';
 import '../admin.css';
 import { BankSlipReviewPage } from './BankSlipReviewPage';
-
-type AdminRole = 'main_admin' | 'meter_reader' | 'payment_handler';
-
-type Section = 'dashboard' | 'users' | 'meter' | 'payments' | 'billing' | 'messaging' | 'inquiry' | 'reports' | 'predictions';
-
-const sectionPathMap: Record<Section, string> = {
-  dashboard: '/admin/dashboard',
-  users: '/admin/users',
-  meter: '/admin/meter',
-  payments: '/admin/payments',
-  billing: '/admin/billing',
-  messaging: '/admin/messaging',
-  inquiry: '/admin/inquiry',
-  reports: '/admin/reports',
-  predictions: '/admin/predictions',
-};
-
-const getDefaultAdminPath = (role: AdminRole): string => {
-  if (role === 'meter_reader') return sectionPathMap.meter;
-  if (role === 'payment_handler') return sectionPathMap.payments;
-  return sectionPathMap.dashboard;
-};
+import { AdminBlogPage } from './AdminBlogPage';
+import { AdminSettings } from './AdminSettings';
+import { SystemSettingsPage } from './SystemSettingsPage';
+import type { Section } from '@/types/admin';
+import { canAccessSection, getDefaultAdminPath, isAdminRole } from '@/utils/adminAccess';
 
 const getSectionFromPath = (pathname: string): Section => {
-  if (pathname.startsWith('/admin/users')) return 'users';
-  if (pathname.startsWith('/admin/meter')) return 'meter';
-  if (pathname.startsWith('/admin/payments')) return 'payments';
-  if (pathname.startsWith('/admin/billing')) return 'billing';
-  if (pathname.startsWith('/admin/messaging')) return 'messaging';
-  if (pathname.startsWith('/admin/inquiry')) return 'inquiry';
-  if (pathname.startsWith('/admin/reports')) return 'reports';
-  if (pathname.startsWith('/admin/predictions')) return 'predictions';
-  return 'dashboard';
+  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'settings', 'system-settings'];
+  return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
 };
 
 const DashboardContent: React.FC = () => {
   const { currentAdmin } = useAdmin();
+  const { user } = useAuth();
   const location = useLocation();
-
+  const adminRole = isAdminRole(user?.role) ? user.role : currentAdmin.role;
   const activeSection = getSectionFromPath(location.pathname);
+
+  if (!canAccessSection(adminRole, activeSection)) {
+    return <Navigate to={getDefaultAdminPath(adminRole)} replace />;
+  }
 
   return (
     <div className="admin-wrapper">
-      <AdminLayout
-        activeSection={activeSection}
-      >
+      <AdminLayout activeSection={activeSection}>
         <Routes>
-          <Route index element={<Navigate to={getDefaultAdminPath(currentAdmin.role)} replace />} />
+          <Route index element={<Navigate to={getDefaultAdminPath(adminRole)} replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="users" element={<UserManagementPage />} />
           <Route path="meter" element={<MeterReadingPage />} />
           <Route path="payments" element={<PaymentsPage />} />
-          <Route path="payments/customer/:subscriptionNo" element={<PaymentsAddingPage />} />
+          <Route path="payments/customer/:subscriptionNumber" element={<PaymentsAddingPage />} />
           <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
           <Route path="billing" element={<BillingPage />} />
-          <Route path="messaging" element={<MessagingPage />} />
+          <Route path="messaging/*" element={<MessagingPage />} />
           <Route path="inquiry" element={<AdminInquiriesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="predictions" element={<PredictionsPage />} />
+          <Route path="blog" element={<AdminBlogPage />} />
+          <Route path="settings" element={<AdminSettings />} />
+          <Route path="system-settings" element={<SystemSettingsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AdminLayout>
