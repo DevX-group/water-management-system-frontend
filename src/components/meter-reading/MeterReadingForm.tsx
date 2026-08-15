@@ -1,11 +1,12 @@
 import '@/index.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { LiveMeterScanner } from './LiveMeterScanner';
 
 interface FormData {
   meterNumber:        string;
@@ -22,12 +23,15 @@ interface MeterReadingFormProps {
   onChange:    (data: FormData) => void;
   onSubmit:    (e: React.FormEvent) => void;
   onClear:     () => void;
+  onMeterNumberBlur?: (meterNumber: string) => void;
 }
 
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
-  formData, submitting, onChange, onSubmit, onClear,
+  formData, submitting, onChange, onSubmit, onClear, onMeterNumberBlur
 }) => {
   const { t } = useTranslation('meterReading');
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+
   const usage = formData.previousReading && formData.currentReading      //
     ? Math.max(0, Number(formData.currentReading) - Number(formData.previousReading))
     : 0;
@@ -39,7 +43,8 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="meterNumber">{t('form.meterNumber')}</Label>
             <Input id="meterNumber" placeholder={t('form.meterNumberPlaceholder')} value={formData.meterNumber} required
-              onChange={(e) => onChange({ ...formData, meterNumber: e.target.value })} />
+              onChange={(e) => onChange({ ...formData, meterNumber: e.target.value })} 
+              onBlur={() => onMeterNumberBlur && formData.meterNumber && onMeterNumberBlur(formData.meterNumber)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="subscriptionNumber">{t('form.subscriptionNumber')}</Label>
@@ -64,6 +69,10 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
             <Label htmlFor="currentReading">{t('form.currentReading')}</Label>
             <Input id="currentReading" type="number" min={0} placeholder="0" value={formData.currentReading} required
               onChange={(e) => onChange({ ...formData, currentReading: e.target.value })} />
+            <Button type="button" variant="outline" className="w-full mt-2" onClick={() => setIsScannerOpen(true)}>
+              <Camera className="w-4 h-4 mr-2" />
+              Get image
+            </Button>
           </div>
           <div className="space-y-2">
             <Label>{t('form.usage')}</Label>
@@ -86,6 +95,14 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
           </Button>
         </div>
       </form>
+
+      <LiveMeterScanner 
+        isOpen={isScannerOpen} 
+        onClose={() => setIsScannerOpen(false)} 
+        onDetected={(reading) => {
+          onChange({ ...formData, currentReading: reading });
+        }} 
+      />
     </div>
   );
 };
