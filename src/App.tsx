@@ -13,6 +13,7 @@ import Bills from "./pages/Bills";
 import Usage from "./pages/Usage";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
+import CustomerSettings from "./pages/CustomerSettings";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
 import { CustomerInquiryPage } from "./pages/CustomerInquiryPage";
@@ -101,6 +102,7 @@ const App = () => (
                   <Route path="/customer/notifications" element={<Notifications />} />
                   <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
                   <Route path="/customer/profile" element={<Profile />} />
+                  <Route path="/customer/settings" element={<CustomerSettings />} />
                 </Route>
 
                 {/* Admin Routes */}
