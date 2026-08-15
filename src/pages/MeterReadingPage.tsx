@@ -20,7 +20,8 @@ export const MeterReadingPage = () => {
     setFormData,
     handleSubmit,
     clearForm,
-    fetchTodaysReadings
+    fetchTodaysReadings,
+    fetchPreviousReading
   } = useMeterReading();
 
   return (
@@ -59,6 +60,7 @@ export const MeterReadingPage = () => {
           formData={formData} submitting={submitting}
           onChange={setFormData} onSubmit={handleSubmit}
           onClear={clearForm}
+          onMeterNumberBlur={fetchPreviousReading}
         />
         <MeterReadingInstructions />
       </div>
