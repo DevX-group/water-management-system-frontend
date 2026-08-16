@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
+import { CustomerNotificationBell } from "@/components/notifications/CustomerNotificationBell";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -198,6 +199,8 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
 
           {/* Right Side */}
           <div className="flex items-center gap-2">
+            <CustomerNotificationBell />
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-xl w-9 h-9">
