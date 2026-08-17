@@ -90,46 +90,35 @@ export const ReportsPage = () => {
   // For customers we only have usage in mock data; derive revenue using a per-unit rate
   const CUSTOMER_UNIT_RATE = 15; // LKR per unit (mock)
 
-//bills report data fetch
-  useEffect(() => {
-    fetch("http://localhost:8081/api/bills_report")
-      .then((res) => res.json())
-      .then((data) => {
-        const mappedBills = data.map((bill) => ({
-  id: bill.id,
-  customerid: bill.customerId,
-  customer: bill.customerName,
-  amount: bill.amount,
-  dueDate: bill.dueDate,
-  status: bill.status === "PAID" ? "Paid" : "Unpaid",
-}));
+// Bills report data fetch
+useEffect(() => {
+  fetch("http://localhost:8081/api/bills_report")
+    .then((res) => res.json())
+    .then((data) => {
+      const mappedBills = data.map((bill) => ({
+        id: bill.id,
+        customerid: bill.customerId,
+        customer: bill.customerName,
+        amount: bill.amount,
+        dueDate: bill.dueDate,
+        status: bill.status === "PAID" ? "Paid" : "Unpaid",
+      }));
 
-  useEffect(() => {
-    fetch("http://localhost:8081/api/bills_report")
-      .then((res) => res.json())
-      .then((data) => {
-        const mappedBills = data.map((bill) => ({
-          id: bill.id,
-          customerid: bill.customerId,
-          customer: bill.customerName,
-          amount: bill.amount,
-          dueDate: bill.dueDate,
-          status: bill.status === "PAID" ? "Paid" : "Unpaid",
-        }));
+      setBillsTableData(mappedBills);
+    })
+    .catch((err) => console.error(err));
+}, []);
 
-        setBillsTableData(mappedBills);
-      })
-      .catch((err) => console.error(err));
-  }, []);
 
-   // Filter bills
-  const filteredBills = customerSearchBill
-    ? billsTableData.filter((bill) =>
-        bill.customerid
-          .toUpperCase()
-          .includes(customerSearchBill.toUpperCase())
-      )
-    : billsTableData;
+// Filter bills
+const filteredBills = customerSearchBill
+  ? billsTableData.filter((bill) =>
+      bill.customerid
+        .toUpperCase()
+        .includes(customerSearchBill.toUpperCase())
+    )
+  : billsTableData;
+
 
   //filter area data based on selected area  
   const filteredAreaData =
