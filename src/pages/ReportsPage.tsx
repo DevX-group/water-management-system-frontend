@@ -8,6 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { exportPDF } from '@/util/exportPDF';
+import { api } from '@/services/api';
+
 
 type MonthlyReportRow = {
   month: string;
@@ -34,33 +36,32 @@ export const ReportsPage = () => {
   const [overdueBill, setoverdueBill] = useState("");
 
   //Monthly report data fetch 
-  useEffect(() => {
-  fetch(`http://localhost:8081/api/reports/monthly?year=${year}`)
-    .then(res => res.json())
-    .then(data => setReports(data));
+useEffect(() => {
+  api.get(`/reports/monthly?year=${year}`)
+    .then((res) => setReports(res.data))
+    .catch((err) => console.error("MONTHLY ERROR:", err));
 }, [year]);
 
 //Customer report data fetch 
-  useEffect(() => {
-    if (!customerId) return;
+useEffect(() => {
+  if (!customerId) return;
 
-  fetch(`http://localhost:8081/api/reports/customer?customerId=${customerId}&year=${customerYear}`)
-    .then(res => res.json())
-    .then(result => {
-      console.log("API RESULT:", result);
-      setData(result);
-    });
-  }, [customerId, customerYear]);
+  api.get(`/reports/customer?customerId=${customerId}&year=${customerYear}`)
+    .then((res) => {
+      console.log("API RESULT:", res.data);
+      setData(res.data);
+    })
+    .catch((err) => console.error("CUSTOMER ERROR:", err));
+}, [customerId, customerYear]);
 
   //Area report data fetch
-  useEffect(() => {
-  fetch(`http://localhost:8081/api/reports/area?year=${areaYear}`)
-    .then(res => res.json())
-    .then(data => {
-      console.log("AREA API:", data);
-      setAreaData(data);
+useEffect(() => {
+  api.get(`/reports/area?year=${areaYear}`)
+    .then((res) => {
+      console.log("AREA API:", res.data);
+      setAreaData(res.data);
     })
-    .catch(err => console.error(err));
+    .catch((err) => console.error("AREA ERROR:", err));
 }, [areaYear]);
 
 
@@ -92,10 +93,9 @@ export const ReportsPage = () => {
 
 // Bills report data fetch
 useEffect(() => {
-  fetch("http://localhost:8081/api/bills_report")
-    .then((res) => res.json())
-    .then((data) => {
-      const mappedBills = data.map((bill) => ({
+  api.get("/bills_report")
+    .then((res) => {
+      const mappedBills = res.data.map((bill) => ({
         id: bill.id,
         customerid: bill.customerId,
         customer: bill.customerName,
@@ -106,7 +106,7 @@ useEffect(() => {
 
       setBillsTableData(mappedBills);
     })
-    .catch((err) => console.error(err));
+    .catch((err) => console.error("BILLS ERROR:", err));
 }, []);
 
 
@@ -177,28 +177,30 @@ const filteredBills = customerSearchBill
 
   //Serach bar for Overdue report + default shows all overdue bills
 useEffect(() => {
-  fetch("http://localhost:8081/api/bills_report/overdue")
-    .then((res) => res.json())
-    .then((data) => {
+  api.get("/bills_report/overdue")
+    .then((res) => {
       const today = new Date();
 
-      const mapped = data.map((bill) => {
-  const due = new Date(bill.dueDate);
+      const mapped = res.data.map((bill) => {
+        const due = new Date(bill.dueDate);
 
-  const daysOverdue = Math.max(
-    Math.floor((today.getTime() - due.getTime()) / (1000 * 60 * 60 * 24)),
-    0
-  );
+        const daysOverdue = Math.max(
+          Math.floor(
+            (today.getTime() - due.getTime()) /
+              (1000 * 60 * 60 * 24)
+          ),
+          0
+        );
 
-  return {
-    id: bill.id,
-    customerid: bill.customerId,
-    customer: bill.customerName,
-    amount: bill.amount,
-    dueDate: bill.dueDate,
-    daysOverdue,
-  };
-});
+        return {
+          id: bill.id,
+          customerid: bill.customerId,
+          customer: bill.customerName,
+          amount: bill.amount,
+          dueDate: bill.dueDate,
+          daysOverdue,
+        };
+      });
 
       setOverdueTableData(mapped);
     })
