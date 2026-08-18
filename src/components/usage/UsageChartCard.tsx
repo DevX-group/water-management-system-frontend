@@ -1,5 +1,6 @@
 import '@/index.css';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BarChartHorizontal, PieChart as PieIcon, LineChart, Loader2 } from 'lucide-react';
@@ -15,23 +16,26 @@ interface UsageChartCardProps {
 
 const tooltipStyle = { borderRadius: "8px", border: "none", boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)" };
 
-export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, setActiveChart, loading, monthlyData, pieData }) => (
+export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, setActiveChart, loading, monthlyData, pieData }) => {
+  const { t } = useTranslation('usage');
+
+  return (
   <Card className="shadow-card border-none mb-8">
     <CardHeader className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-2">
       <div>
-        <CardTitle>Usage Analysis</CardTitle>
-        <CardDescription>Hover over charts to see detailed data</CardDescription>
+        <CardTitle>{t('chartCard.title')}</CardTitle>
+        <CardDescription>{t('chartCard.desc')}</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
   
         <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
-          <BarChartHorizontal className="w-4 h-4" /> Bar
+          <BarChartHorizontal className="w-4 h-4" /> {t('chartCard.bar')}
         </Button>
         <Button variant={activeChart === "pie" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("pie")} className={`gap-2 ${activeChart === "pie" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
-          <PieIcon className="w-4 h-4" /> Pie
+          <PieIcon className="w-4 h-4" /> {t('chartCard.pie')}
         </Button>
         <Button variant={activeChart === "mix" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("mix")} className={`gap-2 ${activeChart === "mix" ? "bg-sky-500 hover:bg-sky-600 text-white" : ""}`}>
-          <LineChart className="w-4 h-4" /> Mix
+          <LineChart className="w-4 h-4" /> {t('chartCard.mix')}
         </Button>
       </div>
     </CardHeader>
@@ -39,7 +43,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
       {loading ? (
         <div className="h-[400px] w-full flex flex-col items-center justify-center gap-3">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Syncing data...</p>
+          <p className="text-sm text-muted-foreground">{t('loading')}</p>
         </div>
       ) : (
         <div className="h-[400px] w-full">
@@ -99,10 +103,11 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
       )}
       {!loading && activeChart === "mix" && (
         <div className="flex justify-center gap-6 mt-4">
-          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary" /><span className="text-sm text-muted-foreground font-medium">Monthly Usage</span></div>
-          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500" /><span className="text-sm text-muted-foreground font-medium">Standard Limit</span></div>
+          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-primary" /><span className="text-sm text-muted-foreground font-medium">{t('chartCard.monthlyUsage')}</span></div>
+          <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-amber-500" /><span className="text-sm text-muted-foreground font-medium">{t('chartCard.standardLimit')}</span></div>
         </div>
       )}
     </CardContent>
   </Card>
-);
+  );
+};
