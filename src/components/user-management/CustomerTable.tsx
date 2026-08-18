@@ -72,7 +72,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           placeholder={t('searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-          className="pl-10 bg-accent/30"
+          className="pl-10 bg-background"
         />
       </div>
 
@@ -81,7 +81,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="space-y-1">
           <Label className="text-xs font-semibold">{t('filterByStatus')}</Label>
           <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allStatus')} /></SelectTrigger>
+            <SelectTrigger className="bg-background"><SelectValue placeholder={t('allStatus')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="ACTIVE">Active</SelectItem>
@@ -94,7 +94,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="space-y-1">
           <Label className="text-xs font-semibold">{t('filterByRegion')}</Label>
           <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allRegions')} /></SelectTrigger>
+            <SelectTrigger className="bg-background"><SelectValue placeholder={t('allRegions')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Regions</SelectItem>
               {Object.values(REGION_CONFIG).map((val) => (
@@ -106,7 +106,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="space-y-1">
           <Label className="text-xs font-semibold">{t('filterByConnectionType')}</Label>
           <Select value={filterConnectionType} onValueChange={(v) => { setFilterConnectionType(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allTypes')} /></SelectTrigger>
+            <SelectTrigger className="bg-background"><SelectValue placeholder={t('allTypes')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('allTypes')}</SelectItem>
               <SelectItem value="metered">{t('metered')}</SelectItem>
