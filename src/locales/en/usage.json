@@ -10,5 +10,12 @@
     "mix": "Mix",
     "monthlyUsage": "Monthly Usage",
     "standardLimit": "Standard Limit"
+  },
+  "stats": {
+    "average": "Average Usage",
+    "peak": "Peak Usage",
+    "minimum": "Minimum Usage",
+    "total": "Total Usage",
+    "units": "units"
   }
 }
