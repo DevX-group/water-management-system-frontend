@@ -20,17 +20,11 @@ export const LoginRightPanel: React.FC = () => (
     className="hidden lg:flex w-[45%] fixed right-0 top-0 h-screen gradient-dark items-center justify-center p-12 overflow-hidden"
   >
     <div className="absolute inset-0 gradient-mesh opacity-30" />
-    <motion.div animate={{ x: [0, 30, 0], y: [0, -20, 0], scale: [1, 1.1, 1] }}
-      transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-      className="absolute top-20 right-20 w-64 h-64 rounded-full bg-primary/20 blur-3xl" />
-    <motion.div animate={{ x: [0, -20, 0], y: [0, 30, 0], scale: [1, 1.2, 1] }}
-      transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-      className="absolute bottom-20 left-20 w-80 h-80 rounded-full bg-accent/20 blur-3xl" />
 
     <div className="relative text-center text-white max-w-md">
       <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
         transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-xl flex items-center justify-center mx-auto mb-10 shadow-glow">
+        className="w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-xl flex items-center justify-center mx-auto mb-10">
         <Droplets className="w-14 h-14" />
       </motion.div>
       <h2 className="text-4xl font-bold mb-4">Manage Your Water Bills</h2>
