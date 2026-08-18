@@ -1,0 +1,32 @@
+{
+  "customer": {
+    "dashboard": "முகப்புப்பலகை",
+    "bills": "பில்கள்",
+    "payments": "கொடுப்பனவுகள்",
+    "usage": "பயன்பாடு",
+    "alerts": "எச்சரிக்கைகள்",
+    "inquiry": "விசாரணை",
+    "signin": "உள்நுழைக",
+    "getStarted": "தொடங்குங்கள்",
+    "profile": "சுயவிவரம்",
+    "settings": "அமைப்புகள்",
+    "signout": "வெளியேறு",
+    "myAccount": "என் கணக்கு"
+  },
+  "admin": {
+    "dashboard": "முகப்புப்பலகை",
+    "users": "பயனர் மேலாண்மை",
+    "meter": "மீட்டர் வாசிப்பு",
+    "billing": "பில்லிங்",
+    "payments": "கொடுப்பனவுகள்",
+    "messaging": "செய்தியிடல்",
+    "inquiry": "விசாரணை",
+    "reports": "அறிக்கைகள்",
+    "predictions": "கணிப்புகள்",
+    "blog": "வலைப்பதிவு",
+    "system-settings": "கணினி அமைப்புகள்",
+    "myAccount": "என் கணக்கு",
+    "profileSettings": "சுயவிவர அமைப்புகள்",
+    "logout": "வெளியேறு"
+  }
+}
