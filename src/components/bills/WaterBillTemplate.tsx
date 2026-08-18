@@ -25,8 +25,8 @@ export const WaterBillTemplate: React.FC<WaterBillTemplateProps> = ({ bill, prof
       
         <div className="flex justify-between items-center border-b-4 border-blue-600 pb-3">
           <div className="flex items-center gap-3">
-            <div className="w-16 h-16 shrink-0 flex items-center justify-center">
-              <img src="/logo.png" alt="Akmeemana Pradeshiya Sabha Logo" className="w-full h-full object-contain" />
+            <div className="w-16 h-16 bg-yellow-50 border-2 border-yellow-600 rounded-full flex items-center justify-center shrink-0">
+              <span className="text-2xl" role="img" aria-label="emblem">🦁</span>
             </div>
             <div className="text-left">
               <h1 className="text-xl font-extrabold text-blue-900 leading-tight">ගාල්ල ප්‍රාදේශීය සභාව</h1>
