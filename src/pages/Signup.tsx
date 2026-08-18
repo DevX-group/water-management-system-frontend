@@ -68,9 +68,9 @@ const Signup = () => {
     <div className="min-h-screen flex">
       <SignupLeftPanel />
 
-      <div className="flex flex-1 lg:ml-[45%] min-h-screen items-start justify-center p-8 bg-gray-50">
+      <div className="flex flex-1 lg:ml-[45%] min-h-screen items-start justify-center p-8 bg-gray-50 dark:bg-gray-950">
         <div className="w-full max-w-md py-8">
-          <div className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
+          <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/80 dark:border-gray-700/80 rounded-3xl p-8 shadow-xl">
             <SignupLogo />
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8">
               <h1 className="text-3xl font-bold mb-2">{activationMode ? 'Activate Account' : 'Sign Up'}</h1>
