@@ -1,5 +1,6 @@
 import '@/index.css';
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,6 +15,7 @@ import type { MonthlyDataPoint, AnalyticsData } from '@/types/usage';
 import { useUsage } from "@/hooks/useUsage";
 
 const Usage = () => {
+  const { t } = useTranslation('usage');
   const {
     activeChart,
     year,
@@ -33,8 +35,8 @@ const Usage = () => {
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-1">Usage Trends</h1>
-            <p className="text-muted-foreground">Analyze your water consumption patterns</p>
+            <h1 className="text-3xl font-bold mb-1">{t('title')}</h1>
+            <p className="text-muted-foreground">{t('subtitle')}</p>
           </div>
 
           <div className="flex items-center gap-2 bg-secondary/50 rounded-lg p-1 self-start sm:self-auto">

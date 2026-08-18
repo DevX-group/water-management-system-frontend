@@ -2,6 +2,7 @@ import '@/index.css';
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { AlertTriangle, Info, AlertOctagon } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface NotificationsStatsProps {
   counts: {
@@ -12,13 +13,15 @@ interface NotificationsStatsProps {
   };
 }
 
-export const NotificationsStats: React.FC<NotificationsStatsProps> = ({ counts }) => (
+export const NotificationsStats: React.FC<NotificationsStatsProps> = ({ counts }) => {
+  const { t } = useTranslation('alerts');
+  return (
   <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
     {[
-      { label: "Critical", count: counts.critical, color: "text-red-500", icon: AlertOctagon, bg: "bg-red-50" },
-      { label: "High",     count: counts.high,     color: "text-orange-500", icon: AlertTriangle, bg: "bg-orange-50" },
-      { label: "Medium",   count: counts.medium,   color: "text-amber-500", icon: Info, bg: "bg-amber-50" },
-      { label: "Info",     count: counts.info,     color: "text-primary", icon: Info, bg: "bg-blue-50" },
+      { label: t('severity.critical'), count: counts.critical, color: "text-red-500", icon: AlertOctagon, bg: "bg-red-50" },
+      { label: t('severity.high'),     count: counts.high,     color: "text-orange-500", icon: AlertTriangle, bg: "bg-orange-50" },
+      { label: t('severity.medium'),   count: counts.medium,   color: "text-amber-500", icon: Info, bg: "bg-amber-50" },
+      { label: t('severity.info'),     count: counts.info,     color: "text-primary", icon: Info, bg: "bg-blue-50" },
     ].map((stat, i) => {
       const Icon = stat.icon;
       return (
@@ -38,17 +41,20 @@ export const NotificationsStats: React.FC<NotificationsStatsProps> = ({ counts }
       );
     })}
   </div>
-);
+  );
+};
 
-export const NotificationsFilter: React.FC<NotificationsFilterProps> = ({ filter, setFilter }) => (
+export const NotificationsFilter: React.FC<any> = ({ filter, setFilter }) => {
+  const { t } = useTranslation('alerts');
+  return (
   <div className="flex flex-col items-center justify-center w-full mt-4">
     <div className="bg-card p-1.5 rounded-2xl border shadow-sm flex flex-wrap justify-center gap-1.5">
       {[
-        { id: "all",      hover: "hover:bg-slate-100 hover:text-slate-900", active: "bg-primary text-primary-foreground" },
-        { id: "critical", hover: "hover:bg-red-50 hover:text-red-600",    active: "bg-red-500 text-white" },
-        { id: "high",     hover: "hover:bg-orange-50 hover:text-orange-600", active: "bg-orange-500 text-white" },
-        { id: "medium",   hover: "hover:bg-amber-50 hover:text-amber-600",  active: "bg-amber-500 text-white" },
-        { id: "info",     hover: "hover:bg-blue-50 hover:text-primary",    active: "bg-primary text-white" },
+        { id: "all",      label: t('severity.all'), hover: "hover:bg-slate-100 hover:text-slate-900", active: "bg-primary text-primary-foreground" },
+        { id: "critical", label: t('severity.critical'), hover: "hover:bg-red-50 hover:text-red-600",    active: "bg-red-500 text-white" },
+        { id: "high",     label: t('severity.high'), hover: "hover:bg-orange-50 hover:text-orange-600", active: "bg-orange-500 text-white" },
+        { id: "medium",   label: t('severity.medium'), hover: "hover:bg-amber-50 hover:text-amber-600",  active: "bg-amber-500 text-white" },
+        { id: "info",     label: t('severity.info'), hover: "hover:bg-blue-50 hover:text-primary",    active: "bg-primary text-white" },
       ].map((lvl) => (
         <button
           key={lvl.id}
@@ -59,11 +65,12 @@ export const NotificationsFilter: React.FC<NotificationsFilterProps> = ({ filter
               : `text-slate-600 ${lvl.hover}`
           }`}
         >
-          {lvl.id}
+          {lvl.label}
         </button>
       ))}
     </div>
   </div>
-);
+  );
+};
 
 

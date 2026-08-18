@@ -1,0 +1,14 @@
+{
+  "title": "Usage Trends",
+  "subtitle": "Analyze your water consumption patterns",
+  "loading": "Syncing data...",
+  "chartCard": {
+    "title": "Usage Analysis",
+    "desc": "Hover over charts to see detailed data",
+    "bar": "Bar",
+    "pie": "Pie",
+    "mix": "Mix",
+    "monthlyUsage": "Monthly Usage",
+    "standardLimit": "Standard Limit"
+  }
+}

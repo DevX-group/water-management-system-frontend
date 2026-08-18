@@ -14,6 +14,10 @@ import enAdminBlog from "./locales/en/adminBlog.json";
 import siAdminBlog from "./locales/si/adminBlog.json";
 import enUserManagement from "./locales/en/userManagement.json";
 import siUserManagement from "./locales/si/userManagement.json";
+import enUsage from "./locales/en/usage.json";
+import siUsage from "./locales/si/usage.json";
+import enAlerts from "./locales/en/alerts.json";
+import siAlerts from "./locales/si/alerts.json";
 
 i18n
   .use(LanguageDetector)
@@ -27,6 +31,8 @@ i18n
         inquiry: enInquiry,
         adminBlog: enAdminBlog,
         userManagement: enUserManagement,
+        usage: enUsage,
+        alerts: enAlerts,
       },
       si: {
         payments: siPayments,
@@ -35,6 +41,8 @@ i18n
         inquiry: siInquiry,
         adminBlog: siAdminBlog,
         userManagement: siUserManagement,
+        usage: siUsage,
+        alerts: siAlerts,
       },
     },
 

@@ -72,13 +72,13 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
   const CompanyNameBlock = () => (
     <div className="hidden sm:flex flex-col items-start justify-center gap-[1px]">
       <span className="text-[10px] font-semibold leading-none text-muted-foreground">
-        ජාතික ජල සම්පාදන මණ්ඩලය
+        ගාල්ල ප්‍රාදේශීය සභාව
       </span>
       <span className="text-sm font-bold leading-none text-gradient py-[1px]">
-        National Water Supply Board
+         Galle Pradeshiya Sabha
       </span>
       <span className="text-[10px] font-semibold leading-none text-muted-foreground">
-        தேசிய நீர் வழங்கல் சபை
+       காலி பிரதேச சபை
       </span>
     </div>
   );
