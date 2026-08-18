@@ -24,6 +24,11 @@ import taMeterReading from "./locales/ta/meterReading.json";
 import taInquiry from "./locales/ta/inquiry.json";
 import taUsage from "./locales/ta/usage.json";
 import taAlerts from "./locales/ta/alerts.json";
+import taAdminBlog from "./locales/ta/adminBlog.json";
+import taUserManagement from "./locales/ta/userManagement.json";
+import enNavbar from "./locales/en/navbar.json";
+import siNavbar from "./locales/si/navbar.json";
+import taNavbar from "./locales/ta/navbar.json";
 
 i18n
   .use(LanguageDetector)
@@ -39,6 +44,7 @@ i18n
         userManagement: enUserManagement,
         usage: enUsage,
         alerts: enAlerts,
+        navbar: enNavbar,
       },
       si: {
         payments: siPayments,
@@ -49,14 +55,18 @@ i18n
         userManagement: siUserManagement,
         usage: siUsage,
         alerts: siAlerts,
+        navbar: siNavbar,
       },
       ta: {
         payments: taPayments,
         billing: taBilling,
         meterReading: taMeterReading,
         inquiry: taInquiry,
+        adminBlog: taAdminBlog,
+        userManagement: taUserManagement,
         usage: taUsage,
         alerts: taAlerts,
+        navbar: taNavbar,
       },
     },
 
