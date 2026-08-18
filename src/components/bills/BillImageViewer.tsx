@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { FileText, Loader2, Download, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { api } from '@/services/api';
+import { WaterBillTemplate } from './WaterBillTemplate';
+import type { CustomerProfile } from '@/components/profile/ProfileForm';
 
 interface Bill {
   billId: string;
@@ -19,6 +20,7 @@ interface Bill {
 
 interface BillImageViewerProps {
   bill: Bill | null;
+  profile: CustomerProfile | null;
   zoom: number;
   rotation: number;
   imageLoading: boolean;
@@ -33,42 +35,17 @@ interface BillImageViewerProps {
 }
 
 export const BillImageViewer: React.FC<BillImageViewerProps> = ({
-  bill, zoom, rotation, imageLoading, imageError,
+  bill, profile, zoom, rotation, imageLoading, imageError,
   onClose, onDownload, onZoomIn, onZoomOut, onRotate, onImageLoad, onImageError,
 }) => {
   const { t } = useTranslation('billing');
 
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
-
   useEffect(() => {
-    let active = true;
-    let objectUrl: string | null = null;
-
-    const loadImage = async () => {
-      if (!bill) {
-        setImageUrl(null);
-        return;
-      }
-
-      try {
-        const response = await api.get(`/bills/${bill.billId}/image`, { responseType: 'blob' });
-        if (!active) return;
-        objectUrl = window.URL.createObjectURL(response.data as Blob);
-        setImageUrl(objectUrl);
-      } catch {
-        if (active) onImageError();
-      }
-    };
-
-    loadImage();
-
-    return () => {
-      active = false;
-      if (objectUrl) {
-        window.URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [bill?.billId, onImageError]);
+    if (bill) {
+      // instantly dismiss loading state since we generate locally
+      onImageLoad();
+    }
+  }, [bill, onImageLoad]);
 
   return (
     <AnimatePresence>
@@ -79,7 +56,6 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
           className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
           onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
-         // Header
           <div className="flex items-center justify-between px-6 py-4 bg-black/60 border-b border-white/10 flex-shrink-0">
             <div>
               <p className="text-white font-bold text-base">{t('history.viewer.bill')} — {bill.billingPeriod}</p>
@@ -95,40 +71,38 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
             </div>
           </div>
 
-        // Image Container
-          <div className="flex-1 overflow-auto flex items-center justify-center p-6 relative">
+          <div className="flex-1 overflow-auto flex p-6 relative">
             {imageLoading && (
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <Loader2 className="w-10 h-10 animate-spin text-white/40" />
               </div>
             )}
             {imageError ? (
-              <div className="text-center text-white/40">
+              <div className="m-auto text-center text-white/40">
                 <FileText className="w-16 h-16 mx-auto mb-3 opacity-30" />
                 <p className="text-sm">{t('history.viewer.imageNotAvailable')}</p>
               </div>
             ) : (
-              <motion.img
+              <motion.div
                 key={bill.billId}
-                src={imageUrl ?? undefined}
-                alt={`Bill ${bill.billingPeriod}`}
                 initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: imageLoading ? 0 : 1, scale: 1 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.3 }}
+                className="m-auto shrink-0"
                 style={{
-                  transform: `scale(${zoom}) rotate(${rotation}deg)`,
+                  transform: `scale(${zoom * 0.8}) rotate(${rotation}deg)`,
                   transformOrigin: 'center center',
-                  transition: 'transform 0.2s ease',
-                  maxWidth: '100%', maxHeight: '100%', objectFit: 'contain',
-                  borderRadius: '8px', boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
+                  backgroundColor: 'white',
+                  borderRadius: '8px', 
+                  boxShadow: '0 25px 60px rgba(0,0,0,0.6)',
+                  overflow: 'hidden'
                 }}
-                onLoad={onImageLoad}
-                onError={onImageError}
-              />
+              >
+                <WaterBillTemplate bill={bill as any} profile={profile} />
+              </motion.div>
             )}
           </div>
 
-        // Footer
           <div className="flex items-center justify-center gap-6 px-6 py-3 bg-black/60 border-t border-white/10 flex-shrink-0">
             <Badge variant="secondary" className={`rounded-full px-3 py-1 ${bill.status?.toLowerCase() === 'paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
               }`}>{bill.status ? t(`status.${bill.status.toUpperCase()}`, { defaultValue: bill.status }) : ''}</Badge>
