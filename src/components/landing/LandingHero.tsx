@@ -1,114 +1,151 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Droplet, ShieldCheck } from 'lucide-react';
+import { Droplet, MoveRight, ChevronRight, Activity, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 export const LandingHero = () => {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-transparent transition-colors duration-300">
-      <div className="absolute inset-0 z-0 gradient-mesh opacity-60"></div>
-      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-         <motion.div 
-          animate={{ scale: [1, 1.1, 1], rotate: [0, 90, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-[10%] -left-[10%] w-[40vw] h-[40vw] rounded-full bg-blue-400/10 blur-[100px]" 
-        />
-        <motion.div 
-          animate={{ scale: [1, 1.2, 1], rotate: [0, -90, 0] }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute bottom-[10%] -right-[10%] w-[50vw] h-[50vw] rounded-full bg-cyan-400/10 blur-[120px]" 
-        />
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-transparent transition-colors duration-500 pt-20">
+      
+      {/* Clean Background Elements */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none flex items-center justify-center">
+        {/* Deep blue backdrop only, no glowing orbs */}
+        <div className="absolute inset-0 bg-transparent dark:bg-background"></div>
       </div>
 
-      <div className="container mx-auto px-6 relative z-10 pt-20 pb-20">
-        <div className="flex flex-col lg:flex-row items-center gap-16 lg:gap-20">
-          <div className="flex-1 max-w-2xl text-center lg:text-left">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/60 border border-blue-200/50 text-blue-700 mb-8 backdrop-blur-sm shadow-sm">
-                <Droplet className="w-4 h-4" />
-                <span className="text-sm font-semibold tracking-wide uppercase">HydroPay is Live</span>
-              </div>
-              
-              <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tighter leading-[1.1] mb-6 text-slate-900">
-                Fluid utility <br className="hidden md:block"/>
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
-                  management.
-                </span>
-              </h1>
-              
-              <p className="text-lg md:text-xl text-slate-600 leading-relaxed mb-10 max-w-xl mx-auto lg:mx-0 font-light">
-                Track every drop, pay in seconds, and stay informed with a beautifully engineered platform designed for the modern home.
-              </p>
+      <div className="container mx-auto px-6 relative z-10 flex flex-col items-center text-center">
+        
+        {/* Top Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent/50 border border-border mb-12 mt-10"
+        >
+          <motion.div 
+            animate={{ y: [0, -3, 0] }} 
+            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          >
+            <Droplet className="w-4 h-4 text-blue-500 fill-blue-500" />
+          </motion.div>
+          <span className="text-sm font-medium tracking-wide text-foreground">Hydropay is live now</span>
+        </motion.div>
+        
+        {/* Hero Typography */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-4xl mx-auto"
+        >
+          <h1 className="text-5xl sm:text-7xl md:text-8xl font-black tracking-[-0.04em] leading-[0.95] mb-8 text-foreground">
+            Fluid tracking.<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-br from-blue-600 via-cyan-500 to-teal-400">
+              Crystal clear.
+            </span>
+          </h1>
+          
+          <p className="text-xl md:text-2xl text-muted-foreground leading-relaxed mb-12 max-w-2xl mx-auto font-light tracking-tight">
+            An immersive platform to monitor every drop, settle bills instantly, and gain unparalleled insight into your utility flow.
+          </p>
+        </motion.div>
 
-              <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4">
-                <Button asChild size="lg" className="h-14 px-8 rounded-full text-base font-semibold shadow-lg hover:shadow-blue-500/25 transition-all bg-blue-600 hover:bg-blue-700 text-white border-none">
-                  <Link to="/signup">
-                    Get Started <ArrowRight className="ml-2 w-5 h-5" />
-                  </Link>
-                </Button>
-                <Button asChild variant="outline" size="lg" className="h-14 px-8 rounded-full text-base font-medium border-blue-200 text-blue-900 hover:bg-white hover:text-blue-700 hover:border-blue-300 transition-all bg-white/50 backdrop-blur-sm shadow-sm">
-                  <Link to="/login">
-                    Sign In to Dashboard
-                  </Link>
-                </Button>
-              </div>
-            </motion.div>
-          </div>
-          <div className="flex-1 w-full flex justify-center lg:justify-end">
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative w-full max-w-md aspect-square"
-            >
-              <motion.div 
-                animate={{ 
-                  borderRadius: ["40% 60% 70% 30% / 40% 50% 60% 50%", "60% 40% 30% 70% / 60% 30% 70% 40%", "40% 60% 70% 30% / 40% 50% 60% 50%"],
-                  rotate: [0, 5, -5, 0]
-                }}
-                transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                className="absolute inset-0 bg-white/40 backdrop-blur-xl border border-white/60 shadow-[0_8px_32px_rgba(0,100,200,0.1)] z-10 flex flex-col items-center justify-center p-10 overflow-hidden"
-              >
-                <h3 className="text-2xl font-bold mb-2 tracking-tight text-slate-800">Active Flow</h3>
-                <p className="text-blue-600 text-xs tracking-widest uppercase font-semibold mb-8">System Optimal</p>
+        {/* CTA Buttons */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 w-full sm:w-auto"
+        >
+          <Button asChild size="lg" className="w-full sm:w-auto h-16 px-10 rounded-full text-lg font-semibold shadow-md bg-blue-600 text-white hover:bg-blue-700 hover:scale-[1.02] transition-all duration-300">
+            <Link to="/signup">
+              Dive In Now <MoveRight className="ml-3 w-5 h-5" />
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg" className="w-full sm:w-auto h-16 px-10 rounded-full text-lg font-medium border-border text-foreground hover:bg-accent transition-all duration-300">
+            <Link to="/login" className="flex items-center">
+              Enter Dashboard <ChevronRight className="ml-2 w-5 h-5 opacity-50" />
+            </Link>
+          </Button>
+        </motion.div>
+
+        {/* Professional Dashboard Preview */}
+        <motion.div
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1.2, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-5xl mx-auto mt-24 relative"
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent z-20 h-full w-full pointer-events-none" />
+          
+          <div className="relative rounded-t-[2rem] bg-card border border-border border-b-0 shadow-sm p-4 overflow-hidden">
+             
+             {/* Mockup Top Bar */}
+             <div className="h-4 flex items-center gap-1.5 px-4 mb-6 border-b border-border/50 pb-4">
+               <div className="w-3 h-3 rounded-full bg-muted-foreground/30"></div>
+               <div className="w-3 h-3 rounded-full bg-muted-foreground/30"></div>
+               <div className="w-3 h-3 rounded-full bg-muted-foreground/30"></div>
+             </div>
+
+             {/* Mockup Content */}
+             <div className="bg-background rounded-xl p-8 sm:p-12 border border-border/40 flex flex-col md:flex-row gap-12 items-center min-h-[300px] relative">
                 
-                <div className="w-full bg-white/90 rounded-2xl p-5 border border-blue-50 shadow-sm backdrop-blur-xl">
-                  <div className="flex justify-between items-center mb-3">
-                    <span className="text-sm font-medium text-slate-500">Monthly Usage</span>
-                    <span className="text-sm font-bold text-slate-900">14.2 Units</span>
-                  </div>
-                  <div className="h-2 w-full bg-blue-50 rounded-full overflow-hidden">
-                    <motion.div 
-                      initial={{ width: 0 }}
-                      animate={{ width: "65%" }}
-                      transition={{ duration: 1.5, delay: 0.5, ease: "easeOut" }}
-                      className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full" 
-                    />
-                  </div>
+                {/* Large Bouncing Water Drop */}
+                <div className="flex-1 flex justify-center items-center relative">
+                  {/* Decorative background circle behind the drop */}
+                  <div className="absolute w-48 h-48 bg-blue-500/5 rounded-full blur-2xl" />
+                  
+                  <motion.div 
+                    animate={{ y: [-10, 10, -10] }}
+                    transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                    className="relative z-10"
+                  >
+                    <div className="relative flex items-center justify-center w-40 h-40 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] bg-gradient-to-br from-blue-400 to-blue-600 shadow-xl overflow-hidden before:content-[''] before:absolute before:inset-0 before:bg-[linear-gradient(to_bottom,white,transparent)] before:opacity-30 before:mix-blend-overlay">
+                      <Droplet className="w-16 h-16 text-white fill-white opacity-90 drop-shadow-md" />
+                    </div>
+                  </motion.div>
                 </div>
-              </motion.div>
-              <motion.div 
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
-                className="absolute -bottom-4 -left-8 z-20 bg-white/90 backdrop-blur-xl border border-blue-50 p-4 rounded-2xl shadow-xl flex items-center gap-3"
-              >
-                <div className="bg-emerald-100 p-2 rounded-full text-emerald-600">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div className="text-left">
-                  <p className="text-xs text-slate-500 font-medium">Payment Secured</p>
-                  <p className="text-sm font-bold text-slate-900">LKR 4,250</p>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
 
-        </div>
+                {/* Usage Statistics */}
+                <div className="flex-[1.5] w-full text-left relative z-10 flex flex-col justify-center">
+                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-blue-500/10 text-blue-600 dark:text-blue-400 font-medium text-sm mb-6 w-fit">
+                    <Activity className="w-4 h-4" /> Real-time Meter Sync
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-8 mb-8">
+                    <div>
+                      <p className="text-sm text-muted-foreground font-medium mb-1 uppercase tracking-wider">Current Month</p>
+                      <h3 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">1,245 <span className="text-xl md:text-2xl text-muted-foreground font-normal">L</span></h3>
+                    </div>
+                    <div>
+                      <p className="text-sm text-muted-foreground font-medium mb-1 uppercase tracking-wider">Estimated Bill</p>
+                      <h3 className="text-4xl md:text-5xl font-bold text-foreground tracking-tight">Rs 850</h3>
+                    </div>
+                  </div>
+
+                  {/* Progress/Usage Bar */}
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm text-muted-foreground">
+                      <span>Safe Usage Zone</span>
+                      <span>62% of monthly average</span>
+                    </div>
+                    <div className="w-full h-3 bg-secondary rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ width: 0 }}
+                        whileInView={{ width: "62%" }}
+                        transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+                        className="h-full bg-gradient-to-r from-blue-500 to-cyan-400 rounded-full"
+                      />
+                    </div>
+                  </div>
+                  
+                </div>
+                
+             </div>
+          </div>
+        </motion.div>
+
       </div>
     </section>
   );
