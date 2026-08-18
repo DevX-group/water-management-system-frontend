@@ -23,8 +23,7 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
         <CardDescription>Hover over charts to see detailed data</CardDescription>
       </div>
       <div className="flex p-1 bg-secondary/50 rounded-lg">
-        {/*The buttons to switch between chart types, with dynamic styling based on the active chart
-*/} 
+  
         <Button variant={activeChart === "bar" ? "default" : "ghost"} size="sm" onClick={() => setActiveChart("bar")} className={`gap-2 ${activeChart === "bar" ? "bg-primary hover:bg-primary/90 text-primary-foreground" : ""}`}>
           <BarChartHorizontal className="w-4 h-4" /> Bar
         </Button>
@@ -71,7 +70,25 @@ export const UsageChartCard: React.FC<UsageChartCardProps> = ({ activeChart, set
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e5e7eb" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} dy={10} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fill: "#6b7280", fontSize: 12 }} />
-                <Tooltip contentStyle={tooltipStyle} />
+                <Tooltip 
+                  contentStyle={tooltipStyle}
+                  content={({ active, payload, label }) => {
+                    if (active && payload && payload.length) {
+                      const unique = payload.filter((v, i, a) => a.findIndex(t => t.dataKey === v.dataKey) === i);
+                      return (
+                        <div className="bg-card p-3 border border-border rounded-lg shadow-md text-sm">
+                          <p className="font-semibold mb-2">{label}</p>
+                          {unique.map((entry: any, index: number) => (
+                            <p key={index} style={{ color: entry.color }} className="capitalize">
+                              {entry.name}: {entry.value}
+                            </p>
+                          ))}
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
                 <Area type="monotone" dataKey="usage" fill="url(#colorUsage)" stroke="hsl(var(--primary))" strokeWidth={2} />
                 <Line type="monotone" dataKey="limit" stroke="#f59e0b" strokeWidth={2} dot={false} strokeDasharray="5 5" />
                 <Bar dataKey="usage" barSize={30} fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} opacity={0.8} />
