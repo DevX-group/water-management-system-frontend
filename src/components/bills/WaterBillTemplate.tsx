@@ -182,7 +182,13 @@ export const WaterBillTemplate: React.FC<WaterBillTemplateProps> = ({ bill, prof
                <span className="text-[10px] font-bold text-blue-900 text-center uppercase">Galle<br/>Pradeshiya<br/>Sabha</span>
                <div className="absolute inset-0 border border-blue-800 rounded-full scale-90"></div>
             </div>
-            <div className="border-b-2 border-blue-900 w-full pb-1 mb-1 relative">
+            <div className="border-b-2 border-blue-900 w-full pb-1 mb-1 relative mt-4">
+               <span 
+                 className="absolute bottom-1 left-1/2 text-blue-950 text-2xl opacity-90 whitespace-nowrap" 
+                 style={{fontFamily: "'Brush Script MT', 'Lucida Handwriting', 'Segoe Print', cursive", transform: 'translateX(-50%) rotate(-5deg)'}}
+               >
+                 A.B. Perera
+               </span>
             </div>
             <div className="text-xs font-bold text-blue-900">ජල සැපයුම් නිලධාරී</div>
             <div className="text-xs font-bold text-blue-800">Water Supply Officer</div>
