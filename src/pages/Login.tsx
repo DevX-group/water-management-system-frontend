@@ -23,7 +23,7 @@ const Login = () => {
         className="flex-1 flex items-center justify-center p-8 relative overflow-y-auto min-h-screen">
         <div className="absolute inset-0 gradient-mesh opacity-30" />
         <div className="w-full max-w-md relative">
-          <div className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-3xl p-8 shadow-xl">
+          <div className="bg-white/60 dark:bg-gray-900/60 backdrop-blur-xl border border-white/80 dark:border-gray-700/80 rounded-3xl p-8 shadow-xl">
             <Link to="/" className="flex items-center gap-3 mb-10">
               <motion.div whileHover={{ scale: 1.05, rotate: 5 }}
                 className="w-12 h-12 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
