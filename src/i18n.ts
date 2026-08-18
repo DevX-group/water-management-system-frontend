@@ -18,6 +18,12 @@ import enUsage from "./locales/en/usage.json";
 import siUsage from "./locales/si/usage.json";
 import enAlerts from "./locales/en/alerts.json";
 import siAlerts from "./locales/si/alerts.json";
+import taPayments from "./locales/ta/payments.json";
+import taBilling from "./locales/ta/billing.json";
+import taMeterReading from "./locales/ta/meterReading.json";
+import taInquiry from "./locales/ta/inquiry.json";
+import taUsage from "./locales/ta/usage.json";
+import taAlerts from "./locales/ta/alerts.json";
 
 i18n
   .use(LanguageDetector)
@@ -43,6 +49,14 @@ i18n
         userManagement: siUserManagement,
         usage: siUsage,
         alerts: siAlerts,
+      },
+      ta: {
+        payments: taPayments,
+        billing: taBilling,
+        meterReading: taMeterReading,
+        inquiry: taInquiry,
+        usage: taUsage,
+        alerts: taAlerts,
       },
     },
 
