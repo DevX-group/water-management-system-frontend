@@ -37,7 +37,7 @@ export const CustomerPaymentHistoryTable: React.FC<CustomerPaymentHistoryTablePr
   history, historyTotalPages, historyStart, historyEnd, historyTotalItems, historyPage,
   filterYear, setFilterYear, filterMethod, setFilterMethod, onFilterChange
 }) => {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation('payments');
   const hasActiveFilter = filterYear !== undefined || filterMethod !== undefined;
 
   const handleYearChange = (val: string) => {

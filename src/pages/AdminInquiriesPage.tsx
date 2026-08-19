@@ -18,8 +18,10 @@ const itemVariants = {
 };
 
 import { useAdminInquiries } from '@/hooks/useAdminInquiries';
+import { useTranslation } from 'react-i18next';
 
 export const AdminInquiriesPage: React.FC = () => {
+  const { t } = useTranslation('inquiry');
   const {
     loading,
     selectedId,
@@ -48,12 +50,12 @@ export const AdminInquiriesPage: React.FC = () => {
         <motion.div variants={itemVariants} className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold mb-0.5">
-              Customer <span className="text-gradient">Inquiries</span>
+              {t('admin.title')} <span className="text-gradient">{t('admin.titleHighlight')}</span>
             </h1>
           </div>
           <div className="flex gap-2">
-            <Badge variant="outline" className="px-4 py-2 text-sm">{stats.open} Open</Badge>
-            <Badge variant="outline" className="px-4 py-2 text-sm text-success border-success/20">{stats.resolved} Resolved</Badge>
+            <Badge variant="outline" className="px-4 py-2 text-sm">{stats.open} {t('admin.open')}</Badge>
+            <Badge variant="outline" className="px-4 py-2 text-sm text-success border-success/20">{stats.resolved} {t('admin.resolved')}</Badge>
           </div>
         </motion.div>
 

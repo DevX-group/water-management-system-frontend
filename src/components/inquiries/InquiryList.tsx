@@ -20,17 +20,20 @@ interface InquiryListProps {
   setCurrentIndex: (fn: (prev: number) => number) => void;
 }
 
+import { useTranslation } from 'react-i18next';
+
 export const InquiryList: React.FC<InquiryListProps> = ({
   loading, filtered, selectedId, search, filter, currentIndex, itemsPerPage,
   setSearch, setFilter, setSelectedId, setCurrentIndex,
 }) => {
+  const { t } = useTranslation('inquiry');
   return (
     <Card className="shadow-card border-none flex flex-col h-full overflow-hidden bg-card">
       <CardHeader className="pb-3">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input        // Search inquiry
-            placeholder="Search tickets..."
+            placeholder={t('admin.search')}
             className="pl-10 h-11 rounded-xl"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -45,7 +48,7 @@ export const InquiryList: React.FC<InquiryListProps> = ({
               className="capitalize rounded-full px-4"
               onClick={() => setFilter(tab)}
             >
-              {tab}
+              {t(`admin.filter.${tab}`)}
             </Button>
           ))}
         </div>

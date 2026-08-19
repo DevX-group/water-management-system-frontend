@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomerBankSlipResponse } from "@/types/bankSlip";
-import { SlipStatus } from "@/types/payment";
+import { BankDetailsResponse, SlipStatus } from "@/types/payment";
 import { useTranslation } from 'react-i18next';
 
 export interface BankSlipForm {
@@ -20,7 +20,7 @@ export interface BankSlipForm {
 
 interface CustomerBankSlipSectionProps {
   slipSectionRef: RefObject<HTMLDivElement>;
-  bankDetails: any;
+  bankDetails: BankDetailsResponse;
   slipForm: BankSlipForm;
   setSlipForm: React.Dispatch<React.SetStateAction<BankSlipForm>>;
   dragging: boolean;
@@ -39,7 +39,7 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
   slipSectionRef, bankDetails, slipForm, setSlipForm, dragging, setDragging, submitSuccess,
   uploading, fileInputRef, handleFileInput, handleDrop, removeFile, handleSlipSubmit
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   return (
     <Card ref={slipSectionRef} className="shadow-card border-none">
       <CardHeader>
@@ -215,7 +215,7 @@ export const CustomerBankSlipHistory: React.FC<CustomerBankSlipHistoryProps> = (
   slipTotalPages, slipStart, slipEnd, slipTotalItems, slipPage,
   filterYear, setFilterYear, filterStatus, setFilterStatus, onFilterChange
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   const hasActiveFilter = filterYear !== undefined || filterStatus !== undefined;
 
   const handleYearChange = (val: string) => {
@@ -401,7 +401,7 @@ interface CustomerBankSlipModalProps {
 export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
   selectedSlip, setSelectedSlip, statusClass, handleDeleteSlip
 }) => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('payments');
   if (!selectedSlip) return null;
 
   return (

@@ -1,0 +1,52 @@
+{
+  "page": {
+    "title": "මීටර කියවීම",
+    "subtitle": "ජල මීටර කියවීමක් ඉදිරිපත් කරන්න"
+  },
+  "form": {
+    "meterNumber": "මීටර අංකය",
+    "meterNumberPlaceholder": "උදා., MTR-001",
+    "subscriptionNumber": "දායක අංකය",
+    "subscriptionNumberPlaceholder": "උදා., SUB-0001",
+    "readingDate": "කියවීම් දිනය",
+    "previousReading": "පෙර කියවීම",
+    "currentReading": "වත්මන් කියවීම",
+    "usage": "භාවිතය (ඒකක)",
+    "additionalNotes": "අමතර සටහන්",
+    "notesPlaceholder": "ඕනෑම නිරීක්ෂණයක් හෝ ගැටළුවක්...",
+    "clearForm": "පෝරමය මකන්න",
+    "submitReading": "කියවීම ඉදිරිපත් කරන්න",
+    "submitting": "ඉදිරිපත් කරමින්..."
+  },
+  "instructions": {
+    "title": "ඔබේ මීටරය කියවන්නේ කෙසේද",
+    "tips": [
+      "බිංදු ඇතුළුව පෙනෙන සියලුම ඉලක්කම් සටහන් කරන්න",
+      "රතු ඩයලය ඇත්නම් එය නොසලකා හරින්න",
+      "වමේ සිට දකුණට කියවන්න",
+      "ඔබේ වාර්තා සඳහා ඡායාරූපයක් ගන්න"
+    ]
+  },
+  "table": {
+    "title": "අද කියවීම්",
+    "refresh": "යාවත්කාලීන කරන්න",
+    "loading": "කියවීම් පූරණය වෙමින්...",
+    "noReadings": "අද තවමත් කිසිදු කියවීමක් ඉදිරිපත් කර නැත.",
+    "headers": {
+      "meterNo": "මීටර අංකය",
+      "customer": "පාරිභෝගිකයා",
+      "subscription": "දායකත්වය",
+      "previous": "පෙර",
+      "current": "වත්මන්",
+      "usage": "භාවිතය",
+      "billAmount": "බිල්පත් මුදල",
+      "status": "තත්වය"
+    },
+    "units": "ඒකක"
+  },
+  "status": {
+    "PENDING": "අපේක්ෂිත",
+    "PAID": "ගෙවා ඇත",
+    "OVERDUE": "කල් ඉකුත්"
+  }
+}

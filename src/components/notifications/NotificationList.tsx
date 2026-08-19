@@ -1,5 +1,6 @@
 import '@/index.css';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -24,7 +25,9 @@ interface NotificationListProps {
 
 export const NotificationList: React.FC<NotificationListProps> = ({
   alerts, loading, currentIndex, itemsPerPage, setCurrentIndex, onDismiss,
-}) => (
+}) => {
+  const { t } = useTranslation('alerts');
+  return (
   <div className="space-y-3 max-w-4xl mx-auto">
     {loading ? (  // Show loading spinner while fetching alerts
 
@@ -49,7 +52,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
               </div>
             </div>
             <Button onClick={() => onDismiss(alert.id)} size="sm" className={`rounded-full px-5 h-8 font-medium shadow-none ${styles.dismissBtn}`}>
-              Dismiss
+              {t('actions.dismiss')}
             </Button>
           </CardContent>
         </Card>
@@ -60,7 +63,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
       <div className="flex justify-center items-center gap-4 mt-8 pb-10">
         <Button variant="outline" size="sm" className="rounded-full bg-card shadow-sm"
           onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))} disabled={currentIndex === 0}>
-          <ArrowLeft className="w-4 h-4 mr-1" /> Previous
+          <ArrowLeft className="w-4 h-4 mr-1" /> {t('actions.previous')}
         </Button>
         <span className="text-sm font-medium text-slate-500">
           {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, alerts.length)} of {alerts.length}
@@ -68,7 +71,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
         <Button variant="outline" size="sm" className="rounded-full bg-card shadow-sm"
           onClick={() => setCurrentIndex(prev => Math.min(alerts.length - itemsPerPage, prev + itemsPerPage))}
           disabled={currentIndex + itemsPerPage >= alerts.length}>
-          Next <ArrowRight className="w-4 h-4 ml-1" />
+          {t('actions.next')} <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </div>
     )}
@@ -76,8 +79,9 @@ export const NotificationList: React.FC<NotificationListProps> = ({
     {!loading && alerts.length === 0 && (      // Show empty state if no alerts found
       <div className="text-center py-12 text-slate-400">
         <CheckCircle2 className="w-12 h-12 mx-auto mb-2 opacity-20" />
-        <p>No alerts found</p>
+        <p>{t('actions.noAlerts')}</p>
       </div>
     )}
   </div>
-);
+  );
+};

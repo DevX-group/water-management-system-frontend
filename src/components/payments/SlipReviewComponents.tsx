@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { AdminBankSlipResponse } from '@/types/bankSlip';
 import { formatDateTime } from '@/utils/dateUtils';
+import { useTranslation } from 'react-i18next';
 
 interface SlipImageViewerProps {
   imageUrl: string;
@@ -64,42 +65,54 @@ interface SlipDetailsCardProps {
 }
 
 export const SlipDetailsCard: React.FC<SlipDetailsCardProps> = ({ slip, isReviewed, handleApprove, onRejectClick }) => {
+  const { t, i18n } = useTranslation('payments');
   return (
     <div className="lg:w-[40%] h-[calc(100vh-260px)]">
       <div className="bg-card p-6 rounded-xl h-full flex flex-col">
         <div>
-          <h3 className="font-semibold mb-4">Slip Details</h3>
+          <h3 className="font-semibold mb-4">{t('payments.slipReview.slipDetails')}</h3>
 
           <div className="space-y-4 text-sm">
             <div className="flex justify-between">
-              <span>Customer</span>
+              <span>{t('payments.slipReview.customer')}</span>
               <span>{slip.accountHolderName}</span>
             </div>
 
             <div className="flex justify-between">
-              <span>Subscription</span>
+              <span>{t('payments.slipReview.subscriptionNo')}</span>
               <span>{slip.subscriptionNumber}</span>
             </div>
 
             <div className="flex justify-between">
-              <span>Reference</span>
+              <span>{t('payments.slipReview.reference')}</span>
               <span>{slip.bankReference}</span>
             </div>
 
             <div className="flex justify-between">
-              <span>Amount</span>
+              <span>{t('payments.slipReview.amount')}</span>
               <span className="font-bold">
-                Rs. {slip.amount.toLocaleString()}
+                {t('payments.billPayment.currency')} {slip.amount.toLocaleString()}
               </span>
             </div>
 
             <div className="flex justify-between">
-              <span>Uploaded At</span>
-              <span>{formatDateTime(slip.uploadedAt)}</span>
+              <span>{t('payments.slipReview.uploadedAt')}</span>
+              <span>
+                {(() => {
+                  const dt = formatDateTime(slip.uploadedAt);
+                  if (dt === "-") return dt;
+                  const [datePart, timePart, ampmPart] = dt.split(' ');
+                  const translatedAmPm = ampmPart === 'AM' ? t('payments.filters.am') : t('payments.filters.pm');
+                  if (i18n.language === 'si') {
+                    return `${datePart} ${translatedAmPm} ${timePart}`;
+                  }
+                  return `${datePart} ${timePart} ${translatedAmPm}`;
+                })()}
+              </span>
             </div>
 
             <div className="flex justify-between">
-              <span>Bank Payment Date</span>
+              <span>{t('payments.slipReview.bankPaymentDate')}</span>
               <span>{slip.bankPaymentDate}</span>
             </div>
           </div>
@@ -112,7 +125,7 @@ export const SlipDetailsCard: React.FC<SlipDetailsCardProps> = ({ slip, isReview
             className="flex-1"
           >
             <CheckCircle className="w-4 h-4 mr-2" />
-            Approve
+            {t('payments.slipReview.approve')}
           </Button>
 
           <Button
@@ -122,7 +135,7 @@ export const SlipDetailsCard: React.FC<SlipDetailsCardProps> = ({ slip, isReview
             className="flex-1"
           >
             <XCircle className="w-4 h-4 mr-2" />
-            Reject
+            {t('payments.slipReview.reject')}
           </Button>
         </div>
       </div>
@@ -139,25 +152,26 @@ interface RejectDialogProps {
 }
 
 export const RejectDialog: React.FC<RejectDialogProps> = ({ rejectOpen, setRejectOpen, comment, setComment, handleReject }) => {
+  const { t } = useTranslation('payments');
   return (
     <Dialog open={rejectOpen} onOpenChange={setRejectOpen}>
       <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <DialogTitle>Reject Bank Slip</DialogTitle>
+          <DialogTitle>{t('payments.rejectDialog.title')}</DialogTitle>
           <DialogDescription>
-            Please add a reason. This message will be shown to the customer.
+            {t('payments.rejectDialog.description')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-foreground">
-            Rejection reason <span className="text-destructive">*</span>
+            {t('payments.rejectDialog.rejectionReason')} <span className="text-destructive">*</span>
           </label>
 
           <Textarea
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Example: Slip is unclear / amount mismatch / wrong reference no..."
+            placeholder={t('payments.rejectDialog.placeholder')}
             maxLength={250}
             className="min-h-[120px] border-border focus-visible:ring-2 focus-visible:ring-[#0d9488] focus-visible:border-[#0d9488] focus:outline-none"
           />
@@ -169,14 +183,14 @@ export const RejectDialog: React.FC<RejectDialogProps> = ({ rejectOpen, setRejec
 
         <DialogFooter className="gap-2 sm:gap-0">
           <Button onClick={() => setRejectOpen(false)} className="bg-muted hover:bg-muted/80 text-foreground">
-            Cancel
+            {t('payments.rejectDialog.cancel')}
           </Button>
 
           <Button
             variant="destructive"
             onClick={handleReject}
           >
-            Reject & Notify
+            {t('payments.rejectDialog.rejectAndNotify')}
           </Button>
         </DialogFooter>
       </DialogContent>

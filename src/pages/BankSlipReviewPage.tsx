@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/sonner";
 import { getAllPendingSlips, getSlipById, processBankSlipReview } from "@/services/bankSlipService";
 import type { AdminBankSlipResponse } from "@/types/bankSlip";
-
+import { useTranslation } from "react-i18next";
 import { SlipImageViewer, SlipDetailsCard, RejectDialog } from "@/components/payments/SlipReviewComponents";
 
 export const BankSlipReviewPage: React.FC = () => {
+    const { t } = useTranslation('payments');
     const [comment, setComment] = useState("");
     const navigate = useNavigate();
     const { slipId } = useParams<{ slipId: string }>();
@@ -54,7 +55,7 @@ export const BankSlipReviewPage: React.FC = () => {
 
             markReviewed(slip.slipId);
 
-            toast.success("Payment approved!");
+            toast.success(t('payments.slipReview.paymentApproved'));
 
             if (isReviewAll && hasNext) {
                 setTimeout(() => goTo(currentIndex + 1), 400);
@@ -64,7 +65,7 @@ export const BankSlipReviewPage: React.FC = () => {
 
         } catch (err) {
             console.error(err);
-            toast.error("Failed to approve slip");
+            toast.error(t('payments.slipReview.failedToApprove'));
         }
     };
 
@@ -72,7 +73,7 @@ export const BankSlipReviewPage: React.FC = () => {
         if (!slip) return;
 
         if (!comment.trim()) {
-            toast.error("Please add a rejection reason.");
+            toast.error(t('payments.slipReview.addRejectionReason'));
             return;
         }
 
@@ -85,7 +86,7 @@ export const BankSlipReviewPage: React.FC = () => {
 
             markReviewed(slip.slipId);
 
-            toast.success("Slip rejected");
+            toast.success(t('payments.slipReview.slipRejected'));
 
             setRejectOpen(false);
             setComment("");
@@ -98,7 +99,7 @@ export const BankSlipReviewPage: React.FC = () => {
 
         } catch (err) {
             console.error(err);
-            toast.error("Failed to reject slip");
+            toast.error(t('payments.slipReview.failedToReject'));
         }
     };
 
@@ -132,12 +133,12 @@ export const BankSlipReviewPage: React.FC = () => {
                 setCurrentIndex(idx >= 0 ? idx : 0);
 
             } catch (err) {
-                toast.error("Failed to load pending slips");
+                toast.error(t('payments.slipReview.failedToLoadPending'));
             }
         };
 
         loadSlips();
-    }, [isReviewAll, numericSlipId]);
+    }, [isReviewAll, numericSlipId, passedSlips]);
 
     useEffect(() => {
         const loadSlip = async () => {
@@ -158,7 +159,7 @@ export const BankSlipReviewPage: React.FC = () => {
                 setSlip(data);
 
             } catch (err) {
-                toast.error("Failed to load bank slip");
+                toast.error(t('payments.slipReview.failedToLoadSlip'));
             } finally {
                 setLoading(false);
             }
@@ -170,7 +171,7 @@ export const BankSlipReviewPage: React.FC = () => {
     if (loading) {
         return (
             <div className="p-6">
-                <p>Loading...</p>
+                <p>{t('payments.slipReview.loading')}</p>
             </div>
         );
     }
@@ -179,13 +180,13 @@ export const BankSlipReviewPage: React.FC = () => {
         return (
             <div className="space-y-6 p-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">Review Bank Slip</h1>
-                    <Button onClick={() => navigate("/admin/payments")}>← Back</Button>
+                    <h1 className="text-2xl font-bold">{t('payments.slipReview.title')}</h1>
+                    <Button onClick={() => navigate("/admin/payments")}>← {t('payments.slipReview.back')}</Button>
                 </div>
 
                 <div className="bg-card p-8 rounded-xl text-center">
                     <XCircle className="mx-auto w-10 h-10 text-red-500" />
-                    <p className="mt-4">Slip not found</p>
+                    <p className="mt-4">{t('payments.slipReview.slipNotFound')}</p>
                 </div>
             </div>
         );
@@ -194,9 +195,9 @@ export const BankSlipReviewPage: React.FC = () => {
     if (allDone) {
         return (
             <div className="space-y-6 p-6 text-center">
-                <h1 className="text-2xl font-bold">All Slips Reviewed!</h1>
+                <h1 className="text-2xl font-bold">{t('payments.slipReview.allSlipsReviewed')}</h1>
                 <Button onClick={() => navigate("/admin/payments")}>
-                    Back
+                    {t('payments.slipReview.back')}
                 </Button>
             </div>
         );
@@ -212,14 +213,14 @@ export const BankSlipReviewPage: React.FC = () => {
                 {/* HEADER */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">Review Bank Slip</h1>
+                        <h1 className="text-2xl font-bold">{t('payments.slipReview.title')}</h1>
                         <p className="text-muted-foreground">
-                            Verify and approve customer bank slips
+                            {t('payments.slipReview.subtitle')}
                         </p>
                     </div>
 
                     <Button variant="secondary" onClick={() => navigate("/admin/payments")}>
-                        Back
+                        {t('payments.slipReview.back')}
                     </Button>
                 </div>
 
@@ -252,7 +253,7 @@ export const BankSlipReviewPage: React.FC = () => {
                         </Button>
 
                         <span>
-                            Slip {currentIndex + 1} of {pendingSlips.length}
+                            {t('payments.slipReview.slip')} {currentIndex + 1} {t('payments.slipReview.of')} {pendingSlips.length}
                         </span>
 
                         <Button

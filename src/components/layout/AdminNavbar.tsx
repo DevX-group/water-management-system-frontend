@@ -18,6 +18,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 
 // Role labels and colors
 const ROLE_LABELS: Record<string, string> = {
@@ -49,7 +50,7 @@ const languages = [
 export const AdminNavbar: React.FC = () => {
   const { currentAdmin } = useAdmin();
   const { logout, user } = useAuth();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const displayName = user?.nic ?? currentAdmin.name;
@@ -103,13 +104,13 @@ export const AdminNavbar: React.FC = () => {
                     }}
                     className={cn(
                       "w-full flex items-center gap-3 px-6 py-3 transition-all duration-200",
-                      isActive 
-                        ? "bg-primary/20 text-white border-l-4 border-primary" 
+                      isActive
+                        ? "bg-primary/20 text-white border-l-4 border-primary"
                         : "text-slate-300 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
                     )}
                   >
                     <Icon className="w-5 h-5" />
-                    <span className="font-medium text-sm">{item.label}</span>
+                    <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`)}</span>
                   </button>
                 );
               })}
@@ -132,6 +133,9 @@ export const AdminNavbar: React.FC = () => {
 
       {/* Right Actions */}
       <div className="flex items-center gap-4">
+        {/* PWA Install Button for Meter Readers */}
+        <PWAInstallButton size="sm" />
+
         {/* Language Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -172,7 +176,7 @@ export const AdminNavbar: React.FC = () => {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('navbar:admin.myAccount', 'My Account')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="px-3 py-2">
               <p className="text-sm font-medium text-foreground">{displayName}</p>
@@ -182,8 +186,10 @@ export const AdminNavbar: React.FC = () => {
               <p className="text-xs text-muted-foreground">Role: {roleLabel}</p>
             </div>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile Settings</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
+              {t('navbar:admin.profileSettings', 'Profile Settings')}
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">{t('navbar:admin.logout', 'Logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

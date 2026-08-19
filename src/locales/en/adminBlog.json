@@ -1,0 +1,16 @@
+{
+  "title": "Blog Management",
+  "cancel": "Cancel",
+  "addNewBlog": "Add New Blog",
+  "form": {
+    "title": "Blog Title",
+    "category": "Department/Category",
+    "image": "Or Image URL",
+    "chooseFile": "Choose File",
+    "noFileChosen": "No file chosen",
+    "content": "Blog Content",
+    "publishing": "Publishing...",
+    "publishNow": "Publish Now"
+  },
+  "readMore": "Read More"
+}

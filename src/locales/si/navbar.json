@@ -1,0 +1,32 @@
+{
+  "customer": {
+    "dashboard": "මුල් පිටුව",
+    "bills": "බිල්පත්",
+    "payments": "ගෙවීම්",
+    "usage": "පරිභෝජනය",
+    "alerts": "දැනුම්දීම්",
+    "inquiry": "විමසීම්",
+    "signin": "ඇතුල් වන්න",
+    "getStarted": "ආරම්භ කරන්න",
+    "profile": "පැතිකඩ",
+    "settings": "සැකසුම්",
+    "signout": "පිටවන්න",
+    "myAccount": "මගේ ගිණුම"
+  },
+  "admin": {
+    "dashboard": "මුල් පිටුව",
+    "users": "පරිශීලක කළමනාකරණය",
+    "meter": "මීටර් කියවීම්",
+    "billing": "බිල්පත් නිකුත් කිරීම",
+    "payments": "ගෙවීම් කළමනාකරණය",
+    "messaging": "පණිවිඩ",
+    "inquiry": "විමසීම්",
+    "reports": "වාර්තා",
+    "predictions": "පුරෝකථන",
+    "blog": "බ්ලොග්",
+    "system-settings": "පද්ධති සැකසුම්",
+    "myAccount": "මගේ ගිණුම",
+    "profileSettings": "පැතිකඩ සැකසුම්",
+    "logout": "පිටවන්න"
+  }
+}

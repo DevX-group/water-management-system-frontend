@@ -130,6 +130,7 @@
       "partial": "අර්ධ",
       "monthly": "මාසික",
       "outstanding": "හිඟ",
+      "paid": "ගෙවා ඇත",
       "am": "පෙ.ව.",
       "pm": "ප.ව.",
       "clear": "මකන්න"
@@ -231,7 +232,7 @@
       "subtitle": "පාරිභෝගික බැංකු රිසිට් තහවුරු කර අනුමත කරන්න",
       "slipDetails": "රිසිට් විස්තර",
       "customer": "පාරිභෝගිකයා",
-      "subscription": "දායකත්වය",
+      "subscriptionNo": "දායක අංකය",
       "reference": "යොමුව",
       "amount": "මුදල",
       "uploadedAt": "උඩුගත කළ දිනය",
@@ -269,7 +270,7 @@
       "paymentFailedDescription": "ඔබේ ගෙවීම සම්පූර්ණ කිරීමට අපට නොහැකි විය. කරුණාකර නැවත උත්සාහ කරන්න.",
       "orderId": "ඇණවුම් අංකය:",
       "viewHistory": "ඉතිහාසය බලන්න",
-      "dashboard": "උපකරණ පුවරුව",
+      "dashboard": "මුල් පිටුව",
       "tryAgain": "නැවත උත්සාහ කරන්න"
     }
   }

@@ -1,6 +1,7 @@
 import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { CheckCircle2, AlertCircle, TrendingUp } from 'lucide-react';
 
 interface Bill {
@@ -15,6 +16,7 @@ interface BillsSummaryStatsProps {
 }
  
 export const BillsSummaryStats: React.FC<BillsSummaryStatsProps> = ({ bills }) => {   // Calculate summary stats for cards
+  const { t } = useTranslation('billing');
   const totalPaid = bills
     .filter(b => b.status.toLowerCase() === 'paid')
     .reduce((sum, b) => sum + b.totalAmount, 0);
@@ -28,9 +30,9 @@ export const BillsSummaryStats: React.FC<BillsSummaryStatsProps> = ({ bills }) =
     : 0;
 
   const stats = [
-    { label: 'Total Paid',   value: `LKR ${totalPaid.toLocaleString()}`,       icon: CheckCircle2, color: 'text-success',  bgColor: 'bg-success/10' },
-    { label: 'Outstanding', value: `LKR ${totalOutstanding.toLocaleString()}`, icon: AlertCircle,  color: 'text-warning',  bgColor: 'bg-warning/10' },
-    { label: 'Avg Monthly', value: `LKR ${avgMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, icon: TrendingUp, color: 'text-primary', bgColor: 'bg-primary/10' },
+    { label: t('history.stats.totalPaid'),   value: `${t('currency')} ${totalPaid.toLocaleString()}`,       icon: CheckCircle2, color: 'text-success',  bgColor: 'bg-success/10' },
+    { label: t('history.stats.outstanding'), value: `${t('currency')} ${totalOutstanding.toLocaleString()}`, icon: AlertCircle,  color: 'text-warning',  bgColor: 'bg-warning/10' },
+    { label: t('history.stats.avgMonthly'), value: `${t('currency')} ${avgMonthly.toLocaleString(undefined, { maximumFractionDigits: 0 })}`, icon: TrendingUp, color: 'text-primary', bgColor: 'bg-primary/10' },
   ];
 
   return (

@@ -1,6 +1,7 @@
 import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
+import { useTranslation } from 'react-i18next';
 import { Eye, Download, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ interface BillsTableProps {
 export const BillsTable: React.FC<BillsTableProps> = ({
   bills, currentIndex, itemsPerPage, setCurrentIndex, onView, onDownload,
 }) => {
+  const { t } = useTranslation('billing');
   const page = bills.slice(currentIndex, currentIndex + itemsPerPage);
 
   return (
@@ -35,7 +37,7 @@ export const BillsTable: React.FC<BillsTableProps> = ({
         <table className="w-full">
           <thead className="bg-secondary/50">
             <tr>
-              {['Billing Period', 'Amount', 'Usage', 'Status', 'Due Date', ''].map(h => (
+              {[t('history.table.billingPeriod'), t('history.table.amount'), t('history.table.usage'), t('history.table.status'), t('history.table.dueDate'), ''].map(h => (
                 <th key={h} className={`p-5 font-semibold text-sm ${h === '' ? 'text-right' : 'text-left'}`}>{h}</th>
               ))}
             </tr>
@@ -44,13 +46,13 @@ export const BillsTable: React.FC<BillsTableProps> = ({
             {page.map(bill => (        // Render each bill row with framer-motion for hover effect
               <motion.tr key={bill.billId} className="border-t border-border hover:bg-secondary/30 transition-colors group">
                 <td className="p-5 font-semibold">{bill.billingPeriod}</td>
-                <td className="p-5 font-bold text-lg">LKR {bill.totalAmount.toLocaleString()}</td>
-                <td className="p-5 text-muted-foreground">{bill.usageUnits} units</td>
+                <td className="p-5 font-bold text-lg">{t('currency')} {bill.totalAmount.toLocaleString()}</td>
+                <td className="p-5 text-muted-foreground">{bill.usageUnits} {t('history.table.units')}</td>
                 <td className="p-5">
                   <Badge variant="secondary" className={`rounded-full px-3 py-1 ${
                     bill.status.toLowerCase() === 'paid' ? 'bg-success/10 text-success' : 'bg-warning/10 text-warning'
                   }`}>
-                    {bill.status}
+                    {t(`status.${bill.status.toUpperCase()}`, { defaultValue: bill.status })}
                   </Badge>
                 </td>
                 <td className="p-5 text-muted-foreground">{bill.dueDate}</td>
@@ -70,20 +72,20 @@ export const BillsTable: React.FC<BillsTableProps> = ({
             <Button variant="outline" size="sm"
               onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}
               disabled={currentIndex === 0}>
-              <ArrowLeft className="w-4 h-4 mr-1" /> Previous
+              <ArrowLeft className="w-4 h-4 mr-1" /> {t('history.table.previous')}
             </Button>
             <span className="text-sm font-medium">
-              Showing {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, bills.length)} of {bills.length}
+              {t('history.table.showing')} {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, bills.length)} {t('history.table.of')} {bills.length}
             </span>
             <Button variant="outline" size="sm"
               onClick={() => setCurrentIndex(prev => Math.min(bills.length - itemsPerPage, prev + itemsPerPage))}
               disabled={currentIndex + itemsPerPage >= bills.length}>
-              Next <ArrowRight className="w-4 h-4 ml-1" />
+              {t('history.table.next')} <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </div>
         )}
         {bills.length === 0 && (
-          <div className="p-10 text-center text-muted-foreground">No bills found.</div>
+          <div className="p-10 text-center text-muted-foreground">{t('history.table.noBills')}</div>
         )}
       </div>
     </Card>

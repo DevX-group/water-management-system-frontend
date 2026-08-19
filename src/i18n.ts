@@ -2,8 +2,33 @@ import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import LanguageDetector from "i18next-browser-languagedetector";
 
-import enTranslation from "./locales/en/payments.json";
-import siTranslation from "./locales/si/payments.json";
+import enPayments from "./locales/en/payments.json";
+import siPayments from "./locales/si/payments.json";
+import enBilling from "./locales/en/billing.json";
+import siBilling from "./locales/si/billing.json";
+import enMeterReading from "./locales/en/meterReading.json";
+import siMeterReading from "./locales/si/meterReading.json";
+import enInquiry from "./locales/en/inquiry.json";
+import siInquiry from "./locales/si/inquiry.json";
+import enAdminBlog from "./locales/en/adminBlog.json";
+import siAdminBlog from "./locales/si/adminBlog.json";
+import enUserManagement from "./locales/en/userManagement.json";
+import siUserManagement from "./locales/si/userManagement.json";
+import enUsage from "./locales/en/usage.json";
+import siUsage from "./locales/si/usage.json";
+import enAlerts from "./locales/en/alerts.json";
+import siAlerts from "./locales/si/alerts.json";
+import taPayments from "./locales/ta/payments.json";
+import taBilling from "./locales/ta/billing.json";
+import taMeterReading from "./locales/ta/meterReading.json";
+import taInquiry from "./locales/ta/inquiry.json";
+import taUsage from "./locales/ta/usage.json";
+import taAlerts from "./locales/ta/alerts.json";
+import taAdminBlog from "./locales/ta/adminBlog.json";
+import taUserManagement from "./locales/ta/userManagement.json";
+import enNavbar from "./locales/en/navbar.json";
+import siNavbar from "./locales/si/navbar.json";
+import taNavbar from "./locales/ta/navbar.json";
 
 i18n
   .use(LanguageDetector)
@@ -11,10 +36,37 @@ i18n
   .init({
     resources: {
       en: {
-        translation: enTranslation,
+        payments: enPayments,
+        billing: enBilling,
+        meterReading: enMeterReading,
+        inquiry: enInquiry,
+        adminBlog: enAdminBlog,
+        userManagement: enUserManagement,
+        usage: enUsage,
+        alerts: enAlerts,
+        navbar: enNavbar,
       },
       si: {
-        translation: siTranslation,
+        payments: siPayments,
+        billing: siBilling,
+        meterReading: siMeterReading,
+        inquiry: siInquiry,
+        adminBlog: siAdminBlog,
+        userManagement: siUserManagement,
+        usage: siUsage,
+        alerts: siAlerts,
+        navbar: siNavbar,
+      },
+      ta: {
+        payments: taPayments,
+        billing: taBilling,
+        meterReading: taMeterReading,
+        inquiry: taInquiry,
+        adminBlog: taAdminBlog,
+        userManagement: taUserManagement,
+        usage: taUsage,
+        alerts: taAlerts,
+        navbar: taNavbar,
       },
     },
 
