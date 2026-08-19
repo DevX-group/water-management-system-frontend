@@ -83,11 +83,11 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setCurrentPage(1); }}>
             <SelectTrigger className="bg-background"><SelectValue placeholder={t('allStatus')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="ACTIVE">Active</SelectItem>
-              <SelectItem value="INACTIVE">Inactive</SelectItem>
-              <SelectItem value="PENDING_ACTIVATION">Pending</SelectItem>
-              <SelectItem value="SUSPENDED">Suspended</SelectItem>
+              <SelectItem value="all">{t('allStatus')}</SelectItem>
+              <SelectItem value="ACTIVE">{t('active')}</SelectItem>
+              <SelectItem value="INACTIVE">{t('inactive')}</SelectItem>
+              <SelectItem value="PENDING_ACTIVATION">{t('pending')}</SelectItem>
+              <SelectItem value="SUSPENDED">{t('suspended')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -96,9 +96,9 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setCurrentPage(1); }}>
             <SelectTrigger className="bg-background"><SelectValue placeholder={t('allRegions')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
+              <SelectItem value="all">{t('allRegions')}</SelectItem>
               {Object.values(REGION_CONFIG).map((val) => (
-                <SelectItem key={val.code} value={val.code}>{val.label}</SelectItem>
+                <SelectItem key={val.code} value={val.code}>{t(`regions.${val.code}`, val.label)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -153,14 +153,14 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 <td className="py-4 text-sm text-muted-foreground">{customer.subscriptionNo}</td>
                 <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
                 <td className="py-4 text-sm text-muted-foreground">
-                  {Object.values(REGION_CONFIG).find(r => r.code === customer.region)?.label || customer.region}
+                  {t(`regions.${customer.region}`, Object.values(REGION_CONFIG).find(r => r.code === customer.region)?.label || customer.region)}
                 </td>
                 <td className="py-4 text-sm text-muted-foreground">
                   {formatDate(customer.registeredDate)}
                 </td>
                 <td className="py-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'ACTIVE' ? 'bg-success/10 text-success' : customer.status === 'INACTIVE' ? 'bg-muted text-muted-foreground' : 'bg-blue-500/10 text-blue-500'}`}>
-                    {customer.status}
+                    {customer.status === 'ACTIVE' ? t('active') : customer.status === 'INACTIVE' ? t('inactive') : customer.status === 'PENDING_ACTIVATION' ? t('pending') : customer.status === 'SUSPENDED' ? t('suspended') : customer.status}
                   </span>
                 </td>
                 <td className="py-4">
@@ -173,7 +173,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                       <Edit className="w-4 h-4 text-green-600" />
                     </button>
                     <button onClick={() => onDelete(customer.id, customer.name)} disabled={customer.isDeleted}
-                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Deactivate">
+                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title={t('deactivate')}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>

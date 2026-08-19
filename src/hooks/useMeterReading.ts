@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
 import { api } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 const API_BASE = 'http://localhost:8081/api';
 const OFFLINE_STORAGE_KEY = 'offline_meter_readings';
@@ -23,6 +24,7 @@ const defaultForm = (): MeterReadingFormData => ({
 });
 
 export const useMeterReading = () => {
+  const { t } = useTranslation('meterReading');
   const { toast } = useToast();
   const [formData, setFormData]   = useState<MeterReadingFormData>(defaultForm());
   const [todaysReadings, setTodaysReadings] = useState<MeterReading[]>([]);
@@ -81,7 +83,7 @@ export const useMeterReading = () => {
     const offlineReadings = getOfflineReadings();
     if (offlineReadings.length === 0) return;
 
-    toast({ title: 'Syncing...', description: `Uploading ${offlineReadings.length} saved readings.` });
+    toast({ title: t('toasts.syncingTitle'), description: t('toasts.syncingDesc', { count: offlineReadings.length }) });
 
     let successCount = 0;
     const failedReadings = [];
@@ -103,26 +105,26 @@ export const useMeterReading = () => {
       localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(failedReadings));
       updatePendingCount();
       fetchTodaysReadings();
-      toast({ title: 'Sync Complete', description: `Successfully uploaded ${successCount} readings.` });
+      toast({ title: t('toasts.syncCompleteTitle'), description: t('toasts.syncCompleteDesc', { count: successCount }) });
     } else if (offlineReadings.length > 0 && failedReadings.length === 0) {
       // All successful
       localStorage.removeItem(OFFLINE_STORAGE_KEY);
       updatePendingCount();
       fetchTodaysReadings();
-      toast({ title: 'Sync Complete', description: `Successfully uploaded ${successCount} readings.` });
+      toast({ title: t('toasts.syncCompleteTitle'), description: t('toasts.syncCompleteDesc', { count: successCount }) });
     }
-  }, [toast, updatePendingCount]);
+  }, [toast, updatePendingCount, t]);
 
   // Handle online/offline events
   useEffect(() => {
     const handleOnline = () => {
       setIsOnline(true);
-      toast({ title: 'Back Online', description: 'Internet connection restored.' });
+      toast({ title: t('toasts.backOnlineTitle'), description: t('toasts.backOnlineDesc') });
       syncOfflineReadings();
     };
     const handleOffline = () => {
       setIsOnline(false);
-      toast({ title: 'Offline Mode Active', description: 'Readings will be saved locally.', variant: 'destructive' });
+      toast({ title: t('toasts.offlineActiveTitle'), description: t('toasts.offlineActiveDesc'), variant: 'destructive' });
     };
 
     window.addEventListener('online', handleOnline);
@@ -133,7 +135,7 @@ export const useMeterReading = () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [syncOfflineReadings, toast, updatePendingCount]);
+  }, [syncOfflineReadings, toast, updatePendingCount, t]);
 
   // Fetches a list of all meter readings submitted today.
   const fetchTodaysReadings = async () => {
@@ -157,13 +159,13 @@ export const useMeterReading = () => {
           id: `offline-${Date.now()}-${i}`,
           usageUnits: usage,
           totalAmount: calculateEstimatedBill(usage),
-          status: 'PENDING SYNC (OFFLINE)'
+          status: 'PENDING_OFFLINE'
         };
       });
       
       setTodaysReadings([...offline, ...data]);
     } catch {
-      toast({ title: 'Error', description: "Could not load today's readings.", variant: 'destructive' });
+      toast({ title: t('toasts.loadErrorTitle'), description: t('toasts.loadErrorDesc'), variant: 'destructive' });
     } finally {
       setLoadingReadings(false);
     }
@@ -212,8 +214,8 @@ export const useMeterReading = () => {
       const estimatedTotal = calculateEstimatedBill(usageUnits);
 
       toast({ 
-        title: 'Saved Offline 📶', 
-        description: `Meter ${formData.meterNumber} — Usage: ${usageUnits} units | Est. Bill: LKR ${estimatedTotal.toFixed(2)}` 
+        title: t('toasts.savedOfflineTitle'), 
+        description: t('toasts.savedOfflineDesc', { meterNo: formData.meterNumber, usage: usageUnits, total: estimatedTotal.toFixed(2) })
       });
       
       setFormData(defaultForm());
@@ -225,7 +227,7 @@ export const useMeterReading = () => {
         id: `offline-${Date.now()}`,
         usageUnits,
         totalAmount: estimatedTotal,
-        status: 'PENDING SYNC (OFFLINE)'
+        status: 'PENDING_OFFLINE'
       };
       setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
       
@@ -237,13 +239,13 @@ export const useMeterReading = () => {
       const res = await api.post('/meter-readings', payload);
       const result = res.data;
       toast({ 
-        title: 'Reading Submitted ✓', 
-        description: `Meter ${formData.meterNumber} — Usage: ${result.usageUnits} units | Bill #${result.billId}: LKR ${Number(result.totalAmount).toFixed(2)}` 
+        title: t('toasts.submittedTitle'), 
+        description: t('toasts.submittedDesc', { meterNo: formData.meterNumber, usage: result.usageUnits, billId: result.billId, total: Number(result.totalAmount).toFixed(2) })
       });
       setFormData(defaultForm());
       fetchTodaysReadings();
     } catch (err: any) {
-      toast({ title: 'Submission Failed', description: 'Something went wrong.', variant: 'destructive' });
+      toast({ title: t('toasts.submissionFailedTitle'), description: t('toasts.submissionFailedDesc'), variant: 'destructive' });
       // If network fails unexpectedly while "online", fallback to offline save
       const offlineReadings = getOfflineReadings();
       offlineReadings.push(payload);

@@ -28,8 +28,8 @@ export const MeterReadingPage = () => {
     <div className="space-y-6">
       <div className="animate-fade-in flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Meter Reading</h1>
-          <p className="text-muted-foreground">Submit a water meter reading</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('page.title')}</h1>
+          <p className="text-muted-foreground">{t('page.subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
@@ -41,14 +41,14 @@ export const MeterReadingPage = () => {
             {isOnline ? (
               <>
                 <Wifi className="w-4 h-4" />
-                <span>Online</span>
-                {pendingCount > 0 && <span className="ml-2 text-xs opacity-80">(Syncing {pendingCount}...)</span>}
+                <span>{t('network.online')}</span>
+                {pendingCount > 0 && <span className="ml-2 text-xs opacity-80">({t('network.syncing', { count: pendingCount })})</span>}
               </>
             ) : (
               <>
                 <WifiOff className="w-4 h-4" />
-                <span>Offline Mode</span>
-                {pendingCount > 0 && <span className="ml-2 text-xs font-bold">({pendingCount} Saved)</span>}
+                <span>{t('network.offlineMode')}</span>
+                {pendingCount > 0 && <span className="ml-2 text-xs font-bold">({t('network.saved', { count: pendingCount })})</span>}
               </>
             )}
           </div>

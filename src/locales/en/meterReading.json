@@ -3,6 +3,12 @@
     "title": "Meter Reading",
     "subtitle": "Submit a water meter reading"
   },
+  "network": {
+    "online": "Online",
+    "offlineMode": "Offline Mode",
+    "syncing": "Syncing {{count}}...",
+    "saved": "{{count}} Saved"
+  },
   "form": {
     "meterNumber": "Meter Number",
     "meterNumberPlaceholder": "e.g., MTR-001",
@@ -47,6 +53,25 @@
   "status": {
     "PENDING": "PENDING",
     "PAID": "PAID",
-    "OVERDUE": "OVERDUE"
+    "OVERDUE": "OVERDUE",
+    "PENDING_OFFLINE": "PENDING SYNC (OFFLINE)"
+  },
+  "toasts": {
+    "syncingTitle": "Syncing...",
+    "syncingDesc": "Uploading {{count}} saved readings.",
+    "syncCompleteTitle": "Sync Complete",
+    "syncCompleteDesc": "Successfully uploaded {{count}} readings.",
+    "backOnlineTitle": "Back Online",
+    "backOnlineDesc": "Internet connection restored.",
+    "offlineActiveTitle": "Offline Mode Active",
+    "offlineActiveDesc": "Readings will be saved locally.",
+    "loadErrorTitle": "Error",
+    "loadErrorDesc": "Could not load today's readings.",
+    "savedOfflineTitle": "Saved Offline 📶",
+    "savedOfflineDesc": "Meter {{meterNo}} — Usage: {{usage}} units | Est. Bill: LKR {{total}}",
+    "submittedTitle": "Reading Submitted ✓",
+    "submittedDesc": "Meter {{meterNo}} — Usage: {{usage}} units | Bill #{{billId}}: LKR {{total}}",
+    "submissionFailedTitle": "Submission Failed",
+    "submissionFailedDesc": "Something went wrong."
   }
 }
