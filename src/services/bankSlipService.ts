@@ -1,65 +1,14 @@
+import {
+    AdminBankSlipResponse,
+    BankSlipActionRequest,
+    BankSlipExtractResponse,
+    BankSlipUploadRequest,
+    BankSlipUploadResponse,
+    PageResponse,
+    SlipStatus
+} from '@/types/bankSlip';
 import { api } from './api';
-
-export type PaymentStatus = "FULL" | "PARTIAL";
-export type PaymentType = "MONTHLY" | "OUTSTANDING";
-export type PaymentMethod = "ONLINE" | "BANK_TRANSFER" | "MANUAL";
-export type SlipStatus = "PENDING" | "APPROVED" | "REJECTED";
-
-export interface BankSlipUploadRequest {
-    amount: number;
-    bankPaymentDate: string;
-    bankReference: string;
-    file: File;
-}
-
-export interface BankSlipUploadResponse {
-    message: string;
-    slipId: number;
-    amount: number;
-    status: SlipStatus;
-    bankReference: string;
-    filePath: string;
-    uploadedAt: string;
-    bankPaymentDate: string;
-}
-
-export interface AdminBankSlipResponse {
-    slipId: number;
-    subscriptionNumber: string;
-    accountHolderName: string;
-    status: SlipStatus;
-    amount: number;
-    bankReference: string;
-    filePath: string;
-    uploadedAt: string;
-    bankPaymentDate: string;
-}
-
-export interface CustomerBankSlipResponse {
-    slipId: number;
-    amount: number;
-    bankReference: string;
-    filePath: string;
-    status: SlipStatus;
-    uploadedAt: string;
-    bankPaymentDate: string;
-    reviewedAt: string;
-    rejectionReason?: string;
-}
-
-export interface BankSlipActionRequest {
-    slipId: number;
-    action: SlipStatus;
-    rejectionReason?: string;
-}
-
-export interface PageResponse<T> {
-    content: T[];
-    totalPages: number;
-    totalElements: number;
-    number: number;
-    size: number;
-}
+import axios from 'axios';
 
 export const uploadBankSlip = async (payload: BankSlipUploadRequest): Promise<BankSlipUploadResponse> => {
     const formData = new FormData();
@@ -118,3 +67,11 @@ export const getSlipById = async (slipId: number): Promise<AdminBankSlipResponse
     const res = await api.get(`/slips/${slipId}`);
     return res.data;
 }
+
+export const extractBankSlipData = async (file: File): Promise<BankSlipExtractResponse> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const res = await api.post('/slips/extract', formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } });
+    return res.data;
+};
