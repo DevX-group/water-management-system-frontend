@@ -50,7 +50,7 @@ const languages = [
 export const AdminNavbar: React.FC = () => {
   const { currentAdmin } = useAdmin();
   const { logout, user } = useAuth();
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const displayName = user?.nic ?? currentAdmin.name;
@@ -110,7 +110,7 @@ export const AdminNavbar: React.FC = () => {
                     )}
                   >
                     <Icon className="w-5 h-5" />
-                    <span className="font-medium text-sm">{item.label}</span>
+                    <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`)}</span>
                   </button>
                 );
               })}
@@ -176,7 +176,7 @@ export const AdminNavbar: React.FC = () => {
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuLabel>{t('navbar:admin.myAccount', 'My Account')}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <div className="px-3 py-2">
               <p className="text-sm font-medium text-foreground">{displayName}</p>
@@ -187,9 +187,9 @@ export const AdminNavbar: React.FC = () => {
             </div>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={() => navigate('/admin/settings')}>
-              Profile Settings
+              {t('navbar:admin.profileSettings', 'Profile Settings')}
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => logout()} className="text-destructive cursor-pointer">{t('navbar:admin.logout', 'Logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

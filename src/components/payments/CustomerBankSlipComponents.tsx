@@ -91,40 +91,7 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
             <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
               {t('payments.bankSlipUpload.uploadYourSlip')}
             </h3>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1.5">
-                <Label htmlFor="slipAmount">{t('payments.bankSlipUpload.amountPaid')}</Label>
-                <Input
-                  id="slipAmount"
-                  type="number"
-                  min={0}
-                  step={1}
-                  placeholder={t('payments.bankSlipUpload.amountPlaceholder')}
-                  value={slipForm.amount}
-                  onChange={(e) => setSlipForm((p) => ({ ...p, amount: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="slipDate">{t('payments.bankSlipUpload.bankPaymentDate')}</Label>
-                <Input
-                  id="slipDate"
-                  type="date"
-                  max={new Date().toISOString().split("T")[0]}
-                  value={slipForm.date}
-                  onChange={(e) => setSlipForm((p) => ({ ...p, date: e.target.value }))}
-                />
-              </div>
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="slipRef">{t('payments.bankSlipUpload.bankReference')}</Label>
-              <Input
-                id="slipRef"
-                type="text"
-                placeholder={t('payments.bankSlipUpload.referencePlaceholder')}
-                value={slipForm.reference}
-                onChange={(e) => setSlipForm((p) => ({ ...p, reference: e.target.value }))}
-              />
-            </div>
+            {/* Upload area — first, so AI extraction auto-fills the fields below */}
             <div className="space-y-1.5">
               <Label>{t('payments.bankSlipUpload.uploadBankSlip')}</Label>
               {slipForm.file ? (
@@ -161,6 +128,41 @@ export const CustomerBankSlipSection: React.FC<CustomerBankSlipSectionProps> = (
                   <p className="text-xs text-muted-foreground">{t('payments.bankSlipUpload.fileTypes')}</p>
                 </button>
               )}
+            </div>
+            {/* Fields — below upload so AI can pre-fill them after scanning */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="slipAmount">{t('payments.bankSlipUpload.amountPaid')}</Label>
+                <Input
+                  id="slipAmount"
+                  type="number"
+                  min={0}
+                  step={1}
+                  placeholder={t('payments.bankSlipUpload.amountPlaceholder')}
+                  value={slipForm.amount}
+                  onChange={(e) => setSlipForm((p) => ({ ...p, amount: e.target.value }))}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="slipDate">{t('payments.bankSlipUpload.bankPaymentDate')}</Label>
+                <Input
+                  id="slipDate"
+                  type="date"
+                  max={new Date().toISOString().split("T")[0]}
+                  value={slipForm.date}
+                  onChange={(e) => setSlipForm((p) => ({ ...p, date: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="slipRef">{t('payments.bankSlipUpload.bankReference')}</Label>
+              <Input
+                id="slipRef"
+                type="text"
+                placeholder={t('payments.bankSlipUpload.referencePlaceholder')}
+                value={slipForm.reference}
+                onChange={(e) => setSlipForm((p) => ({ ...p, reference: e.target.value }))}
+              />
             </div>
             <Button className="w-full gradient-primary" onClick={handleSlipSubmit} disabled={uploading}>
               <Receipt className="w-4 h-4 mr-2" />
@@ -404,7 +406,7 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-card rounded-2xl w-[90%] max-w-6xl max-h-[98vh] h-auto relative overflow-hidden shadow-2xl">
+      <div className="bg-card rounded-2xl w-[90%] max-w-6xl h-[85vh] max-h-[85vh] relative overflow-hidden shadow-2xl">
         <button
           onClick={() => setSelectedSlip(null)}
           className="absolute top-4 right-4 z-10 rounded-full p-1.5 hover:bg-gray-100 transition"
@@ -413,7 +415,7 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
         </button>
         <div className="grid grid-cols-1 md:grid-cols-2 h-full">
           {/* LEFT: SLIP IMAGE */}
-          <div className="flex items-center justify-center bg-gray-100 p-6 border-r">
+          <div className="flex items-center justify-center bg-gray-100 p-6 border-r overflow-hidden h-full">
             {selectedSlip.filePath?.includes(".pdf") ? (
               <iframe
                 src={selectedSlip.filePath}
@@ -424,7 +426,7 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
               <img
                 src={selectedSlip.filePath}
                 alt={t('payments.bankSlipModal.bankSlipImage')}
-                className="max-h-full max-w-full object-contain rounded-lg shadow hover:scale-[1.02] transition"
+                className="w-full h-full object-contain rounded-lg shadow hover:scale-[1.02] transition"
               />
             )}
           </div>

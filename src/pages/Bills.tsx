@@ -22,6 +22,7 @@ const Bills = () => {
   const {
     bills,
     loading,
+    profile,
     searchTerm,
     statusFilter,
     viewingBill,
@@ -97,6 +98,7 @@ const Bills = () => {
 
       <BillImageViewer
         bill={viewingBill ? { ...viewingBill, billId: String((viewingBill as any).billId) } : null}
+        profile={profile}
         zoom={zoom} rotation={rotation}
         imageLoading={imageLoading} imageError={imageError}
         onClose={handleCloseView}

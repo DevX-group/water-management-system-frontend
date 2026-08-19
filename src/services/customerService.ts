@@ -103,7 +103,7 @@ export const searchCustomersApi = async (query: string): Promise<Customer[]> => 
   );
 };
 
-// search customers for adding payments
+// search customers for add
 export const searchCustomersForPayment = async (query: string) => {
   const res = await api.get(`/customers/search?query=${query}`);
   return res.data;

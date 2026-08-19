@@ -48,7 +48,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
             <Input id="accountHolder" placeholder="Enter account holder name" value={formData.accountHolder}
               onChange={(e) => onChangeField('accountHolder', e.target.value)}
-              className="h-12 pl-12 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+              className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
           </div>
         </div>
 
@@ -59,7 +59,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
             <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
               onChange={(e) => onChangeField('email', e.target.value)}
-              className="h-12 pl-12 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+              className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
           </div>
           <ErrorMsg msg={formErrors.email} />
         </div>
@@ -71,7 +71,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
             <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
             <Input id="nic" placeholder="Enter your NIC (e.g., 123456789V)" value={formData.nic}
               onChange={(e) => onChangeField('nic', e.target.value)}
-              className="h-12 pl-12 bg-white border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+              className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
           </div>
           <ErrorMsg msg={formErrors.nic} />
         </div>
@@ -85,7 +85,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
         <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Create a password" value={formData.password}
           onChange={(e) => onChangeField('password', e.target.value)}
-          className="h-12 pl-12 pr-12 bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+          className="h-12 pl-12 pr-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
         <button type="button" onClick={onTogglePassword}
           className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
           {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
@@ -101,7 +101,7 @@ export const SignupForm: React.FC<SignupFormProps> = ({
         <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
         <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} placeholder="Confirm your password" value={formData.confirmPassword}
           onChange={(e) => onChangeField('confirmPassword', e.target.value)}
-          className="h-12 pl-12 pr-12 bg-card border-gray-200 text-gray-900 placeholder:text-gray-400" style={{ caretColor: 'black' }} />
+          className="h-12 pl-12 pr-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
         <button type="button" onClick={onToggleConfirm}
           className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
           {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}

@@ -25,7 +25,6 @@ export const ViewCustomerDialog: React.FC<ViewCustomerDialogProps> = ({ customer
   const statusLabel = customer
     ? customer.status === 'ACTIVE' ? t('active') : customer.status === 'INACTIVE' ? t('inactive') : customer.status === 'PENDING_ACTIVATION' ? t('pending') : customer.status === 'SUSPENDED' ? t('suspended') : customer.status
     : '';
-
   return (
     <Dialog open={!!customer} onOpenChange={onClose}>
       <DialogContent className="admin-wrapper max-w-md max-h-[90vh] flex flex-col">
@@ -54,7 +53,7 @@ export const ViewCustomerDialog: React.FC<ViewCustomerDialogProps> = ({ customer
           <Button className="flex-1 h-auto py-2 whitespace-normal text-center" onClick={() => { if (customer) { onEdit(customer); onClose(); } }}>
             {t('editDetails')}
           </Button>
-          <Button variant="outline" className="flex-1 h-auto py-2 whitespace-normal text-center" onClick={onClose}>{t('close')}</Button>
+          <Button variant="outline" className="flex-1 h-auto py-2 whitespace-normal text-center" onClick={onClose}>{t('goToProfile')}</Button>
         </div>
       </DialogContent>
     </Dialog>

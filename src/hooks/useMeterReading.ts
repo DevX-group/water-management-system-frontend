@@ -173,6 +173,23 @@ export const useMeterReading = () => {
 
   useEffect(() => { fetchTodaysReadings(); }, [isOnline]);
 
+  const fetchPreviousReading = async (meterNumber: string) => {
+    if (!meterNumber || !isOnline) return;
+    try {
+      const res = await api.get(`/meter-readings/previous/${meterNumber}`);
+      if (res.data && res.data.currentReading) {
+        setFormData(prev => ({ ...prev, previousReading: res.data.currentReading.toString() }));
+        toast({ title: 'Previous Reading Found', description: `Auto-filled with last month's reading: ${res.data.currentReading}` });
+      }
+    } catch (err: any) {
+      if (err.response && err.response.status === 404) {
+        toast({ title: 'No Previous Reading', description: `Could not find a previous bill for meter ${meterNumber}.`, variant: 'destructive' });
+      } else {
+        console.log('Error fetching previous reading:', err);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
@@ -252,6 +269,7 @@ export const useMeterReading = () => {
     handleSubmit,
     clearForm,
     fetchTodaysReadings,
-    syncOfflineReadings
+    syncOfflineReadings,
+    fetchPreviousReading
   };
 };

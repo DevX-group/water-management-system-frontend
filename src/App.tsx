@@ -13,6 +13,7 @@ import Bills from "./pages/Bills";
 import Usage from "./pages/Usage";
 import Notifications from "./pages/Notifications";
 import Profile from "./pages/Profile";
+import CustomerSettings from "./pages/CustomerSettings";
 import NotFound from "./pages/NotFound";
 import AdminIndex from "./pages/AdminIndex";
 import { CustomerInquiryPage } from "./pages/CustomerInquiryPage";
@@ -42,25 +43,27 @@ const PWAManifestController: React.FC = () => {
     const existingManifest = document.querySelector('link[rel="manifest"]');
 
     if (isMeterReader) {
-      if (!existingManifest) {
-        const link = document.createElement("link");
-        link.rel = "manifest";
-        link.href = "/manifest.webmanifest";
-        document.head.appendChild(link);
-      }
-      if ("serviceWorker" in navigator && process.env.NODE_ENV === "production") {
-        navigator.serviceWorker.register("/sw.js").catch(() => { });
-      }
-    } else {
-      if (existingManifest) {
-        existingManifest.remove();
-      }
-      if ("serviceWorker" in navigator) {
-        navigator.serviceWorker.getRegistrations().then((registrations) => {
-          registrations.forEach((reg) => reg.unregister());
-        });
-      }
-    }
+  if (!existingManifest) {
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = "/manifest.webmanifest";
+    document.head.appendChild(link);
+  }
+
+  if ("serviceWorker" in navigator && import.meta.env.PROD) {
+    navigator.serviceWorker.register("/sw.js").catch(() => {});
+  }
+} else {
+  if (existingManifest) {
+    existingManifest.remove();
+  }
+
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.getRegistrations().then((registrations) => {
+      registrations.forEach((reg) => reg.unregister());
+    });
+  }
+}
   }, [user?.role]);
 
   return null;
@@ -101,6 +104,7 @@ const App = () => (
                   <Route path="/customer/notifications" element={<Notifications />} />
                   <Route path="/customer/inquiry" element={<CustomerInquiryPage />} />
                   <Route path="/customer/profile" element={<Profile />} />
+                  <Route path="/customer/settings" element={<CustomerSettings />} />
                 </Route>
 
                 {/* Admin Routes */}

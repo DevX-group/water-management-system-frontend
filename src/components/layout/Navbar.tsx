@@ -58,7 +58,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
 
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const language = i18n.language;
 
   const changeLanguage = (lang: string) => {
@@ -73,13 +73,13 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
   const CompanyNameBlock = () => (
     <div className="hidden sm:flex flex-col items-start justify-center gap-[1px]">
       <span className="text-[10px] font-semibold leading-none text-muted-foreground">
-        ජාතික ජල සම්පාදන මණ්ඩලය
+        ගාල්ල ප්‍රාදේශීය සභාව
       </span>
       <span className="text-sm font-bold leading-none text-gradient py-[1px]">
-        National Water Supply Board
+         Galle Pradeshiya Sabha
       </span>
       <span className="text-[10px] font-semibold leading-none text-muted-foreground">
-        தேசிய நீர் வழங்கல் சபை
+       காலி பிரதேச சபை
       </span>
     </div>
   );
@@ -130,13 +130,13 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 </DropdownMenuContent>
               </DropdownMenu>
               <Link to="/login">
-                <Button variant="ghost" className="rounded-xl">Sign in</Button>
+                <Button variant="ghost" className="rounded-xl">{t('navbar:customer.signin', 'Sign in')}</Button>
               </Link>
               <Link to="/signup">
                 <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                   <Button className="gradient-primary shadow-soft rounded-xl gap-2 btn-shine">
                     <Sparkles className="w-4 h-4" />
-                    Get Started
+                    {t('navbar:customer.getStarted', 'Get Started')}
                   </Button>
                 </motion.div>
               </Link>
@@ -189,7 +189,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                         }`}
                     >
                       <Icon className="w-4 h-4" />
-                      {link.name}
+                      {t(`navbar:customer.${link.name.toLowerCase()}`)}
                     </Button>
                   </motion.div>
                 </Link>
@@ -241,14 +241,14 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 <DropdownMenuItem asChild className="rounded-lg">
                   <Link to="/customer/profile" className="flex items-center gap-3 cursor-pointer">
                     <User className="w-4 h-4" />
-                    Profile
+                    {t('navbar:customer.profile', 'Profile')}
                     <ChevronRight className="w-4 h-4 ml-auto" />
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild className="rounded-lg">
                   <Link to="/customer/settings" className="flex items-center gap-3 cursor-pointer">
                     <Settings className="w-4 h-4" />
-                    Settings
+                    {t('navbar:customer.settings', 'Settings')}
                     <ChevronRight className="w-4 h-4 ml-auto" />
                   </Link>
                 </DropdownMenuItem>
@@ -256,7 +256,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 <DropdownMenuItem onClick={() => logout()} className="rounded-lg text-destructive focus:text-destructive cursor-pointer">
                   <div className="flex items-center gap-3">
                     <LogOut className="w-4 h-4" />
-                    Sign out
+                    {t('navbar:customer.signout', 'Sign out')}
                   </div>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -302,7 +302,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                             className={`w-full justify-start gap-3 h-12 rounded-xl ${active ? "shadow-sm" : ""}`}
                           >
                             <Icon className="w-5 h-5" />
-                            {link.name}
+                            {t(`navbar:customer.${link.name.toLowerCase()}`)}
                           </Button>
                         </Link>
                       </motion.div>
