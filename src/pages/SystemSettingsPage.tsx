@@ -49,6 +49,7 @@ import {
   Save,
   Loader2,
 } from 'lucide-react';
+import { BackupManagementCard } from '@/components/system-settings/BackupManagementCard';
 
 export const SystemSettingsPage: React.FC = () => {
   const [systemDetails, setSystemDetails] =
@@ -654,7 +655,8 @@ export const SystemSettingsPage: React.FC = () => {
           </CardContent>
         </Card>
 
-
+        {/* ==================== BACKUPS ==================== */}
+        <BackupManagementCard />
 
       </div>
     </motion.div>
