@@ -1,0 +1,59 @@
+import { Client, type IMessage, type StompSubscription } from '@stomp/stompjs';
+import SockJS from 'sockjs-client';
+import { API_BASE_URL } from '@/config/api';
+import { getToken } from '@/utils/authUtils';
+
+export type InternalChatSocketState = 'CONNECTING' | 'CONNECTED' | 'DISCONNECTED' | 'ERROR';
+
+const getEndpoint = () => {
+  const apiOrigin = API_BASE_URL.replace(/\/api\/?$/, '');
+  return `${apiOrigin}/ws/internal-chat`;
+};
+
+export class InternalChatSocket {
+  private client: Client | null = null;
+  private subscription: StompSubscription | null = null;
+
+  connect(
+    onStateChange: (state: InternalChatSocketState) => void,
+    onMessage: (message: IMessage) => void,
+  ) {
+    const token = getToken();
+    if (!token) {
+      onStateChange('ERROR');
+      return;
+    }
+
+    this.client = new Client({
+      webSocketFactory: () => new SockJS(getEndpoint()),
+      connectHeaders: { Authorization: `Bearer ${token}` },
+      reconnectDelay: 5000,
+      onConnect: () => onStateChange('CONNECTED'),
+      onDisconnect: () => onStateChange('DISCONNECTED'),
+      onWebSocketError: () => onStateChange('ERROR'),
+      onStompError: () => onStateChange('ERROR'),
+    });
+    this.messageHandler = onMessage;
+    onStateChange('CONNECTING');
+    this.client.activate();
+  }
+
+  private messageHandler: ((message: IMessage) => void) | null = null;
+
+  subscribe(conversationId: string) {
+    if (!this.client?.connected) return;
+    this.subscription?.unsubscribe();
+    this.subscription = this.client.subscribe(
+      `/topic/internal-chat/conversation/${conversationId}`,
+      (message) => this.messageHandler?.(message),
+    );
+  }
+
+  disconnect() {
+    this.subscription?.unsubscribe();
+    this.subscription = null;
+    this.messageHandler = null;
+    void this.client?.deactivate();
+    this.client = null;
+  }
+}
