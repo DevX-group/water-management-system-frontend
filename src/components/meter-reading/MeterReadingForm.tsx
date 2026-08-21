@@ -24,10 +24,11 @@ interface MeterReadingFormProps {
   onSubmit:    (e: React.FormEvent) => void;
   onClear:     () => void;
   onMeterNumberBlur?: (meterNumber: string) => void;
+  onSubscriptionNumberBlur?: (subNumber: string) => void;
 }
 
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
-  formData, submitting, onChange, onSubmit, onClear, onMeterNumberBlur
+  formData, submitting, onChange, onSubmit, onClear, onMeterNumberBlur, onSubscriptionNumberBlur
 }) => {
   const { t } = useTranslation('meterReading');
   const [isScannerOpen, setIsScannerOpen] = useState(false);
@@ -49,26 +50,37 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="subscriptionNumber">{t('form.subscriptionNumber')}</Label>
             <Input id="subscriptionNumber" placeholder={t('form.subscriptionNumberPlaceholder')} value={formData.subscriptionNumber} required
-              onChange={(e) => onChange({ ...formData, subscriptionNumber: e.target.value })} />
+              onChange={(e) => onChange({ ...formData, subscriptionNumber: e.target.value })} 
+              onBlur={() => onSubscriptionNumberBlur && formData.subscriptionNumber && onSubscriptionNumberBlur(formData.subscriptionNumber)} />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="readingDate">{t('form.readingDate')}</Label>
-          <Input id="readingDate" type="date" value={formData.readingDate} required
-            onChange={(e) => onChange({ ...formData, readingDate: e.target.value })} />
+          <Input id="readingDate" type="date" value={formData.readingDate} 
+            onChange={() => {
+            }} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="previousReading">{t('form.previousReading')}</Label>
-            <Input id="previousReading" type="number" min={0} placeholder="0" value={formData.previousReading} required
+            <Input id="previousReading" type="number" placeholder="0" value={formData.previousReading} required
               onChange={(e) => onChange({ ...formData, previousReading: e.target.value })} />
+            {formData.previousReading && Number(formData.previousReading) < 0 && (
+              <p className="text-sm text-destructive font-medium">Cannot be negative</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="currentReading">{t('form.currentReading')}</Label>
-            <Input id="currentReading" type="number" min={0} placeholder="0" value={formData.currentReading} required
+            <Input id="currentReading" type="number" placeholder="0" value={formData.currentReading} required
               onChange={(e) => onChange({ ...formData, currentReading: e.target.value })} />
+            {formData.currentReading && Number(formData.currentReading) <= 0 && (
+              <p className="text-sm text-destructive font-medium">Must be greater than 0</p>
+            )}
+            {formData.currentReading && formData.previousReading && Number(formData.currentReading) > 0 && Number(formData.currentReading) < Number(formData.previousReading) && (
+              <p className="text-sm text-destructive font-medium">Cannot be less than previous</p>
+            )}
             <Button type="button" variant="outline" className="w-full mt-2" onClick={() => setIsScannerOpen(true)}>
               <Camera className="w-4 h-4 mr-2" />
               Get image
