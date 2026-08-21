@@ -2,6 +2,7 @@ import '@/index.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { format, isToday, isYesterday } from 'date-fns';
 import {
+  Check,
   CheckCheck,
   ChevronUp,
   CircleAlert,
@@ -23,6 +24,7 @@ import type { AdminRole } from '@/types/admin';
 import type {
   ConversationSummary,
   InternalChatMessage,
+  InternalChatReadReceipt,
   InternalChatRoleFilter,
   InternalChatUser,
 } from '@/types/internalChat';
@@ -141,9 +143,20 @@ export const InternalChatPage = () => {
     socketRef.current = socket;
     socket.connect(setSocketState, (frame) => {
       try {
+        if (frame.headers.destination === '/user/queue/internal-chat-read') {
+          const receipt = JSON.parse(frame.body) as InternalChatReadReceipt;
+          setMessages((current) => current.map((message) => (
+            message.conversationId === receipt.conversationId && message.senderId !== receipt.readerId
+              ? { ...message, read: true }
+              : message
+          )));
+          return;
+        }
+
         const incoming = JSON.parse(frame.body) as InternalChatMessage;
-        if (frame.headers.destination === '/user/queue/internal-chat') {
-          // A user queue is the discovery signal for conversations created while this page was open.
+        // Every saved message can create a conversation for the recipient, so refresh the
+        // filtered list even when no conversation is currently selected.
+        if (incoming.conversationId) {
           void internalChatService.listConversations(filtersRef.current)
             .then((conversationData) => {
               setConversations(conversationData);
@@ -181,6 +194,7 @@ export const InternalChatPage = () => {
   useEffect(() => {
     if (socketState !== 'CONNECTED') return;
     socketRef.current?.subscribeUserQueue();
+    socketRef.current?.subscribeReadQueue();
     if (selectedConversationId) socketRef.current?.subscribe(selectedConversationId);
   }, [selectedConversationId, socketState]);
 
@@ -367,7 +381,7 @@ export const InternalChatPage = () => {
                 </div>
                 <div ref={messageListRef} className="flex-1 overflow-y-auto px-5 py-5 sm:px-8">
                   {hasOlderMessages && <div className="mb-4 text-center"><Button variant="outline" size="sm" onClick={() => void loadOlderMessages()} disabled={loadingOlder}><ChevronUp className="h-4 w-4" />{loadingOlder ? 'Loading older messages' : 'Load older messages'}</Button></div>}
-                  {loadingMessages ? <div className="space-y-3"><div className="h-12 w-2/3 animate-pulse rounded-2xl bg-muted" /><div className="ml-auto h-12 w-1/2 animate-pulse rounded-2xl bg-primary/10" /></div> : messages.length === 0 ? <div className="flex h-full min-h-[300px] flex-col items-center justify-center text-center"><div className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary"><MessageCircle className="h-8 w-8" /></div><h3 className="font-bold">Start the conversation</h3><p className="mt-1 text-sm text-muted-foreground">Send a message to {selectedConversation.otherParticipantName}.</p></div> : <div className="space-y-3">{messages.map((message) => { const mine = message.senderId !== selectedConversation.otherParticipantId; return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[min(78%,540px)] ${mine ? 'items-end' : 'items-start'} flex flex-col`}><div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${mine ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md border border-border bg-card text-foreground'}`}>{message.content}</div><div className="mt-1 flex items-center gap-1.5 px-1 text-[10px] text-muted-foreground"><span>{mine ? 'You' : message.senderName}</span><span>·</span><span>{formatMessageTime(message.createdAt)}</span>{mine && <CheckCheck className="h-3 w-3" />}</div></div></div>; })}</div>}
+                  {loadingMessages ? <div className="space-y-3"><div className="h-12 w-2/3 animate-pulse rounded-2xl bg-muted" /><div className="ml-auto h-12 w-1/2 animate-pulse rounded-2xl bg-primary/10" /></div> : messages.length === 0 ? <div className="flex h-full min-h-[300px] flex-col items-center justify-center text-center"><div className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary"><MessageCircle className="h-8 w-8" /></div><h3 className="font-bold">Start the conversation</h3><p className="mt-1 text-sm text-muted-foreground">Send a message to {selectedConversation.otherParticipantName}.</p></div> : <div className="space-y-3">{messages.map((message) => { const mine = message.senderId !== selectedConversation.otherParticipantId; return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[min(78%,540px)] ${mine ? 'items-end' : 'items-start'} flex flex-col`}><div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${mine ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md border border-border bg-card text-foreground'}`}>{message.content}</div><div className="mt-1 flex items-center gap-1.5 px-1 text-[10px] text-muted-foreground"><span>{mine ? 'You' : message.senderName}</span><span>·</span><span>{formatMessageTime(message.createdAt)}</span>{mine && (message.read ? <CheckCheck className="h-3 w-3 text-primary" aria-label="Read" /> : <Check className="h-3 w-3" aria-label="Sent" />)}</div></div></div>; })}</div>}
                 </div>
                 <div className="border-t border-border bg-card p-4 sm:p-5"><div className="flex items-end gap-2"><Input value={composer} maxLength={2000} onChange={(event) => setComposer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder="Type a message..." className="min-h-11 rounded-xl bg-background" /><Button type="button" size="icon" aria-label="Send message" disabled={!composer.trim() || sending} onClick={() => void sendMessage()}><Send className="h-4 w-4" /></Button></div><div className="mt-1 flex justify-between px-1 text-[10px] text-muted-foreground"><span>Press Enter to send</span><span>{composer.length}/2000</span></div></div>
               </>

@@ -14,6 +14,7 @@ export class InternalChatSocket {
   private client: Client | null = null;
   private conversationSubscription: StompSubscription | null = null;
   private userSubscription: StompSubscription | null = null;
+  private readSubscription: StompSubscription | null = null;
 
   connect(
     onStateChange: (state: InternalChatSocketState) => void,
@@ -59,11 +60,22 @@ export class InternalChatSocket {
     );
   }
 
+  subscribeReadQueue() {
+    if (!this.client?.connected) return;
+    this.readSubscription?.unsubscribe();
+    this.readSubscription = this.client.subscribe(
+      '/user/queue/internal-chat-read',
+      (message) => this.messageHandler?.(message),
+    );
+  }
+
   disconnect() {
     this.conversationSubscription?.unsubscribe();
     this.userSubscription?.unsubscribe();
+    this.readSubscription?.unsubscribe();
     this.conversationSubscription = null;
     this.userSubscription = null;
+    this.readSubscription = null;
     this.messageHandler = null;
     void this.client?.deactivate();
     this.client = null;

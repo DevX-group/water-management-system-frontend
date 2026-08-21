@@ -25,6 +25,13 @@ export interface InternalChatMessage {
   senderName: string;
   content: string;
   createdAt: string;
+  read: boolean;
+}
+
+export interface InternalChatReadReceipt {
+  conversationId: string;
+  readerId: string;
+  readAt: string;
 }
 
 export interface CreateConversationRequest {
