@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { LiveMeterScanner } from './LiveMeterScanner';
+import { api } from '@/services/api';
 
 interface FormData {
   meterNumber:        string;
@@ -14,6 +15,7 @@ interface FormData {
   previousReading:    string;
   currentReading:     string;
   readingDate:        string;
+  imageUrl?:          string;
   notes:              string;
 }
 
@@ -111,10 +113,29 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
       <LiveMeterScanner 
         isOpen={isScannerOpen} 
         onClose={() => setIsScannerOpen(false)} 
-        onDetected={(reading) => {
+        onDetected={async (reading, blob) => {
+          if (blob) {
+            const formDataUpload = new FormData();
+            formDataUpload.append('file', blob);
+            try {
+              const res = await api.post('/meter-readings/upload-image', formDataUpload, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+              });
+              onChange({ ...formData, currentReading: reading, imageUrl: res.data.url });
+              return;
+            } catch (err) {
+              console.error("Image upload failed", err);
+            }
+          }
           onChange({ ...formData, currentReading: reading });
         }} 
       />
+      {formData.imageUrl && (
+        <div className="mt-4">
+          <p className="text-sm font-medium mb-2">Captured Meter Image</p>
+          <img src={formData.imageUrl} alt="Meter" className="w-48 h-auto rounded-md border shadow-sm" />
+        </div>
+      )}
     </div>
   );
 };

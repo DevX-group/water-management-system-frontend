@@ -17,5 +17,6 @@ export interface MeterReadingFormData {
   previousReading: string;
   currentReading: string;
   readingDate: string;
+  imageUrl?: string;
   notes: string;
 }

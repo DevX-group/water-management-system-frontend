@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 interface LiveMeterScannerProps {
   isOpen: boolean;
   onClose: () => void;
-  onDetected: (reading: string) => void;
+  onDetected: (reading: string, imageBlob?: Blob) => void;
 }
 
 export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onClose, onDetected }) => {
@@ -66,7 +66,7 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
             });
             const data = await response.json();
             if (data.success && data.meter_reading && data.meter_reading.length >= 2) {
-               onDetected(data.meter_reading);
+               onDetected(data.meter_reading, blob);
                onClose();
             }
           } catch (err) {

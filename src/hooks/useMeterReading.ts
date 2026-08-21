@@ -239,6 +239,7 @@ export const useMeterReading = () => {
       previousReading: prev, 
       currentReading: curr,
       readingDate: formData.readingDate, 
+      imageUrl: formData.imageUrl,
       notes: formData.notes,
     };
 

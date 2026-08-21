@@ -14,6 +14,7 @@ interface TodayReading {
   usageUnits:         number;
   totalAmount:        number | null;
   billStatus:         string | null;
+  imageUrl?:          string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -51,7 +52,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
         <table className="w-full">      {/* Table of today's meter readings */} 
           <thead>
             <tr className="text-left border-b border-border">
-              {[t('table.headers.meterNo'), t('table.headers.customer'), t('table.headers.subscription'), t('table.headers.previous'), t('table.headers.current'), t('table.headers.usage'), t('table.headers.billAmount'), t('table.headers.status')].map(h => (
+              {[t('table.headers.meterNo'), t('table.headers.customer'), t('table.headers.subscription'), t('table.headers.previous'), t('table.headers.current'), t('table.headers.usage'), t('table.headers.billAmount'), 'Image', t('table.headers.status')].map(h => (
                 <th key={h} className="pb-3 text-sm font-medium text-muted-foreground">{h}</th>
               ))}
             </tr>
@@ -70,7 +71,14 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
                   </span>
                 </td>
                 <td className="py-4 text-sm text-foreground">
-                  {r.totalAmount != null ? `LKR ${Number(r.totalAmount).toFixed(2)}` : '-'}      {/*  Show bill amount if available, otherwise show '-'*/}
+                  {r.totalAmount != null ? `LKR ${Number(r.totalAmount).toFixed(2)}` : '-'}
+                </td>
+                <td className="py-4">
+                  {r.imageUrl ? (
+                    <a href={r.imageUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline font-medium text-xs">
+                      View
+                    </a>
+                  ) : '-'}
                 </td>
                 <td className="py-4">
                   {r.billStatus ? (
