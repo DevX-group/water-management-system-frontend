@@ -19,6 +19,7 @@ export class InternalChatSocket {
   connect(
     onStateChange: (state: InternalChatSocketState) => void,
     onMessage: (message: IMessage) => void,
+    onConnected?: () => void,
   ) {
     const token = getToken();
     if (!token) {
@@ -30,7 +31,10 @@ export class InternalChatSocket {
       webSocketFactory: () => new SockJS(getEndpoint()),
       connectHeaders: { Authorization: `Bearer ${token}` },
       reconnectDelay: 5000,
-      onConnect: () => onStateChange('CONNECTED'),
+      onConnect: () => {
+        onStateChange('CONNECTED');
+        onConnected?.();
+      },
       onDisconnect: () => onStateChange('DISCONNECTED'),
       onWebSocketError: () => onStateChange('ERROR'),
       onStompError: () => onStateChange('ERROR'),

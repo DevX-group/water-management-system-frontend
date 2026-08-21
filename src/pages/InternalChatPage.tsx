@@ -135,6 +135,24 @@ export const InternalChatPage = () => {
   }, [debouncedSearch, selectedRole, toast]);
 
   useEffect(() => {
+    // REST remains the source of truth when a broker user-destination frame is missed.
+    const reconcile = async () => {
+      try {
+        const conversationData = await internalChatService.listConversations(filtersRef.current);
+        setConversations(conversationData);
+        setSelectedConversation((current) => current
+          ? conversationData.find((conversation) => conversation.id === current.id) ?? current
+          : current);
+      } catch {
+        // Background reconciliation must not erase usable data or interrupt search.
+      }
+    };
+
+    const interval = window.setInterval(() => void reconcile(), 3000);
+    return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
     selectedConversationRef.current = selectedConversation;
   }, [selectedConversation]);
 
@@ -143,8 +161,9 @@ export const InternalChatPage = () => {
     socketRef.current = socket;
     socket.connect(setSocketState, (frame) => {
       try {
-        if (frame.headers.destination === '/user/queue/internal-chat-read') {
-          const receipt = JSON.parse(frame.body) as InternalChatReadReceipt;
+        const payload = JSON.parse(frame.body) as Partial<InternalChatMessage & InternalChatReadReceipt>;
+        if (payload.readerId && payload.readAt && payload.conversationId) {
+          const receipt = payload as InternalChatReadReceipt;
           setMessages((current) => current.map((message) => (
             message.conversationId === receipt.conversationId && message.senderId !== receipt.readerId
               ? { ...message, read: true }
@@ -153,7 +172,7 @@ export const InternalChatPage = () => {
           return;
         }
 
-        const incoming = JSON.parse(frame.body) as InternalChatMessage;
+        const incoming = payload as InternalChatMessage;
         // Every saved message can create a conversation for the recipient, so refresh the
         // filtered list even when no conversation is currently selected.
         if (incoming.conversationId) {
@@ -183,6 +202,12 @@ export const InternalChatPage = () => {
         void internalChatService.markAsRead(incoming.conversationId);
       } catch {
         toast({ title: 'Message update failed', description: 'A real-time message could not be read.', variant: 'destructive' });
+      }
+    }, () => {
+      socket.subscribeUserQueue();
+      socket.subscribeReadQueue();
+      if (selectedConversationRef.current?.id) {
+        socket.subscribe(selectedConversationRef.current.id);
       }
     });
     return () => {
@@ -216,6 +241,30 @@ export const InternalChatPage = () => {
       .catch(() => toast({ title: 'Unable to load messages', description: 'Please try again.', variant: 'destructive' }))
       .finally(() => setLoadingMessages(false));
   }, [selectedConversationId, toast]);
+
+  useEffect(() => {
+    if (!selectedConversationId) return;
+
+    // Reconcile the open thread so read receipts update even if the STOMP receipt
+    // was missed by the browser or the recipient opened the conversation elsewhere.
+    const reconcileMessages = async () => {
+      try {
+        const data = await internalChatService.getMessages(selectedConversationId, 0, PAGE_SIZE);
+        if (selectedConversationRef.current?.id !== selectedConversationId) return;
+        setMessages((current) => {
+          const olderMessages = current.filter((message) => !data.some((item) => item.id === message.id));
+          return [...olderMessages, ...data].sort(
+            (left, right) => new Date(left.createdAt).getTime() - new Date(right.createdAt).getTime(),
+          );
+        });
+      } catch {
+        // The active thread remains usable during a temporary background failure.
+      }
+    };
+
+    const interval = window.setInterval(() => void reconcileMessages(), 3000);
+    return () => window.clearInterval(interval);
+  }, [selectedConversationId]);
 
   const loadOlderMessages = async () => {
     if (!selectedConversationId || loadingOlder || !hasOlderMessages) return;
