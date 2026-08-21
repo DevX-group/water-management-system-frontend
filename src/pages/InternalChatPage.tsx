@@ -91,11 +91,14 @@ export const InternalChatPage = () => {
   const [hasOlderMessages, setHasOlderMessages] = useState(false);
   const [socketState, setSocketState] = useState<InternalChatSocketState>('DISCONNECTED');
   const selectedConversationRef = useRef<ConversationSummary | null>(null);
+  const filtersRef = useRef<{ role?: AdminRole; search: string }>({ search: '' });
   const socketRef = useRef<InternalChatSocket | null>(null);
   const messageListRef = useRef<HTMLDivElement | null>(null);
 
   const selectedRole = roleFilter === 'ALL' ? undefined : roleFilter;
   const selectedConversationId = selectedConversation?.id;
+
+  filtersRef.current = { role: selectedRole, search: debouncedSearch };
 
   useEffect(() => {
     const timeout = window.setTimeout(() => setDebouncedSearch(search), 400);
@@ -105,21 +108,23 @@ export const InternalChatPage = () => {
   useEffect(() => {
     let cancelled = false;
     setLoadingList(true);
-    Promise.all([
+    Promise.allSettled([
       internalChatService.listConversations({ role: selectedRole, search: debouncedSearch }),
       internalChatService.findStaff({ role: selectedRole, search: debouncedSearch }),
     ])
-      .then(([conversationData, staffData]) => {
+      .then(([conversationResult, staffResult]) => {
         if (cancelled) return;
-        setConversations(conversationData);
-        setStaff(staffData);
-        setSelectedConversation((current) => {
-          if (!current) return null;
-          return conversationData.find((conversation) => conversation.id === current.id) ?? current;
-        });
-      })
-      .catch(() => {
-        if (!cancelled) toast({ title: 'Unable to load chat', description: 'Please try again.', variant: 'destructive' });
+        if (conversationResult.status === 'fulfilled') {
+          setConversations(conversationResult.value);
+          setSelectedConversation((current) => {
+            if (!current) return null;
+            return conversationResult.value.find((conversation) => conversation.id === current.id) ?? current;
+          });
+        }
+        if (staffResult.status === 'fulfilled') setStaff(staffResult.value);
+        if (conversationResult.status === 'rejected' && staffResult.status === 'rejected') {
+          toast({ title: 'Unable to load chat', description: 'Please try again.', variant: 'destructive' });
+        }
       })
       .finally(() => {
         if (!cancelled) setLoadingList(false);
@@ -137,6 +142,17 @@ export const InternalChatPage = () => {
     socket.connect(setSocketState, (frame) => {
       try {
         const incoming = JSON.parse(frame.body) as InternalChatMessage;
+        if (frame.headers.destination === '/user/queue/internal-chat') {
+          // A user queue is the discovery signal for conversations created while this page was open.
+          void internalChatService.listConversations(filtersRef.current)
+            .then((conversationData) => {
+              setConversations(conversationData);
+              setSelectedConversation((current) => current
+                ? conversationData.find((conversation) => conversation.id === current.id) ?? current
+                : current);
+            })
+            .catch(() => undefined);
+        }
         const openConversation = selectedConversationRef.current;
         if (!openConversation || incoming.conversationId !== openConversation.id) return;
 
@@ -163,8 +179,13 @@ export const InternalChatPage = () => {
   }, [toast]);
 
   useEffect(() => {
+    if (socketState !== 'CONNECTED') return;
+    socketRef.current?.subscribeUserQueue();
+    if (selectedConversationId) socketRef.current?.subscribe(selectedConversationId);
+  }, [selectedConversationId, socketState]);
+
+  useEffect(() => {
     if (!selectedConversationId) return;
-    socketRef.current?.subscribe(selectedConversationId);
     setLoadingMessages(true);
     setMessagePage(0);
     setHasOlderMessages(false);
@@ -180,7 +201,7 @@ export const InternalChatPage = () => {
       })
       .catch(() => toast({ title: 'Unable to load messages', description: 'Please try again.', variant: 'destructive' }))
       .finally(() => setLoadingMessages(false));
-  }, [selectedConversationId, socketState, toast]);
+  }, [selectedConversationId, toast]);
 
   const loadOlderMessages = async () => {
     if (!selectedConversationId || loadingOlder || !hasOlderMessages) return;

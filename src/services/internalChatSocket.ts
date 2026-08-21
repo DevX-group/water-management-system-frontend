@@ -12,7 +12,8 @@ const getEndpoint = () => {
 
 export class InternalChatSocket {
   private client: Client | null = null;
-  private subscription: StompSubscription | null = null;
+  private conversationSubscription: StompSubscription | null = null;
+  private userSubscription: StompSubscription | null = null;
 
   connect(
     onStateChange: (state: InternalChatSocketState) => void,
@@ -42,16 +43,27 @@ export class InternalChatSocket {
 
   subscribe(conversationId: string) {
     if (!this.client?.connected) return;
-    this.subscription?.unsubscribe();
-    this.subscription = this.client.subscribe(
+    this.conversationSubscription?.unsubscribe();
+    this.conversationSubscription = this.client.subscribe(
       `/topic/internal-chat/conversation/${conversationId}`,
       (message) => this.messageHandler?.(message),
     );
   }
 
+  subscribeUserQueue() {
+    if (!this.client?.connected) return;
+    this.userSubscription?.unsubscribe();
+    this.userSubscription = this.client.subscribe(
+      '/user/queue/internal-chat',
+      (message) => this.messageHandler?.(message),
+    );
+  }
+
   disconnect() {
-    this.subscription?.unsubscribe();
-    this.subscription = null;
+    this.conversationSubscription?.unsubscribe();
+    this.userSubscription?.unsubscribe();
+    this.conversationSubscription = null;
+    this.userSubscription = null;
     this.messageHandler = null;
     void this.client?.deactivate();
     this.client = null;
