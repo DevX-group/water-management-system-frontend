@@ -365,7 +365,7 @@ export const InternalChatPage = () => {
               <label htmlFor="chat-search" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">Find a colleague</label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name or user ID" className="h-11 rounded-xl bg-background pl-9" />
+                <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name" className="h-11 rounded-xl bg-background pl-9" />
               </div>
             </div>
 
