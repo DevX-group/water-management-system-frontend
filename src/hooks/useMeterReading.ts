@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
 import { api } from '@/services/api';
-import { useTranslation } from 'react-i18next';
 
 const API_BASE = 'http://localhost:8081/api';
 const OFFLINE_STORAGE_KEY = 'offline_meter_readings';
