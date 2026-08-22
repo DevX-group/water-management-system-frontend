@@ -12,9 +12,10 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useAuth } from '@/contexts/AuthContext';
 import { authService } from '@/services/authService';
 
-const MIN_PASSWORD_LENGTH = 6;
+const MIN_PASSWORD_LENGTH = 8;
 
 const SUCCESS_MESSAGE =
   'Your password has been reset successfully. You can now sign in with your new password.';
@@ -69,6 +70,7 @@ const isInvalidAuthorizationError = (
 const ResetPassword = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { logout } = useAuth();
 
   const resetAuthorization = (
     location.state as ResetLocationState | null
@@ -162,6 +164,7 @@ const ResetPassword = () => {
         confirmPassword,
       });
 
+      logout();
       clearPasswordFields();
       setIsComplete(true);
 
