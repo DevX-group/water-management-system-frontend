@@ -114,7 +114,7 @@ const App = () => (
                 </Route>
 
                 {/* Admin Routes */}
-                <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'SYSTEM_ADMIN', 'PAYMENT_HANDLER', 'METER_READER']} />}>
+                <Route element={<ProtectedRoute allowedRoles={['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER']} />}>
                   <Route path="/admin/*" element={<AdminIndex />} />
                 </Route>
 

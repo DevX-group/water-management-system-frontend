@@ -33,14 +33,15 @@ const ROLE_TABS: Array<{ value: InternalChatRoleFilter; label: string }> = [
   { value: 'ALL', label: 'All staff' },
   { value: 'SUPER_ADMIN', label: 'Super Admin' },
   { value: 'SYSTEM_ADMIN', label: 'System Admin' },
-  { value: 'PAYMENT_HANDLER', label: 'Payment Handler' },
+  { value: 'CUSTOMER_HANDLER', label: 'Customer Handler' },
   { value: 'METER_READER', label: 'Meter Reader' },
 ];
 
 const ROLE_LABELS: Record<AdminRole, string> = {
   SUPER_ADMIN: 'Super Admin',
   SYSTEM_ADMIN: 'System Admin',
-  PAYMENT_HANDLER: 'Payment Handler',
+  CUSTOMER_HANDLER: 'Customer Handler',
+  //PAYMENT_HANDLER: 'Customer Handler',
   METER_READER: 'Meter Reader',
 };
 

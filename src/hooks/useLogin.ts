@@ -43,6 +43,7 @@ export const useLogin = () => {
       if (
         response.role === 'SUPER_ADMIN' ||
         response.role === 'SYSTEM_ADMIN' ||
+        response.role === 'CUSTOMER_HANDLER' ||
         response.role === 'PAYMENT_HANDLER' ||
         response.role === 'METER_READER'
       ) {

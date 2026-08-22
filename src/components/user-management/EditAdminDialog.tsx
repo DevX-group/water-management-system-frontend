@@ -72,7 +72,7 @@ export const EditAdminDialog: React.FC<EditAdminDialogProps> = ({
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="SYSTEM_ADMIN">{t('roles.systemAdmin')}</SelectItem>
-                <SelectItem value="PAYMENT_HANDLER">{t('roles.paymentHandler')}</SelectItem>
+                <SelectItem value="CUSTOMER_HANDLER">{t('roles.paymentHandler')}</SelectItem>
                 <SelectItem value="METER_READER">{t('roles.meterReader')}</SelectItem>
               </SelectContent>
             </Select>
