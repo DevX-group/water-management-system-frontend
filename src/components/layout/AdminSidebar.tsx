@@ -47,7 +47,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 )}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`)}</span>
+                <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
               </button>
             );
           })}

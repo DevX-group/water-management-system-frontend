@@ -24,10 +24,11 @@ import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 const ROLE_LABELS: Record<string, string> = {
   main_admin: 'Main Admin',
   meter_reader: 'Meter Reader',
-  payment_handler: 'Payment Handler',
+  payment_handler: 'Customer Handler',
   SUPER_ADMIN: 'Super Admin',
   SYSTEM_ADMIN: 'System Admin',
-  PAYMENT_HANDLER: 'Payment Handler',
+  CUSTOMER_HANDLER: 'Customer Handler',
+  PAYMENT_HANDLER: 'Customer Handler',
   METER_READER: 'Meter Reader',
 };
 
@@ -37,6 +38,7 @@ const ROLE_COLORS: Record<string, string> = {
   payment_handler: 'bg-green-100 text-green-700',
   SUPER_ADMIN: 'bg-red-100 text-red-700',
   SYSTEM_ADMIN: 'bg-red-100 text-red-700',
+  CUSTOMER_HANDLER: 'bg-green-100 text-green-700',
   PAYMENT_HANDLER: 'bg-green-100 text-green-700',
   METER_READER: 'bg-blue-100 text-blue-700',
 };

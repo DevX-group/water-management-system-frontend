@@ -33,14 +33,15 @@ const ROLE_TABS: Array<{ value: InternalChatRoleFilter; label: string }> = [
   { value: 'ALL', label: 'All staff' },
   { value: 'SUPER_ADMIN', label: 'Super Admin' },
   { value: 'SYSTEM_ADMIN', label: 'System Admin' },
-  { value: 'PAYMENT_HANDLER', label: 'Payment Handler' },
+  { value: 'CUSTOMER_HANDLER', label: 'Customer Handler' },
   { value: 'METER_READER', label: 'Meter Reader' },
 ];
 
 const ROLE_LABELS: Record<AdminRole, string> = {
   SUPER_ADMIN: 'Super Admin',
   SYSTEM_ADMIN: 'System Admin',
-  PAYMENT_HANDLER: 'Payment Handler',
+  CUSTOMER_HANDLER: 'Customer Handler',
+  //PAYMENT_HANDLER: 'Customer Handler',
   METER_READER: 'Meter Reader',
 };
 
@@ -365,7 +366,7 @@ export const InternalChatPage = () => {
               <label htmlFor="chat-search" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">Find a colleague</label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name or user ID" className="h-11 rounded-xl bg-background pl-9" />
+                <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name" className="h-11 rounded-xl bg-background pl-9" />
               </div>
             </div>
 
