@@ -17,6 +17,8 @@ export const MeterReadingPage = () => {
     submitting,
     isOnline,
     pendingCount,
+    selectedDate,
+    setSelectedDate,
     setFormData,
     handleSubmit,
     clearForm,
@@ -69,7 +71,9 @@ export const MeterReadingPage = () => {
       <MeterReadingsTable
         readings={todaysReadings as unknown as any}
         loading={loadingReadings}
-        onRefresh={fetchTodaysReadings}
+        onRefresh={() => fetchTodaysReadings()}
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
       />
     </div>
   );

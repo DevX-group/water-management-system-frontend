@@ -47,7 +47,20 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
     <div className="rounded-md border border-border bg-card overflow-hidden">
       <Table>
         <TableHeader>
+<<<<<<< Updated upstream
           <TableRow className="bg-accent/50 hover:bg-accent/50">
+<<<<<<< Updated upstream
+=======
+            <TableHead>Name</TableHead>
+            <TableHead>NIC</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead>Role</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+=======
+          <TableRow className="bg-primary/10 hover:bg-primary/20">
+>>>>>>> Stashed changes
             <TableHead>{t('name')}</TableHead>
             <TableHead>{t('nic')}</TableHead>
             <TableHead>{t('email')}</TableHead>
@@ -55,6 +68,10 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
             <TableHead>{t('role')}</TableHead>
             <TableHead>{t('status')}</TableHead>
             <TableHead className="text-right">{t('actions')}</TableHead>
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           </TableRow>
         </TableHeader>
         <TableBody>

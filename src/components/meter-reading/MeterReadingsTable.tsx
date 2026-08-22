@@ -27,15 +27,30 @@ interface MeterReadingsTableProps {
   readings:       TodayReading[];
   loading:        boolean;
   onRefresh:      () => void;
+  selectedDate:   string;
+  onDateChange:   (date: string) => void;
 }
 
-export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh }) => {
+export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh, selectedDate, onDateChange }) => {
   const { t } = useTranslation('meterReading');
   
   return (
   <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '200ms' }}>
     <div className="flex items-center justify-between mb-4">
-      <h3 className="text-lg font-semibold text-foreground">{t('table.title')}</h3>
+      <div className="flex items-center gap-4">
+        <h3 className="text-lg font-semibold text-foreground">{t('table.title')}</h3>
+        <input 
+          type="date" 
+          value={selectedDate} 
+          max={new Date().toISOString().split('T')[0]}
+          onChange={(e) => {
+            if (e.target.value) {
+              onDateChange(e.target.value);
+            }
+          }}
+          className="px-3 py-1.5 border border-border rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+        />
+      </div>
       <Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('table.refresh')}
       </Button>

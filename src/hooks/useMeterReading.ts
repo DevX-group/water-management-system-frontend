@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useToast } from '@/hooks/use-toast';
 import type { MeterReading, MeterReadingFormData } from '@/types/meter';
 import { api } from '@/services/api';
-import { useTranslation } from 'react-i18next';
 
 const API_BASE = 'http://localhost:8081/api';
 const OFFLINE_STORAGE_KEY = 'offline_meter_readings';
@@ -33,6 +33,7 @@ export const useMeterReading = () => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [isManualOffline, setIsManualOffline] = useState(false);
   const [pendingCount, setPendingCount] = useState<number>(0);
+  const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
 
   const effectiveIsOnline = isOnline && !isManualOffline;
   const getOfflineReadings = () => {
@@ -128,16 +129,18 @@ export const useMeterReading = () => {
       window.removeEventListener('offline', handleOffline);
     };
   }, [syncOfflineReadings, toast, updatePendingCount, t]);
-  const fetchTodaysReadings = async () => {
+  // Fetches a list of all meter readings submitted today.
+  const fetchTodaysReadings = async (dateOverride?: string) => {
     if (!isOnline) return; // Don't try to fetch if offline
     
+    const targetDate = dateOverride || selectedDate;
     setLoadingReadings(true);
     try {
       api.get('/rates').then(res => {
         localStorage.setItem(OFFLINE_RATES_KEY, JSON.stringify(res.data));
       }).catch(() => {});
 
-      const res = await api.get('/meter-readings/today');
+      const res = await api.get(`/meter-readings/today?date=${targetDate}`);
       const data = res.data;
       const offline = getOfflineReadings().map((r: any, i: number) => {
         const usage = Number(r.currentReading) - Number(r.previousReading);
@@ -158,7 +161,7 @@ export const useMeterReading = () => {
     }
   };
 
-  useEffect(() => { fetchTodaysReadings(); }, [isOnline]);
+  useEffect(() => { fetchTodaysReadings(); }, [isOnline, selectedDate]);
 
   const fetchPreviousReading = async (meterNumber: string) => {
     if (!meterNumber || !isOnline) return;
@@ -265,7 +268,11 @@ export const useMeterReading = () => {
         totalAmount: estimatedTotal,
         status: 'PENDING_OFFLINE'
       };
-      setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
+      
+      // Only push to todaysReadings if selectedDate is today
+      if (selectedDate === getLocalDateString()) {
+        setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
+      }
       
       return;
     }
@@ -299,11 +306,12 @@ export const useMeterReading = () => {
       fetchTodaysReadings();
     } catch (err: any) {
       if (!err.response || err.code === 'ERR_NETWORK') {
-        toast({ title: t('toasts.submissionFailedTitle'), description: 'Network error. Saving offline.', variant: 'destructive' });
+        toast({ title: t('toasts.submissionFailedTitle', { defaultValue: 'Submission Failed' }), description: 'Network error. Saving offline.', variant: 'destructive' });
         const offlineReadings = getOfflineReadings();
         offlineReadings.push(payload);
         localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
         updatePendingCount();
+        fetchTodaysReadings();
       } else {
         toast({ title: 'Submission Failed', description: err.response.data?.message || 'Failed to submit meter reading.', variant: 'destructive' });
       }
@@ -321,6 +329,8 @@ export const useMeterReading = () => {
     submitting,
     isOnline,
     pendingCount,
+    selectedDate,
+    setSelectedDate,
     setFormData,
     handleSubmit,
     clearForm,
