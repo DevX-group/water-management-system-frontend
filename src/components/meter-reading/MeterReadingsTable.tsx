@@ -51,7 +51,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
           className="px-3 py-1.5 border border-border rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
         />
       </div>
-      <Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading}>
+      <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading} className="hover:bg-secondary hover:text-foreground">
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('table.refresh')}
       </Button>
     </div>

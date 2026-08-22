@@ -57,7 +57,7 @@ export const CustomerInquiryPage: React.FC = () => {
               <AnimatePresence mode="wait">
                 {viewingHistoryId && historyInquiry ? (
                   <motion.div key="history-view" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
-                    <InquiryChatPanels inquiry={historyInquiry} isHistory onBack={() => setViewingHistoryId(null)} messagesEndRef={messagesEndRef} />
+                    <InquiryChatPanels inquiry={historyInquiry} isHistory onBack={() => setViewingHistoryId(null)} messagesEndRef={messagesEndRef} chatInput={chatInput} setChatInput={setChatInput} onSendMessage={sendMessage} showTyping={showTyping} />
                   </motion.div>
                 ) : !viewingHistoryId && activeId && inquiry ? (
                   <motion.div key="chat" initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}>
