@@ -1,0 +1,172 @@
+{
+  "title": "Messaging",
+  "subtitle": "Manage automated and custom messages for customers.",
+  "tabs": {
+    "scheduled": "Scheduled Messages",
+    "triggered": "Triggered Messages"
+  },
+  "common": {
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "yes": "Yes",
+    "no": "No",
+    "loadingMessages": "Loading messages...",
+    "itemsPerPage": "Items per page",
+    "itemsCount": "{{start}}-{{end}} of {{total}}",
+    "zeroItems": "0 items",
+    "previous": "Previous",
+    "next": "Next",
+    "pageOf": "Page {{current}} of {{total}}",
+    "error": "Error"
+  },
+  "scheduledSection": {
+    "viewHistory": "View Scheduled Message History",
+    "newMessage": "New Scheduled Message",
+    "empty": "No scheduled messages yet."
+  },
+  "triggeredSection": {
+    "newMessage": "New Triggered Message",
+    "empty": "No triggered messages yet."
+  },
+  "messageNames": {
+    "Monthly Bill": "Monthly Bill",
+    "Monthly Bill Message": "Monthly Bill Message",
+    "Overdue Alert": "Overdue Alert",
+    "Water supply cut-off": "Water supply cut-off",
+    "Custom message A": "Custom message A",
+    "Payment Confirmation": "Payment Confirmation",
+    "Bank Slip Rejection": "Bank Slip Rejection"
+  },
+  "scheduleTypes": {
+    "Recurring": "Recurring",
+    "One-Time": "One-Time"
+  },
+  "scheduleDisplay": {
+    "recurringDay": "{{day}}th of Every Month",
+    "daily": "Daily"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "triggerTypes": {
+    "Payment Confirmed": "Payment Confirmed",
+    "Bank Slip Rejected": "Bank Slip Rejected",
+    "Email Verification": "Email Verification",
+    "Phone Verification": "Phone Verification"
+  },
+  "recipients": {
+    "All Customers": "All Customers",
+    "Overdue Customers": "Overdue Customers"
+  },
+  "channels": {
+    "SMS": "SMS",
+    "Email": "Email"
+  },
+  "confirmDelete": {
+    "title": "Are you sure?",
+    "description": "This action cannot be undone. This will permanently delete the message template."
+  },
+  "toasts": {
+    "deletedTitle": "Message deleted",
+    "scheduledDeletedDesc": "The scheduled message has been successfully deleted.",
+    "triggeredDeletedDesc": "The triggered message has been successfully deleted.",
+    "failedDelete": "Failed to delete message.",
+    "updatedTitle": "Message updated",
+    "updatedDesc": "Your changes have been saved.",
+    "createdTitle": "Message created",
+    "scheduledCreatedDesc": "New scheduled message has been created.",
+    "triggeredCreatedDesc": "New triggered message has been created.",
+    "failedSave": "Failed to save message.",
+    "failedLoadOptions": "Failed to load message options."
+  },
+  "dialog": {
+    "createTitle": "Create New Message",
+    "editTitle": "Edit Message",
+    "saveButton": "Save Message",
+    "tabs": {
+      "details": "Message Details",
+      "template": "Template Editor"
+    },
+    "fields": {
+      "name": "Message Name",
+      "sendAs": "Send As",
+      "recipients": "Recipients",
+      "scheduleType": "Schedule Type",
+      "recurringDay": "Recurring Day of Each Month",
+      "date": "Date",
+      "time": "Time",
+      "triggerType": "Trigger Type",
+      "active": "Active",
+      "activeHelp": "Whether this trigger is enabled."
+    },
+    "placeholders": {
+      "name": "e.g. Monthly Bill",
+      "selectDay": "Select day"
+    }
+  },
+  "templateEditor": {
+    "customMode": "Custom Mode",
+    "subject": "Subject",
+    "subjectPlaceholder": "e.g. Your Monthly Water Bill",
+    "contentPlaceholder": "Type your message here...",
+    "addSection": "Add Section",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "deleteSection": "Delete section",
+    "previewHeader": "{{channel}} Preview",
+    "subjectLabel": "Subject: ",
+    "noTemplate": "No template configured",
+    "newSection": "New Section"
+  },
+  "placeholderPanel": {
+    "title": "Placeholders (Click to copy/insert)",
+    "empty": "No placeholders available."
+  },
+  "history": {
+    "backButton": "Back to Scheduled Messages",
+    "table": {
+      "messageName": "Message Name",
+      "type": "Type",
+      "date": "Date",
+      "time": "Time",
+      "emailSuccess": "Email Success Rate",
+      "smsSuccess": "SMS Success Rate",
+      "details": "Details",
+      "viewDetails": "View Details"
+    }
+  },
+  "historyDetails": {
+    "title": "Message Details",
+    "message": "Message",
+    "type": "Type",
+    "date": "Date",
+    "time": "Time",
+    "recipients": "Recipients",
+    "emailSuccessRate": "Email Success Rate",
+    "smsSuccessRate": "SMS Success Rate",
+    "totalEmailsSent": "Total Emails Sent",
+    "totalEmailsFailed": "Total Emails Failed",
+    "totalEmailsDelivered": "Total Emails Delivered",
+    "totalSmsSent": "Total SMSs Sent",
+    "totalSmsFailed": "Total SMSs Failed",
+    "totalSmsDelivered": "Total SMSs Delivered",
+    "viewFailedRecipients": "View Failed Recipients"
+  },
+  "failedRecipients": {
+    "title": "Failed Recipients",
+    "backToDetails": "Back to Message Details",
+    "loading": "Loading failed recipients...",
+    "empty": "No failed recipients.",
+    "table": {
+      "customer": "Customer",
+      "subscription": "Subscription",
+      "phone": "Phone",
+      "email": "Email",
+      "smsFailed": "SMS Failed",
+      "emailFailed": "Email Failed"
+    }
+  }
+}

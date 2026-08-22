@@ -29,6 +29,9 @@ import taUserManagement from "./locales/ta/userManagement.json";
 import enNavbar from "./locales/en/navbar.json";
 import siNavbar from "./locales/si/navbar.json";
 import taNavbar from "./locales/ta/navbar.json";
+import enMessaging from "./locales/en/messaging.json";
+import siMessaging from "./locales/si/messaging.json";
+import taMessaging from "./locales/ta/messaging.json";
 
 i18n
   .use(LanguageDetector)
@@ -45,6 +48,7 @@ i18n
         usage: enUsage,
         alerts: enAlerts,
         navbar: enNavbar,
+        messaging: enMessaging,
       },
       si: {
         payments: siPayments,
@@ -56,6 +60,7 @@ i18n
         usage: siUsage,
         alerts: siAlerts,
         navbar: siNavbar,
+        messaging: siMessaging,
       },
       ta: {
         payments: taPayments,
@@ -67,6 +72,7 @@ i18n
         usage: taUsage,
         alerts: taAlerts,
         navbar: taNavbar,
+        messaging: taMessaging,
       },
     },
 

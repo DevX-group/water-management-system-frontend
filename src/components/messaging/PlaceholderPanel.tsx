@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from 'react-i18next';
 
 type PlaceholderPanelProps = {
   placeholders: string[];
@@ -8,12 +9,13 @@ type PlaceholderPanelProps = {
 };
 
 export const PlaceholderPanel: React.FC<PlaceholderPanelProps> = ({ placeholders, onInsert }) => {
+  const { t } = useTranslation('messaging');
   return (
     <div className="space-y-2">
-      <Label className="text-xs text-muted-foreground">Placeholders (Click to copy/insert)</Label>
+      <Label className="text-xs text-muted-foreground">{t('placeholderPanel.title')}</Label>
       <div className="flex flex-wrap gap-2">
         {placeholders.length === 0 ? (
-          <div className="text-xs text-muted-foreground">No placeholders available.</div>
+          <div className="text-xs text-muted-foreground">{t('placeholderPanel.empty')}</div>
         ) : (
           placeholders.map((placeholder) => (
             <Button

@@ -19,6 +19,7 @@ import type {
   TriggerType,
   MessageChannel,
 } from '@/types/messaging';
+import { useTranslation } from 'react-i18next';
 import { TemplateEditor } from './TemplateEditor';
 import { useMessageForm } from '../../hooks/useMessageForm';
 
@@ -34,6 +35,7 @@ interface MessageDialogProps {
 export const MessageDialog: React.FC<MessageDialogProps> = ({
   isOpen, mode, onClose, initialData, onSave, enumOptions,
 }) => {
+  const { t } = useTranslation('messaging');
   const channelOptions: MessageChannel[] = (enumOptions?.channels?.length
     ? enumOptions.channels
     : ['SMS', 'Email']);
@@ -72,46 +74,48 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
       <DialogContent className="max-w-6xl max-h-[90vh] w-full flex flex-col p-0 gap-0">
         <div className="flex-none p-6 pb-2 border-b">
           <DialogHeader>
-            <DialogTitle>{initialData ? 'Edit Message' : 'Create New Message'}</DialogTitle>
+            <DialogTitle>{initialData ? t('dialog.editTitle') : t('dialog.createTitle')}</DialogTitle>
           </DialogHeader>
         </div>
 
         <div className="flex-1 overflow-y-auto min-h-0 p-6">
           <Tabs defaultValue="details" className="w-full h-full flex flex-col">
             <TabsList className="grid w-full grid-cols-2 flex-none">
-              <TabsTrigger value="details" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Message Details</TabsTrigger>
-              <TabsTrigger value="template" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Template Editor</TabsTrigger>
+              <TabsTrigger value="details" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">{t('dialog.tabs.details')}</TabsTrigger>
+              <TabsTrigger value="template" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">{t('dialog.tabs.template')}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="details" className="py-4 flex-none">
               <div className="space-y-4 pr-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Message Name</Label>
+                  <Label htmlFor="name">{t('dialog.fields.name')}</Label>
                   <Input id="name" value={formData.name}
                     onChange={(e) => handleInputChange('name', e.target.value)}
-                    placeholder="e.g. Monthly Bill" />
+                    placeholder={t('dialog.placeholders.name')} />
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Send As</Label>
+                  <Label>{t('dialog.fields.sendAs')}</Label>
                   <div className="flex space-x-4">
                     {channelOptions.map((channel) => (
                       <div key={channel} className="flex items-center space-x-2">
                         <Checkbox id={`chk-${channel.toLowerCase()}`} checked={formData.channels.includes(channel)}
                           onCheckedChange={(c) => handleChannelChange(channel, c as boolean)} />
-                        <Label htmlFor={`chk-${channel.toLowerCase()}`}>{channel}</Label>
+                        <Label htmlFor={`chk-${channel.toLowerCase()}`}>{t(`channels.${channel}`, { defaultValue: channel })}</Label>
                       </div>
                     ))}
                   </div>
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Recipients</Label>
+                  <Label>{t('dialog.fields.recipients')}</Label>
                   <Select value={formData.recipients} onValueChange={(val) => handleInputChange('recipients', val)}>
                     <SelectTrigger><SelectValue /></SelectTrigger>
                     <SelectContent>
                       {recipientOptions.map((recipient) => (
-                        <SelectItem key={recipient} value={recipient}>{recipient}</SelectItem>
+                        <SelectItem key={recipient} value={recipient}>
+                          {t(`recipients.${recipient}`, { defaultValue: recipient })}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -120,13 +124,15 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                 {mode === 'scheduled' && (
                   <>
                     <div className="space-y-2">
-                      <Label>Schedule Type</Label>
+                      <Label>{t('dialog.fields.scheduleType')}</Label>
                       <Select value={(formData as ScheduledMessage).schedule.type}
                         onValueChange={(val) => handleScheduleChange('type', val)}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {scheduleTypeOptions.map((scheduleType) => (
-                            <SelectItem key={scheduleType} value={scheduleType}>{scheduleType}</SelectItem>
+                            <SelectItem key={scheduleType} value={scheduleType}>
+                              {t(`scheduleTypes.${scheduleType}`, { defaultValue: scheduleType })}
+                            </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
@@ -134,10 +140,10 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 
                     {(formData as ScheduledMessage).schedule.type === 'Recurring' ? (
                       <div className="space-y-2">
-                        <Label>Recurring Day of Each Month</Label>
+                        <Label>{t('dialog.fields.recurringDay')}</Label>
                         <Select value={(formData as ScheduledMessage).schedule.dayOfMonth?.toString()}
                           onValueChange={(val) => handleScheduleChange('dayOfMonth', parseInt(val))}>
-                          <SelectTrigger><SelectValue placeholder="Select day" /></SelectTrigger>
+                          <SelectTrigger><SelectValue placeholder={t('dialog.placeholders.selectDay')} /></SelectTrigger>
                           <SelectContent className="max-h-48">
                             {Array.from({ length: 28 }, (_, i) => i + 1).map(d => (
                               <SelectItem key={d} value={d.toString()}>{d}</SelectItem>
@@ -147,14 +153,14 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        <Label>Date</Label>
+                        <Label>{t('dialog.fields.date')}</Label>
                         <Input type="date" value={(formData as ScheduledMessage).schedule.date}
                           onChange={(e) => handleScheduleChange('date', e.target.value)} />
                       </div>
                     )}
 
                     <div className="space-y-2">
-                      <Label>Time</Label>
+                      <Label>{t('dialog.fields.time')}</Label>
                       <Input type="time" value={(formData as ScheduledMessage).schedule.time}
                         onChange={(e) => handleScheduleChange('time', e.target.value)} />
                     </div>
@@ -164,14 +170,14 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
                 {mode === 'triggered' && (
                   <>
                     <div className="space-y-2">
-                      <Label>Trigger Type</Label>
+                      <Label>{t('dialog.fields.triggerType')}</Label>
                       <Select value={(formData as TriggeredMessage).triggerType}
                         onValueChange={(val) => handleTriggeredChange('triggerType', val as TriggerType)}>
                         <SelectTrigger><SelectValue /></SelectTrigger>
                         <SelectContent>
                           {triggerTypeOptions.map((trigger) => (
                             <SelectItem key={trigger} value={trigger}>
-                              {trigger}
+                              {t(`triggerTypes.${trigger}`, { defaultValue: trigger })}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -180,8 +186,8 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 
                     <div className="flex items-center justify-between rounded-md border p-3">
                       <div>
-                        <Label htmlFor="trigger-active" className="text-sm font-medium">Active</Label>
-                        <div className="text-xs text-muted-foreground">Whether this trigger is enabled.</div>
+                        <Label htmlFor="trigger-active" className="text-sm font-medium">{t('dialog.fields.active')}</Label>
+                        <div className="text-xs text-muted-foreground">{t('dialog.fields.activeHelp')}</div>
                       </div>
                       <Switch id="trigger-active"
                         checked={(formData as TriggeredMessage).active}
@@ -209,8 +215,8 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
 
         <div className="flex-none p-6 pt-2 border-t mt-auto">
           <DialogFooter>
-            <Button variant="outline" onClick={onClose} className="border-[#168D9C] text-[#168D9C] hover:bg-[#168D9C] hover:text-white">Cancel</Button>
-            <Button onClick={() => onSave(formData)} className="bg-[#168D9C] hover:bg-[#127a87] text-white">Save Message</Button>
+            <Button variant="outline" onClick={onClose} className="border-[#168D9C] text-[#168D9C] hover:bg-[#168D9C] hover:text-white">{t('common.cancel')}</Button>
+            <Button onClick={() => onSave(formData)} className="bg-[#168D9C] hover:bg-[#127a87] text-white">{t('dialog.saveButton')}</Button>
           </DialogFooter>
         </div>
       </DialogContent>

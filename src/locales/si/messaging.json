@@ -1,0 +1,172 @@
+{
+  "title": "පණිවිඩ යැවීම",
+  "subtitle": "පාරිභෝගිකයින් සඳහා ස්වයංක්‍රීය සහ අභිරුචි පණිවිඩ කළමනාකරණය කරන්න.",
+  "tabs": {
+    "scheduled": "කාලසටහන්ගත පණිවිඩ",
+    "triggered": "ස්වයංක්‍රීය පණිවිඩ"
+  },
+  "common": {
+    "edit": "සංස්කරණය",
+    "delete": "මකන්න",
+    "cancel": "අවසාන කරන්න",
+    "save": "සුරකින්න",
+    "yes": "ඔව්",
+    "no": "නැත",
+    "loadingMessages": "පණිවිඩ පූරණය වෙමින් පවතී...",
+    "itemsPerPage": "පිටුවකට අයිතම",
+    "itemsCount": "{{total}} න් {{start}}-{{end}}",
+    "zeroItems": "අයිතම 0",
+    "previous": "පෙර",
+    "next": "ඊළඟ",
+    "pageOf": "පිටු {{total}} න් {{current}} පිටුව",
+    "error": "දෝෂයකි"
+  },
+  "scheduledSection": {
+    "viewHistory": "කාලසටහන්ගත පණිවිඩ ඉතිහාසය",
+    "newMessage": "නව කාලසටහන්ගත පණිවිඩයක්",
+    "empty": "තවම කාලසටහන්ගත පණිවිඩ නොමැත."
+  },
+  "triggeredSection": {
+    "newMessage": "නව ස්වයංක්‍රීය පණිවිඩයක්",
+    "empty": "තවම ස්වයංක්‍රීය පණිවිඩ නොමැත."
+  },
+  "messageNames": {
+    "Monthly Bill": "මාසික බිල්පත",
+    "Monthly Bill Message": "මාසික බිල්පත් පණිවිඩය",
+    "Overdue Alert": "ගෙවීම් ප්‍රමාද අඟවීම",
+    "Water supply cut-off": "ජල සැපයුම අත්හිටුවීම",
+    "Custom message A": "අභිරුචි පණිවිඩය A",
+    "Payment Confirmation": "ගෙවීම් තහවුරු කිරීම",
+    "Bank Slip Rejection": "බැංකු රිසිට්පත ප්‍රතික්ෂේප කිරීම"
+  },
+  "scheduleTypes": {
+    "Recurring": "ආවර්තිත",
+    "One-Time": "එක් වරක් පමණක්"
+  },
+  "scheduleDisplay": {
+    "recurringDay": "සෑම මාසයකම {{day}} වෙනිදා",
+    "daily": "දිනපතා"
+  },
+  "status": {
+    "active": "සක්‍රියයි",
+    "inactive": "අක්‍රියයි"
+  },
+  "triggerTypes": {
+    "Payment Confirmed": "ගෙවීම තහවුරු විය",
+    "Bank Slip Rejected": "බැංකු රිසිට්පත ප්‍රතික්ෂේප විය",
+    "Email Verification": "විද්‍යුත් තැපෑල තහවුරු කිරීම",
+    "Phone Verification": "දුරකථන අංකය තහවුරු කිරීම"
+  },
+  "recipients": {
+    "All Customers": "සියලුම පාරිභෝගිකයින්",
+    "Overdue Customers": "ගෙවීම් ප්‍රමාද වූ පාරිභෝගිකයින්"
+  },
+  "channels": {
+    "SMS": "SMS",
+    "Email": "විද්‍යුත් තැපෑල"
+  },
+  "confirmDelete": {
+    "title": "ඔබට විශ්වාසද?",
+    "description": "මෙම ක්‍රියාව ආපසු හැරවිය නොහැක. මෙය පණිවිඩ අච්චුව ස්ථිරවම මකා දමනු ඇත."
+  },
+  "toasts": {
+    "deletedTitle": "පණිවිඩය මකා දමන ලදී",
+    "scheduledDeletedDesc": "කාලසටහන්ගත පණිවිඩය සාර්ථකව මකා දමන ලදී.",
+    "triggeredDeletedDesc": "ස්වයංක්‍රීය පණිවිඩය සාර්ථකව මකා දමන ලදී.",
+    "failedDelete": "පණිවිඩය මකා දැමීමට නොහැකි විය.",
+    "updatedTitle": "පණිවිඩය යාවත්කාලීන කරන ලදී",
+    "updatedDesc": "ඔබගේ වෙනස්කම් සුරකින ලදී.",
+    "createdTitle": "පණිවිඩය සාදන ලදී",
+    "scheduledCreatedDesc": "නව කාලසටහන්ගත පණිවිඩය සාදන ලදී.",
+    "triggeredCreatedDesc": "නව ස්වයංක්‍රීය පණිවිඩය සාදන ලදී.",
+    "failedSave": "පණිවිඩය සුරැකීමට නොහැකි විය.",
+    "failedLoadOptions": "පණිවිඩ විකල්ප පූරණය කිරීමට නොහැකි විය."
+  },
+  "dialog": {
+    "createTitle": "නව පණිවිඩයක් සාදන්න",
+    "editTitle": "පණිවිඩය සංස්කරණය කරන්න",
+    "saveButton": "පණිවිඩය සුරකින්න",
+    "tabs": {
+      "details": "පණිවිඩ විස්තර",
+      "template": "අච්චු සංස්කාරකය"
+    },
+    "fields": {
+      "name": "පණිවිඩයේ නම",
+      "sendAs": "යවන මාධ්‍යය",
+      "recipients": "ලබන්නන්",
+      "scheduleType": "කාලසටහන්ගත කිරීමේ වර්ගය",
+      "recurringDay": "සෑම මාසයකම ආවර්තිත දිනය",
+      "date": "දිනය",
+      "time": "වේලාව",
+      "triggerType": "ක්‍රියාකාරක වර්ගය",
+      "active": "සක්‍රියයි",
+      "activeHelp": "මෙම ස්වයංක්‍රීය ක්‍රියාකාරකය සක්‍රිය කර තිබේද යන්න."
+    },
+    "placeholders": {
+      "name": "උදා: මාසික බිල්පත",
+      "selectDay": "දිනය තෝරන්න"
+    }
+  },
+  "templateEditor": {
+    "customMode": "අභිරුචි මාදිලිය",
+    "subject": "මාතෘකාව",
+    "subjectPlaceholder": "උදා: ඔබගේ මාසික ජල බිල්පත",
+    "contentPlaceholder": "ඔබගේ පණිවිඩය මෙහි ටයිප් කරන්න...",
+    "addSection": "කොටසක් එකතු කරන්න",
+    "moveUp": "ඉහළට ගෙනියන්න",
+    "moveDown": "පහළට ගෙනියන්න",
+    "deleteSection": "කොටස මකන්න",
+    "previewHeader": "{{channel}} පූර්ව දර්ශනය",
+    "subjectLabel": "මාතෘකාව: ",
+    "noTemplate": "අච්චුවක් සකසා නොමැත",
+    "newSection": "නව කොටස"
+  },
+  "placeholderPanel": {
+    "title": "ස්ථාන රඳවනයන් (පිටපත් කිරීමට/ඇතුළත් කිරීමට ක්ලික් කරන්න)",
+    "empty": "ස්ථාන රඳවනයන් නොමැත."
+  },
+  "history": {
+    "backButton": "නැවත කාලසටහන්ගත පණිවිඩ වෙත",
+    "table": {
+      "messageName": "පණිවිඩයේ නම",
+      "type": "වර්ගය",
+      "date": "දිනය",
+      "time": "වේලාව",
+      "emailSuccess": "විද්‍යුත් තැපැල් සාර්ථකත්ව අනුපාතය",
+      "smsSuccess": "SMS සාර්ථකත්ව අනුපාතය",
+      "details": "විස්තර",
+      "viewDetails": "විස්තර නරඹන්න"
+    }
+  },
+  "historyDetails": {
+    "title": "පණිවිඩ විස්තර",
+    "message": "පණිවිඩය",
+    "type": "වර්ගය",
+    "date": "දිනය",
+    "time": "වේලාව",
+    "recipients": "ලබන්නන්",
+    "emailSuccessRate": "විද්‍යුත් තැපැල් සාර්ථකත්ව අනුපාතය",
+    "smsSuccessRate": "SMS සාර්ථකත්ව අනුපාතය",
+    "totalEmailsSent": "යැවූ මුළු විද්‍යුත් තැපෑල",
+    "totalEmailsFailed": "අසාර්ථක වූ මුළු විද්‍යුත් තැපෑල",
+    "totalEmailsDelivered": "ලැබුණු මුළු විද්‍යුත් තැපෑල",
+    "totalSmsSent": "යැවූ මුළු SMS",
+    "totalSmsFailed": "අසාර්ථක වූ මුළු SMS",
+    "totalSmsDelivered": "ලැබුණු මුළු SMS",
+    "viewFailedRecipients": "අසාර්ථක වූ ලබන්නන් නරඹන්න"
+  },
+  "failedRecipients": {
+    "title": "අසාර්ථක වූ ලබන්නන්",
+    "backToDetails": "නැවත පණිවිඩ විස්තර වෙත",
+    "loading": "අසාර්ථක වූ ලබන්නන් පූරණය වෙමින් පවතී...",
+    "empty": "අසාර්ථක වූ ලබන්නන් නොමැත.",
+    "table": {
+      "customer": "පාරිභෝගිකයා",
+      "subscription": "සබඳතා අංකය",
+      "phone": "දුරකථන අංකය",
+      "email": "විද්‍යුත් තැපෑල",
+      "smsFailed": "SMS අසාර්ථක විය",
+      "emailFailed": "විද්‍යුත් තැපෑල අසාර්ථක විය"
+    }
+  }
+}
