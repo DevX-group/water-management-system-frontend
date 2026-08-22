@@ -46,6 +46,7 @@ export type WidgetComponentKey =
 
 export interface DashboardWidgetConfig {
   id: number;
+  widgetId: number;
   widgetKey: string;
   name: string;
   description?: string;

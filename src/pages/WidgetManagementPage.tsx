@@ -13,6 +13,159 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ALL_ROLES = ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER', 'CUSTOMER'];
 
+const ALLOWED_ROLES_MAP: Record<string, string[]> = {
+  'customer-current-bill': ['CUSTOMER'],
+  'customer-outstanding': ['CUSTOMER'],
+  'customer-pay-now': ['CUSTOMER'],
+  'customer-usage-trend': ['CUSTOMER'],
+  'customer-recent-payments': ['CUSTOMER'],
+  'customer-notifications': ['CUSTOMER'],
+  'customer-bank-slip-status': ['CUSTOMER'],
+  'customer-inquiries': ['CUSTOMER'],
+
+  'meter-quick-entry': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'meter-latest-reading': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'meter-reading-history': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'internal-chat-link': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+
+  'handler-pending-slips': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'handler-recent-payments': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'handler-open-inquiries': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'handler-customer-search': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
+
+  'admin-system-summary': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'admin-usage-chart': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'admin-revenue-chart': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'admin-alerts': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'admin-messaging-link': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'admin-blogs-link': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+  'admin-predictions-link': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
+
+  'superadmin-admin-count': ['SUPER_ADMIN'],
+  'superadmin-region-summary': ['SUPER_ADMIN'],
+  'superadmin-widget-management-link': ['SUPER_ADMIN'],
+  'superadmin-user-management-link': ['SUPER_ADMIN'],
+  'quick-link': ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER', 'CUSTOMER']
+};
+
+const WidgetCatalogCard: React.FC<{
+  widget: WidgetDefinition;
+  onSaved: () => void;
+}> = ({ widget, onSaved }) => {
+  const { toast } = useToast();
+  const [name, setName] = useState(widget.name);
+  const [active, setActive] = useState(widget.active);
+  const [roles, setRoles] = useState<Set<string>>(new Set(widget.allowedRoles || []));
+  const [saving, setSaving] = useState(false);
+
+  const availableRoles = ALLOWED_ROLES_MAP[widget.componentKey] || ALL_ROLES;
+
+  const hasChanges = 
+    name !== widget.name || 
+    active !== widget.active ||
+    roles.size !== (widget.allowedRoles || []).length ||
+    ![...roles].every(r => (widget.allowedRoles || []).includes(r));
+
+  const toggleRole = (role: string) => {
+    const next = new Set(roles);
+    if (next.has(role)) next.delete(role);
+    else next.add(role);
+    setRoles(next);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const payload = {
+        widgetKey: widget.widgetKey,
+        name: name,
+        description: widget.description,
+        widgetType: widget.widgetType,
+        componentKey: widget.componentKey,
+        active: active,
+        allowedRoles: Array.from(roles),
+        defaultColSpan: widget.defaultColSpan,
+        defaultRowSpan: widget.defaultRowSpan
+      };
+      
+      await updateWidget(widget.id, payload as any);
+      toast({ title: 'Widget updated successfully.' });
+      onSaved();
+    } catch (err: any) {
+      toast({ title: 'Failed to update widget.', variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className={`bg-card border rounded-xl flex flex-col transition-all shadow-sm ${!active ? 'opacity-70' : ''}`}>
+      {/* Visual Preview */}
+      <div className="bg-muted/30 p-4 flex justify-center items-center border-b min-h-[160px] pointer-events-none transform scale-90 origin-center">
+        <WidgetContainer name={name} className="w-full max-w-sm m-0 shadow-lg bg-card">
+          <WidgetRenderer componentKey={widget.componentKey} name={name} />
+        </WidgetContainer>
+      </div>
+      
+      <div className="p-4 space-y-4 flex-1 flex flex-col relative">
+        <div className="absolute top-2 right-2">
+          <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider border border-primary/20">
+            {widget.widgetType}
+          </span>
+        </div>
+
+        {/* Name Edit */}
+        <div>
+          <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">Widget Name</label>
+          <Input 
+            value={name} 
+            onChange={(e) => setName(e.target.value)}
+            className="h-8 font-medium"
+          />
+        </div>
+        
+        {/* Role Assignment */}
+        <div className="flex-1">
+          <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Assigned Roles</label>
+          <div className="flex flex-wrap gap-2">
+            {availableRoles.map(role => {
+              const isAssigned = roles.has(role);
+              return (
+                <div 
+                  key={role} 
+                  onClick={() => toggleRole(role)}
+                  className={`text-[10px] px-2 py-1 rounded-full cursor-pointer transition-colors border ${
+                    isAssigned ? 'bg-primary text-primary-foreground border-primary' : 'bg-transparent text-muted-foreground hover:bg-muted border-border'
+                  }`}
+                >
+                  {role.replace('_', ' ')}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Status Toggle */}
+        <div className="flex items-center justify-between pt-2 border-t">
+          <span className="text-sm font-medium">{active ? 'Active' : 'Deactivated'}</span>
+          <Switch 
+            checked={active} 
+            onCheckedChange={setActive}
+          />
+        </div>
+
+        {/* Save Button */}
+        <div className={`transition-all duration-300 overflow-hidden ${hasChanges ? 'max-h-12 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'}`}>
+          <Button onClick={handleSave} disabled={saving} className="w-full h-9 text-sm">
+            {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Save Changes
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const WidgetManagementPage: React.FC = () => {
   const { toast } = useToast();
 
@@ -55,47 +208,9 @@ export const WidgetManagementPage: React.FC = () => {
     loadDashboard(selectedRole);
   }, [selectedRole, loadDashboard]);
 
-  // Widget Catalog Updates
-  const handleUpdateWidgetName = async (widget: WidgetDefinition, newName: string) => {
-    if (!newName.trim() || newName === widget.name) return;
-    try {
-      await updateWidget(widget.id, { name: newName });
-      toast({ title: 'Widget name updated.' });
-      loadCatalog();
-    } catch {
-      toast({ title: 'Failed to update widget name.', variant: 'destructive' });
-    }
-  };
-
-  const handleToggleWidgetRole = async (widget: WidgetDefinition, role: string) => {
-    const roles = new Set(widget.allowedRoles || []);
-    if (roles.has(role)) roles.delete(role);
-    else roles.add(role);
-    
-    try {
-      await updateWidget(widget.id, { allowedRoles: Array.from(roles) });
-      toast({ title: 'Widget roles updated.' });
-      loadCatalog();
-    } catch {
-      toast({ title: 'Failed to update widget roles.', variant: 'destructive' });
-    }
-  };
-
-  const handleToggleWidgetStatus = async (widget: WidgetDefinition) => {
-    if (!widget.active) {
-      toast({ title: 'Inactive widgets cannot be reactivated via UI.', variant: 'destructive' });
-      return;
-    }
-    if (!confirm(`Deactivate widget "${widget.name}"? It will be removed from all dashboards and cannot be reactivated.`)) return;
-    
-    try {
-      await updateWidget(widget.id, { active: false });
-      toast({ title: 'Widget deactivated.' });
-      loadCatalog();
-      loadDashboard(selectedRole);
-    } catch {
-      toast({ title: 'Failed to deactivate widget.', variant: 'destructive' });
-    }
+  const refreshAll = () => {
+    loadCatalog();
+    loadDashboard(selectedRole);
   };
 
   // Dashboard Layout Updates
@@ -104,7 +219,7 @@ export const WidgetManagementPage: React.FC = () => {
     setSavingDash(true);
     try {
       const payload = placements.map((p, idx) => ({
-        widgetId: p.id,
+        widgetId: p.widgetId, // Fixed mapping to use widgetId
         colSpan: p.colSpan,
         rowSpan: p.rowSpan,
         visible: true,
@@ -157,11 +272,12 @@ export const WidgetManagementPage: React.FC = () => {
     setPlacements((prev) => [
       ...prev,
       {
-        id: widget.id,
+        id: Date.now(), // Temporary ID until saved
+        widgetId: widget.id,
         componentKey: widget.componentKey,
         name: widget.name,
-        colSpan: 1,
-        rowSpan: 1,
+        colSpan: widget.defaultColSpan || 1,
+        rowSpan: widget.defaultRowSpan || 1,
         position: prev.length,
         visible: true,
         widgetType: widget.widgetType,
@@ -173,7 +289,7 @@ export const WidgetManagementPage: React.FC = () => {
   const availableWidgetsForRole = catalog.filter(w => 
     w.active && 
     (w.allowedRoles || []).includes(selectedRole) && 
-    !placements.some(p => p.id === w.id)
+    !placements.some(p => p.widgetId === w.id)
   );
 
   return (
@@ -200,62 +316,9 @@ export const WidgetManagementPage: React.FC = () => {
         {catalogLoading ? (
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {catalog.map(w => (
-              <div key={w.id} className={`bg-card border rounded-xl overflow-hidden flex flex-col transition-all shadow-sm ${!w.active ? 'opacity-60' : ''}`}>
-                {/* Visual Preview */}
-                <div className="bg-muted/30 p-4 flex justify-center items-center border-b min-h-[160px] pointer-events-none transform scale-90 origin-center">
-                  <WidgetContainer name={w.name} className="w-full max-w-sm m-0 shadow-lg bg-card">
-                    <WidgetRenderer componentKey={w.componentKey} name={w.name} />
-                  </WidgetContainer>
-                </div>
-                
-                <div className="p-4 space-y-4 flex-1 flex flex-col">
-                  {/* Name Edit */}
-                  <div>
-                    <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">Widget Name</label>
-                    <Input 
-                      defaultValue={w.name} 
-                      onBlur={(e) => handleUpdateWidgetName(w, e.target.value)}
-                      disabled={!w.active}
-                      className="h-8 font-medium"
-                    />
-                  </div>
-                  
-                  {/* Role Assignment */}
-                  <div className="flex-1">
-                    <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Allowed Roles</label>
-                    <div className="flex flex-wrap gap-2">
-                      {ALL_ROLES.map(role => {
-                        const isAssigned = (w.allowedRoles || []).includes(role);
-                        return (
-                          <div 
-                            key={role} 
-                            onClick={() => w.active && handleToggleWidgetRole(w, role)}
-                            className={`text-[10px] px-2 py-1 rounded-full cursor-pointer transition-colors border ${
-                              !w.active ? 'opacity-50 cursor-not-allowed' : ''
-                            } ${
-                              isAssigned ? 'bg-primary text-primary-foreground border-primary' : 'bg-transparent text-muted-foreground hover:bg-muted'
-                            }`}
-                          >
-                            {role.replace('_', ' ')}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Status Toggle */}
-                  <div className="flex items-center justify-between pt-3 border-t">
-                    <span className="text-sm font-medium">{w.active ? 'Active' : 'Deactivated'}</span>
-                    <Switch 
-                      checked={w.active} 
-                      onCheckedChange={() => handleToggleWidgetStatus(w)}
-                      disabled={!w.active} 
-                    />
-                  </div>
-                </div>
-              </div>
+              <WidgetCatalogCard key={w.id} widget={w} onSaved={refreshAll} />
             ))}
           </div>
         )}
