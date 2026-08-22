@@ -69,7 +69,8 @@ export const useCustomerInquiryPage = () => {
 
   // Push the message to the backend which will appear on the Admin's screen.
   const sendMessage = async () => {
-    if (!chatInput.trim() || !activeId) return;
+    const targetId = viewingHistoryId || activeId;
+    if (!chatInput.trim() || !targetId) return;
     const newMsg = {
       msgId: `MSG-${Date.now()}`,
       user: 'user',
@@ -77,7 +78,7 @@ export const useCustomerInquiryPage = () => {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
     try {
-      await api.post(`/inquiries/${activeId}/messages`, newMsg);
+      await api.post(`/inquiries/${targetId}/messages`, newMsg);
       setChatInput('');
     } catch (err) {
       console.error(err);

@@ -149,7 +149,7 @@ export const AdminNavbar: React.FC = () => {
         {/* Language Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button variant="ghost" size="sm" className="gap-2 hover:bg-secondary hover:text-foreground">
               <Globe className="w-4 h-4" />
               <span className="hidden sm:inline">
                 {languages.find(l => l.code === adminLanguage)?.name || "English"}

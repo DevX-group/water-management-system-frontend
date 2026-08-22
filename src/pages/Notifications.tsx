@@ -25,10 +25,10 @@ const Notifications = () => {
     <MainLayout isAuthenticated={true}>
       <div className="container mx-auto px-4 py-8">
         <div className="mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-slate-900">
+          <h1 className="text-3xl md:text-4xl font-bold mb-2 text-foreground">
             {t('anomaly')} <span className="text-gradient">{t('alerts')}</span>
           </h1>
-          <p className="text-slate-500 text-sm">
+          <p className="text-muted-foreground text-sm">
             {t('subtitle')}
           </p>
         </div>
