@@ -10,8 +10,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   { icon: LayoutDashboard, label: 'Dashboard', id: 'dashboard', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER'] },
-  { icon: Users, label: 'User Management', id: 'users', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
-  { icon: Search, label: 'Customers', id: 'customers', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER'] },
+  { icon: Users, label: 'User Management', id: 'users', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER'] },
   { icon: Gauge, label: 'Meter Reading', id: 'meter', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'METER_READER'] },
   { icon: Receipt, label: 'Billing', id: 'billing', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: CreditCard, label: 'Payments', id: 'payments', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER'] },
@@ -28,7 +27,6 @@ export const NAV_ITEMS: NavItem[] = [
 export const SECTION_PATH_MAP: Record<string, string> = {
   dashboard: '/admin/dashboard',
   users: '/admin/users',
-  customers: '/admin/customers',
   meter: '/admin/meter',
   payments: '/admin/payments',
   billing: '/admin/billing',

@@ -27,22 +27,32 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
   error = null,
   className,
 }) => {
-  const colStyle = `col-span-${Math.min(Math.max(colSpan, 1), 4)}`;
-  const rowStyle = `row-span-${Math.min(Math.max(rowSpan, 1), 4)}`;
+  const colSpanMap: Record<number, string> = {
+    1: 'md:col-span-1',
+    2: 'md:col-span-2',
+    3: 'md:col-span-3',
+    4: 'md:col-span-4',
+  };
+  
+  const rowSpanMap: Record<number, string> = {
+    1: 'row-span-1',
+    2: 'row-span-2',
+    3: 'row-span-3',
+    4: 'row-span-4',
+  };
+
+  const colStyle = colSpanMap[Math.min(Math.max(colSpan, 1), 4)] || 'md:col-span-1';
+  const rowStyle = rowSpanMap[Math.min(Math.max(rowSpan, 1), 4)] || 'row-span-1';
 
   return (
     <div
       className={cn(
-        'glass rounded-2xl p-4 flex flex-col gap-2 min-h-[120px] transition-all duration-300',
-        'hover:shadow-lg hover:-translate-y-0.5',
+        'bg-card text-card-foreground rounded-xl border p-4 flex flex-col gap-2 min-h-[120px] transition-all duration-300',
+        'hover:shadow-md col-span-1',
         colStyle,
         rowStyle,
         className
       )}
-      style={{
-        gridColumn: `span ${colSpan}`,
-        gridRow: `span ${rowSpan}`,
-      }}
     >
       {/* Widget header */}
       <div className="flex items-center justify-between mb-1">
@@ -62,9 +72,34 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
             <p className="text-xs text-destructive text-center">{error}</p>
           </div>
         ) : (
-          children
+          <WidgetErrorBoundary name={name}>
+            {children}
+          </WidgetErrorBoundary>
         )}
       </div>
     </div>
   );
 };
+
+// Internal Error Boundary class for widgets
+class WidgetErrorBoundary extends React.Component<{name: string, children: React.ReactNode}, {hasError: boolean, errorMsg: string}> {
+  constructor(props: {name: string, children: React.ReactNode}) {
+    super(props);
+    this.state = { hasError: false, errorMsg: '' };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, errorMsg: error.message };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex items-center justify-center h-full min-h-[80px]">
+          <p className="text-xs text-destructive text-center">Failed to load widget preview.</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}

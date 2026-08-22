@@ -59,12 +59,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
       </div>
 
       {/* Widget Grid */}
-      <div
-        className="grid gap-4 w-full"
-        style={{
-          gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
-        }}
-      >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
         {config.widgets.map((widget) => (
           <WidgetContainer
             key={widget.id}

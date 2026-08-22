@@ -17,6 +17,15 @@ export const getDashboardConfig = async (): Promise<DashboardConfig> => {
 };
 
 /**
+ * Returns the active dashboard configuration for a specific role.
+ * Restricted to SUPER_ADMIN.
+ */
+export const getDashboardConfigByRole = async (role: string): Promise<DashboardConfig> => {
+  const res = await api.get(`/dashboards/role/${role}`);
+  return res.data;
+};
+
+/**
  * Returns system-wide aggregated statistics.
  * Restricted to SUPER_ADMIN and SYSTEM_ADMIN.
  */

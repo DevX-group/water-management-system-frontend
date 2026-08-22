@@ -107,7 +107,7 @@ const WIDGET_REGISTRY: Record<
     <QuickLinkWidget
       label="Customer Management"
       description="Search and manage customers"
-      to="/admin/customers"
+      to="/admin/users"
       icon={Search}
       variant="default"
     />

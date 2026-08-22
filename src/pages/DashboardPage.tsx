@@ -29,11 +29,11 @@ export const DashboardPage: React.FC = () => {
   };
 
   return (
-    <AdminLayout activeSection="dashboard">
+    <div className="w-full">
       <DashboardGrid
         greeting={roleGreeting[currentAdmin.role] ?? 'Dashboard'}
         subtitle={roleSubtitle[currentAdmin.role]}
       />
-    </AdminLayout>
+    </div>
   );
 };

@@ -1,6 +1,7 @@
 import '@/index.css';
 import React from 'react';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
+import { MainLayout } from '@/components/layout/MainLayout';
 
 /**
  * Customer-facing dashboard.
@@ -9,14 +10,14 @@ import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
  */
 const Dashboard: React.FC = () => {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-6">
+    <MainLayout isAuthenticated={true}>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 xl:px-12 py-6">
         <DashboardGrid
           greeting="Welcome Back"
           subtitle="Your water account at a glance"
         />
       </div>
-    </div>
+    </MainLayout>
   );
 };
 
