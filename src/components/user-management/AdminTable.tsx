@@ -28,6 +28,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
   const getRoleLabel = (role: string) => {
     switch (role) {
       case 'SYSTEM_ADMIN': return t('roles.systemAdmin');
+      case 'CUSTOMER_HANDLER':
       case 'PAYMENT_HANDLER': return t('roles.paymentHandler');
       case 'METER_READER': return t('roles.meterReader');
       case 'SUPER_ADMIN': return t('roles.superAdmin');
