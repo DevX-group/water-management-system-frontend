@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bot } from 'lucide-react';
 import { CUSTOMER_SUBSCRIPTION_NUMBER } from '../../constants/customer';
+import { api } from '../../services/api';
 
 import { ChatToggleButton } from './ChatToggleButton';
 import { ChatMessageList } from './ChatMessageList';
@@ -41,18 +42,13 @@ export const CustomerChatbot = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8081/api/chatbot/ask', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          message: userMessage,
-          subscriptionNumber: CUSTOMER_SUBSCRIPTION_NUMBER
-        })
+      const response = await api.post('/chatbot/ask', {
+        message: userMessage,
+        subscriptionNumber: CUSTOMER_SUBSCRIPTION_NUMBER
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', text: data.response }]);
+      if (response.data && response.data.response) {
+        setMessages(prev => [...prev, { id: Date.now().toString(), sender: 'bot', text: response.data.response }]);
       } else {
         throw new Error('Failed to fetch response');
       }
