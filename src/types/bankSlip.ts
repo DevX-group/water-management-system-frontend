@@ -58,3 +58,11 @@ export interface PageResponse<T> {
     number: number;
     size: number;
 }
+
+export interface BankSlipExtractResponse {
+    amount: number | null;
+    bankPaymentDate: string | null;
+    bankReference: string | null;
+    extracted: boolean;
+    message: string;
+}

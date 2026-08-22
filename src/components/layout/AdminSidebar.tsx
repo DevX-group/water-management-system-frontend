@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '@/contexts/AdminContext';
 import { cn } from '@/lib/utils';
 import { NAV_ITEMS, SECTION_PATH_MAP } from '@/constants/adminNav';
+import { useTranslation } from 'react-i18next';
 
 
 
@@ -20,6 +21,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
 }) => {
   const { currentAdmin } = useAdmin();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const filteredNavItems = NAV_ITEMS.filter(item => item.roles.includes(currentAdmin.role));
 
@@ -45,7 +47,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 )}
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                <span className="font-medium text-sm">{item.label}</span>
+                <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
               </button>
             );
           })}

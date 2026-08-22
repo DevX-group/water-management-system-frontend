@@ -5,10 +5,9 @@ import { Droplets, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
 
 const footerLinks = {
   product: [
-    { name: "Dashboard", path: "/dashboard" },
-    { name: "Bills", path: "/bills" },
-    { name: "Payments", path: "/payments" },
-    { name: "Analytics", path: "/usage" },
+    { name: "Dashboard", path: "/customer/dashboard" },
+    { name: "Bills", path: "/customer/bills" },
+    { name: "Payments", path: "/customer/payments" },
   ],
   company: [
     { name: "About Us", path: "/about" },
@@ -62,7 +61,7 @@ export const Footer = () => {
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <MapPin className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">Colombo, Sri Lanka</span>
+                  <span className="text-sm">Galle, Sri Lanka</span>
                 </div>
               </div>
             </div>
@@ -129,7 +128,7 @@ export const Footer = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-white/50 text-sm text-center">
-          © 2025 WaterFlow. All rights reserved.
+          © 2026 WaterFlow. All rights reserved.
         </p>
         
            

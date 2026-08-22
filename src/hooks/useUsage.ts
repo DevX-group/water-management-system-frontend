@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import type { MonthlyDataPoint, AnalyticsData } from '@/types/usage';
 import { Activity, TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import { api } from '@/services/api';
+import { useTranslation } from "react-i18next";
 
 export const useUsage = () => {
+  const { t } = useTranslation('usage');
   const [activeChart, setActiveChart] = useState<"bar" | "pie" | "mix">("bar");
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -38,10 +40,10 @@ export const useUsage = () => {
 
   const stats = data
     ? [
-        { label: "Average Usage", value: `${data.averageUsage.toLocaleString()} units`, icon: Activity },
-        { label: "Peak Usage",     value: `${data.peakUsage.toLocaleString()} units`,    icon: TrendingUp },
-        { label: "Minimum Usage", value: `${data.minimumUsage.toLocaleString()} units`, icon: TrendingDown },
-        { label: "Total Usage",   value: `${data.totalUsage.toLocaleString()} units`,   icon: BarChart3 },
+        { label: t('stats.average', 'Average Usage'), value: `${data.averageUsage.toLocaleString()} ${t('stats.units', 'units')}`, icon: Activity },
+        { label: t('stats.peak', 'Peak Usage'),     value: `${data.peakUsage.toLocaleString()} ${t('stats.units', 'units')}`,    icon: TrendingUp },
+        { label: t('stats.minimum', 'Minimum Usage'), value: `${data.minimumUsage.toLocaleString()} ${t('stats.units', 'units')}`, icon: TrendingDown },
+        { label: t('stats.total', 'Total Usage'),   value: `${data.totalUsage.toLocaleString()} ${t('stats.units', 'units')}`,   icon: BarChart3 },
       ]
     : [];
 

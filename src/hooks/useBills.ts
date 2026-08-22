@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import type { BillResponse } from '@/types/billing';
 import { CUSTOMER_SUBSCRIPTION_NUMBER } from '@/constants/customer';
 import { api } from '@/services/api';
+import { generateWaterBillPDF } from '@/util/generateWaterBillPDF';
+import type { CustomerProfile } from '@/components/profile/ProfileForm';
 
 const SUBSCRIPTION_NUMBER = CUSTOMER_SUBSCRIPTION_NUMBER;
 
@@ -18,12 +20,18 @@ export const useBills = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const itemsPerPage = 5;
 
+  const [profile, setProfile] = useState<CustomerProfile | null>(null);
+
   // Fetch the specific bills for the logged in customer.
   useEffect(() => {
     api.get<BillResponse[]>(`/bills/customer/me`)
       .then(response => setBills(response.data))
       .catch(console.error)
       .finally(() => setLoading(false));
+
+    api.get('/customers/me')
+      .then(res => setProfile(res.data))
+      .catch(console.error);
   }, []);
 
   const filteredBills = bills.filter(b => {
@@ -32,16 +40,11 @@ export const useBills = () => {
     return matchSearch && matchStatus;
   });
 
-  // Handles downloading the bill as a PDF directly from the backend.
+  // Handles downloading the bill as a PDF directly from the frontend template.
 
   const handleDownload = async (bill: BillResponse) => {
     try {
-      const res = await api.get(`/bills/${bill.billId}/download`, { responseType: 'blob' });
-      const blob = res.data as Blob;
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = `bill-${bill.billingPeriod}.pdf`; a.click();
-      window.URL.revokeObjectURL(url);
+      await generateWaterBillPDF(bill, profile);
     } catch (e) { console.error(e); }
   };
 
@@ -61,6 +64,7 @@ export const useBills = () => {
   return {
     bills,
     loading,
+    profile,
     searchTerm,
     statusFilter,
     viewingBill,

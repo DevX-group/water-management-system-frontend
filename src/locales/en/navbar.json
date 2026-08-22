@@ -1,0 +1,34 @@
+{
+  "customer": {
+    "dashboard": "Dashboard",
+    "bills": "Bills",
+    "payments": "Payments",
+    "usage": "Usage",
+    "alerts": "Alerts",
+    "inquiry": "Inquiry",
+    "signin": "Sign in",
+    "getStarted": "Get Started",
+    "profile": "Profile",
+    "settings": "Settings",
+    "signout": "Sign out",
+    "myAccount": "My Account"
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "users": "User Management",
+    "meter": "Meter Reading",
+    "billing": "Billing",
+    "payments": "Payments",
+    "messaging": "Messaging",
+    "internal-chat": "Internal Chat",
+    "inquiry": "Inquiry",
+    "reports": "Reports",
+    "predictions": "Predictions",
+    "blog": "Blog",
+    "widget-management": "Widgets",
+    "system-settings": "System Settings",
+    "myAccount": "My Account",
+    "profileSettings": "Profile Settings",
+    "logout": "Logout"
+  }
+}

@@ -3,6 +3,12 @@
     "title": "මීටර කියවීම",
     "subtitle": "ජල මීටර කියවීමක් ඉදිරිපත් කරන්න"
   },
+  "network": {
+    "online": "සක්‍රියයි",
+    "offlineMode": "නොබැඳි මාදිලිය",
+    "syncing": "සමමුහුර්ත වෙමින් {{count}}...",
+    "saved": "{{count}} ක් සුරකින ලදී"
+  },
   "form": {
     "meterNumber": "මීටර අංකය",
     "meterNumberPlaceholder": "උදා., MTR-001",
@@ -47,6 +53,25 @@
   "status": {
     "PENDING": "අපේක්ෂිත",
     "PAID": "ගෙවා ඇත",
-    "OVERDUE": "කල් ඉකුත්"
+    "OVERDUE": "කල් ඉකුත්",
+    "PENDING_OFFLINE": "නොබැඳිව සුරකින ලදී"
+  },
+  "toasts": {
+    "syncingTitle": "සමමුහුර්ත වෙමින්...",
+    "syncingDesc": "සුරකින ලද කියවීම් {{count}} ක් උඩුගත කරමින් පවතී.",
+    "syncCompleteTitle": "සමමුහුර්තකරණය සම්පූර්ණයි",
+    "syncCompleteDesc": "කියවීම් {{count}} ක් සාර්ථකව උඩුගත කරන ලදී.",
+    "backOnlineTitle": "නැවත සක්‍රියයි",
+    "backOnlineDesc": "අන්තර්ජාල සම්බන්ධතාවය නැවත ලැබුණි.",
+    "offlineActiveTitle": "නොබැඳි මාදිලිය සක්‍රියයි",
+    "offlineActiveDesc": "කියවීම් දේශීයව සුරකිනු ඇත.",
+    "loadErrorTitle": "දෝෂයකි",
+    "loadErrorDesc": "අද කියවීම් පූරණය කිරීමට නොහැකි විය.",
+    "savedOfflineTitle": "නොබැඳිව සුරකින ලදී 📶",
+    "savedOfflineDesc": "මීටරය {{meterNo}} — භාවිතය: ඒකක {{usage}} | ඇස්තමේන්තුගත බිල: LKR {{total}}",
+    "submittedTitle": "කියවීම ඉදිරිපත් කරන ලදී ✓",
+    "submittedDesc": "මීටරය {{meterNo}} — භාවිතය: ඒකක {{usage}} | බිල්පත් අංකය #{{billId}}: LKR {{total}}",
+    "submissionFailedTitle": "ඉදිරිපත් කිරීම අසාර්ථක විය",
+    "submissionFailedDesc": "යම් වරදක් සිදුවිය."
   }
 }

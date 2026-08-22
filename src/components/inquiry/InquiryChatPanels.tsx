@@ -57,21 +57,7 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
       {!isHistory && showTyping && <InquiryTypingIndicator />}
       <div ref={messagesEndRef} />
     </CardContent>
-    {isHistory ? (
-      inquiry.status === 'resolved' ? (  // Show resolved banner if inquiry is resolved
-        <div className="p-4 bg-success/5 border-t flex items-center justify-center gap-2 text-success">
-          <CheckCircle size={16} /><span className="text-xs font-medium">{t('chat.resolvedBanner')}</span>
-        </div>
-      ) : (
-        <div className="p-4 bg-secondary/10 border-t">
-          <p className="text-xs text-muted-foreground text-center italic">
-            <Trans i18nKey="chat.statusBanner" t={t} values={{ status: t(`status.${inquiry.status.toLowerCase()}`) || inquiry.status }}>
-              This inquiry is currently <strong>{{status: inquiry.status}}</strong>. Our team will respond shortly.
-            </Trans>
-          </p>
-        </div>
-      )
-    ) : (
+    {inquiry.status.toLowerCase() === 'open' ? (
       <div className="p-4 bg-secondary/10 border-t">
         <div className="flex gap-2">
           <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder={t('chat.typePlaceholder')} className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
@@ -79,6 +65,18 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
             <Send size={18} />
           </Button>
         </div>
+      </div>
+    ) : inquiry.status.toLowerCase() === 'resolved' ? (
+      <div className="p-4 bg-success/5 border-t flex items-center justify-center gap-2 text-success">
+        <CheckCircle size={16} /><span className="text-xs font-medium">{t('chat.resolvedBanner')}</span>
+      </div>
+    ) : (
+      <div className="p-4 bg-secondary/10 border-t">
+        <p className="text-xs text-muted-foreground text-center italic">
+          <Trans i18nKey="chat.statusBanner" t={t} values={{ status: t(`status.${inquiry.status.toLowerCase()}`) || inquiry.status }}>
+            This inquiry is currently <strong>{{status: inquiry.status}}</strong>. Our team will respond shortly.
+          </Trans>
+        </p>
       </div>
     )}
   </Card>

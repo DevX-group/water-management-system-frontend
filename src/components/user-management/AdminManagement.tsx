@@ -6,7 +6,10 @@ import { AdminTable } from '@/components/user-management/AdminTable';
 import { AddAdminDialog } from '@/components/user-management/AddAdminDialog';
 import { EditAdminDialog } from '@/components/user-management/EditAdminDialog';
 
+import { useTranslation } from 'react-i18next';
+
 export const AdminManagement: React.FC = () => {
+  const { t } = useTranslation('userManagement');
   const am = useAdminManagement();
 
   return (
@@ -14,13 +17,13 @@ export const AdminManagement: React.FC = () => {
       <div className="relative">
         <div className="flex justify-end mb-4">
           <Button onClick={() => am.setShowAddDialog(true)}>
-            <Plus className="w-4 h-4 mr-2" />Create Admin
+            <Plus className="w-4 h-4 mr-2" />{t('createAdmin')}
           </Button>
         </div>
 
         {am.loading ? (
           <div className="py-12 text-center text-muted-foreground bg-card rounded-md border border-border">
-            Loading administrators...
+            {t('loadingAdmins')}
           </div>
         ) : (
           <AdminTable 

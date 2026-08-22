@@ -1,11 +1,13 @@
 import '@/index.css';
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Loader2 } from 'lucide-react';
+import { Check, Loader2, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { LiveMeterScanner } from './LiveMeterScanner';
+import { api } from '@/services/api';
 
 interface FormData {
   meterNumber:        string;
@@ -13,6 +15,7 @@ interface FormData {
   previousReading:    string;
   currentReading:     string;
   readingDate:        string;
+  imageUrl?:          string;
   notes:              string;
 }
 
@@ -22,12 +25,17 @@ interface MeterReadingFormProps {
   onChange:    (data: FormData) => void;
   onSubmit:    (e: React.FormEvent) => void;
   onClear:     () => void;
+  onMeterNumberBlur?: (meterNumber: string) => void;
+  onSubscriptionNumberBlur?: (subNumber: string) => void;
 }
 
 export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
-  formData, submitting, onChange, onSubmit, onClear,
+  formData, submitting, onChange, onSubmit, onClear, onMeterNumberBlur, onSubscriptionNumberBlur
 }) => {
   const { t } = useTranslation('meterReading');
+  const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
+
   const usage = formData.previousReading && formData.currentReading      //
     ? Math.max(0, Number(formData.currentReading) - Number(formData.previousReading))
     : 0;
@@ -39,31 +47,47 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
           <div className="space-y-2">
             <Label htmlFor="meterNumber">{t('form.meterNumber')}</Label>
             <Input id="meterNumber" placeholder={t('form.meterNumberPlaceholder')} value={formData.meterNumber} required
-              onChange={(e) => onChange({ ...formData, meterNumber: e.target.value })} />
+              onChange={(e) => onChange({ ...formData, meterNumber: e.target.value })} 
+              onBlur={() => onMeterNumberBlur && formData.meterNumber && onMeterNumberBlur(formData.meterNumber)} />
           </div>
           <div className="space-y-2">
             <Label htmlFor="subscriptionNumber">{t('form.subscriptionNumber')}</Label>
             <Input id="subscriptionNumber" placeholder={t('form.subscriptionNumberPlaceholder')} value={formData.subscriptionNumber} required
-              onChange={(e) => onChange({ ...formData, subscriptionNumber: e.target.value })} />
+              onChange={(e) => onChange({ ...formData, subscriptionNumber: e.target.value })} 
+              onBlur={() => onSubscriptionNumberBlur && formData.subscriptionNumber && onSubscriptionNumberBlur(formData.subscriptionNumber)} />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label htmlFor="readingDate">{t('form.readingDate')}</Label>
-          <Input id="readingDate" type="date" value={formData.readingDate} required
-            onChange={(e) => onChange({ ...formData, readingDate: e.target.value })} />
+          <Input id="readingDate" type="date" value={formData.readingDate} 
+            onChange={() => {
+            }} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="space-y-2">
             <Label htmlFor="previousReading">{t('form.previousReading')}</Label>
-            <Input id="previousReading" type="number" min={0} placeholder="0" value={formData.previousReading} required
+            <Input id="previousReading" type="number" placeholder="0" value={formData.previousReading} required
               onChange={(e) => onChange({ ...formData, previousReading: e.target.value })} />
+            {formData.previousReading && Number(formData.previousReading) < 0 && (
+              <p className="text-sm text-destructive font-medium">Cannot be negative</p>
+            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="currentReading">{t('form.currentReading')}</Label>
-            <Input id="currentReading" type="number" min={0} placeholder="0" value={formData.currentReading} required
+            <Input id="currentReading" type="number" placeholder="0" value={formData.currentReading} required
               onChange={(e) => onChange({ ...formData, currentReading: e.target.value })} />
+            {formData.currentReading && Number(formData.currentReading) <= 0 && (
+              <p className="text-sm text-destructive font-medium">Must be greater than 0</p>
+            )}
+            {formData.currentReading && formData.previousReading && Number(formData.currentReading) > 0 && Number(formData.currentReading) < Number(formData.previousReading) && (
+              <p className="text-sm text-destructive font-medium">Cannot be less than previous</p>
+            )}
+            <Button type="button" variant="outline" className="w-full mt-2" onClick={() => setIsScannerOpen(true)}>
+              <Camera className="w-4 h-4 mr-2" />
+              Get image
+            </Button>
           </div>
           <div className="space-y-2">
             <Label>{t('form.usage')}</Label>
@@ -86,6 +110,40 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
           </Button>
         </div>
       </form>
+
+      <LiveMeterScanner 
+        isOpen={isScannerOpen} 
+        onClose={() => setIsScannerOpen(false)} 
+        onDetected={async (reading, blob) => {
+          if (blob) {
+            // Show local preview immediately so user can see the captured image
+            const localPreviewUrl = URL.createObjectURL(blob);
+            onChange({ ...formData, currentReading: reading, imageUrl: localPreviewUrl });
+
+            // Upload to backend in background
+            try {
+              const formDataUpload = new FormData();
+              formDataUpload.append('file', blob, 'meter-reading.jpg');
+              const res = await api.post('/meter-readings/upload-image', formDataUpload, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+              });
+              // Replace local preview URL with permanent server URL
+              onChange({ ...formData, currentReading: reading, imageUrl: res.data.url });
+            } catch (err) {
+              console.error("Image upload failed", err);
+              // Keep local preview - image won't persist after refresh but it's still visible
+            }
+          } else if (reading) {
+            onChange({ ...formData, currentReading: reading });
+          }
+        }} 
+      />
+      {formData.imageUrl && (
+        <div className="mt-4">
+          <p className="text-sm font-medium mb-2">Captured Meter Image</p>
+          <img src={formData.imageUrl} alt="Meter" className="w-48 h-auto rounded-md border shadow-sm" />
+        </div>
+      )}
     </div>
   );
 };

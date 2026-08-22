@@ -2,9 +2,13 @@ import '@/index.css';
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
-export const TermsOfService = () => (
-  <MainLayout isAuthenticated={true}>
+export const TermsOfService = () => {
+  const { isAuthenticated } = useAuth();
+  
+  return (
+  <MainLayout isAuthenticated={isAuthenticated}>
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold mb-6 text-gradient">Terms & Service</h1>
       <Card className="border-none shadow-card">
@@ -33,4 +37,5 @@ export const TermsOfService = () => (
       </Card>
     </div>
   </MainLayout>
-);
+  );
+};

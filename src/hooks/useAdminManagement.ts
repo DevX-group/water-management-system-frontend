@@ -3,6 +3,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AdminUser, AdminFormData, AdminStatus } from '@/types/admin';
 import { getAdmins, createAdmin, updateAdmin, updateAdminStatus } from '@/services/adminService';
 import { validateEmail, validatePhone, validateNIC, validateName } from '@/validations/userValidations';
+import { useTranslation } from 'react-i18next';
 
 const EMPTY_FORM: AdminFormData = {
   nic: '',
@@ -13,6 +14,7 @@ const EMPTY_FORM: AdminFormData = {
 };
 
 export const useAdminManagement = () => {
+  const { t } = useTranslation('userManagement');
   const { toast } = useToast();
   
   const [admins, setAdmins] = useState<AdminUser[]>([]);
@@ -31,7 +33,7 @@ export const useAdminManagement = () => {
       setAdmins(data);
     } catch (error) {
       console.error("Failed to fetch admins:", error);
-      toast({ title: 'Error', description: 'Failed to load admin accounts.', variant: 'destructive' });
+      toast({ title: t('loadErrorTitle'), description: t('loadAdminsErrorDesc'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -73,10 +75,10 @@ export const useAdminManagement = () => {
       setAdmins(prev => [newAdmin, ...prev]);
       setShowAddDialog(false);
       setFormData(EMPTY_FORM);
-      toast({ title: 'Admin Created', description: `Admin account (${newAdmin.nic}) created successfully.` });
+      toast({ title: t('adminCreatedTitle'), description: t('adminCreatedDesc', { nic: newAdmin.nic }) });
     } catch (error: any) {
       console.error("Failed to create admin:", error);
-      toast({ title: 'Creation Failed', description: error?.response?.data?.message || 'Failed to create admin.', variant: 'destructive' });
+      toast({ title: t('creationFailed'), description: error?.response?.data?.message || t('creationFailed'), variant: 'destructive' });
     }
   };
 
@@ -113,10 +115,10 @@ export const useAdminManagement = () => {
       setEditingAdmin(null);
       setEditFormData(EMPTY_FORM);
       setEditErrors({});
-      toast({ title: 'Admin Updated', description: `Admin account (${updatedAdmin.nic}) updated successfully.` });
+      toast({ title: t('adminUpdatedTitle'), description: t('adminUpdatedDesc', { nic: updatedAdmin.nic }) });
     } catch (error: any) {
       console.error("Failed to update admin:", error);
-      toast({ title: 'Update Failed', description: error?.response?.data?.message || 'Failed to update admin.', variant: 'destructive' });
+      toast({ title: t('updateFailed'), description: error?.response?.data?.message || t('updateFailed'), variant: 'destructive' });
     }
   };
 
@@ -130,10 +132,10 @@ export const useAdminManagement = () => {
     try {
       const updatedAdmin = await updateAdminStatus(id, newStatus);
       setAdmins(prev => prev.map(a => a.id === id ? updatedAdmin : a));
-      toast({ title: 'Status Updated', description: 'Admin status changed successfully.' });
+      toast({ title: t('adminStatusUpdatedTitle'), description: t('adminStatusUpdatedDesc') });
     } catch (error: any) {
       console.error("Failed to update status:", error);
-      toast({ title: 'Update Failed', description: 'Failed to change admin status.', variant: 'destructive' });
+      toast({ title: t('updateFailed'), description: t('adminStatusUpdateFailedDesc'), variant: 'destructive' });
     }
   };
 

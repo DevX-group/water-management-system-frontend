@@ -1,6 +1,6 @@
 import html2pdf from 'html2pdf.js';
 
-export const exportPDF = (monthlyDataByYear, selectedYearOrFileName, maybeFileName) => {
+export const exportPDF = async (monthlyDataByYear, selectedYearOrFileName, maybeFileName) => {
   if (!monthlyDataByYear) return Promise.reject(new Error('monthlyDataByYear is required'));
 
   // Support two call styles:
@@ -49,23 +49,22 @@ export const exportPDF = (monthlyDataByYear, selectedYearOrFileName, maybeFileNa
 
   // build a clean DOM container for the PDF content
   const container = document.createElement('div');
-  container.style.padding = '20px';
-  container.style.fontFamily = 'Arial, Helvetica, sans-serif';
-  container.style.color = '#111';
-//   container.style.background = '#fff';
-  // set a fixed width that maps well to A4 rendering
-  container.style.width = '800px';
-  container.style.boxSizing = 'border-box';
-  // position it in the viewport so html2canvas can render it properly
-  container.style.position = 'fixed';
-  container.style.left = '8px';
-  container.style.top = '8px';
-  container.style.zIndex = '2147483647';
+
+container.style.position = 'absolute';
+container.style.left = '-9999px';
+container.style.top = '0';
+container.style.width = '800px';
+container.style.background = '#ffffff';
+container.style.color = '#000000';
+container.style.fontFamily = 'Arial, sans-serif';
+container.style.padding = '20px';
+container.style.zIndex = '99999';
 
   const title = document.createElement('h2');
   title.textContent = `Monthly Report — ${selectedYear}`;
   title.style.margin = '0 0 12px 0';
   title.style.fontSize = '18px';
+  title.style.color = '#000000';
   container.appendChild(title);
 
   const table = document.createElement('table');
@@ -78,6 +77,7 @@ export const exportPDF = (monthlyDataByYear, selectedYearOrFileName, maybeFileNa
   ['Month', 'Usage (L)', 'Revenue (LKR)'].forEach(text => {
     const th = document.createElement('th');
     th.textContent = text;
+    th.style.color = '#000000';
     th.style.border = '1px solid #ddd';
     th.style.padding = '8px';
     th.style.textAlign = 'left';
@@ -95,18 +95,21 @@ export const exportPDF = (monthlyDataByYear, selectedYearOrFileName, maybeFileNa
     monthTd.style.border = '1px solid #ddd';
     monthTd.style.padding = '8px';
     monthTd.style.textAlign = 'left';
+    monthTd.style.color = '#000000';
 
     const usageTd = document.createElement('td');
     usageTd.textContent = item?.usage != null ? Number(item.usage).toLocaleString() : '';
     usageTd.style.border = '1px solid #ddd';
     usageTd.style.padding = '8px';
     usageTd.style.textAlign = 'right';
+    usageTd.style.color = '#000000';
 
     const revenueTd = document.createElement('td');
     revenueTd.textContent = item?.revenue != null ? Number(item.revenue).toLocaleString() : '';
     revenueTd.style.border = '1px solid #ddd';
     revenueTd.style.padding = '8px';
     revenueTd.style.textAlign = 'right';
+    revenueTd.style.color = '#000000';
 
     tr.appendChild(monthTd);
     tr.appendChild(usageTd);
@@ -116,14 +119,28 @@ export const exportPDF = (monthlyDataByYear, selectedYearOrFileName, maybeFileNa
 
   table.appendChild(tbody);
   container.appendChild(table);
-  document.body.appendChild(container);
+document.body.appendChild(container);
 
-  return html2pdf()
+container.getBoundingClientRect();
+
+await new Promise(requestAnimationFrame);
+await new Promise(resolve => setTimeout(resolve, 500));
+
+
+
+const worker = html2pdf();
+  return worker
     .set({
       margin: 10,
       filename: fileName,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 3 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+  allowTaint: true,
+  logging: true,
+},
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     })
     .from(container)
@@ -134,7 +151,3 @@ export const exportPDF = (monthlyDataByYear, selectedYearOrFileName, maybeFileNa
       throw err;
     });
 };
-
-// Usage:
-// exportPDF(monthlyDataByYear, '2024', 'monthly-report-2024.pdf')
-// monthlyDataByYear should be an object keyed by year, value is an array of items like { month, usage, revenue }

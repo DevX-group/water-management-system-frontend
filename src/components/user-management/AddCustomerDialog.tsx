@@ -57,8 +57,8 @@ export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
               className={errors.phone ? 'border-red-500 border-2' : ''} />
           </div>
           <div className="space-y-2">
-            <Label>Email *</Label>
-            <Input placeholder="Enter Email" value={formData.email}
+            <Label>{t('emailRequired')}</Label>
+            <Input placeholder={t('enterEmail')} value={formData.email}
               onChange={(e) => { setFormData({ ...formData, email: e.target.value }); onFieldChange('email', e.target.value); }}
               className={errors.email ? 'border-red-500 border-2' : ''} />
           </div>
@@ -84,7 +84,7 @@ export const AddCustomerDialog: React.FC<AddCustomerDialogProps> = ({
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(REGION_CONFIG).map(([key, value]) => (
-                  <SelectItem key={key} value={value.code}>{value.label}</SelectItem>
+                  <SelectItem key={key} value={value.code}>{t(`regions.${value.code}`, value.label)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>

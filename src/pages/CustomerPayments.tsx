@@ -10,7 +10,7 @@ import {
   initiatePayment,
 } from "@/services/paymentService";
 import { toast } from "@/components/ui/sonner";
-import { uploadBankSlip, getMySlips, deleteSlip } from "@/services/bankSlipService";
+import { uploadBankSlip, getMySlips, deleteSlip, extractBankSlipData } from "@/services/bankSlipService";
 import type {
   CurrentBillResponse,
   PaymentHistoryItemResponse,
@@ -203,7 +203,7 @@ export const CustomerPayments = () => {
   const [toastMsg, setToastMsg] = useState<string | null>(null);
   const showToast = (msg: string) => {
     setToastMsg(msg);
-    setTimeout(() => setToastMsg(null), 3500);
+    setTimeout(() => setToastMsg(null), 6000);
   };
 
   // ── Payment handler ─────────────────────────────────────────────────────────
@@ -277,15 +277,63 @@ export const CustomerPayments = () => {
   const [dragging, setDragging] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFile = (file: File) => {
+  // ── AI Slip Auto-Extraction ───────────────────────────────────────────
+  const handleFile = async (file: File) => {
     const maxSize = 5 * 1024 * 1024;
     const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
     if (file.size > maxSize) { removeFile(); showToast(t("payments.bankSlipUpload.maxFileSize")); return; }
     if (!allowedTypes.includes(file.type)) { removeFile(); showToast(t("payments.bankSlipUpload.allowedFileTypes")); return; }
+
     setSlipForm((p) => ({ ...p, file }));
+
+    // AI Vision extraction
+    try {
+      setIsExtracting(true);
+      showToast("AI scanning bank slip...");
+
+      const extracted = await extractBankSlipData(file);
+
+      if (extracted.extracted) {
+        const hasAmount = extracted.amount !== null && extracted.amount !== undefined;
+        const hasDate = !!extracted.bankPaymentDate;
+        const hasRef = !!extracted.bankReference;
+
+        setSlipForm((prev) => ({
+          ...prev,
+          amount: hasAmount ? String(extracted.amount) : prev.amount,
+          date: hasDate ? extracted.bankPaymentDate : prev.date,
+          reference: hasRef ? extracted.bankReference : prev.reference,
+        }));
+
+        const filled: string[] = [];
+        const missing: string[] = [];
+
+        if (hasAmount) filled.push("Amount"); else missing.push("Amount");
+        if (hasDate) filled.push("Date"); else missing.push("Date");
+        if (hasRef) filled.push("Reference"); else missing.push("Reference");
+
+        if (missing.length === 0) {
+          showToast("All fields auto-filled by AI! Check and edit if needed.");
+        } else if (filled.length === 0) {
+          showToast("Could not auto-read slip. Please fill all fields manually.");
+        } else {
+          showToast(
+            `Auto-filled: ${filled.join(", ")}  |  Fill manually: ${missing.join(", ")}`
+          );
+        }
+      } else {
+        showToast("Could not auto-read slip. Please fill fields manually.");
+      }
+    } catch (err) {
+      console.warn("AI extraction unavailable:", err);
+    } finally {
+      setIsExtracting(false);
+    }
   };
+
   const handleFileInput = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) handleFile(file);
@@ -323,7 +371,7 @@ export const CustomerPayments = () => {
         status: uploadResponse.status,
         uploadedAt: uploadResponse.uploadedAt,
         bankPaymentDate: uploadResponse.bankPaymentDate,
-        reviewedAt: null as any, // temporary pending state
+        reviewedAt: null as any,
       };
 
       setBankSlips((prev) => [newSlip, ...prev]);
@@ -418,7 +466,7 @@ export const CustomerPayments = () => {
             dragging={dragging}
             setDragging={setDragging}
             submitSuccess={submitSuccess}
-            uploading={uploading}
+            uploading={uploading || isExtracting}
             fileInputRef={fileInputRef}
             handleFile={handleFile}
             handleFileInput={handleFileInput}
@@ -469,7 +517,7 @@ export const CustomerPayments = () => {
 
       {/* ── Toast ── */}
       {toastMsg && (
-        <div className="fixed bottom-8 right-8 z-50 rounded-xl bg-foreground text-background px-5 py-3.5 text-sm font-medium shadow-lg animate-in slide-in-from-bottom-4">
+        <div className="fixed bottom-24 right-8 z-50 rounded-xl bg-foreground text-background px-5 py-3.5 text-sm font-medium shadow-lg animate-in slide-in-from-bottom-4 flex items-center gap-2">
           {toastMsg}
         </div>
       )}

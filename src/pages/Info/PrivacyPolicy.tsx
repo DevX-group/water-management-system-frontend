@@ -2,9 +2,13 @@ import '@/index.css';
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
-export const PrivacyPolicy = () => (
-  <MainLayout isAuthenticated={true}>
+export const PrivacyPolicy = () => {
+  const { isAuthenticated } = useAuth();
+  
+  return (
+  <MainLayout isAuthenticated={isAuthenticated}>
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="text-center mb-10">
         <h1 className="text-4xl font-bold mb-4 text-gradient">Privacy Policy</h1>
@@ -41,4 +45,5 @@ export const PrivacyPolicy = () => (
       </Card>
     </div>
   </MainLayout>
-);
+  );
+};

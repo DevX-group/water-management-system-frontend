@@ -9,6 +9,7 @@ import {
   validateName,
   validateAddress,
 } from '@/validations/userValidations';
+import { useTranslation } from 'react-i18next';
 
 export const REGION_CONFIG = {
   north:  { code: 'R001', label: 'North' },
@@ -24,6 +25,7 @@ const EMPTY_FORM: CustomerFormData = {
 };
 
 export const useUserManagement = (initialCustomers: Customer[] = []) => {
+  const { t } = useTranslation('userManagement');
   const { toast } = useToast();
   
   const [customers, setCustomers] = useState<Customer[]>([]);
@@ -59,7 +61,7 @@ export const useUserManagement = (initialCustomers: Customer[] = []) => {
       }
     } catch (error) {
       console.error("Failed to fetch customers:", error);
-      toast({ title: 'Error', description: 'Failed to load customers from the server', variant: 'destructive' });
+      toast({ title: t('loadErrorTitle'), description: t('loadErrorDesc'), variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -128,10 +130,10 @@ export const useUserManagement = (initialCustomers: Customer[] = []) => {
       setCustomers(prev => [newCustomer, ...prev]);
       setShowAddDialog(false);
       handleResetForm();
-      toast({ title: 'Customer Added', description: `${formData.name} has been registered successfully.` });
+      toast({ title: t('customerAddedTitle'), description: t('customerAddedDesc', { name: formData.name }) });
     } catch (error: any) {
       console.error("Failed to create customer:", error);
-      toast({ title: 'Registration Failed', description: error?.response?.data?.message || "Failed to create customer.", variant: 'destructive' });
+      toast({ title: t('registrationFailed'), description: error?.response?.data?.message || t('registrationFailed'), variant: 'destructive' });
     }
   };
 
@@ -159,19 +161,19 @@ export const useUserManagement = (initialCustomers: Customer[] = []) => {
     if (!editFormData || !editingCustomer) return;
     
     if (!validateName(editFormData.name)) {
-      toast({ title: 'Error', description: 'Customer Name must be at least 2 characters', variant: 'destructive' });
+      toast({ title: t('loadErrorTitle'), description: t('valMinName'), variant: 'destructive' });
       return;
     }
     if (!validateNIC(editFormData.nic)) {
-      toast({ title: 'Error', description: 'Please enter a valid NIC number', variant: 'destructive' });
+      toast({ title: t('loadErrorTitle'), description: t('valValidNIC'), variant: 'destructive' });
       return;
     }
     if (!validatePhone(editFormData.phone)) {
-      toast({ title: 'Error', description: 'Please enter a valid phone number', variant: 'destructive' });
+      toast({ title: t('loadErrorTitle'), description: t('valValidPhone'), variant: 'destructive' });
       return;
     }
     if (editFormData.email && !validateEmail(editFormData.email)) {
-      toast({ title: 'Error', description: 'Please enter a valid email address', variant: 'destructive' });
+      toast({ title: t('loadErrorTitle'), description: t('valValidEmail'), variant: 'destructive' });
       return;
     }
     
@@ -182,24 +184,24 @@ export const useUserManagement = (initialCustomers: Customer[] = []) => {
       ));
       setEditingCustomer(null);
       setEditFormData(EMPTY_FORM);
-      toast({ title: 'Success', description: `${editFormData.name} has been updated successfully.` });
+      toast({ title: t('customerUpdatedTitle'), description: t('customerUpdatedDesc', { name: editFormData.name }) });
     } catch (error: any) {
       console.error("Failed to update customer:", error);
-      toast({ title: 'Update Failed', description: error?.response?.data?.message || "Failed to update customer.", variant: 'destructive' });
+      toast({ title: t('updateFailed'), description: error?.response?.data?.message || t('updateFailed'), variant: 'destructive' });
     }
   };
 
   const handleDeleteCustomer = async (customerId: string, customerName: string) => {
-    if (window.confirm(`Are you sure you want to deactivate ${customerName}? This action can be reversed by reactivating the account.`)) {
+    if (window.confirm(t('confirmDeactivateCustomer', { name: customerName }))) {
       try {
         await deleteCustomer(customerId);
         setCustomers(customers.map(c =>
           c.id === customerId ? { ...c, status: 'INACTIVE', isDeleted: true } : c
         ));
-        toast({ title: 'Customer Deactivated', description: `${customerName} has been deactivated.` });
+        toast({ title: t('customerDeactivatedTitle'), description: t('customerDeactivatedDesc', { name: customerName }) });
       } catch (error: any) {
         console.error("Failed to delete customer:", error);
-        toast({ title: 'Delete Failed', description: error?.response?.data?.message || "Failed to delete customer.", variant: 'destructive' });
+        toast({ title: t('deleteFailed'), description: error?.response?.data?.message || t('deleteFailed'), variant: 'destructive' });
       }
     }
   };

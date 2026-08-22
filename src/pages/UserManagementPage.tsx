@@ -17,19 +17,19 @@ export const UserManagementPage = () => {
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
-        <h1 className="text-2xl font-bold text-foreground">User Management</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
         <p className="text-muted-foreground">
           {canManageAdmins
-            ? "Manage customer and admin accounts"
-            : "Manage all customer accounts and personal details"}
+            ? t('subtitleWithAdmins')
+            : t('subtitle')}
         </p>
       </div>
 
       {canManageAdmins ? (
         <Tabs defaultValue="customers" className="w-full animate-fade-in">
           <TabsList className="mb-4">
-            <TabsTrigger value="customers">Customers</TabsTrigger>
-            <TabsTrigger value="admins">Admins</TabsTrigger>
+            <TabsTrigger value="customers">{t('customersTab')}</TabsTrigger>
+            <TabsTrigger value="admins">{t('adminsTab')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="customers" className="mt-0">

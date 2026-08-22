@@ -72,7 +72,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
           placeholder={t('searchPlaceholder')}
           value={searchQuery}
           onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
-          className="pl-10 bg-accent/30"
+          className="pl-10 bg-background"
         />
       </div>
 
@@ -81,24 +81,24 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="space-y-1">
           <Label className="text-xs font-semibold">{t('filterByStatus')}</Label>
           <Select value={filterStatus} onValueChange={(v) => { setFilterStatus(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allStatus')} /></SelectTrigger>
+            <SelectTrigger className="bg-background"><SelectValue placeholder={t('allStatus')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="ACTIVE">Active</SelectItem>
-              <SelectItem value="INACTIVE">Inactive</SelectItem>
-              <SelectItem value="PENDING_ACTIVATION">Pending</SelectItem>
-              <SelectItem value="SUSPENDED">Suspended</SelectItem>
+              <SelectItem value="all">{t('allStatus')}</SelectItem>
+              <SelectItem value="ACTIVE">{t('active')}</SelectItem>
+              <SelectItem value="INACTIVE">{t('inactive')}</SelectItem>
+              <SelectItem value="PENDING_ACTIVATION">{t('pending')}</SelectItem>
+              <SelectItem value="SUSPENDED">{t('suspended')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
         <div className="space-y-1">
           <Label className="text-xs font-semibold">{t('filterByRegion')}</Label>
           <Select value={filterRegion} onValueChange={(v) => { setFilterRegion(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allRegions')} /></SelectTrigger>
+            <SelectTrigger className="bg-background"><SelectValue placeholder={t('allRegions')} /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Regions</SelectItem>
+              <SelectItem value="all">{t('allRegions')}</SelectItem>
               {Object.values(REGION_CONFIG).map((val) => (
-                <SelectItem key={val.code} value={val.code}>{val.label}</SelectItem>
+                <SelectItem key={val.code} value={val.code}>{t(`regions.${val.code}`, val.label)}</SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -106,7 +106,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <div className="space-y-1">
           <Label className="text-xs font-semibold">{t('filterByConnectionType')}</Label>
           <Select value={filterConnectionType} onValueChange={(v) => { setFilterConnectionType(v); setCurrentPage(1); }}>
-            <SelectTrigger className="bg-accent/30"><SelectValue placeholder={t('allTypes')} /></SelectTrigger>
+            <SelectTrigger className="bg-background"><SelectValue placeholder={t('allTypes')} /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">{t('allTypes')}</SelectItem>
               <SelectItem value="metered">{t('metered')}</SelectItem>
@@ -128,8 +128,8 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="text-left border-b border-border">
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
+            <tr className="text-left border-b border-border bg-primary/10">
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
                 onClick={() => onSort('name')}>
                 {t('name')} {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
@@ -137,7 +137,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('subscriptionNo')}</th>
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('phone')}</th>
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('region')}</th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
                 onClick={() => onSort('registeredDate')}>
                 {t('registered')} {sortBy === 'registeredDate' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
@@ -153,14 +153,14 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                 <td className="py-4 text-sm text-muted-foreground">{customer.subscriptionNo}</td>
                 <td className="py-4 text-sm text-muted-foreground">{customer.phone}</td>
                 <td className="py-4 text-sm text-muted-foreground">
-                  {Object.values(REGION_CONFIG).find(r => r.code === customer.region)?.label || customer.region}
+                  {t(`regions.${customer.region}`, Object.values(REGION_CONFIG).find(r => r.code === customer.region)?.label || customer.region)}
                 </td>
                 <td className="py-4 text-sm text-muted-foreground">
                   {formatDate(customer.registeredDate)}
                 </td>
                 <td className="py-4">
                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${customer.status === 'ACTIVE' ? 'bg-success/10 text-success' : customer.status === 'INACTIVE' ? 'bg-muted text-muted-foreground' : 'bg-blue-500/10 text-blue-500'}`}>
-                    {customer.status}
+                    {customer.status === 'ACTIVE' ? t('active') : customer.status === 'INACTIVE' ? t('inactive') : customer.status === 'PENDING_ACTIVATION' ? t('pending') : customer.status === 'SUSPENDED' ? t('suspended') : customer.status}
                   </span>
                 </td>
                 <td className="py-4">
@@ -173,7 +173,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
                       <Edit className="w-4 h-4 text-green-600" />
                     </button>
                     <button onClick={() => onDelete(customer.id, customer.name)} disabled={customer.isDeleted}
-                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title="Deactivate">
+                      className="p-1 hover:bg-accent rounded disabled:opacity-50" title={t('deactivate')}>
                       <Trash2 className="w-4 h-4 text-red-600" />
                     </button>
                   </div>

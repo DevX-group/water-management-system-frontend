@@ -1,7 +1,7 @@
 import '@/index.css';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface TodayReading {
@@ -14,6 +14,9 @@ interface TodayReading {
   usageUnits:         number;
   totalAmount:        number | null;
   billStatus:         string | null;
+  imageUrl?:          string;
+  notes?:             string;
+  readingDate?:       string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -26,16 +29,32 @@ interface MeterReadingsTableProps {
   readings:       TodayReading[];
   loading:        boolean;
   onRefresh:      () => void;
+  selectedDate:   string;
+  onDateChange:   (date: string) => void;
+  onEdit?:        (reading: TodayReading) => void;
 }
 
-export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh }) => {
+export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh, selectedDate, onDateChange, onEdit }) => {
   const { t } = useTranslation('meterReading');
   
   return (
   <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '200ms' }}>
     <div className="flex items-center justify-between mb-4">
-      <h3 className="text-lg font-semibold text-foreground">{t('table.title')}</h3>
-      <Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading}>
+      <div className="flex items-center gap-4">
+        <h3 className="text-lg font-semibold text-foreground">{t('table.title')}</h3>
+        <input 
+          type="date" 
+          value={selectedDate} 
+          max={new Date().toISOString().split('T')[0]}
+          onChange={(e) => {
+            if (e.target.value) {
+              onDateChange(e.target.value);
+            }
+          }}
+          className="px-3 py-1.5 border border-border rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
+        />
+      </div>
+      <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('table.refresh')}
       </Button>
     </div>
@@ -48,17 +67,24 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
       <p className="text-center text-muted-foreground py-10">{t('table.noReadings')}</p>
     ) : (
       <div className="overflow-x-auto">
-        <table className="w-full">      {/* Table of today's meter readings */} 
+        {/* Table of today's meter readings */}
+        <table className="w-full">
           <thead>
             <tr className="text-left border-b border-border">
-              {[t('table.headers.meterNo'), t('table.headers.customer'), t('table.headers.subscription'), t('table.headers.previous'), t('table.headers.current'), t('table.headers.usage'), t('table.headers.billAmount'), t('table.headers.status')].map(h => (
+              <th className="pb-3 px-2 w-10"></th>
+              {[t('table.headers.meterNo'), t('table.headers.customer'), t('table.headers.subscription'), t('table.headers.previous'), t('table.headers.current'), t('table.headers.usage'), t('table.headers.billAmount'), 'Image', t('table.headers.status')].map(h => (
                 <th key={h} className="pb-3 text-sm font-medium text-muted-foreground">{h}</th>
               ))}
             </tr>
           </thead>
           <tbody>
             {readings.map((r) => (
-              <tr key={r.readingId} className="border-b border-border/50 last:border-0">
+              <tr key={r.readingId} className="border-b border-border/50 last:border-0 hover:bg-secondary/20 transition-colors">
+                <td className="py-4 px-2">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => onEdit?.(r)}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                </td>
                 <td className="py-4 text-sm font-medium text-foreground">{r.meterNumber}</td>
                 <td className="py-4 text-sm text-foreground">{r.customerName || '-'}</td>
                 <td className="py-4 text-sm text-muted-foreground">{r.subscriptionNumber || '-'}</td>
@@ -70,7 +96,14 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
                   </span>
                 </td>
                 <td className="py-4 text-sm text-foreground">
-                  {r.totalAmount != null ? `LKR ${Number(r.totalAmount).toFixed(2)}` : '-'}      {/*  Show bill amount if available, otherwise show '-'*/}
+                  {r.totalAmount != null ? `LKR ${Number(r.totalAmount).toFixed(2)}` : '-'}
+                </td>
+                <td className="py-4">
+                  {r.imageUrl ? (
+                    <a href={r.imageUrl} target="_blank" rel="noreferrer" className="text-primary hover:underline font-medium text-xs">
+                      View
+                    </a>
+                  ) : '-'}
                 </td>
                 <td className="py-4">
                   {r.billStatus ? (

@@ -7,8 +7,10 @@ import { CustomerTable } from '@/components/user-management/CustomerTable';
 import { AddCustomerDialog } from '@/components/user-management/AddCustomerDialog';
 import { ViewCustomerDialog } from '@/components/user-management/ViewCustomerDialog';
 import { EditCustomerDialog } from '@/components/user-management/EditCustomerDialog';
+import { useTranslation } from 'react-i18next';
 
 export const CustomerManagement: React.FC = () => {
+  const { t } = useTranslation('userManagement');
   const um = useUserManagement();
 
   return (
@@ -16,7 +18,7 @@ export const CustomerManagement: React.FC = () => {
       <div className="relative">
         <div className="absolute top-6 right-6 z-10">
           <Button onClick={() => um.setShowAddDialog(true)}>
-            <Plus className="w-4 h-4 mr-2" />Add Customer
+            <Plus className="w-4 h-4 mr-2" />{t('addCustomer')}
           </Button>
         </div>
 

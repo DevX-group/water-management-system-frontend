@@ -1,0 +1,19 @@
+{
+  "title": "Anomaly Alerts",
+  "anomaly": "Anomaly",
+  "alerts": "Alerts",
+  "subtitle": "Real-time monitoring and detection of unusual water consumption patterns.",
+  "severity": {
+    "all": "All",
+    "critical": "Critical",
+    "high": "High",
+    "medium": "Medium",
+    "info": "Info"
+  },
+  "actions": {
+    "dismiss": "Dismiss",
+    "previous": "Previous",
+    "next": "Next",
+    "noAlerts": "No alerts found"
+  }
+}

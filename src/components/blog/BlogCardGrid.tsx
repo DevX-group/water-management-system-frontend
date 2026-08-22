@@ -49,7 +49,7 @@ export const BlogCardGrid: React.FC<BlogCardGridProps> = ({ blogs, onDelete, onE
                 <span>{blog.category}</span>
               </div>
             </div>
-            <h3 className="text-2xl font-bold text-slate-900 leading-tight mb-8">{blog.title}</h3>
+            <h3 className="text-2xl font-bold text-foreground leading-tight mb-8">{blog.title}</h3>
             <div className="flex items-center gap-2 text-primary font-bold cursor-pointer hover:gap-4 transition-all"
               onClick={() => onExpand(blog)}>
               <span>{t('readMore')}</span><ArrowRight size={18} />
@@ -87,14 +87,14 @@ export const BlogPostModal: React.FC<BlogPostModalProps> = ({ blog, onClose }) =
           <div className="p-8 sm:p-12 overflow-y-auto flex-1">
             <div className="flex items-center gap-4 text-slate-400 text-sm mb-6">
               {[{ icon: Calendar, text: new Date(blog.date).toLocaleDateString() }, { icon: User, text: blog.category }].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-2 bg-slate-100 px-4 py-1.5 rounded-full font-medium text-slate-600">
+                <div key={text} className="flex items-center gap-2 bg-secondary px-4 py-1.5 rounded-full font-medium text-secondary-foreground">
                   <Icon size={16} /><span>{text}</span>
                 </div>
               ))}
             </div>
-            <h2 className="text-4xl sm:text-5xl font-bold text-slate-900 mb-8 leading-tight">{blog.title}</h2>
-            <div className="prose prose-slate max-w-none">
-              <p className="text-lg text-slate-700 leading-relaxed whitespace-pre-wrap">{blog.content}</p>
+            <h2 className="text-4xl sm:text-5xl font-bold text-foreground mb-8 leading-tight">{blog.title}</h2>
+            <div className="prose prose-slate dark:prose-invert max-w-none">
+              <p className="text-lg text-muted-foreground leading-relaxed whitespace-pre-wrap">{blog.content}</p>
             </div>
           </div>
         </motion.div>
