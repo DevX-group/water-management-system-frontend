@@ -25,6 +25,9 @@ import { Blog } from "./pages/Info/Blog";
 import CustomerPayments from "./pages/CustomerPayments";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import PaymentFailed from "./pages/PaymentFailed";
+import ForgotPassword from "./pages/ForgotPassword";
+import VerifyResetOtp from "./pages/VerifyResetOtp";
+import ResetPassword from "./pages/ResetPassword";
 
 // Auth integrations
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
@@ -85,6 +88,9 @@ const App = () => (
                 {/* Public Routes */}
                 <Route path="/" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/forgot-password" element={<ForgotPassword />} />
+                <Route path="/verify-reset-otp" element={<VerifyResetOtp />} />
+                <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/activate" element={<Signup />} />
                 <Route path="/about" element={<AboutUs />} />
