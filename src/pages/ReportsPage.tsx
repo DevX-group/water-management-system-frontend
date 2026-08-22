@@ -74,40 +74,53 @@ useEffect(() => {
 }, [areaYear, selectedArea]);
 
 
-// Bills report data fetch
+// Bills report data fetch.
 // Customer filtering is handled by the backend/database.
+// The request is debounced and stale requests are cancelled.
 useEffect(() => {
-  api
-    .get("/bills_report", {
-      params: customerSearchBill
-        ? { customerId: customerSearchBill }
-        : {},
-    })
-    .then((res) => {
-      console.log("BILLS API:", res.data);
+  const controller = new AbortController();
 
-      const mappedBills = res.data.map((bill) => ({
-        id: bill.id,
-        customerid: bill.customerId,
-        customer: bill.customerName,
-        amount: bill.amount,
-        dueDate: bill.dueDate,
-        status:
-          bill.status?.toUpperCase() === "PAID"
-            ? "Paid"
-            : "Unpaid",
-      }));
+  const timer = window.setTimeout(() => {
+    api
+      .get("/bills_report", {
+        params: customerSearchBill
+          ? { customerId: customerSearchBill }
+          : {},
+        signal: controller.signal,
+      })
+      .then((res) => {
+        const mappedBills = res.data.map((bill) => ({
+          id: bill.id,
+          customerid: bill.customerId,
+          customer: bill.customerName,
+          amount: bill.amount,
+          dueDate: bill.dueDate,
+          status:
+            bill.status?.toUpperCase() === "PAID"
+              ? "Paid"
+              : "Unpaid",
+        }));
 
-      setBillsTableData(mappedBills);
-    })
-    .catch((err) => {
-      console.error("BILLS ERROR:", err);
-    });
+        setBillsTableData(mappedBills);
+      })
+      .catch((err) => {
+        // Request cancellation is expected when the user
+        // continues typing before the debounce finishes.
+        if (err.code !== "ERR_CANCELED") {
+          console.error("BILLS ERROR:", err);
+        }
+      });
+  }, 300);
+
+  return () => {
+    window.clearTimeout(timer);
+    controller.abort();
+  };
 }, [customerSearchBill]);
 
 
-// Chart data is calculated from the relevant records
-// already returned by the backend.
+// Chart data is calculated from records already
+// filtered and returned by the backend.
 const billsData =
   billsTableData.length > 0
     ? [
@@ -127,7 +140,7 @@ const billsData =
     : [];
 
 
-// PDF uses only the relevant bills returned by the backend.
+// PDF uses only the records returned by the backend.
 const transformedBillsData = billsTableData.map((bill) => ({
   month: bill.dueDate,
   usage: 1,
@@ -135,58 +148,70 @@ const transformedBillsData = billsTableData.map((bill) => ({
 }));
 
 
-
- // Fetch overdue bills.
+// Fetch overdue bills.
 // Customer filtering is handled by the backend/database.
+// The request is debounced and stale requests are cancelled.
 useEffect(() => {
-  api
-    .get("/bills_report/overdue", {
-      params: overdueBill
-        ? { customerId: overdueBill }
-        : {},
-    })
-    .then((res) => {
-      console.log("OVERDUE API:", res.data);
+  const controller = new AbortController();
 
-      const today = new Date();
+  const timer = window.setTimeout(() => {
+    api
+      .get("/bills_report/overdue", {
+        params: overdueBill
+          ? { customerId: overdueBill }
+          : {},
+        signal: controller.signal,
+      })
+      .then((res) => {
+        const today = new Date();
 
-      const mapped = res.data.map((bill) => {
-        const dueDate = new Date(
-          `${bill.dueDate}T00:00:00`
-        );
+        const mapped = res.data.map((bill) => {
+          // Add a local time to prevent UTC date shifting.
+          const dueDate = new Date(
+            `${bill.dueDate}T00:00:00`
+          );
 
-        const daysOverdue = Math.max(
-          Math.floor(
-            (today.getTime() - dueDate.getTime()) /
-              (1000 * 60 * 60 * 24)
-          ),
-          0
-        );
+          const daysOverdue = Math.max(
+            Math.floor(
+              (today.getTime() - dueDate.getTime()) /
+                (1000 * 60 * 60 * 24)
+            ),
+            0
+          );
 
-        return {
-          id: bill.id,
-          customerid: bill.customerId,
-          customer: bill.customerName,
-          amount: bill.amount,
-          dueDate: bill.dueDate,
-          daysOverdue,
-        };
+          return {
+            id: bill.id,
+            customerid: bill.customerId,
+            customer: bill.customerName,
+            amount: bill.amount,
+            dueDate: bill.dueDate,
+            daysOverdue,
+          };
+        });
+
+        setOverdueTableData(mapped);
+      })
+      .catch((err) => {
+        // Cancellation is expected while the user is typing.
+        if (err.code !== "ERR_CANCELED") {
+          console.error("OVERDUE ERROR:", err);
+        }
       });
+  }, 300);
 
-      setOverdueTableData(mapped);
-    })
-    .catch((err) => {
-      console.error("OVERDUE ERROR:", err);
-    });
+  return () => {
+    window.clearTimeout(timer);
+    controller.abort();
+  };
 }, [overdueBill]);
 
 
-// Calculate total using only records returned by the backend.
+// Calculate the total using only records returned
+// by the filtered backend endpoint.
 const totalOverdueAmount = overdueTableData.reduce(
-  (sum, item) => sum + item.amount,
+  (sum, item) => sum + Number(item.amount ?? 0),
   0
 );
-
 
   return (
     <div className="space-y-6">
