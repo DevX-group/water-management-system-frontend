@@ -69,6 +69,14 @@ export const deactivateWidget = async (id: number): Promise<void> => {
   await api.delete(`/widgets/${id}`);
 };
 
+export const addWidgetToRole = async (role: string, widgetId: number): Promise<void> => {
+  await api.post(`/dashboards/role/${role}/widgets/${widgetId}`);
+};
+
+export const removeWidgetFromRole = async (role: string, widgetId: number): Promise<void> => {
+  await api.delete(`/dashboards/role/${role}/widgets/${widgetId}`);
+};
+
 /**
  * Replaces the full widget layout for a dashboard.
  * @param dashboardId - The dashboard to update

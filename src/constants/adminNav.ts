@@ -20,7 +20,7 @@ export const NAV_ITEMS: NavItem[] = [
   { icon: BarChart3, label: 'Reports', id: 'reports', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: TrendingUp, label: 'Predictions', id: 'predictions', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
   { icon: MessageSquare, label: 'Blog', id: 'blog', roles: ['SUPER_ADMIN', 'SYSTEM_ADMIN'] },
-  { icon: LayoutGrid, label: 'Widget Management', id: 'widget-management', roles: ['SUPER_ADMIN'] },
+  { icon: LayoutGrid, label: 'Widgets', id: 'widget-management', roles: ['SUPER_ADMIN'] },
   { icon: Settings, label: 'System Settings', id: 'system-settings', roles: ['SUPER_ADMIN'] },
 ];
 

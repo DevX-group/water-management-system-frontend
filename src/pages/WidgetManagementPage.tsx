@@ -1,6 +1,6 @@
 import '@/index.css';
 import React, { useEffect, useState, useCallback } from 'react';
-import { getWidgetCatalog, updateWidget, getDashboardConfigByRole, updateDashboardLayout } from '@/services/dashboardService';
+import { getWidgetCatalog, updateWidget, getDashboardConfigByRole, updateDashboardLayout, addWidgetToRole, removeWidgetFromRole } from '@/services/dashboardService';
 import type { WidgetDefinition, DashboardConfig, DashboardWidgetConfig } from '@/types/dashboard';
 import { WidgetContainer } from '@/components/dashboard/WidgetContainer';
 import { WidgetRenderer } from '@/components/dashboard/WidgetRenderer';
@@ -50,45 +50,66 @@ const ALLOWED_ROLES_MAP: Record<string, string[]> = {
 
 const WidgetCatalogCard: React.FC<{
   widget: WidgetDefinition;
+  initialAssignedRoles: string[];
   onSaved: () => void;
-}> = ({ widget, onSaved }) => {
+}> = ({ widget, initialAssignedRoles, onSaved }) => {
   const { toast } = useToast();
   const [name, setName] = useState(widget.name);
   const [active, setActive] = useState(widget.active);
-  const [roles, setRoles] = useState<Set<string>>(new Set(widget.allowedRoles || []));
+  const [assignedRoles, setAssignedRoles] = useState<Set<string>>(new Set(initialAssignedRoles));
   const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    setAssignedRoles(new Set(initialAssignedRoles));
+    setName(widget.name);
+    setActive(widget.active);
+  }, [initialAssignedRoles, widget]);
 
   const availableRoles = ALLOWED_ROLES_MAP[widget.componentKey] || ALL_ROLES;
 
   const hasChanges = 
     name !== widget.name || 
     active !== widget.active ||
-    roles.size !== (widget.allowedRoles || []).length ||
-    ![...roles].every(r => (widget.allowedRoles || []).includes(r));
+    assignedRoles.size !== initialAssignedRoles.length ||
+    ![...assignedRoles].every(r => initialAssignedRoles.includes(r));
 
   const toggleRole = (role: string) => {
-    const next = new Set(roles);
+    const next = new Set(assignedRoles);
     if (next.has(role)) next.delete(role);
     else next.add(role);
-    setRoles(next);
+    setAssignedRoles(next);
   };
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const payload = {
-        widgetKey: widget.widgetKey,
-        name: name,
-        description: widget.description,
-        widgetType: widget.widgetType,
-        componentKey: widget.componentKey,
-        active: active,
-        allowedRoles: Array.from(roles),
-        defaultColSpan: widget.defaultColSpan,
-        defaultRowSpan: widget.defaultRowSpan
-      };
-      
-      await updateWidget(widget.id, payload as any);
+      // 1. Update Widget Definition (Name & Active status)
+      if (name !== widget.name || active !== widget.active) {
+        const payload = {
+          widgetKey: widget.widgetKey,
+          name: name,
+          description: widget.description,
+          widgetType: widget.widgetType,
+          componentKey: widget.componentKey,
+          active: active,
+          allowedRoles: widget.allowedRoles, // Preserve existing allowed roles
+          defaultColSpan: widget.defaultColSpan,
+          defaultRowSpan: widget.defaultRowSpan
+        };
+        await updateWidget(widget.id, payload as any);
+      }
+
+      // 2. Add/Remove from role dashboards
+      const addedRoles = [...assignedRoles].filter(r => !initialAssignedRoles.includes(r));
+      const removedRoles = initialAssignedRoles.filter(r => !assignedRoles.has(r));
+
+      for (const role of addedRoles) {
+        await addWidgetToRole(role, widget.id).catch(() => {});
+      }
+      for (const role of removedRoles) {
+        await removeWidgetFromRole(role, widget.id).catch(() => {});
+      }
+
       toast({ title: 'Widget updated successfully.' });
       onSaved();
     } catch (err: any) {
@@ -129,7 +150,7 @@ const WidgetCatalogCard: React.FC<{
           <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Assigned Roles</label>
           <div className="flex flex-wrap gap-2">
             {availableRoles.map(role => {
-              const isAssigned = roles.has(role);
+              const isAssigned = assignedRoles.has(role);
               return (
                 <div 
                   key={role} 
@@ -172,16 +193,39 @@ export const WidgetManagementPage: React.FC = () => {
   const [catalog, setCatalog] = useState<WidgetDefinition[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
   
+  // Track all roles' dashboard layouts to know which widgets are currently assigned
+  const [allDashboards, setAllDashboards] = useState<Record<string, DashboardConfig>>({});
+  
   const [selectedRole, setSelectedRole] = useState<string>('SUPER_ADMIN');
   const [dashConfig, setDashConfig] = useState<DashboardConfig | null>(null);
   const [placements, setPlacements] = useState<DashboardWidgetConfig[]>([]);
   const [dashLoading, setDashLoading] = useState(false);
   const [savingDash, setSavingDash] = useState(false);
 
+  const loadAllDashboards = useCallback(async () => {
+    try {
+      const results = await Promise.allSettled(
+        ALL_ROLES.map(role => getDashboardConfigByRole(role))
+      );
+      const newDashboards: Record<string, DashboardConfig> = {};
+      results.forEach((res, idx) => {
+        if (res.status === 'fulfilled') {
+          newDashboards[ALL_ROLES[idx]] = res.value;
+        }
+      });
+      setAllDashboards(newDashboards);
+    } catch {
+      // ignore
+    }
+  }, []);
+
   const loadCatalog = useCallback(() => {
     setCatalogLoading(true);
     getWidgetCatalog()
-      .then(setCatalog)
+      .then((data) => {
+        // Sort by ID to ensure position stability
+        setCatalog(data.sort((a, b) => a.id - b.id));
+      })
       .catch(() => toast({ title: 'Failed to load widget catalog', variant: 'destructive' }))
       .finally(() => setCatalogLoading(false));
   }, [toast]);
@@ -200,36 +244,39 @@ export const WidgetManagementPage: React.FC = () => {
       .finally(() => setDashLoading(false));
   }, []);
 
-  useEffect(() => {
+  const refreshAll = useCallback(() => {
     loadCatalog();
-  }, [loadCatalog]);
+    loadAllDashboards();
+    loadDashboard(selectedRole);
+  }, [loadCatalog, loadAllDashboards, loadDashboard, selectedRole]);
 
   useEffect(() => {
-    loadDashboard(selectedRole);
-  }, [selectedRole, loadDashboard]);
-
-  const refreshAll = () => {
-    loadCatalog();
-    loadDashboard(selectedRole);
-  };
+    refreshAll();
+  }, [refreshAll]);
 
   // Dashboard Layout Updates
   const saveLayout = async () => {
     if (!dashConfig) return;
     setSavingDash(true);
     try {
-      const payload = placements.map((p, idx) => ({
-        widgetId: p.widgetId, // Fixed mapping to use widgetId
-        colSpan: p.colSpan,
-        rowSpan: p.rowSpan,
-        visible: true,
-        position: idx,
-      }));
+      const payload = placements.map((p, idx) => {
+        // Fallback: If widgetId is missing, resolve it by componentKey
+        const resolvedWidgetId = p.widgetId || catalog.find(c => c.componentKey === p.componentKey)?.id;
+        if (!resolvedWidgetId) throw new Error("Missing widgetId for " + p.componentKey);
+
+        return {
+          widgetId: resolvedWidgetId,
+          colSpan: p.colSpan,
+          rowSpan: p.rowSpan,
+          visible: true,
+          position: idx,
+        };
+      });
       await updateDashboardLayout(dashConfig.dashboardId, payload as any);
       toast({ title: 'Dashboard layout saved successfully.' });
-      loadDashboard(selectedRole);
-    } catch {
-      toast({ title: 'Failed to save layout', variant: 'destructive' });
+      refreshAll();
+    } catch (err: any) {
+      toast({ title: 'Failed to save layout: ' + (err.message || ''), variant: 'destructive' });
     } finally {
       setSavingDash(false);
     }
@@ -272,7 +319,7 @@ export const WidgetManagementPage: React.FC = () => {
     setPlacements((prev) => [
       ...prev,
       {
-        id: Date.now(), // Temporary ID until saved
+        id: Date.now(),
         widgetId: widget.id,
         componentKey: widget.componentKey,
         name: widget.name,
@@ -288,8 +335,8 @@ export const WidgetManagementPage: React.FC = () => {
 
   const availableWidgetsForRole = catalog.filter(w => 
     w.active && 
-    (w.allowedRoles || []).includes(selectedRole) && 
-    !placements.some(p => p.widgetId === w.id)
+    (ALLOWED_ROLES_MAP[w.componentKey] || ALL_ROLES).includes(selectedRole) && 
+    !placements.some(p => (p.widgetId === w.id || p.componentKey === w.componentKey))
   );
 
   return (
@@ -308,7 +355,7 @@ export const WidgetManagementPage: React.FC = () => {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Widget Catalog</h2>
-          <Button variant="outline" size="sm" onClick={loadCatalog}>
+          <Button variant="outline" size="sm" onClick={refreshAll}>
             <RefreshCw className={`w-4 h-4 mr-2 ${catalogLoading ? 'animate-spin' : ''}`} /> Refresh
           </Button>
         </div>
@@ -317,9 +364,22 @@ export const WidgetManagementPage: React.FC = () => {
           <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {catalog.map(w => (
-              <WidgetCatalogCard key={w.id} widget={w} onSaved={refreshAll} />
-            ))}
+            {catalog.map(w => {
+              // Determine which roles currently have this widget in their dashboard layout
+              const rolesWithWidget = ALL_ROLES.filter(r => {
+                const dash = allDashboards[r];
+                return dash && dash.widgets.some(dw => dw.componentKey === w.componentKey || dw.widgetId === w.id);
+              });
+
+              return (
+                <WidgetCatalogCard 
+                  key={w.id} 
+                  widget={w} 
+                  initialAssignedRoles={rolesWithWidget}
+                  onSaved={refreshAll} 
+                />
+              );
+            })}
           </div>
         )}
       </section>
@@ -366,7 +426,7 @@ export const WidgetManagementPage: React.FC = () => {
                     </div>
                   ) : (
                     placements.map((p, idx) => (
-                      <div key={p.id} className="flex items-center gap-4 bg-card border rounded-xl p-3 shadow-sm">
+                      <div key={p.id + '-' + idx} className="flex items-center gap-4 bg-card border rounded-xl p-3 shadow-sm">
                         <div className="flex flex-col gap-1">
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveUp(idx)} disabled={idx === 0}><ArrowUp className="w-3 h-3" /></Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveDown(idx)} disabled={idx === placements.length - 1}><ArrowDown className="w-3 h-3" /></Button>
