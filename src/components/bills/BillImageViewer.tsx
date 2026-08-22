@@ -53,7 +53,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
         <motion.div
           key="bill-modal"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex flex-col bg-black/90 backdrop-blur-sm"
+          className="fixed inset-0 z-[9999] flex flex-col bg-black/90 backdrop-blur-sm"
           onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
           <div className="flex items-center justify-between px-6 py-4 bg-black/60 border-b border-white/10 flex-shrink-0">
@@ -67,7 +67,9 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={onZoomIn}><ZoomIn className="w-4 h-4" /></Button>
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={onRotate}><RotateCw className="w-4 h-4" /></Button>
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={() => onDownload(bill)}><Download className="w-4 h-4" /></Button>
-              <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10 ml-2" onClick={onClose}><X className="w-5 h-5" /></Button>
+              <Button variant="destructive" className="ml-4 px-4" onClick={onClose}>
+                <X className="w-4 h-4 mr-2" /> Close
+              </Button>
             </div>
           </div>
 

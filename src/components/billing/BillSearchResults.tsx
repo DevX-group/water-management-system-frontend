@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { BillResponse } from '@/types/billing';
 import { STATUS_STYLES } from '@/utils/billingUtils';
+import { BillImageViewer } from '@/components/bills/BillImageViewer';
+import { generateWaterBillPDF } from '@/util/generateWaterBillPDF';
+import { useToast } from '@/hooks/use-toast';
 
 interface BillSearchResultsProps {
   searchQuery:    string;
@@ -21,12 +24,25 @@ interface BillSearchResultsProps {
   onDownload:     (billId: number) => void;
 }
 
-export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // Pass data types for the BillSearchResults component
+export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
   searchQuery, setSearchQuery, loadingBills, hasSearched,
   searchedSub, bills, billIndex, setBillIndex, billsPerPage,
   onSearch, onDownload,
 }) => {
   const { t } = useTranslation('billing');
+  const { toast } = useToast();
+  const [viewingBill, setViewingBill] = React.useState<BillResponse | null>(null);
+  const [viewerZoom, setViewerZoom] = React.useState(1);
+  const [viewerRotation, setViewerRotation] = React.useState(0);
+
+  const handleLocalDownload = async (bill: BillResponse) => {
+    try {
+      await generateWaterBillPDF(bill, null);
+      toast({ title: 'Success', description: 'Bill downloaded successfully.' });
+    } catch (e) {
+      toast({ title: 'Error', description: 'Failed to download bill.', variant: 'destructive' });
+    }
+  };
 
   return (
     <div className="animate-fade-in space-y-6">
@@ -93,10 +109,14 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // 
                   <div className="flex items-center justify-between">
                     <span className="font-bold text-lg text-primary">{t('currency')} {Number(b.totalAmount).toFixed(2)}</span>
                     <div className="flex gap-2">
-                      <Button variant="secondary" size="sm" onClick={() => window.location.href = '/customer/bills'}>
+                      <Button variant="secondary" size="sm" onClick={() => {
+                        setViewerZoom(1);
+                        setViewerRotation(0);
+                        setViewingBill(b);
+                      }}>
                         <Eye className="w-3 h-3 mr-1" /> {t('search.viewDetails')}
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => onDownload(b.billId)}>
+                      <Button variant="ghost" size="sm" onClick={() => handleLocalDownload(b)}>
                         <Download className="w-4 h-4" />
                       </Button>
                     </div>
@@ -104,7 +124,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // 
                 </div>
               ))}
 
-              {bills.length > billsPerPage && (       // Show pagination controls if there are more bills than the page size
+              {bills.length > billsPerPage && (
                 <div className="flex justify-center items-center gap-4 mt-6">
                   <Button variant="outline" size="sm"
                     onClick={() => setBillIndex(prev => Math.max(0, prev - billsPerPage))}
@@ -124,6 +144,24 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({        // 
             </div>
           )}
         </div>
+      )}
+
+      {viewingBill && (
+        <BillImageViewer
+          bill={viewingBill as any}
+          profile={null}
+          zoom={viewerZoom}
+          rotation={viewerRotation}
+          imageLoading={false}
+          imageError={false}
+          onClose={() => setViewingBill(null)}
+          onDownload={() => handleLocalDownload(viewingBill)}
+          onZoomIn={() => setViewerZoom(z => Math.min(2, z + 0.1))}
+          onZoomOut={() => setViewerZoom(z => Math.max(0.5, z - 0.1))}
+          onRotate={() => setViewerRotation(r => r + 90)}
+          onImageLoad={() => {}}
+          onImageError={() => {}}
+        />
       )}
     </div>
   );
