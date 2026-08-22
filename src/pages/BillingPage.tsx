@@ -94,6 +94,7 @@ export const BillingPage = () => {
         <BillSearchResults
           searchQuery={billing.searchQuery}
           setSearchQuery={billing.setSearchQuery}
+          customers={billing.customers}
           loadingBills={billing.loadingBills}
           hasSearched={billing.hasSearched}
           searchedSub={billing.searchedSub}
