@@ -6,11 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Calendar, User, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from '@/services/api';
+import { useAuth } from "@/contexts/AuthContext";
 
 export const Blog = () => {
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -28,7 +30,7 @@ export const Blog = () => {
 
   if (loading) {
     return (
-      <MainLayout isAuthenticated={true}>
+      <MainLayout isAuthenticated={isAuthenticated}>
         <div className="flex justify-center p-20">
           <Loader2 className="animate-spin text-primary w-8 h-8" />
         </div>
@@ -37,7 +39,7 @@ export const Blog = () => {
   }
 
   return (
-    <MainLayout isAuthenticated={true}>
+    <MainLayout isAuthenticated={isAuthenticated}>
       <div className="container mx-auto px-4 py-12">
         <AnimatePresence mode="wait">
           {!selectedPost ? (

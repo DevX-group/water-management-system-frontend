@@ -10,6 +10,7 @@ import {
   Droplets, 
   ShieldCheck 
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -22,6 +23,8 @@ const itemVariants = {
 };
 
 export const AboutUs = () => {
+  const { isAuthenticated } = useAuth();
+
   const pillars = [
     {
       icon: <Activity className="text-primary" size={24} />,
@@ -46,7 +49,7 @@ export const AboutUs = () => {
   ];
 
   return (
-    <MainLayout isAuthenticated={true}>
+    <MainLayout isAuthenticated={isAuthenticated}>
       <div className="container mx-auto px-4 py-16 max-w-5xl">
         <motion.div 
           variants={containerVariants} 

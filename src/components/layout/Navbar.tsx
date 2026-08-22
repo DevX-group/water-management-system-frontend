@@ -1,5 +1,5 @@
 import '@/index.css';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
@@ -69,7 +69,25 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  // --- REUSABLE COMPONENT: Company Name Block ---
+  const [customerData, setCustomerData] = useState<{name: string, email: string} | null>(null);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      import('@/services/api').then(({ api }) => {
+        api.get('/customers/me')
+          .then(res => {
+            if (res.data) {
+              setCustomerData({
+                name: res.data.accountHolderName || 'Customer',
+                email: res.data.user?.email || 'No email provided'
+              });
+            }
+          })
+          .catch(err => console.error('Failed to fetch customer for navbar', err));
+      });
+    }
+  }, [isAuthenticated]);
+
   const CompanyNameBlock = () => (
     <div className="hidden sm:flex flex-col items-start justify-center gap-[1px]">
       <span className="text-[10px] font-semibold leading-none text-muted-foreground">
@@ -102,12 +120,8 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               >
                 <Droplets className="w-6 h-6 text-primary-foreground" />
               </motion.div>
-
-              {/* UPDATED: 3-Language Text Block */}
               <CompanyNameBlock />
             </Link>
-
-            {/* Auth Buttons */}
             <div className="flex items-center gap-2">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -164,12 +178,8 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
             >
               <Droplets className="w-5 h-5 text-primary-foreground" />
             </motion.div>
-
-            {/* UPDATED: 3-Language Text Block */}
             <CompanyNameBlock />
           </Link>
-
-          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center bg-secondary/50 rounded-xl p-1">
             {navLinks.map((link) => {
               const Icon = link.icon;
@@ -196,8 +206,6 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               );
             })}
           </div>
-
-          {/* Right Side */}
           <div className="flex items-center gap-2">
             <CustomerNotificationBell />
 
@@ -220,8 +228,6 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Profile Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <motion.button
@@ -234,8 +240,8 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56 rounded-xl p-2">
                 <div className="px-3 py-2 mb-2">
-                  <p className="font-medium">A.B.C. Example</p>
-                  <p className="text-sm text-muted-foreground">example@email.com</p>
+                  <p className="font-medium">{customerData?.name || 'Customer'}</p>
+                  <p className="text-sm text-muted-foreground">{customerData?.email || ''}</p>
                 </div>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild className="rounded-lg">
@@ -261,8 +267,6 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild className="lg:hidden">
                 <Button variant="ghost" size="icon" className="rounded-xl">

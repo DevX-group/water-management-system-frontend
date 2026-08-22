@@ -2,9 +2,13 @@ import '@/index.css';
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Cookie } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
 
-export const CookiePolicy = () => (
-  <MainLayout isAuthenticated={true}>
+export const CookiePolicy = () => {
+  const { isAuthenticated } = useAuth();
+  
+  return (
+  <MainLayout isAuthenticated={isAuthenticated}>
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl font-bold mb-6 text-gradient">Cookie Policy</h1>
       <Card className="border-none shadow-card">
@@ -22,4 +26,5 @@ export const CookiePolicy = () => (
       </Card>
     </div>
   </MainLayout>
-);
+  );
+};
