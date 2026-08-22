@@ -129,7 +129,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
         <table className="w-full">
           <thead>
             <tr className="text-left border-b border-border bg-primary/10">
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
                 onClick={() => onSort('name')}>
                 {t('name')} {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>
@@ -137,7 +137,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('subscriptionNo')}</th>
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('phone')}</th>
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground">{t('region')}</th>
-              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
+              <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:text-primary transition-colors"
                 onClick={() => onSort('registeredDate')}>
                 {t('registered')} {sortBy === 'registeredDate' && (sortOrder === 'asc' ? '▲' : '▼')}
               </th>

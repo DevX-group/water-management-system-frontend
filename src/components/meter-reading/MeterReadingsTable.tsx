@@ -67,7 +67,8 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
       <p className="text-center text-muted-foreground py-10">{t('table.noReadings')}</p>
     ) : (
       <div className="overflow-x-auto">
-        <table className="w-full">      {/* Table of today's meter readings */} 
+        {/* Table of today's meter readings */}
+        <table className="w-full">
           <thead>
             <tr className="text-left border-b border-border">
               <th className="pb-3 px-2 w-10"></th>
