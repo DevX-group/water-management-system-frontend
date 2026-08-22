@@ -17,11 +17,14 @@ export const MeterReadingPage = () => {
     submitting,
     isOnline,
     pendingCount,
+    selectedDate,
+    setSelectedDate,
     setFormData,
     handleSubmit,
     clearForm,
     fetchTodaysReadings,
-    fetchPreviousReading
+    fetchPreviousReading,
+    validateSubscription
   } = useMeterReading();
 
   return (
@@ -33,7 +36,6 @@ export const MeterReadingPage = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
-          {/* Network Status Badge */}
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border ${isOnline
             ? 'bg-green-500/10 text-green-600 border-green-500/20'
             : 'bg-red-500/10 text-red-600 border-red-500/20'
@@ -61,6 +63,7 @@ export const MeterReadingPage = () => {
           onChange={setFormData} onSubmit={handleSubmit}
           onClear={clearForm}
           onMeterNumberBlur={fetchPreviousReading}
+          onSubscriptionNumberBlur={validateSubscription}
         />
         <MeterReadingInstructions />
       </div>
@@ -68,7 +71,9 @@ export const MeterReadingPage = () => {
       <MeterReadingsTable
         readings={todaysReadings as unknown as any}
         loading={loadingReadings}
-        onRefresh={fetchTodaysReadings}
+        onRefresh={() => fetchTodaysReadings()}
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
       />
     </div>
   );

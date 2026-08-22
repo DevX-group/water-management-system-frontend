@@ -20,11 +20,12 @@ import { BankSlipReviewPage } from './BankSlipReviewPage';
 import { AdminBlogPage } from './AdminBlogPage';
 import { AdminSettings } from './AdminSettings';
 import { SystemSettingsPage } from './SystemSettingsPage';
+import { InternalChatPage } from './InternalChatPage';
 import type { Section } from '@/types/admin';
 import { canAccessSection, getDefaultAdminPath, isAdminRole } from '@/utils/adminAccess';
 
 const getSectionFromPath = (pathname: string): Section => {
-  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'settings', 'system-settings'];
+  const sections: Section[] = ['users', 'meter', 'payments', 'billing', 'messaging', 'internal-chat', 'inquiry', 'reports', 'predictions', 'blog', 'settings', 'system-settings'];
   return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
 };
 
@@ -52,6 +53,7 @@ const DashboardContent: React.FC = () => {
           <Route path="payments/slip/:slipId" element={<BankSlipReviewPage />} />
           <Route path="billing" element={<BillingPage />} />
           <Route path="messaging/*" element={<MessagingPage />} />
+          <Route path="internal-chat" element={<InternalChatPage />} />
           <Route path="inquiry" element={<AdminInquiriesPage />} />
           <Route path="reports" element={<ReportsPage />} />
           <Route path="predictions" element={<PredictionsPage />} />

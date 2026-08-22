@@ -7,10 +7,10 @@ import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2, ArrowLeft, Ar
 
 const getSeverityStyles = (severity: string) => {
   switch (severity.toLowerCase()) {
-    case "critical": return { cardBg: "bg-card", borderColor: "border-red-100", textColor: "text-red-600", icon: AlertOctagon, iconColor: "text-red-500", dismissBtn: "bg-red-50 text-red-600 hover:bg-red-100" };
-    case "high": return { cardBg: "bg-card", borderColor: "border-orange-100", textColor: "text-orange-600", icon: AlertTriangle, iconColor: "text-orange-500", dismissBtn: "bg-orange-50 text-orange-600 hover:bg-orange-100" };
-    case "medium": return { cardBg: "bg-card", borderColor: "border-amber-100", textColor: "text-amber-600", icon: AlertTriangle, iconColor: "text-amber-500", dismissBtn: "bg-amber-50 text-amber-600 hover:bg-amber-100" };
-    default: return { cardBg: "bg-card", borderColor: "border-blue-100", textColor: "text-primary", icon: Info, iconColor: "text-primary", dismissBtn: "bg-blue-50 text-primary hover:bg-blue-100" };
+    case "critical": return { cardBg: "bg-card", borderColor: "border-red-500/20", textColor: "text-red-500", icon: AlertOctagon, iconColor: "text-red-500", iconBg: "bg-red-500/10", dismissBtn: "bg-red-500/10 text-red-500 hover:bg-red-500/20" };
+    case "high": return { cardBg: "bg-card", borderColor: "border-orange-500/20", textColor: "text-orange-500", icon: AlertTriangle, iconColor: "text-orange-500", iconBg: "bg-orange-500/10", dismissBtn: "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20" };
+    case "medium": return { cardBg: "bg-card", borderColor: "border-amber-500/20", textColor: "text-amber-500", icon: AlertTriangle, iconColor: "text-amber-500", iconBg: "bg-amber-500/10", dismissBtn: "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20" };
+    default: return { cardBg: "bg-card", borderColor: "border-primary/20", textColor: "text-primary", icon: Info, iconColor: "text-primary", iconBg: "bg-primary/10", dismissBtn: "bg-primary/10 text-primary hover:bg-primary/20" };
   }
 };
 
@@ -39,13 +39,13 @@ export const NotificationList: React.FC<NotificationListProps> = ({
         <Card key={alert.id} className={`rounded-3xl border ${styles.borderColor} shadow-sm transition-all ${styles.cardBg}`}>
           <CardContent className="p-5 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
             <div className="flex items-start gap-4">
-              <div className={`p-3 rounded-2xl bg-slate-50 ${styles.iconColor}`}>
+              <div className={`p-3 rounded-2xl ${styles.iconBg} ${styles.iconColor}`}>
                 <Icon className="w-6 h-6" />
               </div>
               <div>
                 <h3 className={`font-bold text-lg ${styles.textColor}`}>{alert.title}</h3>
-                <p className="text-slate-600 text-sm mb-1">{alert.description}</p>
-                <div className="flex items-center gap-4 text-xs font-medium text-slate-400">
+                <p className="text-muted-foreground text-sm mb-1">{alert.description}</p>
+                <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground/80">
                   {alert.usage && <span>Usage: {alert.usage}</span>}
                   <span>{new Date(alert.time).toLocaleString()}</span>
                 </div>
@@ -65,7 +65,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
           onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))} disabled={currentIndex === 0}>
           <ArrowLeft className="w-4 h-4 mr-1" /> {t('actions.previous')}
         </Button>
-        <span className="text-sm font-medium text-slate-500">
+        <span className="text-sm font-medium text-muted-foreground">
           {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, alerts.length)} of {alerts.length}
         </span>
         <Button variant="outline" size="sm" className="rounded-full bg-card shadow-sm"
@@ -77,7 +77,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
     )}
 
     {!loading && alerts.length === 0 && (      // Show empty state if no alerts found
-      <div className="text-center py-12 text-slate-400">
+      <div className="text-center py-12 text-muted-foreground">
         <CheckCircle2 className="w-12 h-12 mx-auto mb-2 opacity-20" />
         <p>{t('actions.noAlerts')}</p>
       </div>

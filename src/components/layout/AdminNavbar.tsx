@@ -2,7 +2,7 @@ import '@/index.css';
 import { useAdmin } from '@/contexts/AdminContext';
 import { useAuth } from '@/contexts/AuthContext';
 import React from 'react';
-import { Search, Globe, User, ChevronDown, Menu } from 'lucide-react';
+import { Search, Globe, User, ChevronDown, Menu, Droplets } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { NAV_ITEMS, SECTION_PATH_MAP } from '@/constants/adminNav';
@@ -83,63 +83,73 @@ export const AdminNavbar: React.FC = () => {
               <Menu className="h-5 w-5" />
             </Button>
           </SheetTrigger>
-          <SheetContent side="left" className="w-72 p-0 gradient-sidebar border-r border-sidebar-border">
-            <SheetHeader className="p-6 border-b border-sidebar-border/50">
-              <SheetTitle className="text-white text-left flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
-                </div>
-                WaterAdmin
-              </SheetTitle>
-            </SheetHeader>
-            <div className="py-4">
-              {filteredNavItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = activeSection === item.id;
-                return (
-                  <button
-                    key={item.id + item.label}
-                    onClick={() => {
-                      navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard');
-                    }}
-                    className={cn(
-                      "w-full flex items-center gap-3 px-6 py-3 transition-all duration-200",
-                      isActive
-                        ? "bg-primary/20 text-white border-l-4 border-primary"
-                        : "text-slate-300 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
-                    )}
-                  >
-                    <Icon className="w-5 h-5" />
-                    <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`)}</span>
-                  </button>
-                );
-              })}
+          <SheetContent side="left" className="admin-wrapper w-72 p-0 border-r border-sidebar-border">
+            <div className="w-full h-full gradient-sidebar">
+              <SheetHeader className="p-6 border-b border-sidebar-border/50">
+                <SheetTitle className="text-white text-left flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  WaterAdmin
+                </SheetTitle>
+              </SheetHeader>
+              <div className="py-4">
+                {filteredNavItems.map((item) => {
+                  const Icon = item.icon;
+                  const isActive = activeSection === item.id;
+                  return (
+                    <button
+                      key={item.id + item.label}
+                      onClick={() => {
+                        navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard');
+                      }}
+                      className={cn(
+                        "w-full flex items-center gap-3 px-6 py-3 transition-all duration-200",
+                        isActive
+                          ? "bg-primary/20 text-white border-l-4 border-primary"
+                          : "text-slate-300 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
+                      )}
+                    >
+                      <Icon className="w-5 h-5" />
+                      <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`)}</span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </SheetContent>
         </Sheet>
       </div>
 
-      {/* Search */}
-      <div className="hidden md:flex items-center gap-4 flex-1 max-w-md">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Search customers, invoices..."
-            className="w-full h-10 pl-10 pr-4 rounded-xl bg-secondary border-0 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
-          />
+      {/* Desktop Logo */}
+      <div className="hidden lg:flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
+          <Droplets className="w-5 h-5 text-primary-foreground" />
+        </div>
+        <div className="flex flex-col items-start justify-center gap-[1px]">
+          <span className="text-[10px] font-semibold leading-none text-muted-foreground">
+            ගාල්ල ප්‍රාදේශීය සභාව
+          </span>
+          <span className="text-sm font-bold leading-none text-primary py-[1px]">
+            Galle Pradeshiya Sabha
+          </span>
+          <span className="text-[10px] font-semibold leading-none text-muted-foreground">
+            காலி பிரதேச சபை
+          </span>
         </div>
       </div>
 
+  
+
       {/* Right Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 ml-auto">
         {/* PWA Install Button for Meter Readers */}
         <PWAInstallButton size="sm" />
 
         {/* Language Selector */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-2">
+            <Button variant="ghost" size="sm" className="gap-2 hover:bg-secondary hover:text-foreground">
               <Globe className="w-4 h-4" />
               <span className="hidden sm:inline">
                 {languages.find(l => l.code === adminLanguage)?.name || "English"}

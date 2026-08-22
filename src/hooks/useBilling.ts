@@ -23,6 +23,7 @@ export const useBilling = () => {
 
   // View bills
   const [searchQuery, setSearchQuery]   = useState('');
+  const [customers, setCustomers]       = useState<any[]>([]);
   const [bills, setBills]               = useState<BillResponse[]>([]);
   const [loadingBills, setLoadingBills] = useState(false);
   const [searchedSub, setSearchedSub]   = useState('');
@@ -52,7 +53,18 @@ export const useBilling = () => {
         console.error('Failed to fetch rates:', err);
       }
     };
+    
+    const fetchCustomers = async () => {
+      try {
+        const res = await api.get('/customers');
+        setCustomers(res.data);
+      } catch (err) {
+        console.error('Failed to fetch customers:', err);
+      }
+    };
+
     fetchRates();
+    fetchCustomers();
   }, []);
 
   // Edit helpers
@@ -99,6 +111,8 @@ export const useBilling = () => {
 
   // Searches for a specific customer's billing history using their Subscription Number.
   
+  const [searchedProfile, setSearchedProfile] = useState<any>(null);
+
   const handleSearch = async () => {
     const sub = searchQuery.trim();
     if (!sub) return;
@@ -108,9 +122,18 @@ export const useBilling = () => {
     try {
       const res = await api.get<BillResponse[]>(`/bills/customer/${encodeURIComponent(sub)}`);
       setBills(res.data);
+      // Fetch customer profile to display name/address/meter on bill
+      try {
+        const custRes = await api.get(`/customers/${encodeURIComponent(sub)}`);
+        setSearchedProfile(custRes.data);
+      } catch (custErr) {
+        console.error('Failed to fetch customer profile', custErr);
+        setSearchedProfile(null);
+      }
     } catch (err: any) {
       toast({ title: 'Error', description:  'Could not fetch bills.', variant: 'destructive' });
       setBills([]);
+      setSearchedProfile(null);
     } finally {
       setLoadingBills(false);
     }
@@ -142,8 +165,8 @@ export const useBilling = () => {
     rates, selectedRate,
     editingType, editDraft,
     startEditing, cancelEditing, setDraftField, handleSaveRates,
-    searchQuery, setSearchQuery,
-    bills, loadingBills,
+    searchQuery, setSearchQuery, customers,
+    bills, loadingBills, searchedProfile,
     searchedSub, hasSearched,
     billIndex, setBillIndex, billsPerPage,
     handleSearch, handleDownload,

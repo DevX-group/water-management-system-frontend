@@ -47,7 +47,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
     <div className="rounded-md border border-border bg-card overflow-hidden">
       <Table>
         <TableHeader>
-          <TableRow className="bg-accent/50 hover:bg-accent/50">
+          <TableRow className="bg-primary/10 hover:bg-primary/20">
             <TableHead>{t('name')}</TableHead>
             <TableHead>{t('nic')}</TableHead>
             <TableHead>{t('email')}</TableHead>
@@ -59,7 +59,7 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
         </TableHeader>
         <TableBody>
           {admins.map((admin) => (
-            <TableRow key={admin.id} className="hover:bg-accent/30 transition-colors">
+            <TableRow key={admin.id} className="hover:bg-primary/10 transition-colors">
               <TableCell className="font-medium">{admin.fullName || '-'}</TableCell>
               <TableCell className="font-medium">{admin.nic}</TableCell>
               <TableCell>{admin.email || '-'}</TableCell>
@@ -78,8 +78,8 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
                     <Edit className="w-4 h-4 mr-1" /> {t('edit')}
                   </Button>
                   {admin.status === 'ACTIVE' ? (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       className="text-amber-500 hover:text-amber-600 hover:bg-amber-500/10 border-amber-500/20"
                       onClick={() => onStatusChange(admin.id, 'SUSPENDED')}
@@ -88,8 +88,8 @@ export const AdminTable: React.FC<AdminTableProps> = ({ admins, onStatusChange, 
                       <PowerOff className="w-4 h-4 mr-1" /> {t('suspend')}
                     </Button>
                   ) : admin.status === 'SUSPENDED' || admin.status === 'INACTIVE' ? (
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       className="text-emerald-500 hover:text-emerald-600 hover:bg-emerald-500/10 border-emerald-500/20"
                       onClick={() => onStatusChange(admin.id, 'ACTIVE')}

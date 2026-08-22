@@ -128,7 +128,7 @@ export const CustomerTable: React.FC<CustomerTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="text-left border-b border-border">
+            <tr className="text-left border-b border-border bg-primary/10">
               <th className="pb-3 px-2 py-2 text-sm font-bold text-foreground cursor-pointer hover:bg-accent/50 rounded transition-colors"
                 onClick={() => onSort('name')}>
                 {t('name')} {sortBy === 'name' && (sortOrder === 'asc' ? '▲' : '▼')}
