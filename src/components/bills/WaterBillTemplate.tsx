@@ -9,9 +9,9 @@ interface WaterBillTemplateProps {
 }
 
 export const WaterBillTemplate: React.FC<WaterBillTemplateProps> = ({ bill, profile }) => {
-  const address = profile?.region?.regionName ? `${profile.region.regionName}, Sri Lanka` : 'N/A';
+  const address = (profile as any)?.address || (profile?.region?.regionName ? `${profile.region.regionName}, Sri Lanka` : 'N/A');
   const name = profile?.accountHolderName || 'N/A';
-  const accountNo = profile?.nic || 'N/A';
+  const accountNo = (profile as any)?.subscriptionNumber || profile?.nic || 'N/A';
   const meterCurrent = 1234 + (bill.usageUnits || 0); // mock current reading
   const meterPrev = 1234; // mock previous reading
   const rate = bill.usageUnits > 0 ? ((bill.totalAmount || 0) / bill.usageUnits).toFixed(2) : '0.00';
@@ -62,7 +62,7 @@ export const WaterBillTemplate: React.FC<WaterBillTemplateProps> = ({ bill, prof
                 <tr>
                   <td className="font-bold text-blue-900">මීටර අංකය<br/><span className="text-xs">Meter No</span></td>
                   <td className="text-blue-900 font-bold text-center">:</td>
-                  <td className="font-bold text-lg text-blue-950 bg-white px-2 py-1 border border-blue-200 rounded inline-block shadow-sm">MTR-{accountNo}</td>
+                  <td className="font-bold text-lg text-blue-950 bg-white px-2 py-1 border border-blue-200 rounded inline-block shadow-sm">{accountNo.startsWith('MTR') ? accountNo : `MTR-${accountNo}`}</td>
                 </tr>
               </tbody>
             </table>

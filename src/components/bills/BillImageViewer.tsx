@@ -1,5 +1,6 @@
 import '@/index.css';
 import React from 'react';
+import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
@@ -47,13 +48,13 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
     }
   }, [bill, onImageLoad]);
 
-  return (
+  return createPortal(
     <AnimatePresence>
       {bill && (
         <motion.div
           key="bill-modal"
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[9999] flex flex-col bg-black/90 backdrop-blur-sm"
+          className="fixed inset-0 z-[99999] flex flex-col bg-black/90 backdrop-blur-sm"
           onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
         >
           <div className="flex items-center justify-between px-6 py-4 bg-black/60 border-b border-white/10 flex-shrink-0">
@@ -113,6 +114,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
           </div>
         </motion.div>
       )}
-    </AnimatePresence>
+    </AnimatePresence>,
+    document.body
   );
 };
