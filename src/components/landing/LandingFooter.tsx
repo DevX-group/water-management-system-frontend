@@ -46,7 +46,7 @@ export const LandingFooter = () => {
             <h4 className="font-semibold mb-6 text-foreground tracking-wide text-sm uppercase">Connect</h4>
             <ul className="space-y-4 text-muted-foreground font-light">
               <li><Link to="/about" className="hover:text-blue-600 transition-colors">About Us</Link></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">Support Center</a></li>
+              <li><Link to="/blog" className="hover:text-blue-600 transition-colors">Blog</Link></li>
             </ul>
           </div>
         </div>
