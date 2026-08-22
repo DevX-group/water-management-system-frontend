@@ -34,6 +34,7 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
 }) => {
   const { t } = useTranslation('meterReading');
   const [isScannerOpen, setIsScannerOpen] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
 
   const usage = formData.previousReading && formData.currentReading      //
     ? Math.max(0, Number(formData.currentReading) - Number(formData.previousReading))
@@ -115,19 +116,26 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
         onClose={() => setIsScannerOpen(false)} 
         onDetected={async (reading, blob) => {
           if (blob) {
-            const formDataUpload = new FormData();
-            formDataUpload.append('file', blob);
+            // Show local preview immediately so user can see the captured image
+            const localPreviewUrl = URL.createObjectURL(blob);
+            onChange({ ...formData, currentReading: reading, imageUrl: localPreviewUrl });
+
+            // Upload to backend in background
             try {
+              const formDataUpload = new FormData();
+              formDataUpload.append('file', blob, 'meter-reading.jpg');
               const res = await api.post('/meter-readings/upload-image', formDataUpload, {
                 headers: { 'Content-Type': 'multipart/form-data' }
               });
+              // Replace local preview URL with permanent server URL
               onChange({ ...formData, currentReading: reading, imageUrl: res.data.url });
-              return;
             } catch (err) {
               console.error("Image upload failed", err);
+              // Keep local preview - image won't persist after refresh but it's still visible
             }
+          } else if (reading) {
+            onChange({ ...formData, currentReading: reading });
           }
-          onChange({ ...formData, currentReading: reading });
         }} 
       />
       {formData.imageUrl && (
