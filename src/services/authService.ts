@@ -39,6 +39,16 @@ export interface PasswordResetVerifyResponse {
   resetAuthorization: string;
 }
 
+export interface PasswordResetCompleteRequest {
+  resetAuthorization: string;
+  newPassword: string;
+  confirmPassword: string;
+}
+
+export interface PasswordResetCompleteResponse {
+  message: string;
+}
+
 export const authService = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
     const response = await api.post<LoginResponse>('/auth/login', credentials);
@@ -54,6 +64,10 @@ export const authService = {
   },
   verifyPasswordResetOtp: async (payload: PasswordResetVerifyRequest): Promise<PasswordResetVerifyResponse> => {
     const response = await api.post<PasswordResetVerifyResponse>('/auth/password-reset/verify', payload);
+    return response.data;
+  },
+  completePasswordReset: async (payload: PasswordResetCompleteRequest): Promise<PasswordResetCompleteResponse> => {
+    const response = await api.post<PasswordResetCompleteResponse>('/auth/password-reset/complete', payload);
     return response.data;
   },
 };
