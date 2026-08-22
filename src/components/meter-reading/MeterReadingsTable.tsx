@@ -1,7 +1,7 @@
 import '@/index.css';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface TodayReading {
@@ -15,6 +15,8 @@ interface TodayReading {
   totalAmount:        number | null;
   billStatus:         string | null;
   imageUrl?:          string;
+  notes?:             string;
+  readingDate?:       string;
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -29,9 +31,10 @@ interface MeterReadingsTableProps {
   onRefresh:      () => void;
   selectedDate:   string;
   onDateChange:   (date: string) => void;
+  onEdit?:        (reading: TodayReading) => void;
 }
 
-export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh, selectedDate, onDateChange }) => {
+export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings, loading, onRefresh, selectedDate, onDateChange, onEdit }) => {
   const { t } = useTranslation('meterReading');
   
   return (
@@ -51,7 +54,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
           className="px-3 py-1.5 border border-border rounded-md text-sm bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all"
         />
       </div>
-      <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading} className="hover:bg-secondary hover:text-foreground">
+      <Button variant="outline" size="sm" onClick={onRefresh} disabled={loading}>
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : t('table.refresh')}
       </Button>
     </div>
@@ -67,6 +70,7 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
         <table className="w-full">      {/* Table of today's meter readings */} 
           <thead>
             <tr className="text-left border-b border-border">
+              <th className="pb-3 px-2 w-10"></th>
               {[t('table.headers.meterNo'), t('table.headers.customer'), t('table.headers.subscription'), t('table.headers.previous'), t('table.headers.current'), t('table.headers.usage'), t('table.headers.billAmount'), 'Image', t('table.headers.status')].map(h => (
                 <th key={h} className="pb-3 text-sm font-medium text-muted-foreground">{h}</th>
               ))}
@@ -74,7 +78,12 @@ export const MeterReadingsTable: React.FC<MeterReadingsTableProps> = ({ readings
           </thead>
           <tbody>
             {readings.map((r) => (
-              <tr key={r.readingId} className="border-b border-border/50 last:border-0">
+              <tr key={r.readingId} className="border-b border-border/50 last:border-0 hover:bg-secondary/20 transition-colors">
+                <td className="py-4 px-2">
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => onEdit?.(r)}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
+                </td>
                 <td className="py-4 text-sm font-medium text-foreground">{r.meterNumber}</td>
                 <td className="py-4 text-sm text-foreground">{r.customerName || '-'}</td>
                 <td className="py-4 text-sm text-muted-foreground">{r.subscriptionNumber || '-'}</td>

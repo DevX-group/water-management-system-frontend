@@ -34,6 +34,7 @@ export const useMeterReading = () => {
   const [isManualOffline, setIsManualOffline] = useState(false);
   const [pendingCount, setPendingCount] = useState<number>(0);
   const [selectedDate, setSelectedDate] = useState<string>(getLocalDateString());
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   const effectiveIsOnline = isOnline && !isManualOffline;
   const getOfflineReadings = () => {
@@ -247,31 +248,42 @@ export const useMeterReading = () => {
     };
 
     if (!isOnline) {
-      const offlineReadings = getOfflineReadings();
-      offlineReadings.push(payload);
-      localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
-      updatePendingCount();
+      let offlineReadings = getOfflineReadings();
       const usageUnits = payload.currentReading - payload.previousReading;
       const estimatedTotal = calculateEstimatedBill(usageUnits);
+      
+      const mockReading = {
+        ...payload,
+        id: editingId?.startsWith('offline-') ? editingId : `offline-${Date.now()}`,
+        usageUnits,
+        totalAmount: estimatedTotal,
+        status: 'PENDING_OFFLINE'
+      };
+
+      if (editingId?.startsWith('offline-')) {
+        offlineReadings = offlineReadings.map((r: any) => r.id === editingId ? mockReading : r);
+      } else {
+        offlineReadings.push(mockReading);
+      }
+      
+      localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
+      updatePendingCount();
 
       toast({ 
         title: t('toasts.savedOfflineTitle'), 
         description: t('toasts.savedOfflineDesc', { meterNo: formData.meterNumber, usage: usageUnits, total: estimatedTotal.toFixed(2) })
       });
       
-      setFormData(defaultForm());
+      clearForm();
       setSubmitting(false);
-      const mockReading = {
-        ...payload,
-        id: `offline-${Date.now()}`,
-        usageUnits,
-        totalAmount: estimatedTotal,
-        status: 'PENDING_OFFLINE'
-      };
       
-      // Only push to todaysReadings if selectedDate is today
+      // Update todaysReadings
       if (selectedDate === getLocalDateString()) {
-        setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
+        if (editingId?.startsWith('offline-')) {
+          setTodaysReadings(prev => prev.map(r => (r as any).id === editingId ? mockReading as unknown as MeterReading : r));
+        } else {
+          setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
+        }
       }
       
       return;
@@ -320,7 +332,24 @@ export const useMeterReading = () => {
     }
   };
 
-  const clearForm = () => setFormData(defaultForm());
+  const handleEdit = (reading: any) => {
+    setEditingId(reading.id || reading.readingId || null);
+    setFormData({
+      meterNumber: reading.meterNumber || '',
+      subscriptionNumber: reading.subscriptionNumber || '',
+      previousReading: reading.previousReading?.toString() || '',
+      currentReading: reading.currentReading?.toString() || '',
+      readingDate: reading.readingDate || getLocalDateString(),
+      notes: reading.notes || '',
+      imageUrl: reading.imageUrl || '',
+    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const clearForm = () => {
+    setFormData(defaultForm());
+    setEditingId(null);
+  };
 
   return {
     formData,
@@ -332,6 +361,7 @@ export const useMeterReading = () => {
     selectedDate,
     setSelectedDate,
     setFormData,
+    handleEdit,
     handleSubmit,
     clearForm,
     fetchTodaysReadings,

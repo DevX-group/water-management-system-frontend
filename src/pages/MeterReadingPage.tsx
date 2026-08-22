@@ -24,7 +24,8 @@ export const MeterReadingPage = () => {
     clearForm,
     fetchTodaysReadings,
     fetchPreviousReading,
-    validateSubscription
+    validateSubscription,
+    handleEdit
   } = useMeterReading();
 
   return (
@@ -74,6 +75,7 @@ export const MeterReadingPage = () => {
         onRefresh={() => fetchTodaysReadings()}
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
+        onEdit={handleEdit}
       />
     </div>
   );

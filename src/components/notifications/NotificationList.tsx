@@ -7,10 +7,10 @@ import { AlertTriangle, Info, AlertOctagon, CheckCircle2, Loader2, ArrowLeft, Ar
 
 const getSeverityStyles = (severity: string) => {
   switch (severity.toLowerCase()) {
-    case "critical": return { cardBg: "bg-card", borderColor: "border-red-500/20", textColor: "text-red-500", icon: AlertOctagon, iconColor: "text-red-500", iconBg: "bg-red-500/10", dismissBtn: "bg-red-500/10 text-red-500 hover:bg-red-500/20" };
-    case "high": return { cardBg: "bg-card", borderColor: "border-orange-500/20", textColor: "text-orange-500", icon: AlertTriangle, iconColor: "text-orange-500", iconBg: "bg-orange-500/10", dismissBtn: "bg-orange-500/10 text-orange-500 hover:bg-orange-500/20" };
-    case "medium": return { cardBg: "bg-card", borderColor: "border-amber-500/20", textColor: "text-amber-500", icon: AlertTriangle, iconColor: "text-amber-500", iconBg: "bg-amber-500/10", dismissBtn: "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20" };
-    default: return { cardBg: "bg-card", borderColor: "border-primary/20", textColor: "text-primary", icon: Info, iconColor: "text-primary", iconBg: "bg-primary/10", dismissBtn: "bg-primary/10 text-primary hover:bg-primary/20" };
+    case "critical": return { cardBg: "bg-card", borderColor: "border-red-500/20", textColor: "text-red-600 dark:text-red-400", icon: AlertOctagon, iconColor: "text-red-600 dark:text-red-400", iconBg: "bg-red-100 dark:bg-red-500/20", dismissBtn: "text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20" };
+    case "high": return { cardBg: "bg-card", borderColor: "border-orange-500/20", textColor: "text-orange-600 dark:text-orange-400", icon: AlertTriangle, iconColor: "text-orange-600 dark:text-orange-400", iconBg: "bg-orange-100 dark:bg-orange-500/20", dismissBtn: "text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20" };
+    case "medium": return { cardBg: "bg-card", borderColor: "border-amber-500/20", textColor: "text-amber-600 dark:text-amber-400", icon: AlertTriangle, iconColor: "text-amber-600 dark:text-amber-400", iconBg: "bg-amber-100 dark:bg-amber-500/20", dismissBtn: "text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20" };
+    default: return { cardBg: "bg-card", borderColor: "border-primary/20", textColor: "text-primary dark:text-primary", icon: Info, iconColor: "text-primary dark:text-primary", iconBg: "bg-primary/10 dark:bg-primary/20", dismissBtn: "text-primary dark:text-primary hover:bg-primary/10 dark:hover:bg-primary/20" };
   }
 };
 
@@ -51,7 +51,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                 </div>
               </div>
             </div>
-            <Button onClick={() => onDismiss(alert.id)} size="sm" className={`rounded-full px-5 h-8 font-medium shadow-none ${styles.dismissBtn}`}>
+            <Button variant="ghost" onClick={() => onDismiss(alert.id)} size="sm" className={`rounded-full px-5 h-8 font-medium shadow-none ${styles.dismissBtn}`}>
               {t('actions.dismiss')}
             </Button>
           </CardContent>

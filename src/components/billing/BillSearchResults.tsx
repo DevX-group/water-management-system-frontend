@@ -48,26 +48,45 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
 
   return (
     <div className="animate-fade-in space-y-6">
-      {/*Search input  */} 
-      <div className="bg-card rounded-2xl p-6 shadow-md">
+      <div className="bg-card rounded-2xl p-6 shadow-md relative">
         <h3 className="text-base font-semibold text-foreground mb-4">{t('search.title')}</h3>
-        <div className="flex gap-3">
-          <Input
-            type="text"
-            placeholder={t('search.placeholder')}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && onSearch()}
-            className="max-w-sm"
-            list="customer-suggestions"
-          />
-          <datalist id="customer-suggestions">
-            {customers.map(c => (
-              <option key={c.subscriptionNumber} value={c.subscriptionNumber}>
-                {c.accountHolderName} ({c.nic})
-              </option>
-            ))}
-          </datalist>
+        <div className="flex gap-3 relative">
+          <div className="flex-1 relative">
+            <Input
+              type="text"
+              placeholder={t('search.placeholder')}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && onSearch()}
+              className="w-full"
+            />
+            {searchQuery && customers.length > 0 && searchQuery !== searchedSub && (
+              <div className="absolute z-10 w-full mt-1 bg-card border rounded-md shadow-lg max-h-60 overflow-auto">
+                {customers
+                  .filter(c => 
+                    c.subscriptionNumber.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    c.accountHolderName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    c.nic?.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .map(c => (
+                    <div
+                      key={c.subscriptionNumber}
+                      className="px-4 py-2 hover:bg-secondary cursor-pointer"
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        setSearchQuery(c.subscriptionNumber);
+                      }}
+                      onClick={() => {
+                        setSearchQuery(c.subscriptionNumber);
+                      }}
+                    >
+                      <div className="font-medium">{c.subscriptionNumber}</div>
+                      <div className="text-xs text-muted-foreground">{c.accountHolderName} ({c.nic})</div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
           <Button onClick={onSearch} disabled={loadingBills || !searchQuery.trim()}>
             {loadingBills && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             {loadingBills ? t('search.searching') : t('search.searchBtn')}
