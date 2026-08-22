@@ -16,6 +16,7 @@ interface BillSearchResultsProps {
   loadingBills:   boolean;
   hasSearched:    boolean;
   searchedSub:    string;
+  searchedProfile:any;
   bills:          BillResponse[];
   billIndex:      number;
   setBillIndex:   (fn: (prev: number) => number) => void;
@@ -26,7 +27,7 @@ interface BillSearchResultsProps {
 
 export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
   searchQuery, setSearchQuery, loadingBills, hasSearched,
-  searchedSub, bills, billIndex, setBillIndex, billsPerPage,
+  searchedSub, searchedProfile, bills, billIndex, setBillIndex, billsPerPage,
   onSearch, onDownload,
 }) => {
   const { t } = useTranslation('billing');
@@ -37,7 +38,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
 
   const handleLocalDownload = async (bill: BillResponse) => {
     try {
-      await generateWaterBillPDF(bill, null);
+      await generateWaterBillPDF(bill, searchedProfile);
       toast({ title: 'Success', description: 'Bill downloaded successfully.' });
     } catch (e) {
       toast({ title: 'Error', description: 'Failed to download bill.', variant: 'destructive' });
@@ -149,7 +150,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
       {viewingBill && (
         <BillImageViewer
           bill={viewingBill as any}
-          profile={null}
+          profile={searchedProfile}
           zoom={viewerZoom}
           rotation={viewerRotation}
           imageLoading={false}
