@@ -30,7 +30,6 @@ export const LandingFooter = () => {
             <ul className="space-y-4 text-muted-foreground font-light">
               <li><Link to="/login" className="hover:text-blue-600 transition-colors">Sign In</Link></li>
               <li><Link to="/signup" className="hover:text-blue-600 transition-colors">Create Account</Link></li>
-              <li><a href="#" className="hover:text-blue-600 transition-colors">Pricing & Plans</a></li>
             </ul>
           </div>
 
@@ -47,7 +46,6 @@ export const LandingFooter = () => {
             <h4 className="font-semibold mb-6 text-foreground tracking-wide text-sm uppercase">Connect</h4>
             <ul className="space-y-4 text-muted-foreground font-light">
               <li><Link to="/about" className="hover:text-blue-600 transition-colors">About Us</Link></li>
-              <li><Link to="/blog" className="hover:text-blue-600 transition-colors">Journal</Link></li>
               <li><a href="#" className="hover:text-blue-600 transition-colors">Support Center</a></li>
             </ul>
           </div>
