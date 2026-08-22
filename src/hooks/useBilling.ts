@@ -23,6 +23,7 @@ export const useBilling = () => {
 
   // View bills
   const [searchQuery, setSearchQuery]   = useState('');
+  const [customers, setCustomers]       = useState<any[]>([]);
   const [bills, setBills]               = useState<BillResponse[]>([]);
   const [loadingBills, setLoadingBills] = useState(false);
   const [searchedSub, setSearchedSub]   = useState('');
@@ -52,7 +53,18 @@ export const useBilling = () => {
         console.error('Failed to fetch rates:', err);
       }
     };
+    
+    const fetchCustomers = async () => {
+      try {
+        const res = await api.get('/customers');
+        setCustomers(res.data);
+      } catch (err) {
+        console.error('Failed to fetch customers:', err);
+      }
+    };
+
     fetchRates();
+    fetchCustomers();
   }, []);
 
   // Edit helpers
@@ -153,7 +165,7 @@ export const useBilling = () => {
     rates, selectedRate,
     editingType, editDraft,
     startEditing, cancelEditing, setDraftField, handleSaveRates,
-    searchQuery, setSearchQuery,
+    searchQuery, setSearchQuery, customers,
     bills, loadingBills, searchedProfile,
     searchedSub, hasSearched,
     billIndex, setBillIndex, billsPerPage,

@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 interface BillSearchResultsProps {
   searchQuery:    string;
   setSearchQuery: (v: string) => void;
+  customers?:     any[];
   loadingBills:   boolean;
   hasSearched:    boolean;
   searchedSub:    string;
@@ -26,7 +27,7 @@ interface BillSearchResultsProps {
 }
 
 export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
-  searchQuery, setSearchQuery, loadingBills, hasSearched,
+  searchQuery, setSearchQuery, customers = [], loadingBills, hasSearched,
   searchedSub, searchedProfile, bills, billIndex, setBillIndex, billsPerPage,
   onSearch, onDownload,
 }) => {
@@ -58,7 +59,15 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && onSearch()}
             className="max-w-sm"
+            list="customer-suggestions"
           />
+          <datalist id="customer-suggestions">
+            {customers.map(c => (
+              <option key={c.subscriptionNumber} value={c.subscriptionNumber}>
+                {c.accountHolderName} ({c.nic})
+              </option>
+            ))}
+          </datalist>
           <Button onClick={onSearch} disabled={loadingBills || !searchQuery.trim()}>
             {loadingBills && <Loader2 className="w-4 h-4 animate-spin mr-2" />}
             {loadingBills ? t('search.searching') : t('search.searchBtn')}
