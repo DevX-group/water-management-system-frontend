@@ -25,6 +25,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import {
   Database,
@@ -36,6 +42,7 @@ import {
   RefreshCw,
   AlertTriangle,
   FileArchive,
+  CalendarClock,
 } from 'lucide-react';
 import {
   createBackup,
@@ -46,8 +53,10 @@ import {
   triggerFileDownload,
 } from '@/services/backupService';
 import type { BackupFileInfo } from '@/types/backup';
+import { BackupScheduleSettings } from './BackupScheduleSettings';
 
 export const BackupManagementCard: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<string>('instant');
   const [backups, setBackups] = useState<BackupFileInfo[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [creatingBackup, setCreatingBackup] = useState(false);
@@ -190,179 +199,220 @@ export const BackupManagementCard: React.FC = () => {
     <>
       <Card className="border-primary/10 shadow-soft hover:shadow-lg transition-all duration-500 bg-background/50 backdrop-blur-sm rounded-2xl overflow-hidden">
         <CardHeader className="border-b border-border/50 bg-secondary/30 pb-6">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
               <CardTitle className="flex items-center gap-3 text-2xl">
                 <div className="p-2.5 rounded-xl gradient-primary text-white shadow-sm">
                   <Database className="h-5 w-5" />
                 </div>
-                System Backups
+                Database Backup Management
               </CardTitle>
 
               <CardDescription className="text-base ml-14 mt-1">
-                Manage database backup archives and restore system data.
+                Perform manual database backups, restore archives, or configure automated backup schedules.
               </CardDescription>
-            </div>
-
-            <div className="flex items-center gap-2.5 ml-14 sm:ml-0">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={fetchBackups}
-                disabled={loadingList || creatingBackup}
-                className="rounded-xl border-primary/20 hover:bg-primary/10 h-10 px-3.5"
-              >
-                <RefreshCw className={`h-4 w-4 ${loadingList ? 'animate-spin' : ''}`} />
-              </Button>
-
-              <Button
-                type="button"
-                onClick={handleCreateBackup}
-                disabled={creatingBackup || loadingList}
-                className="h-10 px-5 rounded-xl gradient-primary text-white shadow-md transition-all gap-2"
-              >
-                {creatingBackup ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Plus className="h-4 w-4" />
-                )}
-                <span>Create Backup</span>
-              </Button>
             </div>
           </div>
         </CardHeader>
 
-        <CardContent className="pt-6 space-y-6">
-          {/* Backups Table */}
-          <div className="rounded-2xl border border-primary/10 overflow-hidden bg-background">
-            {loadingList ? (
-              <div className="flex flex-col justify-center items-center h-[200px] gap-2 text-muted-foreground">
-                <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                <span className="text-sm">Loading backups...</span>
-              </div>
-            ) : backups.length === 0 ? (
-              /* Empty State */
-              <div className="flex flex-col justify-center items-center py-12 px-4 text-center">
-                <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 mb-3 text-primary">
-                  <Database className="h-6 w-6" />
+        <CardContent className="pt-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            {/* Tabs List */}
+            <TabsList className="grid grid-cols-2 max-w-md bg-secondary/60 p-1 rounded-xl h-11 border border-border/40 mb-6">
+              <TabsTrigger
+                value="instant"
+                className="rounded-lg gap-2 text-sm font-semibold data-[state=active]:gradient-primary data-[state=active]:text-white transition-all"
+              >
+                <Database className="h-4 w-4" />
+                Instant Backup
+              </TabsTrigger>
+
+              <TabsTrigger
+                value="schedule"
+                className="rounded-lg gap-2 text-sm font-semibold data-[state=active]:gradient-primary data-[state=active]:text-white transition-all"
+              >
+                <CalendarClock className="h-4 w-4" />
+                Scheduled Backup
+              </TabsTrigger>
+            </TabsList>
+
+            {/* TAB 1: Instant Backup */}
+            <TabsContent value="instant" className="space-y-6 mt-0">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-secondary/20 p-4 rounded-xl border border-border/40">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground">
+                    Instant Manual Backup
+                  </h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Generate an immediate snapshot of the current database state.
+                  </p>
                 </div>
-                <h3 className="text-base font-semibold text-foreground">
-                  No backups found
-                </h3>
-                <p className="text-sm text-muted-foreground max-w-xs mt-1 mb-4">
-                  Create a system backup to safeguard your data.
-                </p>
-                <Button
-                  onClick={handleCreateBackup}
-                  disabled={creatingBackup}
-                  size="sm"
-                  className="rounded-xl gradient-primary text-white gap-2"
-                >
-                  {creatingBackup ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : (
-                    <Plus className="h-4 w-4" />
-                  )}
-                  Create Backup
-                </Button>
+
+                <div className="flex items-center gap-2.5 shrink-0">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={fetchBackups}
+                    disabled={loadingList || creatingBackup}
+                    className="rounded-xl border-primary/20 hover:bg-primary/10 h-10 px-3.5"
+                    title="Refresh Backup List"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loadingList ? 'animate-spin' : ''}`} />
+                  </Button>
+
+                  <Button
+                    type="button"
+                    onClick={handleCreateBackup}
+                    disabled={creatingBackup || loadingList}
+                    className="h-10 px-5 rounded-xl gradient-primary text-white shadow-md transition-all gap-2"
+                  >
+                    {creatingBackup ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Plus className="h-4 w-4" />
+                    )}
+                    <span>Create Backup Now</span>
+                  </Button>
+                </div>
               </div>
-            ) : (
-              <div className="max-h-[380px] overflow-y-auto">
-                <Table>
-                  <TableHeader className="bg-secondary/40 sticky top-0 z-10 backdrop-blur-md">
-                    <TableRow className="hover:bg-transparent border-b border-primary/10">
-                      <TableHead className="pl-6 font-semibold text-foreground">
-                        File Name
-                      </TableHead>
-                      <TableHead className="font-semibold text-foreground">
-                        Size
-                      </TableHead>
-                      <TableHead className="font-semibold text-foreground">
-                        Created Date
-                      </TableHead>
-                      <TableHead className="w-[180px] text-right pr-6 font-semibold text-foreground">
-                        Actions
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
 
-                  <TableBody>
-                    {backups.map((backup) => (
-                      <TableRow
-                        key={backup.fileName}
-                        className="group border-b border-border/50 hover:bg-primary/[0.03] transition-colors"
-                      >
-                        {/* File Name */}
-                        <TableCell className="pl-6 py-3.5 font-medium text-foreground text-sm">
-                          <div className="flex items-center gap-3">
-                            <FileArchive className="h-4 w-4 text-primary shrink-0" />
-                            <span className="font-mono text-xs">{backup.fileName}</span>
-                          </div>
-                        </TableCell>
+              {/* Backups Table */}
+              <div className="rounded-2xl border border-primary/10 overflow-hidden bg-background">
+                {loadingList ? (
+                  <div className="flex flex-col justify-center items-center h-[200px] gap-2 text-muted-foreground">
+                    <Loader2 className="h-7 w-7 animate-spin text-primary" />
+                    <span className="text-sm">Loading backups...</span>
+                  </div>
+                ) : backups.length === 0 ? (
+                  /* Empty State */
+                  <div className="flex flex-col justify-center items-center py-12 px-4 text-center">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-xl bg-primary/10 mb-3 text-primary">
+                      <Database className="h-6 w-6" />
+                    </div>
+                    <h3 className="text-base font-semibold text-foreground">
+                      No backups found
+                    </h3>
+                    <p className="text-sm text-muted-foreground max-w-xs mt-1 mb-4">
+                      Create a system backup to safeguard your data.
+                    </p>
+                    <Button
+                      onClick={handleCreateBackup}
+                      disabled={creatingBackup}
+                      size="sm"
+                      className="rounded-xl gradient-primary text-white gap-2"
+                    >
+                      {creatingBackup ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Plus className="h-4 w-4" />
+                      )}
+                      Create Backup
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="max-h-[380px] overflow-y-auto">
+                    <Table>
+                      <TableHeader className="bg-secondary/40 sticky top-0 z-10 backdrop-blur-md">
+                        <TableRow className="hover:bg-transparent border-b border-primary/10">
+                          <TableHead className="pl-6 font-semibold text-foreground">
+                            File Name
+                          </TableHead>
+                          <TableHead className="font-semibold text-foreground">
+                            Size
+                          </TableHead>
+                          <TableHead className="font-semibold text-foreground">
+                            Created Date
+                          </TableHead>
+                          <TableHead className="w-[180px] text-right pr-6 font-semibold text-foreground">
+                            Actions
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
 
-                        {/* Size */}
-                        <TableCell className="text-sm text-muted-foreground">
-                          {backup.sizeFormatted || formatBytes(backup.fileSize)}
-                        </TableCell>
+                      <TableBody>
+                        {backups.map((backup) => (
+                          <TableRow
+                            key={backup.fileName}
+                            className="group border-b border-border/50 hover:bg-primary/[0.03] transition-colors"
+                          >
+                            {/* File Name */}
+                            <TableCell className="pl-6 py-3.5 font-medium text-foreground text-sm">
+                              <div className="flex items-center gap-3">
+                                <FileArchive className="h-4 w-4 text-primary shrink-0" />
+                                <span className="font-mono text-xs">{backup.fileName}</span>
+                              </div>
+                            </TableCell>
 
-                        {/* Date */}
-                        <TableCell className="text-sm text-muted-foreground">
-                          {formatDate(backup)}
-                        </TableCell>
+                            {/* Size */}
+                            <TableCell className="text-sm text-muted-foreground">
+                              {backup.sizeFormatted || formatBytes(backup.fileSize)}
+                            </TableCell>
 
-                        {/* Actions */}
-                        <TableCell className="text-right pr-6">
-                          <div className="flex items-center justify-end gap-1">
-                            {/* Download */}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              title="Download"
-                              onClick={() => handleDownload(backup.fileName)}
-                              disabled={downloadingFile === backup.fileName}
-                              className="h-8 px-2.5 text-muted-foreground hover:text-primary rounded-lg gap-1.5"
-                            >
-                              {downloadingFile === backup.fileName ? (
-                                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                              ) : (
-                                <Download className="h-3.5 w-3.5" />
-                              )}
-                              <span className="hidden lg:inline text-xs">Download</span>
-                            </Button>
+                            {/* Date */}
+                            <TableCell className="text-sm text-muted-foreground">
+                              {formatDate(backup)}
+                            </TableCell>
 
-                            {/* Restore */}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              title="Restore"
-                              onClick={() => setRestoreModalFile(backup.fileName)}
-                              className="h-8 px-2.5 text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 rounded-lg gap-1.5"
-                            >
-                              <RotateCcw className="h-3.5 w-3.5" />
-                              <span className="hidden lg:inline text-xs">Restore</span>
-                            </Button>
+                            {/* Actions */}
+                            <TableCell className="text-right pr-6">
+                              <div className="flex items-center justify-end gap-1">
+                                {/* Download */}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  title="Download"
+                                  onClick={() => handleDownload(backup.fileName)}
+                                  disabled={downloadingFile === backup.fileName}
+                                  className="h-8 px-2.5 text-muted-foreground hover:text-primary rounded-lg gap-1.5"
+                                >
+                                  {downloadingFile === backup.fileName ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <Download className="h-3.5 w-3.5" />
+                                  )}
+                                  <span className="hidden lg:inline text-xs">Download</span>
+                                </Button>
 
-                            {/* Delete */}
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              title="Delete"
-                              onClick={() => setDeleteModalFile(backup.fileName)}
-                              className="h-8 px-2.5 text-muted-foreground hover:text-destructive rounded-lg gap-1.5"
-                            >
-                              <Trash2 className="h-3.5 w-3.5" />
-                              <span className="hidden lg:inline text-xs">Delete</span>
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                                {/* Restore */}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  title="Restore"
+                                  onClick={() => setRestoreModalFile(backup.fileName)}
+                                  className="h-8 px-2.5 text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 rounded-lg gap-1.5"
+                                >
+                                  <RotateCcw className="h-3.5 w-3.5" />
+                                  <span className="hidden lg:inline text-xs">Restore</span>
+                                </Button>
+
+                                {/* Delete */}
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  title="Delete"
+                                  onClick={() => setDeleteModalFile(backup.fileName)}
+                                  className="h-8 px-2.5 text-muted-foreground hover:text-destructive rounded-lg gap-1.5"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <span className="hidden lg:inline text-xs">Delete</span>
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
+            </TabsContent>
+
+            {/* TAB 2: Scheduled Backup */}
+            <TabsContent value="schedule" className="mt-0">
+              <BackupScheduleSettings />
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
 
