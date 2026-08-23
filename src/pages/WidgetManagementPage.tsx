@@ -313,8 +313,8 @@ export const WidgetManagementPage: React.FC = () => {
           <LayoutGrid className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gradient">Widget Management</h1>
-          <p className="text-muted-foreground">Manage the widget catalog and configure role dashboards.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Widget Management</h1>
+          <p className="mt-1 text-muted-foreground">Manage the widget catalog and configure role dashboards.</p>
         </div>
       </div>
 
@@ -461,3 +461,5 @@ export const WidgetManagementPage: React.FC = () => {
     </div>
   );
 };
+
+

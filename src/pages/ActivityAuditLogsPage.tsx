@@ -96,7 +96,7 @@ const AuditDetailDialog = ({ id, open, onOpenChange }: { id: string | null; open
             </dl>
             <section aria-labelledby="changed-fields-heading">
               <h3 id="changed-fields-heading" className="mb-2 font-semibold">Changed fields</h3>
-              {fields.length === 0 ? <p className="text-muted-foreground">No changed fields were recorded.</p> : (
+              {fields.length === 0 ? <p className="mt-1 text-muted-foreground">No changed fields were recorded.</p> : (
                 <div className="overflow-hidden rounded-md border">
                   <Table><TableHeader><TableRow><TableHead>Field</TableHead><TableHead>Safe value</TableHead></TableRow></TableHeader>
                     <TableBody>{fields.map(([field, value]) => <TableRow key={field}><TableCell className="font-medium">{humanize(field)}</TableCell><TableCell className="break-words">{renderChangedValue(value)}</TableCell></TableRow>)}</TableBody>
@@ -187,3 +187,4 @@ const AuditTable = ({ items, onView }: { items: ActivityAuditListItem[]; onView:
     <TableBody>{items.map(item => <TableRow key={item.id}><TableCell className="min-w-44 whitespace-nowrap">{formatDateTime(item.occurredAt)}</TableCell><TableCell><div className="min-w-36"><p className="font-medium">{item.actorDisplayName}</p><p className="text-xs text-muted-foreground">{humanize(item.actorRole)}</p></div></TableCell><TableCell><Badge variant="secondary">{humanize(item.action)}</Badge></TableCell><TableCell><div><Badge variant="outline">{humanize(item.entityType)}</Badge><p className="mt-1 font-mono text-xs" title={item.entityId}>{shortId(item.entityId)}</p></div></TableCell><TableCell className="min-w-56 max-w-md">{item.summary}</TableCell><TableCell><Badge variant="outline">{item.source}</Badge></TableCell><TableCell className="text-right"><Button variant="ghost" size="sm" aria-label={`View details for activity ${item.id}`} onClick={() => onView(item.id)}><Eye className="mr-1 h-4 w-4" />View</Button></TableCell></TableRow>)}</TableBody>
   </Table></div>
 );
+

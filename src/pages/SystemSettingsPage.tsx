@@ -214,11 +214,11 @@ export const SystemSettingsPage: React.FC = () => {
     >
       {/* Page Header */}
       <div className="flex flex-col gap-2 mb-2">
-        <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {t('title')}
         </h1>
 
-        <p className="text-muted-foreground text-lg">
+        <p className="mt-1 text-muted-foreground">
           {t('subtitle')}
         </p>
       </div>
@@ -660,4 +660,5 @@ export const SystemSettingsPage: React.FC = () => {
     </motion.div>
   );
 };
+
 
