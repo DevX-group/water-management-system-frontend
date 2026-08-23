@@ -1,3 +1,4 @@
+import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 import '@/index.css';
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
@@ -124,7 +125,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
               >
                 <Droplets className="w-6 h-6 text-primary-foreground" />
               </motion.div>
-              <CompanyNameBlock />
+              <div className="hidden sm:block"><CompanyNameBlock /></div>
             </Link>
             <div className="flex items-center gap-2">
               <DropdownMenu>
