@@ -371,12 +371,11 @@ export const ReportsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Page heading */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           Reports
         </h1>
-
-        <p className="text-sm text-muted-foreground">
+        <p className="mt-1 text-muted-foreground">
           Summarized and detailed views of system data
           for monitoring and analysis
         </p>
@@ -483,3 +482,4 @@ export const ReportsPage: React.FC = () => {
 };
 
 export default ReportsPage;
+

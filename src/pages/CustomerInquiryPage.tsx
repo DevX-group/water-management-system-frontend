@@ -46,8 +46,8 @@ export const CustomerInquiryPage: React.FC = () => {
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         <motion.div variants={containerVariants} initial="hidden" animate="visible">
           <motion.div variants={itemVariants} className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('title')} <span className="text-gradient">{t('titleHighlight')}</span></h1>
-            <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('title')} {t('titleHighlight')}</h1>
+            <p className="mt-1 text-muted-foreground">{t('subtitle')}</p>
           </motion.div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {inquiries.length > 0 && (
@@ -79,3 +79,4 @@ export const CustomerInquiryPage: React.FC = () => {
     </MainLayout>
   );
 };
+

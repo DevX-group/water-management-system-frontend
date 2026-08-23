@@ -15,10 +15,10 @@ export const DashboardPage: React.FC = () => {
   const { currentAdmin } = useAdmin();
 
   const roleGreeting: Record<string, string> = {
-    SUPER_ADMIN: '🛡️ Super Admin Dashboard',
-    SYSTEM_ADMIN: '⚙️ System Admin Dashboard',
-    CUSTOMER_HANDLER: '👤 Customer Handler Dashboard',
-    METER_READER: '📊 Meter Reader Dashboard',
+    SUPER_ADMIN: 'Super Admin Dashboard',
+    SYSTEM_ADMIN: 'System Admin Dashboard',
+    CUSTOMER_HANDLER: 'Customer Handler Dashboard',
+    METER_READER: 'Meter Reader Dashboard',
   };
 
   const roleSubtitle: Record<string, string> = {
@@ -37,3 +37,4 @@ export const DashboardPage: React.FC = () => {
     </div>
   );
 };
+

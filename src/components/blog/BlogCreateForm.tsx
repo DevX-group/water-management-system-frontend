@@ -28,7 +28,7 @@ export const BlogCreateForm: React.FC<BlogCreateFormProps> = ({
   return (
     <>
       <div className="flex justify-between items-center mb-10">
-        <h1 className="text-3xl font-bold">{t('title')}</h1>
+        <div><h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('title')}</h1><p className="mt-1 text-muted-foreground">Manage and publish news and updates for customers.</p></div>
         <Button onClick={onToggle} className="rounded-full px-6">
           {showForm ? <><X className="mr-2" />{t('cancel')}</> : <><Plus className="mr-2" />{t('addNewBlog')}</>}
         </Button>
@@ -91,3 +91,4 @@ export const BlogCreateForm: React.FC<BlogCreateFormProps> = ({
     </>
   );
 };
+

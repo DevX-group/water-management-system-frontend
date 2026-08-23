@@ -16,8 +16,8 @@ const CustomerSettings = () => {
     <MainLayout isAuthenticated={true}>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto p-4 md:p-6 mt-20">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-          <p className="text-muted-foreground mt-2">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Settings</h1>
+          <p className="mt-1 text-muted-foreground">
             Customize the look and feel of your application.
           </p>
         </div>
@@ -163,3 +163,4 @@ const CustomerSettings = () => {
 };
 
 export default CustomerSettings;
+

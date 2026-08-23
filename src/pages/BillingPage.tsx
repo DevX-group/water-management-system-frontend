@@ -19,8 +19,8 @@ export const BillingPage = () => {
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
-        <h1 className="text-2xl font-bold text-foreground">{t('title')}</h1>
-        <p className="text-muted-foreground">{t('subtitle')}</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('title')}</h1>
+        <p className="mt-1 text-muted-foreground">{t('subtitle')}</p>
       </div>
 
       {/* Tab selector */}
@@ -108,3 +108,4 @@ export const BillingPage = () => {
     </div>
   );
 };
+

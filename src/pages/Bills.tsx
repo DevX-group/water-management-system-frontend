@@ -62,9 +62,9 @@ const Bills = () => {
         <motion.div variants={containerVariants} initial="hidden" animate="visible">
 
           <motion.div variants={itemVariants} className="mb-8">
-            <h1 className="text-3xl md:text-4xl font-bold mb-2">
-              {t('history.title')} <span className="text-gradient">{t('history.titleHighlight')}</span>
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {t('history.title')} {t('history.titleHighlight')}
+            </h1><p className="mt-1 text-muted-foreground">View your past billing history and download invoices.</p>
           </motion.div>
 
           {/* normalize billId to string to satisfy BillsSummaryStats Bill type */}
@@ -118,3 +118,4 @@ const Bills = () => {
 };
 
 export default Bills;
+

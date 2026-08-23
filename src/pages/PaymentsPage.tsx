@@ -9,8 +9,8 @@ export const PaymentsPage = () => {
   return (
     <div className="space-y-6">
       <div className="animate-fade-in">
-        <h1 className="text-2xl font-bold text-foreground">{t('payments.title')}</h1>
-        <p className="text-muted-foreground">{t('payments.adminSubtitle')}</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('payments.title')}</h1>
+        <p className="mt-1 text-muted-foreground">{t('payments.adminSubtitle')}</p>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
@@ -25,3 +25,4 @@ export const PaymentsPage = () => {
     </div>
   );
 };
+

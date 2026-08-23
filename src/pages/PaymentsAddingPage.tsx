@@ -362,8 +362,8 @@ export const PaymentsAddingPage = () => {
       <div className="animate-fade-in">
         <div className="flex items-center justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{t('payments.adminPayments.addPayment')}</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('payments.adminPayments.addPayment')}</h1>
+            <p className="mt-1 text-muted-foreground">
               {customerInfo?.accountHolderName ?? t('payments.adminPayments.customer')} • {customerInfo?.subscriptionNumber}
             </p>
           </div>
@@ -553,3 +553,4 @@ export const PaymentsAddingPage = () => {
     </div>
   );
 };
+

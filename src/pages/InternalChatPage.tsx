@@ -354,9 +354,7 @@ export const InternalChatPage = () => {
     <div className="space-y-5 pb-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-            <Sparkles className="h-4 w-4" /> {t('page.badge')}
-          </div>
+          
           <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('page.title')}</h1>
           <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t('page.subtitle')}</p>
         </div>
@@ -466,3 +464,5 @@ export const InternalChatPage = () => {
 };
 
 export default InternalChatPage;
+
+

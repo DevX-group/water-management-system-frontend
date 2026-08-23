@@ -50,11 +50,11 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
     <div className="space-y-6">
       {/* Header */}
       <div className="animate-slide-up">
-        <h1 className="text-2xl font-bold text-gradient mb-1">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {greeting ?? config.name}
         </h1>
         {subtitle && (
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
+          <p className="mt-1 text-muted-foreground">{subtitle}</p>
         )}
       </div>
 
@@ -78,3 +78,4 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
     </div>
   );
 };
+
