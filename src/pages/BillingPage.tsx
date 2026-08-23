@@ -62,29 +62,27 @@ export const BillingPage = () => {
               />
             </div>
             
-            {currentAdmin.role === 'SUPER_ADMIN' && (
-              <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '100ms' }}>
-                <div className="flex items-center gap-2 mb-6">
-                  <Settings2 className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold text-foreground">{t('manageRates')}</h3>
-                </div>
-                <div className="space-y-4">
-                  {(['metered', 'non_metered'] as const).map((type) => (
-                    <RateCard
-                      key={type}
-                      type={type}
-                      rates={billing.rates}
-                      editingType={billing.editingType}
-                      editDraft={billing.editDraft}
-                      onStartEdit={billing.startEditing}
-                      onCancelEdit={billing.cancelEditing}
-                      onSetDraft={billing.setDraftField}
-                      onSave={(t) => billing.handleSaveRates(t, TYPE_META[t])}
-                    />
-                  ))}
-                </div>
+            <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '100ms' }}>
+              <div className="flex items-center gap-2 mb-6">
+                <Settings2 className="w-5 h-5 text-primary" />
+                <h3 className="text-lg font-semibold text-foreground">{t('manageRates')}</h3>
               </div>
-            )}
+              <div className="space-y-4">
+                {(['metered', 'non_metered'] as const).map((type) => (
+                  <RateCard
+                    key={type}
+                    type={type}
+                    rates={billing.rates}
+                    editingType={billing.editingType}
+                    editDraft={billing.editDraft}
+                    onStartEdit={billing.startEditing}
+                    onCancelEdit={billing.cancelEditing}
+                    onSetDraft={billing.setDraftField}
+                    onSave={(t) => billing.handleSaveRates(t, TYPE_META[t])}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -17,18 +17,28 @@ export const useBills = () => {
   const [rotation, setRotation]     = useState(0);
   const [imageLoading, setImageLoading] = useState(false);
   const [imageError, setImageError]     = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const itemsPerPage = 5;
+  
+  const [pageIndex, setPageIndex] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
+  const itemsPerPage = 10; // Fetch 10 bills per page from backend
 
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
 
   // Fetch the specific bills for the logged in customer.
   useEffect(() => {
-    api.get<BillResponse[]>(`/bills/customer/me`)
-      .then(response => setBills(response.data))
+    setLoading(true);
+    api.get<{ content: BillResponse[], totalPages: number, totalElements: number }>(`/bills/customer/me/paginated?page=${pageIndex}&size=${itemsPerPage}`)
+      .then(response => {
+        setBills(response.data.content);
+        setTotalPages(response.data.totalPages);
+        setTotalElements(response.data.totalElements);
+      })
       .catch(console.error)
       .finally(() => setLoading(false));
+  }, [pageIndex]);
 
+  useEffect(() => {
     api.get('/customers/me')
       .then(res => setProfile(res.data))
       .catch(console.error);
@@ -72,11 +82,13 @@ export const useBills = () => {
     rotation,
     imageLoading,
     imageError,
-    currentIndex,
+    pageIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     setSearchTerm,
     setStatusFilter,
-    setCurrentIndex,
+    setPageIndex,
     setZoom,
     setRotation,
     setImageLoading,

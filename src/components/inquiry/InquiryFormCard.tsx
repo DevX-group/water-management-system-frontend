@@ -56,6 +56,12 @@ export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm,
         <textarea value={form.message} onChange={(e) => setForm({...form, message: e.target.value})} rows={4} placeholder={t('form.messagePlaceholder')} className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus:ring-2 focus:ring-primary/20 outline-none transition-all resize-none" />
         {errors.message && <p className="text-[10px] text-destructive font-medium">{errors.message}</p>}
       </div>
+      <div className="space-y-2">
+        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Attachment</label>
+        <div className="flex items-center gap-2">
+           <input type="file" onChange={(e) => setForm({...form, file: e.target.files?.[0] || null})} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+        </div>
+      </div>
       <Button onClick={onSubmit} disabled={submitting} className="w-full h-14 text-base font-bold rounded-xl gradient-primary transition-transform active:scale-[0.98]">
         {submitting ? <Loader2 className="animate-spin mr-2" /> : <Send size={18} className="mr-2" />}
         {submitting ? t('form.submitting') : t('form.submit')}

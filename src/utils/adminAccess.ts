@@ -4,7 +4,7 @@ import type { AdminRole, Section } from '@/types/admin';
 export const ADMIN_ROLES: AdminRole[] = [
   'SUPER_ADMIN',
   'SYSTEM_ADMIN',
-  'PAYMENT_HANDLER',
+  'CUSTOMER_HANDLER',
   'METER_READER',
 ];
 
@@ -28,7 +28,6 @@ export const canAccessSection = (role: AdminRole, section: Section): boolean => 
 };
 
 export const getDefaultAdminPath = (role: AdminRole): string => {
-  if (role === 'METER_READER') return SECTION_PATH_MAP.meter;
-  if (role === 'PAYMENT_HANDLER') return SECTION_PATH_MAP.payments;
+  // All roles now land on the dashboard - which loads the role-appropriate widget config.
   return SECTION_PATH_MAP.dashboard;
 };

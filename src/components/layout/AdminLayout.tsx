@@ -1,11 +1,9 @@
 import '@/index.css';
 import { useAdmin } from '@/contexts/AdminContext';
 import React from 'react';
-import { AdminSidebar } from '@/components/layout/AdminSidebar';
 import { AdminNavbar } from '@/components/layout/AdminNavbar';
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -24,14 +22,10 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeSectio
   }, [i18n]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-50">
-        <AdminNavbar />
-        <AdminSidebar 
-          activeSection={activeSection}
-        />
-      </div>
-      <div className="px-4 sm:px-6 lg:px-8 xl:px-12 py-6" >
+    <div className="min-h-screen bg-background relative">
+      <AdminNavbar />
+      {/* Padding top is 28 (112px) to account for the floating navbar */}
+      <div className="pt-28 px-4 sm:px-6 lg:px-8 xl:px-12 py-6" >
         <main>
           {children}
         </main>

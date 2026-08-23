@@ -28,11 +28,28 @@ import type {
   InternalChatRoleFilter,
   InternalChatUser,
 } from '@/types/internalChat';
-import { useTranslation } from 'react-i18next';
+
+const ROLE_TABS: Array<{ value: InternalChatRoleFilter; label: string }> = [
+  { value: 'ALL', label: 'All staff' },
+  { value: 'SUPER_ADMIN', label: 'Super Admin' },
+  { value: 'SYSTEM_ADMIN', label: 'System Admin' },
+  { value: 'CUSTOMER_HANDLER', label: 'Customer Handler' },
+  { value: 'METER_READER', label: 'Meter Reader' },
+];
+
+const ROLE_LABELS: Record<AdminRole, string> = {
+  SUPER_ADMIN: 'Super Admin',
+  SYSTEM_ADMIN: 'System Admin',
+  CUSTOMER_HANDLER: 'Customer Handler',
+  //PAYMENT_HANDLER: 'Customer Handler',
+  METER_READER: 'Meter Reader',
+};
 
 const PAGE_SIZE = 30;
 
-const getInitials = (name: string) => name
+const getRoleLabel = (role: AdminRole) => ROLE_LABELS[role] ?? role;
+
+const getInitials = (name?: string | null) => (name || 'Admin')
   .split(' ')
   .filter(Boolean)
   .slice(0, 2)
@@ -195,11 +212,11 @@ export const InternalChatPage = () => {
         setConversations((current) => current.map((conversation) => (
           conversation.id === incoming.conversationId
             ? {
-                ...conversation,
-                latestMessagePreview: incoming.content,
-                latestMessageTime: incoming.createdAt,
-                unreadCount: 0,
-              }
+              ...conversation,
+              latestMessagePreview: incoming.content,
+              latestMessageTime: incoming.createdAt,
+              unreadCount: 0,
+            }
             : conversation
         )));
         void internalChatService.markAsRead(incoming.conversationId);
@@ -368,7 +385,7 @@ export const InternalChatPage = () => {
               <label htmlFor="chat-search" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('sidebar.searchLabel')}</label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder={t('sidebar.searchPlaceholder')} className="h-11 rounded-xl bg-background pl-9" />
+                <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name" className="h-11 rounded-xl bg-background pl-9" />
               </div>
             </div>
 

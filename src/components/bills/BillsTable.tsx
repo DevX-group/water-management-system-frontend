@@ -18,18 +18,20 @@ interface Bill {
 
 interface BillsTableProps {
   bills:        Bill[];
-  currentIndex: number;
+  pageIndex:    number;
+  totalPages:   number;
+  totalElements: number;
   itemsPerPage: number;
-  setCurrentIndex: (fn: (prev: number) => number) => void;
+  setPageIndex: (fn: (prev: number) => number) => void;
   onView:       (bill: Bill) => void;
   onDownload:   (bill: Bill) => void;
 }
 
 export const BillsTable: React.FC<BillsTableProps> = ({
-  bills, currentIndex, itemsPerPage, setCurrentIndex, onView, onDownload,
+  bills, pageIndex, totalPages, totalElements, itemsPerPage, setPageIndex, onView, onDownload,
 }) => {
   const { t } = useTranslation('billing');
-  const page = bills.slice(currentIndex, currentIndex + itemsPerPage);
+  const page = bills; // backend already returns a page of items
 
   return (
     <Card className="shadow-card border-none overflow-hidden">
@@ -67,19 +69,19 @@ export const BillsTable: React.FC<BillsTableProps> = ({
           </tbody>
         </table>
 
-        {bills.length > itemsPerPage && (        // Pagination Controls
+        {totalPages > 1 && (        // Pagination Controls
           <div className="p-4 border-t bg-secondary/20 flex justify-center items-center gap-4">
             <Button variant="outline" size="sm"
-              onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}
-              disabled={currentIndex === 0}>
+              onClick={() => setPageIndex(prev => Math.max(0, prev - 1))}
+              disabled={pageIndex === 0}>
               <ArrowLeft className="w-4 h-4 mr-1" /> {t('history.table.previous')}
             </Button>
             <span className="text-sm font-medium">
-              {t('history.table.showing')} {currentIndex + 1} - {Math.min(currentIndex + itemsPerPage, bills.length)} {t('history.table.of')} {bills.length}
+              {t('history.table.showing')} {pageIndex * itemsPerPage + 1} - {Math.min((pageIndex + 1) * itemsPerPage, totalElements)} {t('history.table.of')} {totalElements}
             </span>
             <Button variant="outline" size="sm"
-              onClick={() => setCurrentIndex(prev => Math.min(bills.length - itemsPerPage, prev + itemsPerPage))}
-              disabled={currentIndex + itemsPerPage >= bills.length}>
+              onClick={() => setPageIndex(prev => Math.min(totalPages - 1, prev + 1))}
+              disabled={pageIndex >= totalPages - 1}>
               {t('history.table.next')} <ArrowRight className="w-4 h-4 ml-1" />
             </Button>
           </div>

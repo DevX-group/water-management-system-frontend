@@ -1,70 +1,297 @@
-import '@/index.css';
-import React from 'react';
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine,
-} from 'recharts';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { customerPredictionData } from '@/utils/predictionData';
-import { useTranslation } from 'react-i18next';
+import "@/index.css";
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
-const CustomerTooltip = ({ active, payload }: any) => {
-  const { t } = useTranslation('predictions');
-  if (!active || !payload?.length) return null;
-  const d = payload[0].payload;
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+import { Input } from "@/components/ui/input";
+import { api } from "@/services/api";
+
+interface CustomerPredictionRow {
+  month: string;
+  usage: number | null;
+  revenue: number | null;
+  predictedUsage: number | null;
+  predictedRevenue: number | null;
+}
+
+interface CustomerTooltipProps {
+  active?: boolean;
+  payload?: Array<{
+    payload: CustomerPredictionRow;
+  }>;
+}
+
+const CustomerTooltip = ({
+  active,
+  payload,
+}: CustomerTooltipProps) => {
+  if (!active || !payload?.length) {
+    return null;
+  }
+
+  const data = payload[0]?.payload;
+
+  if (!data) {
+    return null;
+  }
+
   return (
     <div className="bg-card border border-border rounded-lg p-3 text-sm shadow-md">
-      <p className="font-semibold mb-2">{d.month}</p>
-      {d.usage !== null && <p>{t('customer.tooltipActualUsage', { value: d.usage.toLocaleString() })}</p>}
-      {d.revenue !== null && <p>{t('customer.tooltipActualRevenue', { value: d.revenue.toLocaleString() })}</p>}
-      {d.predictedUsage !== null && (
-        <><p className="text-orange-500">{t('customer.tooltipPredictedUsage', { value: d.predictedUsage.toLocaleString() })}</p>
-          <p className="text-orange-500">{t('customer.tooltipPredictedRevenue', { value: d.predictedRevenue.toLocaleString() })}</p></>
+      <p className="font-semibold mb-2">
+        {data.month}
+      </p>
+
+      {data.usage != null && (
+        <p>
+          Actual Usage:{" "}
+          {Number(data.usage).toLocaleString()} L
+        </p>
+      )}
+
+      {data.revenue != null && (
+        <p>
+          Actual Revenue: LKR{" "}
+          {Number(data.revenue).toLocaleString()}
+        </p>
+      )}
+
+      {data.predictedUsage != null && (
+        <p className="text-orange-500">
+          Predicted Usage:{" "}
+          {Number(
+            data.predictedUsage
+          ).toLocaleString()}{" "}
+          L
+        </p>
+      )}
+
+      {data.predictedRevenue != null && (
+        <p className="text-orange-500">
+          Predicted Revenue: LKR{" "}
+          {Number(
+            data.predictedRevenue
+          ).toLocaleString()}
+        </p>
       )}
     </div>
   );
 };
 
 interface CustomerPredictionChartProps {
-  searchId:    string;
-  setSearchId: (v: string) => void;
+  searchId: string;
+  setSearchId: (value: string) => void;
+  selectedYear: string;
 }
 
-export const CustomerPredictionChart: React.FC<CustomerPredictionChartProps> = ({ searchId, setSearchId }) => {
-  const { t } = useTranslation('predictions');
-  const filteredData = customerPredictionData.filter(d => d.customerId === searchId);
+export const CustomerPredictionChart: React.FC<
+  CustomerPredictionChartProps
+> = ({
+  searchId,
+  setSearchId,
+  selectedYear,
+}) => {
+    const [
+      customerPredictionData,
+      setCustomerPredictionData,
+    ] = useState<CustomerPredictionRow[]>([]);
 
-  return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>{t('customer.title')}</CardTitle>
-            <CardDescription>{t('customer.description')}</CardDescription>
+    const [isLoading, setIsLoading] =
+      useState(false);
+
+    const [error, setError] =
+      useState<string | null>(null);
+
+    /*
+     * The backend/database filters by customer ID and the
+     * current year. The delay avoids one request for every
+     * immediate keystroke.
+     */
+    useEffect(() => {
+      const normalizedCustomerId =
+        searchId.trim().toUpperCase();
+
+      if (!normalizedCustomerId) {
+        setCustomerPredictionData([]);
+        setIsLoading(false);
+        setError(null);
+        return;
+      }
+
+      const controller = new AbortController();
+
+      const timer = window.setTimeout(() => {
+        setIsLoading(true);
+        setError(null);
+
+        api
+          .get("/predictions/customer", {
+            params: {
+              customerId: normalizedCustomerId,
+              year: selectedYear,
+            },
+            signal: controller.signal,
+          })
+          .then((res) => {
+            setCustomerPredictionData(res.data);
+          })
+          .catch((err) => {
+            if (err.code !== "ERR_CANCELED") {
+              console.error(
+                "CUSTOMER PREDICTION ERROR:",
+                err
+              );
+
+              setError(
+                "Failed to load customer prediction data."
+              );
+            }
+          })
+          .finally(() => {
+            if (!controller.signal.aborted) {
+              setIsLoading(false);
+            }
+          });
+      }, 300);
+
+      return () => {
+        window.clearTimeout(timer);
+        controller.abort();
+      };
+    }, [searchId, selectedYear]);
+
+    /*
+     * Find the first predicted month dynamically.
+     */
+    const firstPredictionMonth = useMemo(
+      () =>
+        customerPredictionData.find(
+          (row) => row.predictedUsage != null
+        )?.month,
+      [customerPredictionData]
+    );
+
+    return (
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>
+                Customer Usage Prediction -{" "}
+                {selectedYear}
+              </CardTitle>
+
+              <CardDescription>
+                Forecasted usage for the selected
+                customer up to 3 months
+              </CardDescription>
+            </div>
+
+            <Input
+              placeholder={t('customer.searchPlaceholder')}
+              value={searchId}
+              onChange={(event) =>
+                setSearchId(
+                  event.target.value.toUpperCase()
+                )
+              }
+              className="w-48"
+            />
           </div>
-          <Input
-            placeholder={t('customer.searchPlaceholder')}
-            value={searchId}
-            onChange={(e) => setSearchId(e.target.value.toUpperCase())}
-            className="w-48"
-          />
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={filteredData}>
-              <ReferenceLine x="Jul" stroke="gray" strokeDasharray="3 3" label={t('customer.predictionStart')} />
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis label={{ value: t('customer.usageLabel'), angle: -90, position: 'insideLeft' }} />
-              <Tooltip content={<CustomerTooltip />} />
-              <Line type="monotone" dataKey="usage" stroke="#2563eb" strokeWidth={2} name={t('customer.actualUsage')} connectNulls />
-              <Line type="monotone" dataKey="predictedUsage" stroke="#f97316" strokeWidth={2} strokeDasharray="5 5" name={t('customer.predictedUsage')} connectNulls />
-            </LineChart>
-          </ResponsiveContainer>
-        </div>
-      </CardContent>
-    </Card>
-  );
-};
+        </CardHeader>
+
+        <CardContent>
+          {isLoading ? (
+            <div className="h-80 flex items-center justify-center text-muted-foreground">
+              Loading customer predictions...
+            </div>
+          ) : error ? (
+            <div className="h-80 flex items-center justify-center text-destructive">
+              {error}
+            </div>
+          ) : customerPredictionData.length === 0 ? (
+            <div className="h-80 flex items-center justify-center text-muted-foreground">
+              No prediction data found for this customer.
+            </div>
+          ) : (
+            <div className="h-80">
+              <ResponsiveContainer
+                width="100%"
+                height="100%"
+              >
+                <LineChart
+                  data={customerPredictionData}
+                >
+                  {firstPredictionMonth && (
+                    <ReferenceLine
+                      x={firstPredictionMonth}
+                      stroke="gray"
+                      strokeDasharray="3 3"
+                      label="Prediction Start"
+                    />
+                  )}
+
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                  />
+
+                  <XAxis dataKey="month" />
+
+                  <YAxis
+                    label={{
+                      value: "Usage (L)",
+                      angle: -90,
+                      position: "insideLeft",
+                    }}
+                  />
+
+                  <Tooltip
+                    content={<CustomerTooltip />}
+                  />
+
+                  <Line
+                    type="monotone"
+                    dataKey="usage"
+                    stroke="#2563eb"
+                    strokeWidth={2}
+                    name="Actual Usage"
+                    connectNulls
+                  />
+
+                  <Line
+                    type="monotone"
+                    dataKey="predictedUsage"
+                    stroke="#f97316"
+                    strokeWidth={2}
+                    strokeDasharray="5 5"
+                    name="Predicted Usage"
+                    connectNulls
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };

@@ -30,11 +30,13 @@ const Bills = () => {
     rotation,
     imageLoading,
     imageError,
-    currentIndex,
+    pageIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     setSearchTerm,
     setStatusFilter,
-    setCurrentIndex,
+    setPageIndex,
     setZoom,
     setRotation,
     setImageLoading,
@@ -80,9 +82,11 @@ const Bills = () => {
           <motion.div variants={itemVariants}>
             <BillsTable
               bills={filteredBills.map(b => ({ ...b, billId: String(b.billId) }))}
-              currentIndex={currentIndex}
+              pageIndex={pageIndex}
+              totalPages={totalPages}
+              totalElements={totalElements}
               itemsPerPage={itemsPerPage}
-              setCurrentIndex={setCurrentIndex}
+              setPageIndex={setPageIndex}
               // BillsTable expects a Bill type; adapt BillResponse to Bill by picking required fields
               onView={(billParam) => {
                 // find original source item (has billDate) by id, fall back to passed item
