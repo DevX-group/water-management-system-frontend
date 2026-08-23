@@ -103,8 +103,8 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
             <p className="text-red-500 p-4 text-center">{error}</p>
           ) : (
             <>
-              <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-              <canvas ref={canvasRef} className="hidden" />
+              <video ref={videoRef} autoPlay playsInline muted className={isCapturing ? "hidden" : "w-full h-full object-cover"} />
+              <canvas ref={canvasRef} className={isCapturing ? "w-full h-full object-cover" : "hidden"} />
 
               {/* Frame overlay */}
               <div className="absolute inset-0 pointer-events-none">

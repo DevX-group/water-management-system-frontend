@@ -8,7 +8,10 @@ import { MeterReadingsTable } from '@/components/meter-reading/MeterReadingsTabl
 import { useMeterReading } from '@/hooks/useMeterReading';
 import { useTranslation } from 'react-i18next';
 
+import { useAdmin } from '@/contexts/AdminContext';
+
 export const MeterReadingPage = () => {
+  const { currentAdmin } = useAdmin();
   const { t } = useTranslation('meterReading');
   const {
     formData,
@@ -58,16 +61,18 @@ export const MeterReadingPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <MeterReadingForm
-          formData={formData} submitting={submitting}
-          onChange={setFormData} onSubmit={handleSubmit}
-          onClear={clearForm}
-          onMeterNumberBlur={fetchPreviousReading}
-          onSubscriptionNumberBlur={validateSubscription}
-        />
-        <MeterReadingInstructions />
-      </div>
+      {currentAdmin.role === 'METER_READER' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <MeterReadingForm
+            formData={formData} submitting={submitting}
+            onChange={setFormData} onSubmit={handleSubmit}
+            onClear={clearForm}
+            onMeterNumberBlur={fetchPreviousReading}
+            onSubscriptionNumberBlur={validateSubscription}
+          />
+          <MeterReadingInstructions />
+        </div>
+      )}
 
       <MeterReadingsTable
         readings={todaysReadings as unknown as any}

@@ -7,9 +7,11 @@ export interface InquiryMessage {
   sender_role: string;
   id: string;
   from: MessageSender;
+  user: string;
   text: string;
   time: string;
   isHtml?: boolean;
+  attachmentUrl?: string;
 }
 
 export type InquiryStatus = 'open' | 'pending' | 'resolved';
@@ -37,6 +39,7 @@ export interface InquiryFormData {
   email: string;
   category: InquiryCategory | '';
   message: string;
+  file?: File | null;
 }
 
 export type InquiryFormErrors = Partial<Record<keyof InquiryFormData, string>>;

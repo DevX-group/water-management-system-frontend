@@ -54,6 +54,23 @@ export const InquiryChatMessage: React.FC<Props> = ({ message, customerName, vie
               : 'bg-slate-100 border border-slate-200 text-slate-800 rounded-tl-sm rounded-tr-2xl rounded-br-2xl rounded-bl-2xl'
           )}
         >
+          {message.attachmentUrl && (
+            <div className="mb-2">
+              {message.attachmentUrl.toLowerCase().endsWith('.pdf') ? (
+                <a href={message.attachmentUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border hover:bg-background/80 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-red-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M10 13a2 2 0 1 0 0 4h1v-4h-1z"/><path d="M16 13h-2v4h2"/><path d="M16 15h-2"/><path d="M6 13v4"/><path d="M6 15h2"/></svg>
+                  <span className="text-sm font-medium underline underline-offset-2 text-primary">View PDF Document</span>
+                </a>
+              ) : message.attachmentUrl.toLowerCase().match(/\.(jpeg|jpg|gif|png|webp)$/) != null || !message.attachmentUrl.includes('.') ? (
+                <img src={message.attachmentUrl} alt="attachment" className="max-w-full rounded-lg object-contain cursor-pointer" onClick={() => window.open(message.attachmentUrl, '_blank')} style={{ maxHeight: '200px' }} />
+              ) : (
+                <a href={message.attachmentUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 p-3 bg-background/50 rounded-lg border hover:bg-background/80 transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-500"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  <span className="text-sm font-medium underline underline-offset-2 text-primary">Download File</span>
+                </a>
+              )}
+            </div>
+          )}
           {message.isHtml
             ? <span dangerouslySetInnerHTML={{ __html: message.text }} />
             : message.text}

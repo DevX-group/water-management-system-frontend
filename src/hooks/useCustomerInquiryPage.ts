@@ -12,11 +12,11 @@ export const useCustomerInquiryPage = () => {
   const [chatInput, setChatInput] = useState('');
   const [showTyping, setShowTyping] = useState(false);
   const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  const [historyIndex, setHistoryIndex] = useState(0); // This is now pageIndex
   const itemsPerPage = 5;
 
   const { inquiry } = useInquiry(activeId, 1500);
-  const { inquiries } = useInquiries(3000);
+  const { inquiries, totalPages, totalElements } = useInquiries(3000, historyIndex, itemsPerPage);
   const { inquiry: historyInquiry } = useInquiry(viewingHistoryId, 5000);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +40,17 @@ export const useCustomerInquiryPage = () => {
   const handleSubmit = async () => {
     if (!validate()) return;
     setSubmitting(true);
+    let attachmentUrl = undefined;
+    if (form.file) {
+      const formData = new FormData();
+      formData.append('file', form.file);
+      try {
+        const res = await api.post('/inquiries/upload-attachment', formData);
+        attachmentUrl = res.data.url;
+      } catch (e) {
+        console.error('File upload failed', e);
+      }
+    }
     const id = `INQ-${Math.floor(1000 + Math.random() * 9000)}`;
     const payload = {
       id,
@@ -50,7 +61,8 @@ export const useCustomerInquiryPage = () => {
         msgId: `MSG-${Date.now()}`,
         user: 'user',
         text: form.message.trim(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        attachmentUrl
       }],
       status: 'open'
     };
@@ -58,7 +70,7 @@ export const useCustomerInquiryPage = () => {
       await api.post('/inquiries', payload);
       setActiveId(id);
       setViewingHistoryId(null);
-      setForm({ name: '', email: '', category: '', message: '' });
+      setForm({ name: '', email: '', category: '', message: '', file: null });
     } catch (err) {
       console.error(err);
     } finally {
@@ -68,14 +80,15 @@ export const useCustomerInquiryPage = () => {
 
 
   // Push the message to the backend which will appear on the Admin's screen.
-  const sendMessage = async () => {
+  const sendMessage = async (attachmentUrl?: string) => {
     const targetId = viewingHistoryId || activeId;
-    if (!chatInput.trim() || !targetId) return;
+    if ((!chatInput.trim() && !attachmentUrl) || !targetId) return;
     const newMsg = {
       msgId: `MSG-${Date.now()}`,
       user: 'user',
       text: chatInput.trim(),
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      attachmentUrl
     };
     try {
       await api.post(`/inquiries/${targetId}/messages`, newMsg);
@@ -99,6 +112,8 @@ export const useCustomerInquiryPage = () => {
     viewingHistoryId,
     historyIndex,
     itemsPerPage,
+    totalPages,
+    totalElements,
     inquiry,
     inquiries,
     historyInquiry,
