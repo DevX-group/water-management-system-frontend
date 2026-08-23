@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '@/contexts/AdminContext';
 import { cn } from '@/lib/utils';
 import { NAV_ITEMS, SECTION_PATH_MAP } from '@/constants/adminNav';
+import type { NavItem } from '@/constants/adminNav';
 import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
@@ -34,10 +35,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     { id: 'finance', label: 'Finance', icon: Receipt, items: ['billing', 'payments'] },
     { id: 'communications', label: 'Communications', icon: MessageSquare, items: ['messaging', 'internal-chat', 'inquiry', 'blog'] },
     { id: 'analytics', label: 'Analytics', icon: BarChart3, items: ['reports', 'predictions'] },
-    { id: 'settings', label: 'Settings', icon: Settings, items: ['widget-management', 'system-settings'] }
+    { id: 'settings', label: 'Settings', icon: Settings, items: ['activity-logs', 'widget-management', 'system-settings'] }
   ];
 
-  const renderItem = (item: any) => {
+  const renderItem = (item: NavItem) => {
     const Icon = item.icon;
     const isActive = activeSection === item.id;
     return (
