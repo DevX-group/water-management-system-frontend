@@ -101,7 +101,7 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
                 <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto" onClick={() => setFile(null)}>✕</Button>
               </div>
             )}
-            <div className="flex items-end gap-2">
+            <div className="flex items-center gap-2">
               <input type="file" ref={fileInputRef} className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
               <Button variant="outline" size="icon" className="shrink-0 h-12 w-12 rounded-xl" onClick={() => fileInputRef.current?.click()}>
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
@@ -111,8 +111,8 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder={t('admin.writeResponse')}
-                  rows={2}
-                  className="w-full rounded-xl border-none bg-background p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none shadow-inner"
+                  rows={1}
+                  className="w-full rounded-xl border-none bg-background p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none shadow-inner min-h-[48px]"
                 />
               </div>
               <Button

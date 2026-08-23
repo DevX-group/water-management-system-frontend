@@ -49,7 +49,7 @@ const PAGE_SIZE = 30;
 
 const getRoleLabel = (role: AdminRole) => ROLE_LABELS[role] ?? role;
 
-const getInitials = (name: string) => name
+const getInitials = (name?: string | null) => (name || 'Admin')
   .split(' ')
   .filter(Boolean)
   .slice(0, 2)

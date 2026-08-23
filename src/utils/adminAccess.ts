@@ -28,6 +28,6 @@ export const canAccessSection = (role: AdminRole, section: Section): boolean => 
 };
 
 export const getDefaultAdminPath = (role: AdminRole): string => {
-  // All roles now land on the dashboard — which loads the role-appropriate widget config.
+  // All roles now land on the dashboard - which loads the role-appropriate widget config.
   return SECTION_PATH_MAP.dashboard;
 };

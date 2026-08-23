@@ -92,13 +92,13 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
             <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto" onClick={() => setFile(null)}>✕</Button>
           </div>
         )}
-        <div className="flex gap-2 items-end">
+        <div className="flex gap-2 items-center">
           <input type="file" ref={fileInputRef} className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
-          <Button variant="outline" size="icon" className="shrink-0 h-[50px] w-[50px] rounded-xl" onClick={() => fileInputRef.current?.click()}>
+          <Button variant="outline" size="icon" className="shrink-0 h-[48px] w-[48px] rounded-xl" onClick={() => fileInputRef.current?.click()}>
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
           </Button>
-          <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder={t('chat.typePlaceholder')} className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
-          <Button onClick={handleSend} disabled={(!chatInput?.trim() && !file) || uploading} className="h-[50px] px-6 rounded-xl gradient-primary">
+          <textarea value={chatInput} rows={1} onChange={(e) => setChatInput?.(e.target.value)} placeholder={t('chat.typePlaceholder')} className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[48px] shadow-inner" />
+          <Button onClick={handleSend} disabled={(!chatInput?.trim() && !file) || uploading} className="h-[48px] px-6 rounded-xl gradient-primary">
             {uploading ? '...' : <Send size={18} />}
           </Button>
         </div>
