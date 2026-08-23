@@ -1,0 +1,172 @@
+{
+  "title": "செய்தியிடல்",
+  "subtitle": "வாடிக்கையாளர்களுக்கான தானியங்கி மற்றும் தனிப்பயன் செய்திகளை நிர்வகிக்கவும்.",
+  "tabs": {
+    "scheduled": "திட்டமிடப்பட்ட செய்திகள்",
+    "triggered": "தூண்டப்பட்ட செய்திகள்"
+  },
+  "common": {
+    "edit": "திருத்து",
+    "delete": "நீக்கு",
+    "cancel": "ரத்துசெய்",
+    "save": "சேமி",
+    "yes": "ஆம்",
+    "no": "இல்லை",
+    "loadingMessages": "செய்திகள் ஏற்றப்படுகின்றன...",
+    "itemsPerPage": "பக்கத்திற்கு பொருட்கள்",
+    "itemsCount": "{{total}} இல் {{start}}-{{end}}",
+    "zeroItems": "0 பொருட்கள்",
+    "previous": "முந்தைய",
+    "next": "அடுத்தது",
+    "pageOf": "பக்கம் {{total}} இல் {{current}}",
+    "error": "பிழை"
+  },
+  "scheduledSection": {
+    "viewHistory": "திட்டமிடப்பட்ட செய்தி வரலாற்றைக் காண்க",
+    "newMessage": "புதிய திட்டமிடப்பட்ட செய்தி",
+    "empty": "இன்னும் திட்டமிடப்பட்ட செய்திகள் எதுவும் இல்லை."
+  },
+  "triggeredSection": {
+    "newMessage": "புதிய தூண்டப்பட்ட செய்தி",
+    "empty": "இன்னும் தூண்டப்பட்ட செய்திகள் எதுவும் இல்லை."
+  },
+  "messageNames": {
+    "Monthly Bill": "மாதாந்திர பில்",
+    "Monthly Bill Message": "மாதாந்திர பில் செய்தி",
+    "Overdue Alert": "பாக்கி எச்சரிக்கை",
+    "Water supply cut-off": "குடிநீர் விநியோகம் நிறுத்தம்",
+    "Custom message A": "தனிப்பயன் செய்தி A",
+    "Payment Confirmation": "கொடுப்பனவு உறுதிப்படுத்தல்",
+    "Bank Slip Rejection": "வங்கி சீட்டு நிராகரிப்பு"
+  },
+  "scheduleTypes": {
+    "Recurring": "மீண்டும் மீண்டும் நிகழும்",
+    "One-Time": "ஒரு முறை மட்டும்"
+  },
+  "scheduleDisplay": {
+    "recurringDay": "ஒவ்வொரு மாதமும் {{day}} ஆம் தேதி",
+    "daily": "தினசரி"
+  },
+  "status": {
+    "active": "செயலில் உள்ளது",
+    "inactive": "செயலில் இல்லை"
+  },
+  "triggerTypes": {
+    "Payment Confirmed": "செலுத்துதல் உறுதி செய்யப்பட்டது",
+    "Bank Slip Rejected": "வங்கி சீட்டு நிராகரிக்கப்பட்டது",
+    "Email Verification": "மின்னஞ்சல் சரிபார்ப்பு",
+    "Phone Verification": "தொலைபேசி சரிபார்ப்பு"
+  },
+  "recipients": {
+    "All Customers": "அனைத்து வாடிக்கையாளர்கள்",
+    "Overdue Customers": "பாக்கி வைத்துள்ள வாடிக்கையாளர்கள்"
+  },
+  "channels": {
+    "SMS": "SMS",
+    "Email": "மின்னஞ்சல்"
+  },
+  "confirmDelete": {
+    "title": "நிச்சயமாக நீக்க வேண்டுமா?",
+    "description": "இந்த செயலை மீட்டெடுக்க முடியாது. இது செய்தி மாதிரியை நிரந்தரமாக நீக்கும்."
+  },
+  "toasts": {
+    "deletedTitle": "செய்தி நீக்கப்பட்டது",
+    "scheduledDeletedDesc": "திட்டமிடப்பட்ட செய்தி வெற்றிகரமாக நீக்கப்பட்டது.",
+    "triggeredDeletedDesc": "தூண்டப்பட்ட செய்தி வெற்றிகரமாக நீக்கப்பட்டது.",
+    "failedDelete": "செய்தியை நீக்க முடியவில்லை.",
+    "updatedTitle": "செய்தி புதுப்பிக்கப்பட்டது",
+    "updatedDesc": "உங்கள் மாற்றங்கள் சேமிக்கப்பட்டன.",
+    "createdTitle": "செய்தி உருவாக்கப்பட்டது",
+    "scheduledCreatedDesc": "புதிய திட்டமிடப்பட்ட செய்தி உருவாக்கப்பட்டது.",
+    "triggeredCreatedDesc": "புதிய தூண்டப்பட்ட செய்தி உருவாக்கப்பட்டது.",
+    "failedSave": "செய்தியை சேமிக்க முடியவில்லை.",
+    "failedLoadOptions": "செய்தி விருப்பங்களை ஏற்ற முடியவில்லை."
+  },
+  "dialog": {
+    "createTitle": "புதிய செய்தியை உருவாக்கு",
+    "editTitle": "செய்தியைத் திருத்து",
+    "saveButton": "செய்தியை சேமி",
+    "tabs": {
+      "details": "செய்தி விவரங்கள்",
+      "template": "மாதிரி திருத்தி"
+    },
+    "fields": {
+      "name": "செய்தியின் பெயர்",
+      "sendAs": "அனுப்பும் வழி",
+      "recipients": "பெறுநர்கள்",
+      "scheduleType": "திட்டமிடல் வகை",
+      "recurringDay": "ஒவ்வொரு மாதத்தின் நாள்",
+      "date": "தேதி",
+      "time": "நேரம்",
+      "triggerType": "தூண்டல் வகை",
+      "active": "செயலில் உள்ளது",
+      "activeHelp": "இந்த தூண்டல் செயல்படுத்தப்பட்டுள்ளதா என்பது."
+    },
+    "placeholders": {
+      "name": "எ.கா. மாதாந்திர பில்",
+      "selectDay": "நாளைத் தேர்ந்தெடுக்கவும்"
+    }
+  },
+  "templateEditor": {
+    "customMode": "தனிப்பயன் பயன்முறை",
+    "subject": "தலைப்பு",
+    "subjectPlaceholder": "எ.கா. உங்கள் மாதாந்திர நீர் பில்",
+    "contentPlaceholder": "உங்கள் செய்தியை இங்கே தட்டச்சு செய்யவும்...",
+    "addSection": "பிரிவைச் சேர்",
+    "moveUp": "மேலே நகர்த்து",
+    "moveDown": "கீழே நகர்த்து",
+    "deleteSection": "பிரிவை நீக்கு",
+    "previewHeader": "{{channel}} முன்பார்வை",
+    "subjectLabel": "தலைப்பு: ",
+    "noTemplate": "மாதிரி எதுவும் உள்ளமைக்கப்படவில்லை",
+    "newSection": "புதிய பிரிவு"
+  },
+  "placeholderPanel": {
+    "title": "இடத்தைப் பிடிப்பவை (நகலெடுக்க/செருக கிளிக் செய்யவும்)",
+    "empty": "இடத்தைப் பிடிப்பவை எதுவும் கிடைக்கவில்லை."
+  },
+  "history": {
+    "backButton": "திட்டமிடப்பட்ட செய்திகளுக்குத் திரும்பு",
+    "table": {
+      "messageName": "செய்தியின் பெயர்",
+      "type": "வகை",
+      "date": "தேதி",
+      "time": "நேரம்",
+      "emailSuccess": "மின்னஞ்சல் வெற்றி விகிதம்",
+      "smsSuccess": "SMS வெற்றி விகிதம்",
+      "details": "விவரங்கள்",
+      "viewDetails": "விவரங்களைக் காண்க"
+    }
+  },
+  "historyDetails": {
+    "title": "செய்தி விவரங்கள்",
+    "message": "செய்தி",
+    "type": "வகை",
+    "date": "தேதி",
+    "time": "நேரம்",
+    "recipients": "பெறுநர்கள்",
+    "emailSuccessRate": "மின்னஞ்சல் வெற்றி விகிதம்",
+    "smsSuccessRate": "SMS வெற்றி விகிதம்",
+    "totalEmailsSent": "அனுப்பப்பட்ட மொத்த மின்னஞ்சல்கள்",
+    "totalEmailsFailed": "தோல்வியடைந்த மொத்த மின்னஞ்சல்கள்",
+    "totalEmailsDelivered": "சேர்க்கப்பட்ட மொத்த மின்னஞ்சல்கள்",
+    "totalSmsSent": "அனுப்பப்பட்ட மொத்த SMSகள்",
+    "totalSmsFailed": "தோல்வியடைந்த மொத்த SMSகள்",
+    "totalSmsDelivered": "சேர்க்கப்பட்ட மொத்த SMSகள்",
+    "viewFailedRecipients": "தோல்வியடைந்த பெறுநர்களைக் காண்க"
+  },
+  "failedRecipients": {
+    "title": "தோல்வியடைந்த பெறுநர்கள்",
+    "backToDetails": "செய்தி விவரங்களுக்குத் திரும்பு",
+    "loading": "தோல்வியடைந்த பெறுநர்கள் ஏற்றப்படுகிறார்கள்...",
+    "empty": "தோல்வியடைந்த பெறுநர்கள் எவருமில்லை.",
+    "table": {
+      "customer": "வாடிக்கையாளர்",
+      "subscription": "சந்தா எண்",
+      "phone": "தொலைபேசி",
+      "email": "மின்னஞ்சல்",
+      "smsFailed": "SMS தோல்வியடைந்தது",
+      "emailFailed": "மின்னஞ்சல் தோல்வியடைந்தது"
+    }
+  }
+}

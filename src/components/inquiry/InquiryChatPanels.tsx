@@ -9,6 +9,7 @@ import { InquiryTypingIndicator } from '@/components/ui/InquiryTypingIndicator';
 import { InquiryAvatar } from '@/components/ui/InquiryAvatar';
 import { StatusBadge } from './InquiryHistoryList';
 import type { Inquiry } from '@/types/inquiry';
+import { api } from '@/services/api';
 
 interface InquiryChatPanelsProps {
   inquiry: Inquiry;
@@ -16,7 +17,7 @@ interface InquiryChatPanelsProps {
   onBack?: () => void;
   chatInput?: string;
   setChatInput?: (v: string) => void;
-  onSendMessage?: () => void;
+  onSendMessage?: (attachmentUrl?: string) => void;
   showTyping?: boolean;
   messagesEndRef: React.RefObject<HTMLDivElement>;
 }
@@ -27,6 +28,32 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
   inquiry, isHistory, onBack, chatInput, setChatInput, onSendMessage, showTyping, messagesEndRef
 }) => {
   const { t } = useTranslation('inquiry');
+  const [file, setFile] = React.useState<File | null>(null);
+  const [uploading, setUploading] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleSend = async () => {
+    if (!chatInput?.trim() && !file) return;
+    let attachmentUrl = undefined;
+    if (file) {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const res = await api.post('/inquiries/upload-attachment', formData);
+        attachmentUrl = res.data.url;
+      } catch (e) {
+        console.error('File upload failed', e);
+      } finally {
+        setUploading(false);
+      }
+    }
+    if (onSendMessage) {
+      onSendMessage(attachmentUrl);
+    }
+    setFile(null);
+  };
+
   return (
   <Card className="shadow-card border-none overflow-hidden h-[600px] flex flex-col bg-card">
     <CardHeader className="bg-secondary/20 border-b flex flex-row items-center gap-4 py-4">
@@ -59,10 +86,20 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
     </CardContent>
     {inquiry.status.toLowerCase() === 'open' ? (
       <div className="p-4 bg-secondary/10 border-t">
-        <div className="flex gap-2">
-          <textarea value={chatInput} onChange={(e) => setChatInput?.(e.target.value)} placeholder={t('chat.typePlaceholder')} className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[50px] shadow-inner" />
-          <Button onClick={onSendMessage} disabled={!chatInput?.trim()} className="h-auto px-6 rounded-xl gradient-primary">
-            <Send size={18} />
+        {file && (
+          <div className="flex items-center gap-2 mb-2 p-2 bg-secondary/30 rounded-md">
+            <span className="text-xs truncate">{file.name}</span>
+            <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto" onClick={() => setFile(null)}>✕</Button>
+          </div>
+        )}
+        <div className="flex gap-2 items-center">
+          <input type="file" ref={fileInputRef} className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+          <Button variant="outline" size="icon" className="shrink-0 h-[48px] w-[48px] rounded-xl" onClick={() => fileInputRef.current?.click()}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+          </Button>
+          <textarea value={chatInput} rows={1} onChange={(e) => setChatInput?.(e.target.value)} placeholder={t('chat.typePlaceholder')} className="flex-1 bg-card border border-input rounded-xl p-3 text-sm focus:ring-2 focus:ring-primary/20 resize-none min-h-[48px] shadow-inner" />
+          <Button onClick={handleSend} disabled={(!chatInput?.trim() && !file) || uploading} className="h-[48px] px-6 rounded-xl gradient-primary">
+            {uploading ? '...' : <Send size={18} />}
           </Button>
         </div>
       </div>

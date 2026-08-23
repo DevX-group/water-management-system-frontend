@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import type { MessageTemplate, ScheduledMessage, TriggeredMessage } from '@/types/messaging';
 import { replacePlaceholders } from '@/utils/messagingUtils';
+import { useTranslation } from 'react-i18next';
 import { PlaceholderPanel } from './PlaceholderPanel';
 
 type TemplateEditorProps = {
@@ -32,13 +33,15 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
   onMoveSection,
   onFocusSection,
 }) => {
+  const { t } = useTranslation('messaging');
+
   const renderEditor = (type: 'sms' | 'email') => {
     const template = formData.templates[type];
     if (!template) return null;
     if (template.isCustom) {
       return (
         <Textarea
-          placeholder="Type your message here..."
+          placeholder={t('templateEditor.contentPlaceholder')}
           value={template.content}
           onChange={(event) => onUpdateTemplate(type, { content: event.target.value })}
           className="min-h-[200px]"
@@ -68,7 +71,7 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
                   className="h-6 w-6"
                   onClick={() => onMoveSection(type, index, index - 1)}
                   disabled={index === 0}
-                  title="Move up"
+                  title={t('templateEditor.moveUp')}
                 >
                   <ChevronUp className="h-3 w-3" />
                 </Button>
@@ -78,7 +81,7 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
                   className="h-6 w-6"
                   onClick={() => onMoveSection(type, index, index + 1)}
                   disabled={index === (template.sections?.length || 0) - 1}
-                  title="Move down"
+                  title={t('templateEditor.moveDown')}
                 >
                   <ChevronDown className="h-3 w-3" />
                 </Button>
@@ -90,7 +93,7 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
                     const newSections = template.sections?.filter(s => s.id !== section.id);
                     onUpdateTemplate(type, { sections: newSections });
                   }}
-                  title="Delete section"
+                  title={t('templateEditor.deleteSection')}
                 >
                   <X className="h-3 w-3" />
                 </Button>
@@ -115,12 +118,12 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
           onClick={() => {
             const newSections = [
               ...(template.sections || []),
-              { id: Date.now().toString(), name: 'New Section', content: '' },
+              { id: Date.now().toString(), name: t('templateEditor.newSection'), content: '' },
             ];
             onUpdateTemplate(type, { sections: newSections });
           }}
         >
-          <PlusCircle className="mr-2 h-3 w-3" /> Add Section
+          <PlusCircle className="mr-2 h-3 w-3" /> {t('templateEditor.addSection')}
         </Button>
       </div>
     );
@@ -128,13 +131,13 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
 
   const renderPreview = (type: 'sms' | 'email') => {
     const template = formData.templates[type];
-    if (!template) return <div className="text-muted-foreground italic">No template configured</div>;
+    if (!template) return <div className="text-muted-foreground italic">{t('templateEditor.noTemplate')}</div>;
     if (template.isCustom) {
       return (
         <div>
           {type === 'email' && template.subject && (
             <div className="mb-3 pb-2 border-b">
-              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
+              <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{t('templateEditor.subjectLabel')}</span>
               <span className="font-semibold text-sm">{replacePlaceholders(template.subject)}</span>
             </div>
           )}
@@ -147,7 +150,7 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
       <div>
         {type === 'email' && template.subject && (
           <div className="mb-3 pb-2 border-b">
-            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Subject: </span>
+            <span className="text-xs text-muted-foreground font-medium uppercase tracking-wide">{t('templateEditor.subjectLabel')}</span>
             <span className="font-semibold text-sm">{replacePlaceholders(template.subject)}</span>
           </div>
         )}
@@ -165,11 +168,11 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
       <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as 'SMS' | 'Email')} className="flex flex-col flex-1 min-h-0">
         <div className="bg-slate-50 p-2 border-b flex justify-between items-center flex-none">
           <TabsList>
-            <TabsTrigger value="SMS" disabled={!formData.channels.includes('SMS')}>SMS</TabsTrigger>
-            <TabsTrigger value="Email" disabled={!formData.channels.includes('Email')}>Email</TabsTrigger>
+            <TabsTrigger value="SMS" disabled={!formData.channels.includes('SMS')}>{t('channels.SMS', { defaultValue: 'SMS' })}</TabsTrigger>
+            <TabsTrigger value="Email" disabled={!formData.channels.includes('Email')}>{t('channels.Email', { defaultValue: 'Email' })}</TabsTrigger>
           </TabsList>
           <div className="flex items-center space-x-2">
-            <Label htmlFor="custom-mode" className="text-xs">Custom Mode</Label>
+            <Label htmlFor="custom-mode" className="text-xs">{t('templateEditor.customMode')}</Label>
             <Switch
               id="custom-mode"
               checked={formData.templates[activeTab === 'SMS' ? 'sms' : 'email']?.isCustom}
@@ -185,10 +188,10 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
             <PlaceholderPanel placeholders={placeholders} onInsert={onInsertPlaceholder} />
             {activeTab === 'Email' && (
               <div className="space-y-2">
-                <Label htmlFor="email-subject" className="text-xs font-medium">Subject</Label>
+                <Label htmlFor="email-subject" className="text-xs font-medium">{t('templateEditor.subject')}</Label>
                 <Input
                   id="email-subject"
-                  placeholder="e.g. Your Monthly Water Bill"
+                  placeholder={t('templateEditor.subjectPlaceholder')}
                   value={formData.templates.email?.subject || ''}
                   onChange={(event) => onUpdateTemplate('email', { subject: event.target.value })}
                 />
@@ -205,7 +208,7 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
           </div>
 
           <div className="border rounded-md bg-stone-50 p-4 h-[440px] flex flex-col">
-            <Label className="mb-2 block text-muted-foreground flex-none">{activeTab} Preview</Label>
+            <Label className="mb-2 block text-muted-foreground flex-none">{t('templateEditor.previewHeader', { channel: t(`channels.${activeTab}`, { defaultValue: activeTab }) })}</Label>
             <div className="bg-white p-4 rounded shadow-sm border text-sm flex-1 overflow-y-auto w-full break-words">
               {renderPreview(activeTab === 'SMS' ? 'sms' : 'email')}
             </div>

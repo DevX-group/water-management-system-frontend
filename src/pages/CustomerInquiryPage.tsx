@@ -26,6 +26,8 @@ export const CustomerInquiryPage: React.FC = () => {
     showTyping,
     viewingHistoryId,
     historyIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     inquiry,
     inquiries,
@@ -44,13 +46,13 @@ export const CustomerInquiryPage: React.FC = () => {
       <div className="container mx-auto px-4 py-12 max-w-5xl">
         <motion.div variants={containerVariants} initial="hidden" animate="visible">
           <motion.div variants={itemVariants} className="text-center mb-10">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{t('title')} <span className="text-gradient">{t('titleHighlight')}</span></h1>
-            <p className="text-muted-foreground text-lg">{t('subtitle')}</p>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('title')} {t('titleHighlight')}</h1>
+            <p className="mt-1 text-muted-foreground">{t('subtitle')}</p>
           </motion.div>
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {inquiries.length > 0 && (
               <motion.div variants={itemVariants} className="lg:col-span-4">
-                <InquiryHistoryList inquiries={inquiries} historyIndex={historyIndex} itemsPerPage={itemsPerPage} viewingHistoryId={viewingHistoryId} setViewingHistoryId={setViewingHistoryId} setHistoryIndex={setHistoryIndex} />
+                <InquiryHistoryList inquiries={inquiries} historyIndex={historyIndex} totalPages={totalPages} totalElements={totalElements} itemsPerPage={itemsPerPage} viewingHistoryId={viewingHistoryId} setViewingHistoryId={setViewingHistoryId} setHistoryIndex={setHistoryIndex} />
               </motion.div>
             )}
             <motion.div variants={itemVariants} className={inquiries.length > 0 ? "lg:col-span-8" : "lg:col-span-12"}>
@@ -77,3 +79,4 @@ export const CustomerInquiryPage: React.FC = () => {
     </MainLayout>
   );
 };
+

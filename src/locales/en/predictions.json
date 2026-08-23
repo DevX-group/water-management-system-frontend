@@ -1,0 +1,58 @@
+{
+  "page": {
+    "title": "Predictions",
+    "subtitle": "Predicted data for monitoring and analysis up to 3 months"
+  },
+  "tabs": {
+    "monthly": "Monthly Report Prediction",
+    "customer": "Customer Report Prediction",
+    "area": "Area Report Prediction"
+  },
+  "monthly": {
+    "title": "Monthly Usage and Revenue Report Prediction - 2026",
+    "description": "Individual customer consumption and billing trends predicted up to 3 months",
+    "usageLabel": "Usage (L)",
+    "predictionStart": "Prediction Start",
+    "actualUsage": "Actual Usage",
+    "predictedUsage": "Predicted Usage",
+    "tooltipActualUsage": "Actual Usage: {{value}} L",
+    "tooltipActualRevenue": "Actual Revenue: LKR {{value}}",
+    "tooltipPredictedUsage": "Predicted Usage: {{value}} L",
+    "tooltipPredictedRevenue": "Predicted Revenue: LKR {{value}}"
+  },
+  "customer": {
+    "title": "Customer Usage Prediction - 2026",
+    "description": "Forecasted usage for selected customer up to 3 months",
+    "searchPlaceholder": "Customer ID (e.g., C001)",
+    "usageLabel": "Usage (L)",
+    "predictionStart": "Prediction Start",
+    "actualUsage": "Actual Usage",
+    "predictedUsage": "Predicted Usage",
+    "tooltipActualUsage": "Actual Usage: {{value}} L",
+    "tooltipActualRevenue": "Actual Revenue: LKR {{value}}",
+    "tooltipPredictedUsage": "Predicted Usage: {{value}} L",
+    "tooltipPredictedRevenue": "Predicted Revenue: LKR {{value}}"
+  },
+  "area": {
+    "title": "Area-wise Usage and Revenue Report Prediction - {{year}}",
+    "description": "Predicted trends up to 3 months",
+    "allAreas": "All Areas",
+    "area1": "Area 1",
+    "area2": "Area 2",
+    "area3": "Area 3",
+    "series": {
+      "area1Usage": "Area 1 Usage",
+      "area1Revenue": "Area 1 Revenue",
+      "predictedArea1Usage": "Predicted Area 1 Usage",
+      "predictedArea1Revenue": "Predicted Area 1 Revenue",
+      "area2Usage": "Area 2 Usage",
+      "area2Revenue": "Area 2 Revenue",
+      "predictedArea2Usage": "Predicted Area 2 Usage",
+      "predictedArea2Revenue": "Predicted Area 2 Revenue",
+      "area3Usage": "Area 3 Usage",
+      "area3Revenue": "Area 3 Revenue",
+      "predictedArea3Usage": "Predicted Area 3 Usage",
+      "predictedArea3Revenue": "Predicted Area 3 Revenue"
+    }
+  }
+}

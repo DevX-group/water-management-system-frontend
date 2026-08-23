@@ -1,76 +1,205 @@
-import '@/index.css';
-import React from 'react';
-import { Download } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { exportPDF } from '@/util/exportPDF';
+import "@/index.css";
+import React from "react";
+import { Download } from "lucide-react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { exportPDF } from "@/util/exportPDF";
+
+export interface OverdueReportRow {
+  id: string;
+  customerid: string;
+  customer: string;
+  amount: number;
+  dueDate: string;
+  daysOverdue: number;
+}
 
 interface OverdueReportTabProps {
   overdueBill: string;
-  setoverdueBill: (v: string) => void;
-  filteredOverdue: any[];
+  setOverdueBill: (customerId: string) => void;
+  overdueTableData: OverdueReportRow[];
   totalOverdueAmount: number;
-  overdueTableData: any[];
-  transformedBillsData: any[];
 }
 
 export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
-  overdueBill, setoverdueBill, filteredOverdue, totalOverdueAmount, overdueTableData, transformedBillsData
-}) => (
-  <Card>
-    <CardHeader>
-      <CardTitle>Overdue Payments Report</CardTitle>
-      <CardDescription>Unpaid bills that have passed their due dates with financial risk analysis</CardDescription>
-    </CardHeader>
-    <CardContent className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
-          <p className="text-sm text-muted-foreground mb-2">Total Overdue Amount</p>
-          <p className="text-3xl font-bold text-destructive">LKR {totalOverdueAmount.toLocaleString()}</p>
+  overdueBill,
+  setOverdueBill,
+  overdueTableData,
+  totalOverdueAmount,
+}) => {
+  const pdfData = overdueTableData.map((bill) => ({
+    month: bill.dueDate,
+    usage: Number(bill.daysOverdue ?? 0),
+    revenue: Number(bill.amount ?? 0),
+  }));
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Overdue Payments Report</CardTitle>
+        <CardDescription>
+          Unpaid bills that have passed their due dates with financial risk
+          analysis
+        </CardDescription>
+      </CardHeader>
+
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
+            <p className="text-sm text-muted-foreground mb-2">
+              Total Overdue Amount
+            </p>
+
+            <p className="text-3xl font-bold text-destructive">
+              LKR {Number(totalOverdueAmount).toLocaleString()}
+            </p>
+          </div>
+
+          <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
+            <p className="text-sm text-muted-foreground mb-2">
+              Number of Overdue Bills
+            </p>
+
+            <p className="text-3xl font-bold text-destructive">
+              {overdueTableData.length}
+            </p>
+          </div>
         </div>
-        <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
-          <p className="text-sm text-muted-foreground mb-2">Number of Overdue Bills</p>
-          <p className="text-3xl font-bold text-destructive">{overdueTableData.length}</p>
+
+        <div className="flex justify-end">
+          <Input
+            placeholder="Search Customer ID"
+            value={overdueBill}
+            onChange={(event) =>
+              setOverdueBill(event.target.value.toUpperCase())
+            }
+            className="w-48"
+          />
         </div>
-      </div>
-      <div className="flex justify-end">
-        <Input placeholder="Search Customer ID (C001, C002, C003)" value={overdueBill} onChange={(e) => setoverdueBill(e.target.value.toUpperCase())} className="w-48" />
-      </div>
-      <div className="rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Bill ID</TableHead>
-              <TableHead>Customer ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Days Overdue</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredOverdue.length > 0 ? (
-              filteredOverdue.map((overdue) => (
-                <TableRow key={overdue.id}>
-                  <TableCell className="font-medium">{overdue.id}</TableCell>
-                  <TableCell>{overdue.customerid}</TableCell>
-                  <TableCell>{overdue.customer}</TableCell>
-                  <TableCell>LKR {overdue.amount.toLocaleString()}</TableCell>
-                  <TableCell>{overdue.dueDate}</TableCell>
-                  <TableCell><span className="px-3 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">{overdue.daysOverdue} days</span></TableCell>
+
+        <div className="rounded-lg border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Bill ID</TableHead>
+                <TableHead>Customer ID</TableHead>
+                <TableHead>Customer</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Due Date</TableHead>
+                <TableHead>Days Overdue</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {overdueTableData.length > 0 ? (
+                overdueTableData.map((bill) => (
+                  <TableRow key={bill.id}>
+                    <TableCell className="font-medium">
+                      {bill.id}
+                    </TableCell>
+                    <TableCell>{bill.customerid}</TableCell>
+                    <TableCell>{bill.customer}</TableCell>
+                    <TableCell>
+                      LKR {Number(bill.amount).toLocaleString()}
+                    </TableCell>
+                    <TableCell>{bill.dueDate}</TableCell>
+
+                    <TableCell>
+                      <span className="px-3 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
+                        {bill.daysOverdue} days
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center">
+                    No results found
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : <TableRow><TableCell colSpan={6} className="text-center">No results found</TableCell></TableRow>}
-          </TableBody>
-        </Table>
-      </div>
-      <div className="flex justify-end">
-        <Button onClick={() => exportPDF({ bills: transformedBillsData }, `BillsReport.pdf`)}>
-          <Download className="w-4 h-4 mr-2" /> Export as PDF
-        </Button>
-      </div>
-    </CardContent>
-  </Card>
-);
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        <div className="flex justify-end">
+          <Button
+  disabled={overdueTableData.length === 0}
+  onClick={() =>
+    exportPDF(
+      overdueTableData,
+      `Overdue Payments Report${
+        overdueBill
+          ? ` - ${overdueBill}`
+          : ""
+      }`,
+      `OverdueReport${
+        overdueBill
+          ? `-${overdueBill}`
+          : ""
+      }.pdf`,
+      [
+        {
+          header: "Bill ID",
+          value: (bill) => bill.id,
+          width: 1,
+        },
+        {
+          header: "Customer ID",
+          value: (bill) => bill.customerid,
+          width: 1.2,
+        },
+        {
+          header: "Customer",
+          value: (bill) => bill.customer,
+          width: 1.5,
+        },
+        {
+          header: "Amount",
+          value: (bill) =>
+            `LKR ${Number(
+              bill.amount ?? 0
+            ).toLocaleString()}`,
+          width: 1.3,
+          align: "right",
+        },
+        {
+          header: "Due Date",
+          value: (bill) => bill.dueDate,
+          width: 1.2,
+        },
+        {
+          header: "Days Overdue",
+          value: (bill) =>
+            `${bill.daysOverdue} days`,
+          width: 1.1,
+          align: "center",
+        },
+      ]
+    )
+  }
+>
+  <Download className="w-4 h-4 mr-2" />
+  Export as PDF
+</Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};

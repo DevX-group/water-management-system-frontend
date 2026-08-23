@@ -22,11 +22,12 @@ import { AdminSettings } from './AdminSettings';
 import { SystemSettingsPage } from './SystemSettingsPage';
 import { InternalChatPage } from './InternalChatPage';
 import { WidgetManagementPage } from './WidgetManagementPage';
+import { ActivityAuditLogsPage } from './ActivityAuditLogsPage';
 import type { Section } from '@/types/admin';
 import { canAccessSection, getDefaultAdminPath, isAdminRole } from '@/utils/adminAccess';
 
 const getSectionFromPath = (pathname: string): Section => {
-  const sections: Section[] = ['users', 'customers', 'meter', 'payments', 'billing', 'messaging', 'internal-chat', 'inquiry', 'reports', 'predictions', 'blog', 'settings', 'system-settings', 'widget-management'];
+  const sections: Section[] = ['users', 'customers', 'meter', 'payments', 'billing', 'messaging', 'internal-chat', 'inquiry', 'reports', 'predictions', 'blog', 'activity-logs', 'settings', 'system-settings', 'widget-management'];
   return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
 };
 
@@ -62,6 +63,7 @@ const DashboardContent: React.FC = () => {
           <Route path="settings" element={<AdminSettings />} />
           <Route path="system-settings" element={<SystemSettingsPage />} />
           <Route path="widget-management" element={<WidgetManagementPage />} />
+          <Route path="activity-logs" element={<ActivityAuditLogsPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AdminLayout>

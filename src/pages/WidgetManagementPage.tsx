@@ -13,40 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const ALL_ROLES = ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER', 'CUSTOMER'];
 
-const ALLOWED_ROLES_MAP: Record<string, string[]> = {
-  'customer-current-bill': ['CUSTOMER'],
-  'customer-outstanding': ['CUSTOMER'],
-  'customer-pay-now': ['CUSTOMER'],
-  'customer-usage-trend': ['CUSTOMER'],
-  'customer-recent-payments': ['CUSTOMER'],
-  'customer-notifications': ['CUSTOMER'],
-  'customer-bank-slip-status': ['CUSTOMER'],
-  'customer-inquiries': ['CUSTOMER'],
 
-  'meter-quick-entry': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'meter-latest-reading': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'meter-reading-history': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'internal-chat-link': ['METER_READER', 'CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-
-  'handler-pending-slips': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'handler-recent-payments': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'handler-open-inquiries': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'handler-customer-search': ['CUSTOMER_HANDLER', 'SYSTEM_ADMIN', 'SUPER_ADMIN'],
-
-  'admin-system-summary': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'admin-usage-chart': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'admin-revenue-chart': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'admin-alerts': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'admin-messaging-link': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'admin-blogs-link': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-  'admin-predictions-link': ['SYSTEM_ADMIN', 'SUPER_ADMIN'],
-
-  'superadmin-admin-count': ['SUPER_ADMIN'],
-  'superadmin-region-summary': ['SUPER_ADMIN'],
-  'superadmin-widget-management-link': ['SUPER_ADMIN'],
-  'superadmin-user-management-link': ['SUPER_ADMIN'],
-  'quick-link': ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER', 'CUSTOMER']
-};
 
 const WidgetCatalogCard: React.FC<{
   widget: WidgetDefinition;
@@ -65,7 +32,7 @@ const WidgetCatalogCard: React.FC<{
     setActive(widget.active);
   }, [initialAssignedRoles, widget]);
 
-  const availableRoles = ALLOWED_ROLES_MAP[widget.componentKey] || ALL_ROLES;
+  const availableRoles = widget.allowedRoles || ALL_ROLES;
 
   const hasChanges = 
     name !== widget.name || 
@@ -335,7 +302,7 @@ export const WidgetManagementPage: React.FC = () => {
 
   const availableWidgetsForRole = catalog.filter(w => 
     w.active && 
-    (ALLOWED_ROLES_MAP[w.componentKey] || ALL_ROLES).includes(selectedRole) && 
+    (w.allowedRoles || ALL_ROLES).includes(selectedRole) && 
     !placements.some(p => (p.widgetId === w.id || p.componentKey === w.componentKey))
   );
 
@@ -346,8 +313,8 @@ export const WidgetManagementPage: React.FC = () => {
           <LayoutGrid className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gradient">Widget Management</h1>
-          <p className="text-muted-foreground">Manage the widget catalog and configure role dashboards.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Widget Management</h1>
+          <p className="mt-1 text-muted-foreground">Manage the widget catalog and configure role dashboards.</p>
         </div>
       </div>
 
@@ -494,3 +461,5 @@ export const WidgetManagementPage: React.FC = () => {
     </div>
   );
 };
+
+

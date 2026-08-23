@@ -43,10 +43,12 @@ const navLinks = [
   { name: "Inquiry", path: "/customer/inquiry", icon: Bell },
 ];
 
+import { useSystemDetails } from "@/context/SystemDetailsContext";
+
 const languages = [
   { code: "en", name: "English", flag: "🇬🇧" },
   { code: "si", name: "සිංහල", flag: "🇱🇰" },
-  { code: "ta", name: "தமிழ்", flag: "🇮🇳" },
+  { code: "ta", name: "தமிழ்", flag: "🇱🇰" },
 ];
 
 interface NavbarProps {
@@ -54,6 +56,8 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
+  const { systemDetails } = useSystemDetails();
+  const companyName = systemDetails?.companyName || 'Galle Pradeshiya Sabha';
   const { logout } = useAuth();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -69,7 +73,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
 
   const isActive = (path: string) => location.pathname === path;
 
-  const [customerData, setCustomerData] = useState<{name: string, email: string} | null>(null);
+  const [customerData, setCustomerData] = useState<{ name: string, email: string } | null>(null);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -94,10 +98,10 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
         ගාල්ල ප්‍රාදේශීය සභාව
       </span>
       <span className="text-sm font-bold leading-none text-gradient py-[1px]">
-         Galle Pradeshiya Sabha
+        Galle Pradeshiya Sabha
       </span>
       <span className="text-[10px] font-semibold leading-none text-muted-foreground">
-       காலி பிரதேச சபை
+        காலி பிரதேச சபை
       </span>
     </div>
   );

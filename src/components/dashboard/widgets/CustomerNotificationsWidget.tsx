@@ -17,7 +17,7 @@ export const CustomerNotificationsWidget: React.FC = () => {
   const handleRead = async (id: number) => {
     await markNotificationAsRead(id);
     setNotifications((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+      prev.map((n) => (n.id === id ? { ...n, readStatus: true } : n))
     );
   };
 
@@ -44,9 +44,9 @@ export const CustomerNotificationsWidget: React.FC = () => {
         <li
           key={n.id}
           className={`flex items-start gap-2 text-xs p-2 rounded-lg cursor-pointer transition-colors ${
-            n.read ? 'opacity-60' : 'bg-primary/5 hover:bg-primary/10'
+            n.readStatus ? 'opacity-60' : 'bg-primary/5 hover:bg-primary/10'
           }`}
-          onClick={() => !n.read && handleRead(n.id)}
+          onClick={() => !n.readStatus && handleRead(n.id)}
         >
           <Bell className="w-3 h-3 mt-0.5 flex-shrink-0 text-primary" />
           <span className="text-foreground">{n.message}</span>

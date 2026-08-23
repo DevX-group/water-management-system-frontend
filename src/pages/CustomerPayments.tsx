@@ -430,8 +430,8 @@ export const CustomerPayments = () => {
         <div className="container mx-auto px-4 py-8 space-y-6">
           {/* ── Header ── */}
           <div className="mb-2">
-            <h1 className="text-3xl font-bold">{t("payments.title")}</h1>
-            <p className="text-muted-foreground mt-1">
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t("payments.title")}</h1>
+            <p className="mt-1 text-muted-foreground">
               {t("payments.subtitle")}
             </p>
           </div>
@@ -534,3 +534,4 @@ export const CustomerPayments = () => {
 };
 
 export default CustomerPayments;
+

@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import type { ScheduledMessage } from '@/types/messaging';
+import { useTranslation } from 'react-i18next';
 
 interface ScheduledMessageCardProps {
   message:  ScheduledMessage;
@@ -16,15 +17,17 @@ interface ScheduledMessageCardProps {
 }
 
 export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ message, onEdit, onDelete }) => {
+  const { t } = useTranslation('messaging');
+
   // Compact card showing schedule and recipients with edit/delete actions.
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-medium">{message.name}</CardTitle>
+        <CardTitle className="text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
         <span className={`px-2 py-1 rounded text-xs font-medium ${
           message.schedule.type === 'Recurring' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
         }`}>
-          {message.schedule.type}
+          {t(`scheduleTypes.${message.schedule.type}`, { defaultValue: message.schedule.type })}
         </span>
       </CardHeader>
       <CardContent>
@@ -33,7 +36,7 @@ export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ mess
             <Calendar className="mr-2 h-4 w-4" />
             <span>
               {message.schedule.type === 'Recurring'
-                ? (message.schedule.dayOfMonth ? `${message.schedule.dayOfMonth}th of Every Month` : 'Daily')
+                ? (message.schedule.dayOfMonth ? t('scheduleDisplay.recurringDay', { day: message.schedule.dayOfMonth }) : t('scheduleDisplay.daily'))
                 : `${message.schedule.date}`
               }
             </span>
@@ -44,30 +47,30 @@ export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ mess
           </div>
           <div className="flex items-center">
             <Users className="mr-2 h-4 w-4" />
-            <span>{message.recipients}</span>
+            <span>{t(`recipients.${message.recipients}`, { defaultValue: message.recipients })}</span>
           </div>
         </div>
       </CardContent>
       <CardFooter className="flex justify-between">
         <Button variant="outline" size="sm" onClick={onEdit}>
-          <Edit className="mr-2 h-4 w-4" /> Edit
+          <Edit className="mr-2 h-4 w-4" /> {t('common.edit')}
         </Button>
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600 hover:bg-red-50">
-              <Trash2 className="mr-2 h-4 w-4" /> Delete
+              <Trash2 className="mr-2 h-4 w-4" /> {t('common.delete')}
             </Button>
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+              <AlertDialogTitle>{t('confirmDelete.title')}</AlertDialogTitle>
               <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the message template.
+                {t('confirmDelete.description')}
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">Delete</AlertDialogAction>
+              <AlertDialogCancel>{t('common.cancel')}</AlertDialogCancel>
+              <AlertDialogAction onClick={onDelete} className="bg-red-600 hover:bg-red-700">{t('common.delete')}</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>

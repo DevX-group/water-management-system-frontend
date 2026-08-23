@@ -4,7 +4,8 @@ import { api } from '@/services/api';
 
 interface Alert {
   id: number;
-  message: string;
+  title: string;
+  description: string;
   severity: string;
   time: string;
 }
@@ -45,7 +46,7 @@ export const ActiveAlertsWidget: React.FC = () => {
         <li key={a.id} className="flex items-start gap-2 text-xs p-2 rounded-lg bg-muted/40">
           {severityIcon(a.severity)}
           <div className="flex-1 min-w-0">
-            <p className="text-foreground leading-snug">{a.message}</p>
+            <p className="text-foreground leading-snug">{a.title}</p>
             <p className="text-muted-foreground text-[10px] mt-0.5">
               {new Date(a.time).toLocaleTimeString()}
             </p>

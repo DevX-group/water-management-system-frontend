@@ -35,8 +35,8 @@ const Usage = () => {
         
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold mb-1">{t('title')}</h1>
-            <p className="text-muted-foreground">{t('subtitle')}</p>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('title')}</h1>
+            <p className="mt-1 text-muted-foreground">{t('subtitle')}</p>
           </div>
 
           <div className="flex items-center gap-2 bg-secondary/50 rounded-lg p-1 self-start sm:self-auto">
@@ -81,3 +81,4 @@ const Usage = () => {
 };
 
 export default Usage;
+

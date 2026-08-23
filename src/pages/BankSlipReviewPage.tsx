@@ -180,7 +180,7 @@ export const BankSlipReviewPage: React.FC = () => {
         return (
             <div className="space-y-6 p-6">
                 <div className="flex justify-between items-center">
-                    <h1 className="text-2xl font-bold">{t('payments.slipReview.title')}</h1>
+                    <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('payments.slipReview.title')}</h1>
                     <Button onClick={() => navigate("/admin/payments")}>← {t('payments.slipReview.back')}</Button>
                 </div>
 
@@ -195,7 +195,7 @@ export const BankSlipReviewPage: React.FC = () => {
     if (allDone) {
         return (
             <div className="space-y-6 p-6 text-center">
-                <h1 className="text-2xl font-bold">{t('payments.slipReview.allSlipsReviewed')}</h1>
+                <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('payments.slipReview.allSlipsReviewed')}</h1>
                 <Button onClick={() => navigate("/admin/payments")}>
                     {t('payments.slipReview.back')}
                 </Button>
@@ -213,8 +213,8 @@ export const BankSlipReviewPage: React.FC = () => {
                 {/* HEADER */}
                 <div className="flex items-center justify-between">
                     <div>
-                        <h1 className="text-2xl font-bold">{t('payments.slipReview.title')}</h1>
-                        <p className="text-muted-foreground">
+                        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('payments.slipReview.title')}</h1>
+                        <p className="mt-1 text-muted-foreground">
                             {t('payments.slipReview.subtitle')}
                         </p>
                     </div>
@@ -278,3 +278,4 @@ export const BankSlipReviewPage: React.FC = () => {
         </>
     );
 };
+

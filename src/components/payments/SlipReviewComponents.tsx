@@ -10,48 +10,85 @@ import { useTranslation } from 'react-i18next';
 
 interface SlipImageViewerProps {
   imageUrl: string;
+  fileType?: string;
+  fileName?: string;
   zoom: number;
   setZoom: (z: number | ((prev: number) => number)) => void;
 }
 
-export const SlipImageViewer: React.FC<SlipImageViewerProps> = ({ imageUrl, zoom, setZoom }) => {
+export const SlipImageViewer: React.FC<SlipImageViewerProps> = ({ imageUrl, fileType, fileName, zoom, setZoom }) => {
+  const [imgErrorCount, setImgErrorCount] = React.useState(0);
+
+  React.useEffect(() => {
+    setImgErrorCount(0);
+  }, [imageUrl]);
+
+  const isPdf =
+    fileType === "application/pdf" ||
+    (Boolean(imageUrl) && String(imageUrl).toLowerCase().includes(".pdf")) ||
+    (Boolean(fileName) && String(fileName).toLowerCase().endsWith(".pdf")) ||
+    imgErrorCount > 0;
+
+  const isCloudinaryImage = imageUrl?.includes("/image/upload/");
+  const isCloudinaryRaw = imageUrl?.includes("/raw/upload/");
+
+  let previewUrl = imageUrl || "";
+
+  if (isPdf && isCloudinaryImage && imgErrorCount < 2) {
+    previewUrl = previewUrl.replace("/image/upload/", "/image/upload/f_jpg,pg_1/");
+    if (previewUrl.toLowerCase().endsWith(".pdf")) {
+      previewUrl = previewUrl.replace(/\.pdf$/i, ".jpg");
+    }
+  }
+
   return (
     <div className="lg:w-[60%] bg-card rounded-xl p-4 h-[calc(100vh-260px)]">
       <div className="relative w-full rounded-xl border border-border bg-background p-3 h-full flex flex-col">
-        <div className="overflow-auto flex-1">
-          <div
-            style={{
-              width: `${zoom * 100}%`,
-              transition: "width 0.2s ease",
-            }}
-            className="inline-block min-w-full"
-          >
-            <img
+        <div className="overflow-auto flex-1 h-full">
+          {(isPdf && isCloudinaryRaw) || imgErrorCount >= 2 ? (
+            <iframe
               src={imageUrl}
-              alt="Bank slip"
-              className="block w-full h-auto rounded-lg"
-              onDoubleClick={() => setZoom(1)}
+              className="w-full h-full rounded-lg shadow border-0"
+              title="Bank Slip PDF"
             />
-          </div>
+          ) : (
+            <div
+              style={{
+                width: `${zoom * 100}%`,
+                transition: "width 0.2s ease",
+              }}
+              className="inline-block min-w-full"
+            >
+              <img
+                src={previewUrl}
+                alt="Bank slip"
+                onError={() => setImgErrorCount((prev) => prev + 1)}
+                className="block w-full h-auto rounded-lg"
+                onDoubleClick={() => setZoom(1)}
+              />
+            </div>
+          )}
         </div>
 
-        <div className="absolute top-4 right-4 flex items-center gap-2 bg-background/80 backdrop-blur-md border border-border rounded-full px-3 py-1.5 shadow-md z-10">
-          <button
-            onClick={() => setZoom((z) => Math.max(0.8, z - 0.1))}
-            className="p-1 rounded-full hover:bg-muted"
-          >
-            <ZoomOut className="w-4 h-4" />
-          </button>
-          <span className="text-xs w-[40px] text-center">
-            {Math.round(zoom * 100)}%
-          </span>
-          <button
-            onClick={() => setZoom((z) => Math.min(3, z + 0.1))}
-            className="p-1 rounded-full hover:bg-muted"
-          >
-            <ZoomIn className="w-4 h-4" />
-          </button>
-        </div>
+        {imgErrorCount < 2 && !isCloudinaryRaw && (
+          <div className="absolute top-4 right-4 flex items-center gap-2 bg-background/80 backdrop-blur-md border border-border rounded-full px-3 py-1.5 shadow-md z-10">
+            <button
+              onClick={() => setZoom((z) => Math.max(0.8, z - 0.1))}
+              className="p-1 rounded-full hover:bg-muted"
+            >
+              <ZoomOut className="w-4 h-4" />
+            </button>
+            <span className="text-xs w-[40px] text-center">
+              {Math.round(zoom * 100)}%
+            </span>
+            <button
+              onClick={() => setZoom((z) => Math.min(3, z + 0.1))}
+              className="p-1 rounded-full hover:bg-muted"
+            >
+              <ZoomIn className="w-4 h-4" />
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

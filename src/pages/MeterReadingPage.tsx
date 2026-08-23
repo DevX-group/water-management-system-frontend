@@ -8,7 +8,10 @@ import { MeterReadingsTable } from '@/components/meter-reading/MeterReadingsTabl
 import { useMeterReading } from '@/hooks/useMeterReading';
 import { useTranslation } from 'react-i18next';
 
+import { useAdmin } from '@/contexts/AdminContext';
+
 export const MeterReadingPage = () => {
+  const { currentAdmin } = useAdmin();
   const { t } = useTranslation('meterReading');
   const {
     formData,
@@ -32,8 +35,8 @@ export const MeterReadingPage = () => {
     <div className="space-y-6">
       <div className="animate-fade-in flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">{t('page.title')}</h1>
-          <p className="text-muted-foreground">{t('page.subtitle')}</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('page.title')}</h1>
+          <p className="mt-1 text-muted-foreground">{t('page.subtitle')}</p>
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
@@ -58,16 +61,18 @@ export const MeterReadingPage = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <MeterReadingForm
-          formData={formData} submitting={submitting}
-          onChange={setFormData} onSubmit={handleSubmit}
-          onClear={clearForm}
-          onMeterNumberBlur={fetchPreviousReading}
-          onSubscriptionNumberBlur={validateSubscription}
-        />
-        <MeterReadingInstructions />
-      </div>
+      {currentAdmin.role === 'METER_READER' && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <MeterReadingForm
+            formData={formData} submitting={submitting}
+            onChange={setFormData} onSubmit={handleSubmit}
+            onClear={clearForm}
+            onMeterNumberBlur={fetchPreviousReading}
+            onSubscriptionNumberBlur={validateSubscription}
+          />
+          <MeterReadingInstructions />
+        </div>
+      )}
 
       <MeterReadingsTable
         readings={todaysReadings as unknown as any}
@@ -80,3 +85,4 @@ export const MeterReadingPage = () => {
     </div>
   );
 };
+

@@ -23,6 +23,8 @@ export const StatusBadge: React.FC<{ status: string }> = ({ status }) => {
 interface InquiryHistoryListProps {
   inquiries:        Inquiry[];
   historyIndex:     number;
+  totalPages:       number;
+  totalElements:    number;
   itemsPerPage:     number;
   viewingHistoryId: string | null;
   setViewingHistoryId: (id: string | null) => void;
@@ -30,7 +32,7 @@ interface InquiryHistoryListProps {
 }
 
 export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
-  inquiries, historyIndex, itemsPerPage, viewingHistoryId, setViewingHistoryId, setHistoryIndex,
+  inquiries, historyIndex, totalPages, totalElements, itemsPerPage, viewingHistoryId, setViewingHistoryId, setHistoryIndex,
 }) => {
   const { t } = useTranslation('inquiry');
   
@@ -41,7 +43,7 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
         <History size={16} />  {t('history.title')}
       </div>
       <CardContent className="p-2 space-y-1 max-h-[600px] overflow-y-auto">
-        {inquiries.slice(historyIndex, historyIndex + itemsPerPage).map((inq) => (
+        {inquiries.map((inq) => (
           <button
             key={inq.id} onClick={() => setViewingHistoryId(inq.id)}
             className={clsx("w-full text-left p-3 rounded-xl transition-all border",
@@ -56,15 +58,15 @@ export const InquiryHistoryList: React.FC<InquiryHistoryListProps> = ({
             <p className="text-[10px] text-primary/60 mt-1">{inq.id}</p>
           </button>
         ))}
-        {inquiries.length > itemsPerPage && (  // Show pagination controls
+        {totalPages > 1 && (  // Show pagination controls
           <div className="flex justify-center items-center gap-2 mt-4 pb-2">
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.max(0, p - itemsPerPage))} disabled={historyIndex === 0}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.max(0, p - 1))} disabled={historyIndex === 0}>
               <ArrowLeft size={14} />
             </Button>
             <span className="text-[10px] font-medium text-muted-foreground">
-              {historyIndex + 1}-{Math.min(historyIndex + itemsPerPage, inquiries.length)} / {inquiries.length}
+              {historyIndex * itemsPerPage + 1}-{Math.min((historyIndex + 1) * itemsPerPage, totalElements)} / {totalElements}
             </span>
-            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.min(inquiries.length - itemsPerPage, p + itemsPerPage))} disabled={historyIndex + itemsPerPage >= inquiries.length}>
+            <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setHistoryIndex(p => Math.min(totalPages - 1, p + 1))} disabled={historyIndex >= totalPages - 1}>
               <ArrowRight size={14} />
             </Button>
           </div>

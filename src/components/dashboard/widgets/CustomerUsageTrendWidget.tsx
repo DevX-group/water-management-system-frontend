@@ -13,12 +13,12 @@ export const CustomerUsageTrendWidget: React.FC = () => {
 
   useEffect(() => {
     const year = new Date().getFullYear();
-    api.get(`/analytics/usage?year=${year}`)  // customer-scoped endpoint via auth context
+    api.get(`/analytics/usage/me?year=${year}`)  // customer-scoped endpoint via auth context
       .then((res) => {
         // Map analytics response to chart-friendly format
-        const monthly = res.data?.monthlyUsage ?? res.data?.data ?? [];
+        const monthly = res.data?.monthlyData ?? res.data?.monthlyUsage ?? res.data?.data ?? [];
         const formatted: UsageData[] = monthly.map((m: any, idx: number) => ({
-          month: m.month ?? m.label ?? `Month ${idx + 1}`,
+          month: m.month ?? m.name ?? m.label ?? `Month ${idx + 1}`,
           usage: m.usage ?? m.usageUnits ?? m.value ?? 0,
         }));
         setData(formatted);

@@ -28,14 +28,16 @@ export const AdminInquiriesPage: React.FC = () => {
     filter,
     search,
     replyText,
-    currentIndex,
+    pageIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     messagesEndRef,
     selectedInquiry,
     setSearch,
     setFilter,
     setSelectedId,
-    setCurrentIndex,
+    setPageIndex,
     setReplyText,
     sendReply,
     resolveInquiry,
@@ -49,9 +51,9 @@ export const AdminInquiriesPage: React.FC = () => {
 
         <motion.div variants={itemVariants} className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold mb-0.5">
-              {t('admin.title')} <span className="text-gradient">{t('admin.titleHighlight')}</span>
-            </h1>
+            <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+              {t('admin.title')} {t('admin.titleHighlight')}
+            </h1><p className="mt-1 text-muted-foreground">Manage and respond to customer inquiries.</p>
           </div>
           <div className="flex gap-2">
             <Badge variant="outline" className="px-4 py-2 text-sm">{stats.open} {t('admin.open')}</Badge>
@@ -68,12 +70,14 @@ export const AdminInquiriesPage: React.FC = () => {
               selectedId={selectedId}
               search={search}
               filter={filter}
-              currentIndex={currentIndex}
+              pageIndex={pageIndex}
+              totalPages={totalPages}
+              totalElements={totalElements}
               itemsPerPage={itemsPerPage}
               setSearch={setSearch}
               setFilter={setFilter}
               setSelectedId={setSelectedId}
-              setCurrentIndex={setCurrentIndex}
+              setPageIndex={setPageIndex}
             />
           </motion.div>
 
@@ -93,3 +97,4 @@ export const AdminInquiriesPage: React.FC = () => {
     </div>
   );
 };
+
