@@ -164,24 +164,20 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
         <div className="relative px-4 sm:px-6 lg:px-10 -mt-24 pb-10">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-5 auto-rows-[minmax(130px,auto)]">
             {config.widgets.map((widget, index) => (
-              <div
+              <WidgetContainer
                 key={widget.id}
+                name={widget.name}
+                colSpan={widget.colSpan}
+                rowSpan={widget.rowSpan}
                 className="animate-slide-up"
                 style={{ animationDelay: (index * 80) + 'ms', animationFillMode: 'both' }}
               >
-                <WidgetContainer
+                <WidgetRenderer
+                  componentKey={widget.componentKey}
                   name={widget.name}
-                  colSpan={widget.colSpan}
-                  rowSpan={widget.rowSpan}
-                  index={index}
-                >
-                  <WidgetRenderer
-                    componentKey={widget.componentKey}
-                    name={widget.name}
-                    configJson={widget.configJson}
-                  />
-                </WidgetContainer>
-              </div>
+                  configJson={widget.configJson}
+                />
+              </WidgetContainer>
             ))}
           </div>
         </div>

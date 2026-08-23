@@ -218,7 +218,7 @@ export const SystemSettingsPage: React.FC = () => {
           {t('title')}
         </h1>
 
-        <p className="mt-1 text-muted-foreground">
+        <p className="text-muted-foreground text-lg">
           {t('subtitle')}
         </p>
       </div>

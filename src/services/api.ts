@@ -48,7 +48,9 @@ api.interceptors.response.use(
     const status = error?.response?.status;
     if (status === 401) {
       removeToken();
-      window.location.href = '/login';
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
