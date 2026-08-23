@@ -248,7 +248,7 @@ export const AdminNavbar: React.FC = () => {
             {/* Language Selector */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="inline-flex items-center justify-center rounded-xl w-9 h-9 hidden sm:flex text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white transition-colors outline-none">
+                <button className="inline-flex items-center justify-center rounded-xl w-9 h-9 flex text-slate-600 hover:bg-slate-200/50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-700/50 dark:hover:text-white transition-colors outline-none">
                   <Globe className="w-4 h-4" />
                 </button>
               </DropdownMenuTrigger>
