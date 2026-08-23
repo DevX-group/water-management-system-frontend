@@ -1,15 +1,11 @@
 import '@/index.css';
 import React from 'react';
-import { AdminLayout } from '@/components/layout/AdminLayout';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
 import { useAdmin } from '@/contexts/AdminContext';
 
 /**
  * Admin dashboard page — served to SUPER_ADMIN, SYSTEM_ADMIN,
  * CUSTOMER_HANDLER, and METER_READER.
- *
- * The DashboardGrid fetches the role-appropriate configuration from
- * GET /api/dashboards/me and renders widgets via the allow-listed WidgetRenderer.
  */
 export const DashboardPage: React.FC = () => {
   const { currentAdmin } = useAdmin();
@@ -33,8 +29,8 @@ export const DashboardPage: React.FC = () => {
       <DashboardGrid
         greeting={roleGreeting[currentAdmin.role] ?? 'Dashboard'}
         subtitle={roleSubtitle[currentAdmin.role]}
+        role={currentAdmin.role}
       />
     </div>
   );
 };
-
