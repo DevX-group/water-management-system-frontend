@@ -20,6 +20,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 import { motion } from 'framer-motion';
+import { useSystemDetails } from '@/context/SystemDetailsContext';
 
 const ROLE_LABELS: Record<string, string> = {
   main_admin: 'Main Admin',
@@ -58,8 +59,6 @@ const GROUP_CONFIG = [
   { id: 'analytics', label: 'Analytics', icon: BarChart3, items: ['reports', 'predictions'] },
   { id: 'settings', label: 'Settings', icon: Settings, items: ['activity-logs', 'widget-management', 'system-settings'] }
 ];
-
-import { useSystemDetails } from '@/context/SystemDetailsContext';
 
 export const AdminNavbar: React.FC = () => {
   const { systemDetails } = useSystemDetails();
@@ -127,37 +126,49 @@ export const AdminNavbar: React.FC = () => {
                 </button>
               </SheetTrigger>
               <SheetContent side="left" className="admin-wrapper w-72 p-0 border-r border-sidebar-border">
-                <div className="w-full h-full gradient-sidebar">
-                  <SheetHeader className="p-6 border-b border-sidebar-border/50">
-                    <SheetTitle className="text-white text-left flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-                        <User className="w-4 h-4 text-white" />
-                      </div>
-                      WaterAdmin
-                    </SheetTitle>
-                  </SheetHeader>
-                  <div className="py-4 overflow-y-auto max-h-[calc(100vh-100px)]">
-                    {filteredNavItems.map((item) => {
-                      const Icon = item.icon;
-                      const isActive = activeSection === item.id;
-                      return (
-                        <button
-                          key={item.id + item.label}
-                          onClick={() => {
-                            navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard');
-                          }}
-                          className={cn(
-                            "w-full flex items-center gap-3 px-6 py-3 transition-all duration-200",
-                            isActive
-                              ? "bg-primary/20 text-white border-l-4 border-primary"
-                              : "text-slate-300 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
-                          )}
-                        >
-                          <Icon className="w-5 h-5" />
-                          <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
-                        </button>
-                      );
-                    })}
+                <div className="w-full h-full gradient-sidebar flex flex-col justify-between">
+                  <div className="flex-1 overflow-y-auto">
+                    <SheetHeader className="p-4 border-b border-sidebar-border/50">
+                      <SheetTitle className="text-white text-left flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-xl gradient-primary flex items-center justify-center shadow-soft shrink-0">
+                          <Droplets className="w-5 h-5 text-primary-foreground" />
+                        </div>
+                        <div className="flex flex-col items-start justify-center gap-[1px]">
+                          <span className="text-sm font-bold leading-none text-white py-[1px]">
+                            {companyName}
+                          </span>
+                          <span className="text-[10px] font-semibold leading-none text-slate-400">
+                            Water Management System
+                          </span>
+                        </div>
+                      </SheetTitle>
+                    </SheetHeader>
+                    <div className="py-4">
+                      {filteredNavItems.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = activeSection === item.id;
+                        return (
+                          <button
+                            key={item.id + item.label}
+                            onClick={() => {
+                              navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard');
+                            }}
+                            className={cn(
+                              "w-full flex items-center gap-3 px-6 py-3 transition-all duration-200",
+                              isActive
+                                ? "bg-primary/20 text-white border-l-4 border-primary"
+                                : "text-slate-300 hover:text-white hover:bg-white/5 border-l-4 border-transparent"
+                            )}
+                          >
+                            <Icon className="w-5 h-5" />
+                            <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="p-4 border-t border-sidebar-border/50 bg-slate-900/40">
+                    <PWAInstallButton size="default" className="w-full justify-center shadow-md py-2.5" />
                   </div>
                 </div>
               </SheetContent>
@@ -165,7 +176,7 @@ export const AdminNavbar: React.FC = () => {
           </div>
 
           {/* Desktop Logo */}
-          <div className="flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center shadow-soft">
               <Droplets className="w-5 h-5 text-primary-foreground" />
             </div>
@@ -177,7 +188,7 @@ export const AdminNavbar: React.FC = () => {
                 Galle Pradeshiya Sabha
               </span>
               <span className="text-[10px] font-semibold leading-none text-muted-foreground hidden sm:block">
-                காலி பிரதேச சபை
+                காலி பிரதேச සபை
               </span>
             </div>
           </div>
@@ -241,7 +252,7 @@ export const AdminNavbar: React.FC = () => {
           {/* Right Actions */}
           <div className="flex items-center gap-2 ml-auto xl:ml-0">
             {/* PWA Install Button for Meter Readers */}
-            <div className="hidden sm:block">
+            <div className="flex items-center">
               <PWAInstallButton size="sm" />
             </div>
 

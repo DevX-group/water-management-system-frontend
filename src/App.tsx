@@ -43,7 +43,8 @@ const PWAManifestController: React.FC = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const isMeterReader = user?.role === "METER_READER";
+    const role = user?.role ?? "";
+    const isMeterReader = role.toUpperCase() === "METER_READER" || role === "meter_reader";
     const existingManifest = document.querySelector('link[rel="manifest"]');
 
     if (isMeterReader) {

@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/dialog';
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAdmin } from '@/contexts/AdminContext';
 
 interface PWAInstallButtonProps {
   size?: 'default' | 'sm' | 'lg' | 'icon';
@@ -28,6 +29,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
   label = 'Install App',
 }) => {
   const { user } = useAuth();
+  const { currentAdmin } = useAdmin();
   const {
     isInstalled,
     installApp,
@@ -38,7 +40,10 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
   } = usePWAInstall();
 
   // Role check: If required, restrict to METER_READER role
-  if (requireMeterReaderRole && user?.role !== 'METER_READER') {
+  const userRole = user?.role || currentAdmin?.role || '';
+  const isMeterReader = userRole.toUpperCase() === 'METER_READER' || userRole === 'meter_reader';
+
+  if (requireMeterReaderRole && !isMeterReader) {
     return null;
   }
 
