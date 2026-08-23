@@ -143,11 +143,7 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
   disabled={overdueTableData.length === 0}
   onClick={() =>
     exportPDF(
-      overdueTableData.map((bill) => ({
-        month: bill.dueDate,
-        usage: Number(bill.daysOverdue ?? 0),
-        revenue: Number(bill.amount ?? 0),
-      })),
+      overdueTableData,
       `Overdue Payments Report${
         overdueBill
           ? ` - ${overdueBill}`
@@ -157,7 +153,45 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
         overdueBill
           ? `-${overdueBill}`
           : ""
-      }.pdf`
+      }.pdf`,
+      [
+        {
+          header: "Bill ID",
+          value: (bill) => bill.id,
+          width: 1,
+        },
+        {
+          header: "Customer ID",
+          value: (bill) => bill.customerid,
+          width: 1.2,
+        },
+        {
+          header: "Customer",
+          value: (bill) => bill.customer,
+          width: 1.5,
+        },
+        {
+          header: "Amount",
+          value: (bill) =>
+            `LKR ${Number(
+              bill.amount ?? 0
+            ).toLocaleString()}`,
+          width: 1.3,
+          align: "right",
+        },
+        {
+          header: "Due Date",
+          value: (bill) => bill.dueDate,
+          width: 1.2,
+        },
+        {
+          header: "Days Overdue",
+          value: (bill) =>
+            `${bill.daysOverdue} days`,
+          width: 1.1,
+          align: "center",
+        },
+      ]
     )
   }
 >

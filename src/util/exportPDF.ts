@@ -6,263 +6,311 @@ export interface PDFReportRow {
   revenue: number;
 }
 
-export const exportPDF = async (
-  data: PDFReportRow[],
+export interface PDFColumn<T> {
+  header: string;
+  value: (row: T) => string | number;
+  width?: number;
+  align?: "left" | "center" | "right";
+}
+
+export const exportPDF = async <T extends object>(
+  data: T[],
   title: string,
-  fileName: string
+  fileName: string,
+  columns?: PDFColumn<T>[]
 ): Promise<void> => {
   if (!Array.isArray(data) || data.length === 0) {
     throw new Error("No data available to export");
   }
 
-  try {
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "mm",
-      format: "a4",
-    });
+  /*
+   * Monthly and customer reports can omit columns.
+   * These default columns will then be used.
+   */
+  const selectedColumns: PDFColumn<T>[] =
+    columns ??
+    ([
+      {
+        header: "Month / Date",
+        value: (row: T) =>
+          String(
+            (row as unknown as PDFReportRow).month ?? ""
+          ),
+        width: 1.2,
+        align: "left",
+      },
+      {
+        header: "Usage (L)",
+        value: (row: T) =>
+          Number(
+            (row as unknown as PDFReportRow).usage ?? 0
+          ).toLocaleString(),
+        width: 1,
+        align: "right",
+      },
+      {
+        header: "Revenue (LKR)",
+        value: (row: T) =>
+          Number(
+            (row as unknown as PDFReportRow).revenue ?? 0
+          ).toLocaleString(),
+        width: 1,
+        align: "right",
+      },
+    ] as PDFColumn<T>[]);
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
+  /*
+   * Six-column reports use landscape orientation.
+   */
+  const orientation: "portrait" | "landscape" =
+    selectedColumns.length > 4
+      ? "landscape"
+      : "portrait";
 
-    const leftMargin = 15;
-    const rightMargin = 15;
-    const bottomMargin = 15;
+  const pdf = new jsPDF({
+    orientation,
+    unit: "mm",
+    format: "a4",
+  });
 
-    const usableWidth =
-      pageWidth - leftMargin - rightMargin;
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
 
-    const monthColumnWidth = 60;
-    const usageColumnWidth = 55;
-    const revenueColumnWidth =
-      usableWidth -
-      monthColumnWidth -
-      usageColumnWidth;
+  const leftMargin = 12;
+  const rightMargin = 12;
+  const topMargin = 15;
+  const bottomMargin = 15;
+  const rowHeight = 10;
 
-    const rowHeight = 10;
+  const usableWidth =
+    pageWidth - leftMargin - rightMargin;
 
-    let currentY = 20;
+  const totalWidthWeight = selectedColumns.reduce(
+    (total, column) =>
+      total + Number(column.width ?? 1),
+    0
+  );
 
-    const formatNumber = (
-      value: number | null | undefined
-    ): string => {
-      return Number(value ?? 0).toLocaleString(
-        "en-US",
-        {
-          maximumFractionDigits: 2,
-        }
-      );
-    };
+  const columnWidths = selectedColumns.map(
+    (column) =>
+      usableWidth *
+      (Number(column.width ?? 1) /
+        totalWidthWeight)
+  );
 
-    const drawPageHeading = (): void => {
-      pdf.setTextColor(0, 0, 0);
+  let currentY = topMargin;
 
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(16);
+  const shortenText = (
+    text: string,
+    maximumWidth: number
+  ): string => {
+    if (pdf.getTextWidth(text) <= maximumWidth) {
+      return text;
+    }
 
-      const titleLines = pdf.splitTextToSize(
-        title,
-        usableWidth
-      );
+    let shortenedText = text;
 
-      pdf.text(
-        titleLines,
-        pageWidth / 2,
-        currentY,
-        {
-          align: "center",
-        }
-      );
+    while (
+      shortenedText.length > 0 &&
+      pdf.getTextWidth(`${shortenedText}...`) >
+        maximumWidth
+    ) {
+      shortenedText = shortenedText.slice(0, -1);
+    }
 
-      currentY += titleLines.length * 7;
+    return `${shortenedText}...`;
+  };
 
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(9);
-      pdf.setTextColor(90, 90, 90);
+  const drawPageTitle = (): void => {
+    pdf.setTextColor(0, 0, 0);
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
 
-      pdf.text(
-        `Generated: ${new Date().toLocaleString()}`,
-        pageWidth / 2,
-        currentY,
-        {
-          align: "center",
-        }
-      );
+    const titleLines = pdf.splitTextToSize(
+      title,
+      usableWidth
+    );
 
-      currentY += 10;
-    };
+    pdf.text(
+      titleLines,
+      pageWidth / 2,
+      currentY,
+      {
+        align: "center",
+      }
+    );
 
-    const drawTableHeading = (): void => {
-      pdf.setFillColor(232, 244, 245);
-      pdf.setDrawColor(180, 180, 180);
-      pdf.setTextColor(0, 0, 0);
-      pdf.setFont("helvetica", "bold");
-      pdf.setFontSize(10);
-
-      pdf.rect(
-        leftMargin,
-        currentY,
-        monthColumnWidth,
-        rowHeight,
-        "FD"
-      );
-
-      pdf.rect(
-        leftMargin + monthColumnWidth,
-        currentY,
-        usageColumnWidth,
-        rowHeight,
-        "FD"
-      );
-
-      pdf.rect(
-        leftMargin +
-          monthColumnWidth +
-          usageColumnWidth,
-        currentY,
-        revenueColumnWidth,
-        rowHeight,
-        "FD"
-      );
-
-      pdf.text(
-        "Month / Date",
-        leftMargin + 3,
-        currentY + 6.5
-      );
-
-      pdf.text(
-        "Usage (L)",
-        leftMargin +
-          monthColumnWidth +
-          usageColumnWidth -
-          3,
-        currentY + 6.5,
-        {
-          align: "right",
-        }
-      );
-
-      pdf.text(
-        "Revenue (LKR)",
-        pageWidth - rightMargin - 3,
-        currentY + 6.5,
-        {
-          align: "right",
-        }
-      );
-
-      currentY += rowHeight;
-    };
-
-    const startNewPage = (): void => {
-      pdf.addPage();
-      currentY = 20;
-
-      drawPageHeading();
-      drawTableHeading();
-    };
-
-    drawPageHeading();
-    drawTableHeading();
+    currentY += titleLines.length * 7;
 
     pdf.setFont("helvetica", "normal");
-    pdf.setFontSize(10);
+    pdf.setFontSize(8);
+    pdf.setTextColor(90, 90, 90);
 
-    data.forEach((item, index) => {
-      if (
-        currentY + rowHeight >
-        pageHeight - bottomMargin
-      ) {
-        startNewPage();
+    pdf.text(
+      `Generated: ${new Date().toLocaleString()}`,
+      pageWidth / 2,
+      currentY,
+      {
+        align: "center",
       }
+    );
 
-      if (index % 2 === 0) {
+    currentY += 8;
+  };
+
+  const drawTableHeader = (): void => {
+    let currentX = leftMargin;
+
+    selectedColumns.forEach((column, index) => {
+      const columnWidth = columnWidths[index];
+
+      pdf.setFillColor(232, 244, 245);
+      pdf.setDrawColor(180, 180, 180);
+
+      pdf.rect(
+        currentX,
+        currentY,
+        columnWidth,
+        rowHeight,
+        "FD"
+      );
+
+      pdf.setFont("helvetica", "bold");
+      pdf.setFontSize(9);
+      pdf.setTextColor(0, 0, 0);
+
+      const alignment = column.align ?? "left";
+
+      const textX =
+        alignment === "right"
+          ? currentX + columnWidth - 2
+          : alignment === "center"
+            ? currentX + columnWidth / 2
+            : currentX + 2;
+
+      pdf.text(
+        shortenText(
+          column.header,
+          columnWidth - 4
+        ),
+        textX,
+        currentY + 6.5,
+        {
+          align: alignment,
+        }
+      );
+
+      currentX += columnWidth;
+    });
+
+    currentY += rowHeight;
+  };
+
+  const startNewPage = (): void => {
+    pdf.addPage();
+    currentY = topMargin;
+
+    drawPageTitle();
+    drawTableHeader();
+  };
+
+  drawPageTitle();
+  drawTableHeader();
+
+  data.forEach((row, rowIndex) => {
+    if (
+      currentY + rowHeight >
+      pageHeight - bottomMargin
+    ) {
+      startNewPage();
+    }
+
+    let currentX = leftMargin;
+
+    selectedColumns.forEach((column, columnIndex) => {
+      const columnWidth =
+        columnWidths[columnIndex];
+
+      const rawValue = column.value(row);
+
+      const cellValue =
+        rawValue === null ||
+        rawValue === undefined
+          ? ""
+          : String(rawValue);
+
+      if (rowIndex % 2 === 0) {
         pdf.setFillColor(255, 255, 255);
       } else {
         pdf.setFillColor(248, 248, 248);
       }
 
       pdf.setDrawColor(210, 210, 210);
-      pdf.setTextColor(0, 0, 0);
+
+      pdf.rect(
+        currentX,
+        currentY,
+        columnWidth,
+        rowHeight,
+        "FD"
+      );
+
       pdf.setFont("helvetica", "normal");
+      pdf.setFontSize(8.5);
+      pdf.setTextColor(0, 0, 0);
 
-      pdf.rect(
-        leftMargin,
-        currentY,
-        monthColumnWidth,
-        rowHeight,
-        "FD"
-      );
+      const alignment = column.align ?? "left";
 
-      pdf.rect(
-        leftMargin + monthColumnWidth,
-        currentY,
-        usageColumnWidth,
-        rowHeight,
-        "FD"
-      );
-
-      pdf.rect(
-        leftMargin +
-          monthColumnWidth +
-          usageColumnWidth,
-        currentY,
-        revenueColumnWidth,
-        rowHeight,
-        "FD"
-      );
+      const textX =
+        alignment === "right"
+          ? currentX + columnWidth - 2
+          : alignment === "center"
+            ? currentX + columnWidth / 2
+            : currentX + 2;
 
       pdf.text(
-        String(item.month ?? ""),
-        leftMargin + 3,
-        currentY + 6.5
-      );
-
-      pdf.text(
-        formatNumber(item.usage),
-        leftMargin +
-          monthColumnWidth +
-          usageColumnWidth -
-          3,
+        shortenText(
+          cellValue,
+          columnWidth - 4
+        ),
+        textX,
         currentY + 6.5,
         {
-          align: "right",
+          align: alignment,
         }
       );
 
-      pdf.text(
-        formatNumber(item.revenue),
-        pageWidth - rightMargin - 3,
-        currentY + 6.5,
-        {
-          align: "right",
-        }
-      );
-
-      currentY += rowHeight;
+      currentX += columnWidth;
     });
 
-    const totalUsage = data.reduce(
-      (total, item) =>
-        total + Number(item.usage ?? 0),
+    currentY += rowHeight;
+  });
+
+  /*
+   * Keep totals for the default monthly/customer format.
+   */
+  if (!columns) {
+    const reportRows =
+      data as unknown as PDFReportRow[];
+
+    const totalUsage = reportRows.reduce(
+      (total, row) =>
+        total + Number(row.usage ?? 0),
       0
     );
 
-    const totalRevenue = data.reduce(
-      (total, item) =>
-        total + Number(item.revenue ?? 0),
+    const totalRevenue = reportRows.reduce(
+      (total, row) =>
+        total + Number(row.revenue ?? 0),
       0
     );
-
-    const summaryHeight = 20;
 
     if (
-      currentY + summaryHeight >
+      currentY + 25 >
       pageHeight - bottomMargin
     ) {
       pdf.addPage();
-      currentY = 20;
+      currentY = topMargin;
     } else {
       currentY += 5;
     }
@@ -274,18 +322,16 @@ export const exportPDF = async (
       leftMargin,
       currentY,
       usableWidth,
-      summaryHeight,
+      20,
       "FD"
     );
 
-    pdf.setTextColor(0, 0, 0);
     pdf.setFont("helvetica", "bold");
     pdf.setFontSize(10);
+    pdf.setTextColor(0, 0, 0);
 
     pdf.text(
-      `Total Usage: ${formatNumber(
-        totalUsage
-      )} L`,
+      `Total Usage: ${totalUsage.toLocaleString()} L`,
       pageWidth - rightMargin - 4,
       currentY + 7,
       {
@@ -294,50 +340,44 @@ export const exportPDF = async (
     );
 
     pdf.text(
-      `Total Revenue: LKR ${formatNumber(
-        totalRevenue
-      )}`,
+      `Total Revenue: LKR ${totalRevenue.toLocaleString()}`,
       pageWidth - rightMargin - 4,
       currentY + 14,
       {
         align: "right",
       }
     );
-
-    /*
-     * Add page numbers.
-     */
-    const pageCount =
-      pdf.getNumberOfPages();
-
-    for (
-      let pageNumber = 1;
-      pageNumber <= pageCount;
-      pageNumber++
-    ) {
-      pdf.setPage(pageNumber);
-
-      pdf.setFont("helvetica", "normal");
-      pdf.setFontSize(8);
-      pdf.setTextColor(100, 100, 100);
-
-      pdf.text(
-        `Page ${pageNumber} of ${pageCount}`,
-        pageWidth / 2,
-        pageHeight - 7,
-        {
-          align: "center",
-        }
-      );
-    }
-
-    pdf.save(
-      fileName.toLowerCase().endsWith(".pdf")
-        ? fileName
-        : `${fileName}.pdf`
-    );
-  } catch (error) {
-    console.error("PDF EXPORT ERROR:", error);
-    throw error;
   }
+
+  /*
+   * Add page numbers.
+   */
+  const pageCount = pdf.getNumberOfPages();
+
+  for (
+    let pageNumber = 1;
+    pageNumber <= pageCount;
+    pageNumber++
+  ) {
+    pdf.setPage(pageNumber);
+
+    pdf.setFont("helvetica", "normal");
+    pdf.setFontSize(8);
+    pdf.setTextColor(100, 100, 100);
+
+    pdf.text(
+      `Page ${pageNumber} of ${pageCount}`,
+      pageWidth / 2,
+      pageHeight - 7,
+      {
+        align: "center",
+      }
+    );
+  }
+
+  pdf.save(
+    fileName.toLowerCase().endsWith(".pdf")
+      ? fileName
+      : `${fileName}.pdf`
+  );
 };

@@ -159,11 +159,7 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
   disabled={billsTableData.length === 0}
   onClick={() =>
     exportPDF(
-      billsTableData.map((bill) => ({
-        month: bill.dueDate,
-        usage: 1,
-        revenue: Number(bill.amount ?? 0),
-      })),
+      billsTableData,
       `Bills Report${
         customerSearchBill
           ? ` - ${customerSearchBill}`
@@ -173,7 +169,44 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
         customerSearchBill
           ? `-${customerSearchBill}`
           : ""
-      }.pdf`
+      }.pdf`,
+      [
+        {
+          header: "Bill ID",
+          value: (bill) => bill.id,
+          width: 1,
+        },
+        {
+          header: "Customer ID",
+          value: (bill) => bill.customerid,
+          width: 1.2,
+        },
+        {
+          header: "Customer",
+          value: (bill) => bill.customer,
+          width: 1.5,
+        },
+        {
+          header: "Amount",
+          value: (bill) =>
+            `LKR ${Number(
+              bill.amount ?? 0
+            ).toLocaleString()}`,
+          width: 1.3,
+          align: "right",
+        },
+        {
+          header: "Due Date",
+          value: (bill) => bill.dueDate,
+          width: 1.2,
+        },
+        {
+          header: "Status",
+          value: (bill) => bill.status,
+          width: 1,
+          align: "center",
+        },
+      ]
     )
   }
 >

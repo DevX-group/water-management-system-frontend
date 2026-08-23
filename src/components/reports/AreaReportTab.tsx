@@ -1,6 +1,7 @@
 import "@/index.css";
 import React from "react";
 import { Download, Filter } from "lucide-react";
+
 import {
   Bar,
   CartesianGrid,
@@ -14,6 +15,7 @@ import {
 } from "recharts";
 
 import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardContent,
@@ -21,6 +23,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+
 import {
   Select,
   SelectContent,
@@ -28,14 +31,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+
 import { exportPDF } from "@/util/exportPDF";
 
 export interface AreaReportRow {
   month: string;
+
   area1Usage?: number;
   area1Revenue?: number;
+
   area2Usage?: number;
   area2Revenue?: number;
+
   area3Usage?: number;
   area3Revenue?: number;
 }
@@ -43,29 +50,106 @@ export interface AreaReportRow {
 interface AreaReportTabProps {
   selectedArea: string;
   setSelectedArea: (area: string) => void;
+
   areaYear: string;
   setAreaYear: (year: string) => void;
+
+  /*
+   * This data has already been filtered by the
+   * backend/database using area and year.
+   */
   areaData: AreaReportRow[];
 }
 
-export const AreaReportTab: React.FC<AreaReportTabProps> = ({
+interface AreaPDFRow {
+  area: string;
+  month: string;
+  usage: number;
+  revenue: number;
+}
+
+export const AreaReportTab: React.FC<
+  AreaReportTabProps
+> = ({
   selectedArea,
   setSelectedArea,
   areaYear,
   setAreaYear,
   areaData,
 }) => {
-  const pdfData = areaData.map((row) => ({
-    month: row.month,
-    usage:
-      Number(row.area1Usage ?? 0) +
-      Number(row.area2Usage ?? 0) +
-      Number(row.area3Usage ?? 0),
-    revenue:
-      Number(row.area1Revenue ?? 0) +
-      Number(row.area2Revenue ?? 0) +
-      Number(row.area3Revenue ?? 0),
-  }));
+  /*
+   * Decide which areas should appear in the PDF.
+   *
+   * This is not database filtering. The backend has
+   * already returned the requested data. This only
+   * changes the PDF row layout.
+   */
+  const includedAreas =
+    selectedArea === "all"
+      ? [
+          {
+            key: "area1",
+            label: "Area 1",
+          },
+          {
+            key: "area2",
+            label: "Area 2",
+          },
+          {
+            key: "area3",
+            label: "Area 3",
+          },
+        ]
+      : [
+          {
+            key: selectedArea,
+            label:
+              selectedArea === "area1"
+                ? "Area 1"
+                : selectedArea === "area2"
+                  ? "Area 2"
+                  : "Area 3",
+          },
+        ];
+
+  /*
+   * Convert each backend area/month result into
+   * an individual PDF row.
+   */
+  const areaPdfData: AreaPDFRow[] =
+    areaData.flatMap((row) =>
+      includedAreas.map((area) => {
+        const usage =
+          area.key === "area1"
+            ? row.area1Usage
+            : area.key === "area2"
+              ? row.area2Usage
+              : row.area3Usage;
+
+        const revenue =
+          area.key === "area1"
+            ? row.area1Revenue
+            : area.key === "area2"
+              ? row.area2Revenue
+              : row.area3Revenue;
+
+        return {
+          area: area.label,
+          month: row.month,
+          usage: Number(usage ?? 0),
+          revenue: Number(revenue ?? 0),
+        };
+      })
+    );
+
+  const selectedAreaLabel =
+    selectedArea === "all"
+      ? "All Areas"
+      : selectedArea === "area1"
+        ? "Area 1"
+        : selectedArea === "area2"
+          ? "Area 2"
+          : "Area 3";
 
   return (
     <Card>
@@ -77,14 +161,15 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
             </CardTitle>
 
             <CardDescription>
-              Usage and revenue trends summarized by area for comparison
-              across regions
+              Usage and revenue trends summarized by
+              area for comparison across regions
             </CardDescription>
           </div>
 
           <div className="flex items-center gap-2">
             <Filter className="w-4 h-4 text-muted-foreground" />
 
+            {/* Area filter sent to the backend */}
             <Select
               value={selectedArea}
               onValueChange={setSelectedArea}
@@ -94,21 +179,44 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
               </SelectTrigger>
 
               <SelectContent>
-                <SelectItem value="all">All Areas</SelectItem>
-                <SelectItem value="area1">Area 1</SelectItem>
-                <SelectItem value="area2">Area 2</SelectItem>
-                <SelectItem value="area3">Area 3</SelectItem>
+                <SelectItem value="all">
+                  All Areas
+                </SelectItem>
+
+                <SelectItem value="area1">
+                  Area 1
+                </SelectItem>
+
+                <SelectItem value="area2">
+                  Area 2
+                </SelectItem>
+
+                <SelectItem value="area3">
+                  Area 3
+                </SelectItem>
               </SelectContent>
             </Select>
 
-            <Select value={areaYear} onValueChange={setAreaYear}>
+            {/* Year filter sent to the backend */}
+            <Select
+              value={areaYear}
+              onValueChange={setAreaYear}
+            >
               <SelectTrigger className="w-32">
                 <SelectValue />
               </SelectTrigger>
 
               <SelectContent>
-                {["2023", "2024", "2025", "2026"].map((year) => (
-                  <SelectItem key={year} value={year}>
+                {[
+                  "2023",
+                  "2024",
+                  "2025",
+                  "2026",
+                ].map((year) => (
+                  <SelectItem
+                    key={year}
+                    value={year}
+                  >
                     {year}
                   </SelectItem>
                 ))}
@@ -120,7 +228,14 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
 
       <CardContent>
         <div className="h-80">
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer
+            width="100%"
+            height="100%"
+          >
+            {/*
+             * areaData contains only the data returned
+             * by the backend for the selected filters.
+             */}
             <ComposedChart data={areaData}>
               <CartesianGrid
                 strokeDasharray="3 3"
@@ -155,52 +270,94 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
 
               <Tooltip
                 content={({ active, payload }) => {
-                  if (!active || !payload?.length) {
+                  if (
+                    !active ||
+                    !payload?.length
+                  ) {
                     return null;
                   }
 
-                  const row = payload[0]?.payload as AreaReportRow;
+                  const row =
+                    payload[0]
+                      ?.payload as AreaReportRow;
+
+                  if (!row) {
+                    return null;
+                  }
 
                   return (
-                    <div className="bg-card border border-border rounded-lg p-2 text-sm">
+                    <div className="bg-card border border-border rounded-lg p-2 text-sm shadow-md">
                       {(selectedArea === "all" ||
-                        selectedArea === "area1") && (
+                        selectedArea ===
+                          "area1") && (
                         <>
-                          <p>
-                            Area 1 Usage:{" "}
-                            {Number(row.area1Usage ?? 0).toLocaleString()} L
+                          <p className="font-medium">
+                            Area 1
                           </p>
+
                           <p>
-                            Area 1 Revenue: LKR{" "}
-                            {Number(row.area1Revenue ?? 0).toLocaleString()}
+                            Usage:{" "}
+                            {Number(
+                              row.area1Usage ?? 0
+                            ).toLocaleString()}{" "}
+                            L
+                          </p>
+
+                          <p>
+                            Revenue: LKR{" "}
+                            {Number(
+                              row.area1Revenue ?? 0
+                            ).toLocaleString()}
                           </p>
                         </>
                       )}
 
                       {(selectedArea === "all" ||
-                        selectedArea === "area2") && (
+                        selectedArea ===
+                          "area2") && (
                         <>
-                          <p>
-                            Area 2 Usage:{" "}
-                            {Number(row.area2Usage ?? 0).toLocaleString()} L
+                          <p className="font-medium mt-2">
+                            Area 2
                           </p>
+
                           <p>
-                            Area 2 Revenue: LKR{" "}
-                            {Number(row.area2Revenue ?? 0).toLocaleString()}
+                            Usage:{" "}
+                            {Number(
+                              row.area2Usage ?? 0
+                            ).toLocaleString()}{" "}
+                            L
+                          </p>
+
+                          <p>
+                            Revenue: LKR{" "}
+                            {Number(
+                              row.area2Revenue ?? 0
+                            ).toLocaleString()}
                           </p>
                         </>
                       )}
 
                       {(selectedArea === "all" ||
-                        selectedArea === "area3") && (
+                        selectedArea ===
+                          "area3") && (
                         <>
-                          <p>
-                            Area 3 Usage:{" "}
-                            {Number(row.area3Usage ?? 0).toLocaleString()} L
+                          <p className="font-medium mt-2">
+                            Area 3
                           </p>
+
                           <p>
-                            Area 3 Revenue: LKR{" "}
-                            {Number(row.area3Revenue ?? 0).toLocaleString()}
+                            Usage:{" "}
+                            {Number(
+                              row.area3Usage ?? 0
+                            ).toLocaleString()}{" "}
+                            L
+                          </p>
+
+                          <p>
+                            Revenue: LKR{" "}
+                            {Number(
+                              row.area3Revenue ?? 0
+                            ).toLocaleString()}
                           </p>
                         </>
                       )}
@@ -211,6 +368,7 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
 
               <Legend />
 
+              {/* Area 1 */}
               {(selectedArea === "all" ||
                 selectedArea === "area1") && (
                 <>
@@ -219,7 +377,9 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
                     dataKey="area1Usage"
                     name="Area 1 Usage (L)"
                     fill="hsl(187, 75%, 35%)"
+                    radius={[4, 4, 0, 0]}
                   />
+
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -231,6 +391,7 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
                 </>
               )}
 
+              {/* Area 2 */}
               {(selectedArea === "all" ||
                 selectedArea === "area2") && (
                 <>
@@ -239,7 +400,9 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
                     dataKey="area2Usage"
                     name="Area 2 Usage (L)"
                     fill="hsl(152, 70%, 40%)"
+                    radius={[4, 4, 0, 0]}
                   />
+
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -251,6 +414,7 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
                 </>
               )}
 
+              {/* Area 3 */}
               {(selectedArea === "all" ||
                 selectedArea === "area3") && (
                 <>
@@ -259,7 +423,9 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
                     dataKey="area3Usage"
                     name="Area 3 Usage (L)"
                     fill="hsl(38, 92%, 55%)"
+                    radius={[4, 4, 0, 0]}
                   />
+
                   <Line
                     yAxisId="right"
                     type="monotone"
@@ -276,28 +442,50 @@ export const AreaReportTab: React.FC<AreaReportTabProps> = ({
 
         <div className="flex justify-end mt-4">
           <Button
-  disabled={areaData.length === 0}
-  onClick={() =>
-    exportPDF(
-      areaData.map((row) => ({
-        month: row.month,
-        usage:
-          Number(row.area1Usage ?? 0) +
-          Number(row.area2Usage ?? 0) +
-          Number(row.area3Usage ?? 0),
-        revenue:
-          Number(row.area1Revenue ?? 0) +
-          Number(row.area2Revenue ?? 0) +
-          Number(row.area3Revenue ?? 0),
-      })),
-      `Area Report - ${selectedArea} - ${areaYear}`,
-      `AreaReport-${selectedArea}-${areaYear}.pdf`
-    )
-  }
->
-  <Download className="w-4 h-4 mr-2" />
-  Export as PDF
-</Button>
+            disabled={areaPdfData.length === 0}
+            onClick={() =>
+              exportPDF(
+                areaPdfData,
+                `Area Report - ${selectedAreaLabel} - ${areaYear}`,
+                `AreaReport-${selectedArea}-${areaYear}.pdf`,
+                [
+                  {
+                    header: "Area",
+                    value: (row) => row.area,
+                    width: 1,
+                    align: "left",
+                  },
+                  {
+                    header: "Month",
+                    value: (row) => row.month,
+                    width: 1,
+                    align: "left",
+                  },
+                  {
+                    header: "Usage (L)",
+                    value: (row) =>
+                      Number(
+                        row.usage ?? 0
+                      ).toLocaleString(),
+                    width: 1,
+                    align: "right",
+                  },
+                  {
+                    header: "Revenue (LKR)",
+                    value: (row) =>
+                      Number(
+                        row.revenue ?? 0
+                      ).toLocaleString(),
+                    width: 1.2,
+                    align: "right",
+                  },
+                ]
+              )
+            }
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Export as PDF
+          </Button>
         </div>
       </CardContent>
     </Card>
