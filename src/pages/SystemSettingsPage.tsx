@@ -50,8 +50,10 @@ import {
   Loader2,
 } from 'lucide-react';
 import { BackupManagementCard } from '@/components/system-settings/BackupManagementCard';
+import { useTranslation } from 'react-i18next';
 
 export const SystemSettingsPage: React.FC = () => {
+  const { t } = useTranslation('systemSettings');
   const [systemDetails, setSystemDetails] =
     useState<SystemDetailsRequest>({
       companyName: '',
@@ -92,7 +94,7 @@ export const SystemSettingsPage: React.FC = () => {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to load system details';
+        t('systemDetails.loadFailed', { defaultValue: 'Failed to load system details' });
       toast.error(msg);
     } finally {
       setLoadingDetails(false);
@@ -110,7 +112,7 @@ export const SystemSettingsPage: React.FC = () => {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to load regions';
+        t('regions.loadFailed', { defaultValue: 'Failed to load regions' });
       toast.error(msg);
     } finally {
       setLoadingRegions(false);
@@ -138,12 +140,12 @@ export const SystemSettingsPage: React.FC = () => {
 
       await updateSystemDetails(systemDetails);
 
-      toast.success('System details updated successfully');
+      toast.success(t('systemDetails.updateSuccess', { defaultValue: 'System details updated successfully' }));
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to update system details';
+        t('systemDetails.updateFailed', { defaultValue: 'Failed to update system details' });
       toast.error(msg);
     } finally {
       setSavingDetails(false);
@@ -167,12 +169,12 @@ export const SystemSettingsPage: React.FC = () => {
       setRegions((prev) => [...prev, response]);
       setNewRegionName('');
 
-      toast.success('Region added successfully');
+      toast.success(t('regions.addSuccess', { defaultValue: 'Region added successfully' }));
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to add region';
+        t('regions.addFailed', { defaultValue: 'Failed to add region' });
       toast.error(msg, { className: "toast-error" });
     } finally {
       setAddingRegion(false);
@@ -191,12 +193,12 @@ export const SystemSettingsPage: React.FC = () => {
         )
       );
 
-      toast.success('Region deleted successfully');
+      toast.success(t('regions.deleteSuccess', { defaultValue: 'Region deleted successfully' }));
       } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to delete region';
+        t('regions.deleteFailed', { defaultValue: 'Failed to delete region' });
       toast.error(msg);
     }
   };
@@ -210,11 +212,11 @@ export const SystemSettingsPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-col gap-2 mb-2">
         <h1 className="text-4xl font-extrabold tracking-tight bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          System Settings
+          {t('title')}
         </h1>
 
         <p className="text-muted-foreground text-lg">
-          Manage global system configurations and operating regions.
+          {t('subtitle')}
         </p>
       </div>
 
@@ -229,11 +231,11 @@ export const SystemSettingsPage: React.FC = () => {
                 <Settings className="h-5 w-5" />
               </div>
 
-              System Details
+              {t('systemDetails.title')}
             </CardTitle>
 
             <CardDescription className="text-base ml-14">
-              Update the core business information used across the system.
+              {t('systemDetails.description')}
             </CardDescription>
           </CardHeader>
 
@@ -255,7 +257,7 @@ export const SystemSettingsPage: React.FC = () => {
                       htmlFor="companyName"
                       className="text-sm font-semibold text-foreground/80"
                     >
-                      Company Name
+                      {t('systemDetails.fields.companyName')}
                     </Label>
 
                     <Input
@@ -273,7 +275,7 @@ export const SystemSettingsPage: React.FC = () => {
                       htmlFor="defaultCurrency"
                       className="text-sm font-semibold text-foreground/80"
                     >
-                      Default Currency
+                      {t('systemDetails.fields.defaultCurrency')}
                     </Label>
 
                     <Input
@@ -291,7 +293,7 @@ export const SystemSettingsPage: React.FC = () => {
                       htmlFor="officeContactNumber"
                       className="text-sm font-semibold text-foreground/80"
                     >
-                      Contact Number
+                      {t('systemDetails.fields.officeContactNumber')}
                     </Label>
 
                     <Input
@@ -311,7 +313,7 @@ export const SystemSettingsPage: React.FC = () => {
                       htmlFor="officeEmail"
                       className="text-sm font-semibold text-foreground/80"
                     >
-                      Email Address
+                      {t('systemDetails.fields.officeEmail')}
                     </Label>
 
                     <Input
@@ -330,7 +332,7 @@ export const SystemSettingsPage: React.FC = () => {
                       htmlFor="officeAddress"
                       className="text-sm font-semibold text-foreground/80"
                     >
-                      Office Address
+                      {t('systemDetails.fields.officeAddress')}
                     </Label>
 
                     <Input
@@ -348,7 +350,7 @@ export const SystemSettingsPage: React.FC = () => {
                 <div className="pt-6 border-t border-border/50 mt-2">
                   <h3 className="text-lg font-bold text-foreground/90 mb-5 flex items-center gap-2">
                     <span className="w-1.5 h-5 rounded-full gradient-primary inline-block"></span>
-                    Bank Information
+                    {t('systemDetails.bankInfoTitle')}
                   </h3>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -358,7 +360,7 @@ export const SystemSettingsPage: React.FC = () => {
                         htmlFor="bankName"
                         className="text-sm font-semibold text-foreground/80"
                       >
-                        Bank Name
+                        {t('systemDetails.fields.bankName')}
                       </Label>
 
                       <Input
@@ -376,7 +378,7 @@ export const SystemSettingsPage: React.FC = () => {
                         htmlFor="branch"
                         className="text-sm font-semibold text-foreground/80"
                       >
-                        Branch
+                        {t('systemDetails.fields.branch')}
                       </Label>
 
                       <Input
@@ -394,7 +396,7 @@ export const SystemSettingsPage: React.FC = () => {
                         htmlFor="accountName"
                         className="text-sm font-semibold text-foreground/80"
                       >
-                        Account Name
+                        {t('systemDetails.fields.accountName')}
                       </Label>
 
                       <Input
@@ -412,7 +414,7 @@ export const SystemSettingsPage: React.FC = () => {
                         htmlFor="accountNumber"
                         className="text-sm font-semibold text-foreground/80"
                       >
-                        Account Number
+                        {t('systemDetails.fields.accountNumber')}
                       </Label>
 
                       <Input
@@ -440,7 +442,7 @@ export const SystemSettingsPage: React.FC = () => {
                       <Save className="h-5 w-5" />
                     )}
 
-                    Save Configuration
+                    {t('systemDetails.saveButton')}
                   </Button>
                 </div>
               </form>
@@ -457,18 +459,18 @@ export const SystemSettingsPage: React.FC = () => {
                   <div className="p-2.5 rounded-xl gradient-primary text-white shadow-sm">
                     <MapPin className="h-5 w-5" />
                   </div>
-                  Regions
+                  {t('regions.title')}
                 </CardTitle>
 
                 <CardDescription className="text-base ml-14 mt-1">
-                  Manage the active operating regions available in the system.
+                  {t('regions.description')}
                 </CardDescription>
               </div>
 
               {/* Region Count */}
               <div className="flex items-center gap-2 ml-14 sm:ml-0">
                 <span className="text-sm text-muted-foreground">
-                  Active Regions
+                  {t('regions.activeCount')}
                 </span>
 
                 <span className="inline-flex items-center justify-center min-w-9 h-9 px-3 rounded-full bg-primary/10 text-primary font-bold text-sm">
@@ -487,7 +489,7 @@ export const SystemSettingsPage: React.FC = () => {
                 <div className="flex gap-3">
                   <Input
                     id="newRegionName"
-                    placeholder="Enter region name"
+                    placeholder={t('regions.placeholder')}
                     value={newRegionName}
                     onChange={(e) =>
                       setNewRegionName(e.target.value)
@@ -511,14 +513,13 @@ export const SystemSettingsPage: React.FC = () => {
                       <Plus className="h-4 w-4" />
                     )}
 
-                    Add Region
+                    {t('regions.addButton')}
                   </Button>
                 </div>
               </div>
 
               <p className="text-sm text-muted-foreground">
-                Add regions that will be available for customer registration
-                and system operations.
+                {t('regions.helpText')}
               </p>
             </div>
 
@@ -530,7 +531,7 @@ export const SystemSettingsPage: React.FC = () => {
                   <Loader2 className="h-9 w-9 animate-spin text-primary" />
 
                   <p className="text-sm text-muted-foreground">
-                    Loading regions...
+                    {t('regions.loading')}
                   </p>
                 </div>
               ) : regions.length === 0 ? (
@@ -541,11 +542,11 @@ export const SystemSettingsPage: React.FC = () => {
                   </div>
 
                   <h3 className="text-lg font-semibold text-foreground">
-                    No regions available
+                    {t('regions.emptyTitle')}
                   </h3>
 
                   <p className="text-sm text-muted-foreground max-w-sm mt-1">
-                    Add your first operating region using the form above.
+                    {t('regions.emptyDescription')}
                   </p>
                 </div>
               ) : (
@@ -554,15 +555,15 @@ export const SystemSettingsPage: React.FC = () => {
                     <TableHeader className="bg-secondary/40 sticky top-0 z-10 backdrop-blur-md">
                       <TableRow className="hover:bg-transparent border-b border-primary/10">
                         <TableHead className="w-[180px] pl-6 font-semibold text-foreground">
-                          Region Code
+                          {t('regions.table.code')}
                         </TableHead>
 
                         <TableHead className="font-semibold text-foreground">
-                          Region Name
+                          {t('regions.table.name')}
                         </TableHead>
 
                         <TableHead className="w-[140px] text-right pr-6 font-semibold text-foreground">
-                          Actions
+                          {t('regions.table.actions')}
                         </TableHead>
                       </TableRow>
                     </TableHeader>
@@ -604,7 +605,7 @@ export const SystemSettingsPage: React.FC = () => {
                                 >
                                   <Trash2 className="h-4 w-4" />
                                   <span className="hidden sm:inline">
-                                    Delete
+                                    {t('common.delete')}
                                   </span>
                                 </Button>
                               </AlertDialogTrigger>
@@ -612,23 +613,17 @@ export const SystemSettingsPage: React.FC = () => {
                               <AlertDialogContent className="rounded-2xl border-primary/20 shadow-xl shadow-primary/5">
                                 <AlertDialogHeader>
                                   <AlertDialogTitle>
-                                    Delete Region?
+                                    {t('regions.deleteDialog.title')}
                                   </AlertDialogTitle>
 
                                   <AlertDialogDescription>
-                                    This action cannot be undone. This will
-                                    permanently delete the region{' '}
-                                    <strong>
-                                      {region.regionName}
-                                    </strong>{' '}
-                                    and remove its configurations from the
-                                    system.
+                                    {t('regions.deleteDialog.description', { name: region.regionName })}
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
 
                                 <AlertDialogFooter>
                                   <AlertDialogCancel className="rounded-xl">
-                                    Cancel
+                                    {t('common.cancel')}
                                   </AlertDialogCancel>
 
                                   <AlertDialogAction
@@ -639,7 +634,7 @@ export const SystemSettingsPage: React.FC = () => {
                                       )
                                     }
                                   >
-                                    Delete Region
+                                    {t('regions.deleteDialog.confirm')}
                                   </AlertDialogAction>
                                 </AlertDialogFooter>
                               </AlertDialogContent>
