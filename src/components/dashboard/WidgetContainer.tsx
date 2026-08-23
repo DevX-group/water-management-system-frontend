@@ -10,6 +10,7 @@ interface WidgetContainerProps {
   loading?: boolean;
   error?: string | null;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 /**
@@ -26,6 +27,7 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
   loading = false,
   error = null,
   className,
+  style,
 }) => {
   const colSpanMap: Record<number, string> = {
     1: 'md:col-span-1',
@@ -53,6 +55,7 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
         rowStyle,
         className
       )}
+      style={style}
     >
       {/* Widget header */}
       <div className="flex items-center justify-between mb-1">

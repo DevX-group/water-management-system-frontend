@@ -40,7 +40,7 @@ export const InquiryChatPanels: React.FC<InquiryChatPanelsProps> = ({
       const formData = new FormData();
       formData.append('file', file);
       try {
-        const res = await api.post('/inquiries/upload-attachment', formData);
+        const res = await api.post('/inquiries/upload-attachment', formData);  // Assuming the API returns the uploaded file
         attachmentUrl = res.data.url;
       } catch (e) {
         console.error('File upload failed', e);

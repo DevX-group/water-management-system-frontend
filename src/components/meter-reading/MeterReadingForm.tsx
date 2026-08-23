@@ -36,7 +36,8 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
   const [isScannerOpen, setIsScannerOpen] = useState(false);
   const [isExtracting, setIsExtracting] = useState(false);
 
-  const usage = formData.previousReading && formData.currentReading      //
+  // Calculate usage based on previous and current readings
+  const usage = formData.previousReading && formData.currentReading      
     ? Math.max(0, Number(formData.currentReading) - Number(formData.previousReading))
     : 0;
 
@@ -131,7 +132,6 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
               onChange({ ...formData, currentReading: reading, imageUrl: res.data.url });
             } catch (err) {
               console.error("Image upload failed", err);
-              // Keep local preview - image won't persist after refresh but it's still visible
             }
           } else if (reading) {
             onChange({ ...formData, currentReading: reading });

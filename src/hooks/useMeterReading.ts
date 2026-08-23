@@ -75,6 +75,7 @@ export const useMeterReading = () => {
       return usageUnits * 50;
     }
   };
+  // Syncs offline readings to the server when back online.
   const syncOfflineReadings = useCallback(async () => {
     const offlineReadings = getOfflineReadings();
     if (offlineReadings.length === 0) return;
@@ -132,7 +133,7 @@ export const useMeterReading = () => {
   }, [syncOfflineReadings, toast, updatePendingCount, t]);
   // Fetches a list of all meter readings submitted today.
   const fetchTodaysReadings = async (dateOverride?: string) => {
-    if (!isOnline) return; // Don't try to fetch if offline
+    if (!isOnline) return; 
 
     const targetDate = dateOverride || selectedDate;
     setLoadingReadings(true);
@@ -187,7 +188,7 @@ export const useMeterReading = () => {
       }
     }
   };
-
+// Validates if the subscription number exists and matches the meter number.
   const validateSubscription = async (subNumber: string) => {
     if (!subNumber || !isOnline) return;
     try {
@@ -365,7 +366,8 @@ export const useMeterReading = () => {
       setSubmitting(false);
     }
   };
-
+ // Handles editing an existing reading by populating the form with its data.
+ 
   const handleEdit = (reading: any) => {
     const id = reading.id || reading.readingId;
     setEditingId(id ? String(id) : null);
