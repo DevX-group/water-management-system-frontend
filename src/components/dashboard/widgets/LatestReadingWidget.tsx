@@ -5,7 +5,7 @@ import { api } from '@/services/api';
 interface Reading {
   id: string;
   subscriptionNumber: string;
-  reading: number;
+  usageUnits: number;
   readingDate: string;
   status: string;
 }
@@ -40,7 +40,7 @@ export const LatestReadingWidget: React.FC = () => {
             <Gauge className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono font-medium">{r.subscriptionNumber}</span>
           </div>
-          <span className="font-bold text-foreground">{r.reading} <span className="text-muted-foreground font-normal">units</span></span>
+          <span className="font-bold text-foreground">{r.usageUnits} <span className="text-muted-foreground font-normal">units</span></span>
         </li>
       ))}
     </ul>
