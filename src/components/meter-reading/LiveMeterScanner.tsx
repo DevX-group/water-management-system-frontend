@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { Loader2, Camera } from 'lucide-react';
+import { Loader2, Camera, Flashlight, FlashlightOff } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 interface LiveMeterScannerProps {
@@ -32,8 +32,10 @@ async function extractMeterReading(blob: Blob): Promise<string | null> {
 export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onClose, onDetected }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const trackRef = useRef<MediaStreamTrack | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isTorchOn, setIsTorchOn] = useState(false);
 
   const captureAndExtract = async () => {
     if (!videoRef.current || !canvasRef.current || isCapturing) return;
@@ -52,11 +54,15 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
 
     if (ctx) {
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      if (isTorchOn) {
+        ctx.fillStyle = 'rgba(255, 255, 200, 0.1)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+      
       canvas.toBlob(async (blob) => {
         if (!blob) { setIsCapturing(false); return; }
         try {
           const reading = await extractMeterReading(blob);
-          // Whether extraction succeeded or not, pass blob + reading (empty if failed)
           onDetected(reading || '', blob);
           onClose();
         } catch (err) {
@@ -70,6 +76,21 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
     }
   };
 
+  const toggleTorch = async () => {
+    const newState = !isTorchOn;
+    setIsTorchOn(newState);
+    
+    if (trackRef.current) {
+      try {
+        await trackRef.current.applyConstraints({
+          advanced: [{ torch: newState } as any]
+        });
+      } catch (e) {
+        console.warn('Hardware torch not supported, using visual simulation.');
+      }
+    }
+  };
+
   useEffect(() => {
     let stream: MediaStream | null = null;
     const startCamera = async () => {
@@ -78,6 +99,7 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
           video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } }
         });
         if (videoRef.current) videoRef.current.srcObject = stream;
+        trackRef.current = stream.getVideoTracks()[0];
       } catch (err) {
         setError('Camera access denied or not available.');
         console.error(err);
@@ -87,6 +109,7 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
     if (isOpen) {
       setError(null);
       setIsCapturing(false);
+      setIsTorchOn(false);
       startCamera();
     }
     return () => { if (stream) stream.getTracks().forEach(t => t.stop()); };
@@ -103,10 +126,21 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
             <p className="text-red-500 p-4 text-center">{error}</p>
           ) : (
             <>
-              <video ref={videoRef} autoPlay playsInline muted className={isCapturing ? "hidden" : "w-full h-full object-cover"} />
+              {/* Added visual filter for laptop simulation */}
+              <video 
+                ref={videoRef} 
+                autoPlay 
+                playsInline 
+                muted 
+                className={isCapturing ? "hidden" : "w-full h-full object-cover transition-all duration-300"} 
+                style={{ filter: isTorchOn ? 'brightness(1.3) contrast(1.1)' : 'none' }}
+              />
               <canvas ref={canvasRef} className={isCapturing ? "w-full h-full object-cover" : "hidden"} />
 
-              {/* Frame overlay */}
+              {isTorchOn && !isCapturing && (
+                <div className="absolute inset-0 bg-yellow-400/10 pointer-events-none mix-blend-overlay transition-opacity duration-300" />
+              )}
+
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute inset-0 border-[60px] border-black/50" />
                 <div className="absolute inset-[60px] border-2 border-primary rounded-sm">
@@ -121,8 +155,17 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
                   </p>
                 )}
               </div>
+              {!isCapturing && (
+                <button
+                  type="button"
+                  onClick={toggleTorch}
+                  className="absolute top-16 right-4 z-20 p-3 bg-black/60 rounded-full text-white backdrop-blur-sm transition-all active:scale-95"
+                  title="Toggle Flashlight"
+                >
+                  {isTorchOn ? <Flashlight className="w-5 h-5 text-yellow-400" /> : <FlashlightOff className="w-5 h-5" />}
+                </button>
+              )}
 
-              {/* Bottom */}
               <div className="absolute bottom-6 left-0 right-0 flex flex-col items-center gap-2 z-10">
                 {isCapturing ? (
                   <div className="bg-black/80 px-5 py-3 rounded-full flex items-center gap-2 text-white text-sm">
@@ -151,4 +194,3 @@ export const LiveMeterScanner: React.FC<LiveMeterScannerProps> = ({ isOpen, onCl
     </Dialog>
   );
 };
-
