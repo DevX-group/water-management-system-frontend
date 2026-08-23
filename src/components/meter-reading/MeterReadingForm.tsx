@@ -125,13 +125,15 @@ export const MeterReadingForm: React.FC<MeterReadingFormProps> = ({
             try {
               const formDataUpload = new FormData();
               formDataUpload.append('file', blob, 'meter-reading.jpg');
-              const res = await api.post('/meter-readings/upload-image', formDataUpload, {
-                headers: { 'Content-Type': 'multipart/form-data' }
-              });
-              // Replace local preview URL with permanent server URL
-              onChange({ ...formData, currentReading: reading, imageUrl: res.data.url });
-            } catch (err) {
+              const res = await api.post('/meter-readings/upload-image', formDataUpload);
+              if (res.data && res.data.url) {
+                // Replace local preview URL with permanent server URL
+                onChange({ ...formData, currentReading: reading, imageUrl: res.data.url });
+              }
+            } catch (err: any) {
               console.error("Image upload failed", err);
+              const errMsg = err.response?.data?.message || err.message || "Unknown error";
+              alert(`Cloudinary Upload Error: ${errMsg}`);
             }
           } else if (reading) {
             onChange({ ...formData, currentReading: reading });
