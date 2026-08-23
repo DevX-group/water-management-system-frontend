@@ -12,19 +12,21 @@ interface InquiryListProps {
   selectedId:    string | null;
   search:        string;
   filter:        string;
-  currentIndex:  number;
+  pageIndex:     number;
+  totalPages:    number;
+  totalElements: number;
   itemsPerPage:  number;
   setSearch:     (v: string) => void;
   setFilter:     (v: string) => void;
   setSelectedId: (id: string) => void;
-  setCurrentIndex: (fn: (prev: number) => number) => void;
+  setPageIndex:  (fn: (prev: number) => number) => void;
 }
 
 import { useTranslation } from 'react-i18next';
 
 export const InquiryList: React.FC<InquiryListProps> = ({
-  loading, filtered, selectedId, search, filter, currentIndex, itemsPerPage,
-  setSearch, setFilter, setSelectedId, setCurrentIndex,
+  loading, filtered, selectedId, search, filter, pageIndex, totalPages, totalElements, itemsPerPage,
+  setSearch, setFilter, setSelectedId, setPageIndex,
 }) => {
   const { t } = useTranslation('inquiry');
   return (
@@ -60,7 +62,7 @@ export const InquiryList: React.FC<InquiryListProps> = ({
           </div>
         ) : (
           <>
-            {filtered.slice(currentIndex, currentIndex + itemsPerPage).map((inq) => (   // Render each inquiry in the list with pagination
+            {filtered.map((inq) => (   // Render each inquiry in the list with pagination
               <button
                 key={inq.id}
                 onClick={() => setSelectedId(inq.id)}
@@ -83,19 +85,19 @@ export const InquiryList: React.FC<InquiryListProps> = ({
               </button>
             ))}
 
-            {filtered.length > itemsPerPage && (         // Pagination controls
+            {totalPages > 1 && (         // Pagination controls
               <div className="flex justify-center items-center gap-2 mt-4 pb-4">
                 <Button variant="ghost" size="icon" className="h-8 w-8"
-                  onClick={() => setCurrentIndex(prev => Math.max(0, prev - itemsPerPage))}
-                  disabled={currentIndex === 0}>
+                  onClick={() => setPageIndex(prev => Math.max(0, prev - 1))}
+                  disabled={pageIndex === 0}>
                   <ArrowLeft className="w-4 h-4" />
                 </Button>
                 <span className="text-[10px] font-medium text-muted-foreground">
-                  {currentIndex + 1}-{Math.min(currentIndex + itemsPerPage, filtered.length)} / {filtered.length}
+                  {pageIndex * itemsPerPage + 1}-{Math.min((pageIndex + 1) * itemsPerPage, totalElements)} / {totalElements}
                 </span>
                 <Button variant="ghost" size="icon" className="h-8 w-8"
-                  onClick={() => setCurrentIndex(prev => Math.min(filtered.length - itemsPerPage, prev + itemsPerPage))}
-                  disabled={currentIndex + itemsPerPage >= filtered.length}>
+                  onClick={() => setPageIndex(prev => Math.min(totalPages - 1, prev + 1))}
+                  disabled={pageIndex >= totalPages - 1}>
                   <ArrowRight className="w-4 h-4" />
                 </Button>
               </div>

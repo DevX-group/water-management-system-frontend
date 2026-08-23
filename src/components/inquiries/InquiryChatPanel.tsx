@@ -7,13 +7,14 @@ import { Badge } from '@/components/ui/badge';
 import { InquiryChatMessage } from '@/components/ui/InquiryChatMessage';
 import { InquiryAvatar } from '@/components/ui/InquiryAvatar';
 import type { Inquiry } from '@/types/inquiry';
+import { api } from '@/services/api';
 
 interface InquiryChatPanelProps {
   selectedInquiry: Inquiry | null;
   replyText:       string;
   setReplyText:    (v: string) => void;
   messagesEndRef:  RefObject<HTMLDivElement>;
-  onSendReply:     () => void;
+  onSendReply:     (attachmentUrl?: string) => void;
   onResolve:       (id: string) => void;
 }
 
@@ -24,6 +25,30 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
   messagesEndRef, onSendReply, onResolve,
 }) => {
   const { t } = useTranslation('inquiry');
+  const [file, setFile] = React.useState<File | null>(null);
+  const [uploading, setUploading] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleSend = async () => {
+    if (!replyText.trim() && !file) return;
+    let attachmentUrl = undefined;
+    if (file) {
+      setUploading(true);
+      const formData = new FormData();
+      formData.append('file', file);
+      try {
+        const res = await api.post('/inquiries/upload-attachment', formData);
+        attachmentUrl = res.data.url;
+      } catch (e) {
+        console.error('File upload failed', e);
+      } finally {
+        setUploading(false);
+      }
+    }
+    onSendReply(attachmentUrl);
+    setFile(null);
+  };
+
   return (
     <Card className="shadow-card border-none h-full flex flex-col overflow-hidden bg-card">
       {!selectedInquiry ? (    // Empty State when no inquiry is selected
@@ -70,7 +95,17 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
 
           {/*Reply input  */} 
           <div className="p-4 border-t bg-secondary/10">
+            {file && (
+              <div className="flex items-center gap-2 mb-2 p-2 bg-secondary/30 rounded-md">
+                <span className="text-xs truncate">{file.name}</span>
+                <Button variant="ghost" size="sm" className="h-6 w-6 p-0 ml-auto" onClick={() => setFile(null)}>✕</Button>
+              </div>
+            )}
             <div className="flex items-end gap-2">
+              <input type="file" ref={fileInputRef} className="hidden" onChange={e => setFile(e.target.files?.[0] || null)} />
+              <Button variant="outline" size="icon" className="shrink-0 h-12 w-12 rounded-xl" onClick={() => fileInputRef.current?.click()}>
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+              </Button>
               <div className="flex-1 relative">
                 <textarea
                   value={replyText}
@@ -81,11 +116,11 @@ export const InquiryChatPanel: React.FC<InquiryChatPanelProps> = ({
                 />
               </div>
               <Button
-                className="h-12 w-12 rounded-xl gradient-primary"
-                disabled={!replyText.trim()}
-                onClick={onSendReply}
+                className="h-12 px-6 rounded-xl gradient-primary"
+                disabled={(!replyText.trim() && !file) || uploading}
+                onClick={handleSend}
               >
-                <Send size={18} />
+                {uploading ? '...' : <Send size={18} />}
               </Button>
             </div>
           </div>

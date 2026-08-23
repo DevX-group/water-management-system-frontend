@@ -4,18 +4,22 @@ import { useState, useEffect, useCallback } from 'react';
 import type { Inquiry } from '../types/inquiry';
 import { api } from '@/services/api';
 
-// Polls all inquiries — use in admin dashboard 
-export function useInquiries(pollMs = 1500) {
+// Polls all inquiries - use in admin dashboard 
+export function useInquiries(pollMs = 1500, pageIndex = 0, size = 5) {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
   const refresh = useCallback(async () => {
     try {
-      const response = await api.get<Inquiry[]>('/inquiries');
-      setInquiries(response.data);
+      const response = await api.get<{ content: Inquiry[], totalPages: number, totalElements: number }>(`/inquiries/paginated?page=${pageIndex}&size=${size}`);
+      setInquiries(response.data.content);
+      setTotalPages(response.data.totalPages);
+      setTotalElements(response.data.totalElements);
     } catch (error) {
       console.error("Error fetching inquiries:", error);
     }
-  }, []);
+  }, [pageIndex, size]);
 
   useEffect(() => {
     refresh();
@@ -23,7 +27,7 @@ export function useInquiries(pollMs = 1500) {
     return () => clearInterval(id);
   }, [refresh, pollMs]);
 
-  return { inquiries, refresh };
+  return { inquiries, refresh, totalPages, totalElements };
 }
 
 // Polls a single inquiry by ID — use in customer chat view 

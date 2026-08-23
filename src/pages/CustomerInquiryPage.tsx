@@ -26,6 +26,8 @@ export const CustomerInquiryPage: React.FC = () => {
     showTyping,
     viewingHistoryId,
     historyIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     inquiry,
     inquiries,
@@ -50,7 +52,7 @@ export const CustomerInquiryPage: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {inquiries.length > 0 && (
               <motion.div variants={itemVariants} className="lg:col-span-4">
-                <InquiryHistoryList inquiries={inquiries} historyIndex={historyIndex} itemsPerPage={itemsPerPage} viewingHistoryId={viewingHistoryId} setViewingHistoryId={setViewingHistoryId} setHistoryIndex={setHistoryIndex} />
+                <InquiryHistoryList inquiries={inquiries} historyIndex={historyIndex} totalPages={totalPages} totalElements={totalElements} itemsPerPage={itemsPerPage} viewingHistoryId={viewingHistoryId} setViewingHistoryId={setViewingHistoryId} setHistoryIndex={setHistoryIndex} />
               </motion.div>
             )}
             <motion.div variants={itemVariants} className={inquiries.length > 0 ? "lg:col-span-8" : "lg:col-span-12"}>

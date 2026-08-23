@@ -9,18 +9,21 @@ export const useAdminInquiries = () => {
   const [filter, setFilter]         = useState<string>('all');
   const [search, setSearch]         = useState('');
   const [replyText, setReplyText]   = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [pageIndex, setPageIndex]   = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
   const itemsPerPage = 5;
 
   const messagesEndRef  = useRef<HTMLDivElement>(null);
   const selectedInquiry = inquiries.find((t) => t.id === selectedId) ?? null;
 
   // Fetches all customer support inquiries from the backend database.
-
   const fetchAllInquiries = async () => {
     try {
-      const response = await api.get<Inquiry[]>('/inquiries');
-      setInquiries(response.data);
+      const response = await api.get<{ content: Inquiry[], totalPages: number, totalElements: number }>(`/inquiries/paginated?page=${pageIndex}&size=${itemsPerPage}`);
+      setInquiries(response.data.content);
+      setTotalPages(response.data.totalPages);
+      setTotalElements(response.data.totalElements);
     } catch (error) {
       console.error('Error fetching inquiries:', error);
     } finally {
@@ -32,7 +35,7 @@ export const useAdminInquiries = () => {
     fetchAllInquiries();
     const interval = setInterval(fetchAllInquiries, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [pageIndex]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -40,13 +43,14 @@ export const useAdminInquiries = () => {
 
   // Posts an admin reply message to the currently selected inquiry chat.
  
-  const sendReply = async () => {
-    if (!replyText.trim() || !selectedId) return;
+  const sendReply = async (attachmentUrl?: string) => {
+    if (!replyText.trim() && !attachmentUrl || !selectedId) return;
     const newMessage = {
       msgId: `MSG-${Date.now()}`,
       user: 'admin',
       text: replyText.trim(),
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      attachmentUrl
     };
     try {
       await api.post(`/inquiries/${selectedId}/messages`, newMessage);
@@ -87,14 +91,16 @@ export const useAdminInquiries = () => {
     filter,
     search,
     replyText,
-    currentIndex,
+    pageIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     messagesEndRef,
     selectedInquiry,
     setSearch,
     setFilter,
     setSelectedId,
-    setCurrentIndex,
+    setPageIndex,
     setReplyText,
     sendReply,
     resolveInquiry,

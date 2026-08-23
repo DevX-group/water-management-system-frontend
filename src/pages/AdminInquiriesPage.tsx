@@ -28,14 +28,16 @@ export const AdminInquiriesPage: React.FC = () => {
     filter,
     search,
     replyText,
-    currentIndex,
+    pageIndex,
+    totalPages,
+    totalElements,
     itemsPerPage,
     messagesEndRef,
     selectedInquiry,
     setSearch,
     setFilter,
     setSelectedId,
-    setCurrentIndex,
+    setPageIndex,
     setReplyText,
     sendReply,
     resolveInquiry,
@@ -68,12 +70,14 @@ export const AdminInquiriesPage: React.FC = () => {
               selectedId={selectedId}
               search={search}
               filter={filter}
-              currentIndex={currentIndex}
+              pageIndex={pageIndex}
+              totalPages={totalPages}
+              totalElements={totalElements}
               itemsPerPage={itemsPerPage}
               setSearch={setSearch}
               setFilter={setFilter}
               setSelectedId={setSelectedId}
-              setCurrentIndex={setCurrentIndex}
+              setPageIndex={setPageIndex}
             />
           </motion.div>
 
