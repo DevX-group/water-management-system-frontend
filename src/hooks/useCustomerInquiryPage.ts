@@ -41,6 +41,8 @@ export const useCustomerInquiryPage = () => {
     if (!validate()) return;
     setSubmitting(true);
     let attachmentUrl = undefined;
+    
+    // --- FILE ATTACHMENT LOGIC ---
     if (form.file) {
       const formData = new FormData();
       formData.append('file', form.file);
