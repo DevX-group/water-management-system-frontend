@@ -35,6 +35,9 @@ import taMessaging from "./locales/ta/messaging.json";
 import enSystemSettings from "./locales/en/systemSettings.json";
 import siSystemSettings from "./locales/si/systemSettings.json";
 import taSystemSettings from "./locales/ta/systemSettings.json";
+import enReports from "./locales/en/reports.json";
+import siReports from "./locales/si/reports.json";
+import taReports from "./locales/ta/reports.json";
 
 i18n
   .use(LanguageDetector)
@@ -53,6 +56,7 @@ i18n
         navbar: enNavbar,
         messaging: enMessaging,
         systemSettings: enSystemSettings,
+        reports: enReports,
       },
       si: {
         payments: siPayments,
@@ -66,6 +70,7 @@ i18n
         navbar: siNavbar,
         messaging: siMessaging,
         systemSettings: siSystemSettings,
+        reports: siReports,
       },
       ta: {
         payments: taPayments,
@@ -79,6 +84,7 @@ i18n
         navbar: taNavbar,
         messaging: taMessaging,
         systemSettings: taSystemSettings,
+        reports: taReports,
       },
     },
 

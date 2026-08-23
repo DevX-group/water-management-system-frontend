@@ -1,0 +1,92 @@
+{
+  "page": {
+    "title": "Reports",
+    "subtitle": "Summarized and detailed views of system data for monitoring and analysis"
+  },
+  "tabs": {
+    "monthly": "Monthly Report",
+    "customer": "Customer Report",
+    "area": "Area Report",
+    "bills": "Bills Report",
+    "overdue": "Overdue Report"
+  },
+  "monthly": {
+    "title": "Monthly Usage and Revenue Report",
+    "description": "Usage and revenue trends across months for a selected year",
+    "usageLabel": "Usage (L)",
+    "usageSeries": "Usage (L)",
+    "revenueSeries": "Revenue (LKR)"
+  },
+  "customer": {
+    "title": "Customer-wise Usage and Revenue Report",
+    "description": "Individual customer consumption and billing trends for a selected year",
+    "searchPlaceholder": "Search Customer ID (e.g. C001)",
+    "tooltipUsage": "Usage: {{value}} L",
+    "tooltipRevenue": "Revenue: LKR {{value}}",
+    "seriesUsage": "Customer Usage (L)"
+  },
+  "area": {
+    "title": "Area-wise Usage and Revenue Report",
+    "description": "Usage and revenue trends summarized by area for comparison across regions",
+    "allAreas": "All Areas",
+    "area1": "Area 1",
+    "area2": "Area 2",
+    "area3": "Area 3",
+    "tooltipArea1Usage": "Area 1 Usage:",
+    "tooltipArea1Revenue": "Area 1 Revenue:",
+    "tooltipArea2Usage": "Area 2 Usage:",
+    "tooltipArea2Revenue": "Area 2 Revenue:",
+    "tooltipArea3Usage": "Area 3 Usage:",
+    "tooltipArea3Revenue": "Area 3 Revenue:",
+    "series": {
+      "area1Usage": "Area 1 Usage (L)",
+      "area1Revenue": "Area 1 Revenue (LKR)",
+      "area2Usage": "Area 2 Usage (L)",
+      "area2Revenue": "Area 2 Revenue (LKR)",
+      "area3Usage": "Area 3 Usage (L)",
+      "area3Revenue": "Area 3 Revenue (LKR)"
+    }
+  },
+  "bills": {
+    "title": "Paid vs Unpaid Bills Report",
+    "description": "Overview of bill payment status with comparison and detailed listings",
+    "searchPlaceholder": "Search Customer ID (C001,...)",
+    "table": {
+      "billId": "Bill ID",
+      "customerId": "Customer ID",
+      "customer": "Customer",
+      "amount": "Amount",
+      "dueDate": "Due Date",
+      "status": "Status",
+      "noResults": "No results found"
+    },
+    "status": {
+      "paid": "Paid",
+      "unpaid": "Unpaid"
+    },
+    "chart": {
+      "numberOfBills": "Number of Bills"
+    }
+  },
+  "overdue": {
+    "title": "Overdue Payments Report",
+    "description": "Unpaid bills that have passed their due dates with financial risk analysis",
+    "totalAmount": "Total Overdue Amount",
+    "numberOfBills": "Number of Overdue Bills",
+    "searchPlaceholder": "Search Customer ID",
+    "days": "days",
+    "table": {
+      "billId": "Bill ID",
+      "customerId": "Customer ID",
+      "customer": "Customer",
+      "amount": "Amount",
+      "dueDate": "Due Date",
+      "daysOverdue": "Days Overdue",
+      "noResults": "No results found"
+    }
+  },
+  "common": {
+    "year": "Year",
+    "exportPdf": "Export as PDF"
+  }
+}

@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { exportPDF } from '@/util/exportPDF';
 import { api } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 
 type MonthlyReportRow = {
@@ -18,6 +19,7 @@ type MonthlyReportRow = {
 };
 
 export const ReportsPage = () => {
+  const { t } = useTranslation('reports');
   const [year, setYear] = useState(2023);
   const [reports, setReports] = useState([]);
 
@@ -192,19 +194,19 @@ const totalOverdueAmount = overdueTableData.reduce(
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-foreground">Reports</h1>
-          <p className="text-sm text-muted-foreground">Summarized and detailed views of system data for monitoring and analysis</p>
+          <h1 className="text-2xl font-bold text-foreground">{t('page.title')}</h1>
+          <p className="text-sm text-muted-foreground">{t('page.subtitle')}</p>
 
       </div>
 
       {/* Tabs for different report types */}
       <Tabs defaultValue="monthly" className="w-full">
         <TabsList className="grid w-full grid-cols-5">
-          <TabsTrigger value="monthly">Monthly Report</TabsTrigger>
-          <TabsTrigger value="customer">Customer Report</TabsTrigger>
-          <TabsTrigger value="area">Area Report</TabsTrigger>
-          <TabsTrigger value="bills">Bills Report</TabsTrigger>
-          <TabsTrigger value="overdue">Overdue Report</TabsTrigger>
+          <TabsTrigger value="monthly">{t('tabs.monthly')}</TabsTrigger>
+          <TabsTrigger value="customer">{t('tabs.customer')}</TabsTrigger>
+          <TabsTrigger value="area">{t('tabs.area')}</TabsTrigger>
+          <TabsTrigger value="bills">{t('tabs.bills')}</TabsTrigger>
+          <TabsTrigger value="overdue">{t('tabs.overdue')}</TabsTrigger>
         </TabsList>
 
         {/* Monthly Usage and Revenue Report */}
@@ -214,16 +216,16 @@ const totalOverdueAmount = overdueTableData.reduce(
       <div className="flex items-center justify-between">
         {/* Title */}
         <div>
-          <CardTitle>Monthly Usage and Revenue Report</CardTitle>
+          <CardTitle>{t('monthly.title')}</CardTitle>
           <CardDescription>
-            Usage and revenue trends across months for a selected year
+            {t('monthly.description')}
           </CardDescription>
         </div>
 
         {/* Styled Year Filter (same UI system as others) */}
         <Select value={year.toString()} onValueChange={(value) => setYear(Number(value))}>
           <SelectTrigger className="w-32">
-            <SelectValue placeholder="Year" />
+            <SelectValue placeholder={t('common.year')} />
           </SelectTrigger>
 
           <SelectContent>
@@ -257,7 +259,7 @@ const totalOverdueAmount = overdueTableData.reduce(
 
             <Bar
               dataKey="usage"
-              name="Usage (L)"
+              name={t('monthly.usageSeries')}
               fill="hsl(187, 75%, 35%)"
               radius={[4, 4, 0, 0]}
             />
@@ -265,7 +267,7 @@ const totalOverdueAmount = overdueTableData.reduce(
             <Line
               type="monotone"
               dataKey="revenue"
-              name="Revenue (LKR)"
+              name={t('monthly.revenueSeries')}
               stroke="hsl(152, 70%, 40%)"
               strokeWidth={2}
             />
@@ -293,7 +295,7 @@ const totalOverdueAmount = overdueTableData.reduce(
     }
   >
     <Download className="w-4 h-4 mr-2" />
-    Export as PDF
+    {t('common.exportPdf')}
   </Button>
 </div>
 </TabsContent>
@@ -307,9 +309,9 @@ const totalOverdueAmount = overdueTableData.reduce(
         
         {/* LEFT: Title */}
         <div>
-          <CardTitle>Customer-wise Usage and Revenue Report</CardTitle>
+          <CardTitle>{t('customer.title')}</CardTitle>
           <CardDescription>
-            Individual customer consumption and billing trends for a selected year
+            {t('customer.description')}
           </CardDescription>
         </div>
 
@@ -318,7 +320,7 @@ const totalOverdueAmount = overdueTableData.reduce(
           
           {/* Customer ID Input */}
           <Input
-            placeholder="Search Customer ID (e.g. C001)"
+            placeholder={t('customer.searchPlaceholder')}
             value={customerId}
             onChange={(e) => setCustomerId(e.target.value.toUpperCase())}
             className="w-48"
@@ -327,7 +329,7 @@ const totalOverdueAmount = overdueTableData.reduce(
           {/* Styled Year Select (FIXED) */}
           <Select value={customerYear} onValueChange={setCustomerYear}>
             <SelectTrigger className="w-32">
-              <SelectValue placeholder="Year" />
+              <SelectValue placeholder={t('common.year')} />
             </SelectTrigger>
 
             <SelectContent>
@@ -351,7 +353,7 @@ const totalOverdueAmount = overdueTableData.reduce(
             
             <YAxis
               stroke="hsl(var(--muted-foreground))"
-              label={{ value: "Usage (L)", position: "top", offset: 10 }}
+              label={{ value: t('monthly.usageLabel'), position: "top", offset: 10 }}
             />
 
             <Tooltip
@@ -368,10 +370,10 @@ const totalOverdueAmount = overdueTableData.reduce(
                     return (
                       <div className="bg-card border border-border rounded-lg p-2 text-sm">
                         <p className="text-foreground">
-                          {`Usage: ${Number(data.totalUsage).toLocaleString()} L`}
+                          {t('customer.tooltipUsage', { value: Number(data.totalUsage).toLocaleString() })}
                         </p>
                         <p className="text-foreground">
-                          {`Revenue: LKR ${Number(data.totalAmount).toLocaleString()}`}
+                          {t('customer.tooltipRevenue', { value: Number(data.totalAmount).toLocaleString() })}
                         </p>
                       </div>
                     );
@@ -384,7 +386,7 @@ const totalOverdueAmount = overdueTableData.reduce(
             <Line
               type="monotone"
               dataKey="totalUsage"
-              name="Customer Usage (L)"
+              name={t('customer.seriesUsage')}
               stroke="hsl(187, 75%, 35%)"
               strokeWidth={2}
             />
@@ -395,7 +397,7 @@ const totalOverdueAmount = overdueTableData.reduce(
       <div className="flex justify-end">
         <Button onClick={() => exportPDF({ customer: data }, `CustomerReport.pdf`)}>
           <Download className="w-4 h-4 mr-2" />
-          Export as PDF
+          {t('common.exportPdf')}
         </Button>
       </div>
     </CardContent>
@@ -411,12 +413,11 @@ const totalOverdueAmount = overdueTableData.reduce(
       <div className="flex items-center justify-between">
         <div>
           <CardTitle>
-            Area-wise Usage and Revenue Report
+            {t('area.title')}
           </CardTitle>
 
           <CardDescription>
-            Usage and revenue trends summarized by area
-            for comparison across regions
+            {t('area.description')}
           </CardDescription>
         </div>
 
@@ -434,19 +435,19 @@ const totalOverdueAmount = overdueTableData.reduce(
 
             <SelectContent>
               <SelectItem value="all">
-                All Areas
+                {t('area.allAreas')}
               </SelectItem>
 
               <SelectItem value="area1">
-                Area 1
+                {t('area.area1')}
               </SelectItem>
 
               <SelectItem value="area2">
-                Area 2
+                {t('area.area2')}
               </SelectItem>
 
               <SelectItem value="area3">
-                Area 3
+                {t('area.area3')}
               </SelectItem>
             </SelectContent>
           </Select>
@@ -530,11 +531,11 @@ const totalOverdueAmount = overdueTableData.reduce(
                       selectedArea === "area1") && (
                       <>
                         <p>
-                          Area 1 Usage:{" "}
+                          {t('area.tooltipArea1Usage')}{" "}
                           {row.area1Usage ?? 0}
                         </p>
                         <p>
-                          Area 1 Revenue:{" "}
+                          {t('area.tooltipArea1Revenue')}{" "}
                           {row.area1Revenue ?? 0}
                         </p>
                       </>
@@ -544,11 +545,11 @@ const totalOverdueAmount = overdueTableData.reduce(
                       selectedArea === "area2") && (
                       <>
                         <p>
-                          Area 2 Usage:{" "}
+                          {t('area.tooltipArea2Usage')}{" "}
                           {row.area2Usage ?? 0}
                         </p>
                         <p>
-                          Area 2 Revenue:{" "}
+                          {t('area.tooltipArea2Revenue')}{" "}
                           {row.area2Revenue ?? 0}
                         </p>
                       </>
@@ -558,11 +559,11 @@ const totalOverdueAmount = overdueTableData.reduce(
                       selectedArea === "area3") && (
                       <>
                         <p>
-                          Area 3 Usage:{" "}
+                          {t('area.tooltipArea3Usage')}{" "}
                           {row.area3Usage ?? 0}
                         </p>
                         <p>
-                          Area 3 Revenue:{" "}
+                          {t('area.tooltipArea3Revenue')}{" "}
                           {row.area3Revenue ?? 0}
                         </p>
                       </>
@@ -581,7 +582,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                 <Bar
                   yAxisId="left"
                   dataKey="area1Usage"
-                  name="Area 1 Usage (L)"
+                  name={t('area.series.area1Usage')}
                   fill="hsl(187, 75%, 35%)"
                   radius={[4, 4, 0, 0]}
                 />
@@ -590,7 +591,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                   yAxisId="right"
                   type="monotone"
                   dataKey="area1Revenue"
-                  name="Area 1 Revenue (LKR)"
+                  name={t('area.series.area1Revenue')}
                   stroke="hsl(187, 75%, 55%)"
                   strokeWidth={2}
                 />
@@ -604,7 +605,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                 <Bar
                   yAxisId="left"
                   dataKey="area2Usage"
-                  name="Area 2 Usage (L)"
+                  name={t('area.series.area2Usage')}
                   fill="hsl(152, 70%, 40%)"
                   radius={[4, 4, 0, 0]}
                 />
@@ -613,7 +614,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                   yAxisId="right"
                   type="monotone"
                   dataKey="area2Revenue"
-                  name="Area 2 Revenue (LKR)"
+                  name={t('area.series.area2Revenue')}
                   stroke="hsl(152, 70%, 60%)"
                   strokeWidth={2}
                 />
@@ -627,7 +628,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                 <Bar
                   yAxisId="left"
                   dataKey="area3Usage"
-                  name="Area 3 Usage (L)"
+                  name={t('area.series.area3Usage')}
                   fill="hsl(38, 92%, 55%)"
                   radius={[4, 4, 0, 0]}
                 />
@@ -636,7 +637,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                   yAxisId="right"
                   type="monotone"
                   dataKey="area3Revenue"
-                  name="Area 3 Revenue (LKR)"
+                  name={t('area.series.area3Revenue')}
                   stroke="hsl(38, 92%, 75%)"
                   strokeWidth={2}
                 />
@@ -682,12 +683,11 @@ const totalOverdueAmount = overdueTableData.reduce(
   <Card>
     <CardHeader>
       <CardTitle>
-        Paid vs Unpaid Bills Report
+        {t('bills.title')}
       </CardTitle>
 
       <CardDescription>
-        Overview of bill payment status with comparison
-        and detailed listings
+        {t('bills.description')}
       </CardDescription>
     </CardHeader>
 
@@ -706,7 +706,7 @@ const totalOverdueAmount = overdueTableData.reduce(
 
             <Bar
               dataKey="count"
-              name="Number of Bills"
+              name={t('bills.chart.numberOfBills')}
               fill="hsl(187, 75%, 35%)"
               radius={[4, 4, 0, 0]}
             />
@@ -717,7 +717,7 @@ const totalOverdueAmount = overdueTableData.reduce(
       {/* Customer-ID backend filter */}
       <div className="flex justify-end">
         <Input
-  placeholder="Search Customer ID (C001,...)"
+  placeholder={t('bills.searchPlaceholder')}
   value={customerSearchBill}
   onChange={(event) =>
     setCustomerSearchBill(
@@ -733,12 +733,12 @@ const totalOverdueAmount = overdueTableData.reduce(
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Bill ID</TableHead>
-              <TableHead>Customer ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead>{t('bills.table.billId')}</TableHead>
+              <TableHead>{t('bills.table.customerId')}</TableHead>
+              <TableHead>{t('bills.table.customer')}</TableHead>
+              <TableHead>{t('bills.table.amount')}</TableHead>
+              <TableHead>{t('bills.table.dueDate')}</TableHead>
+              <TableHead>{t('bills.table.status')}</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -823,12 +823,11 @@ const totalOverdueAmount = overdueTableData.reduce(
   <Card>
     <CardHeader>
       <CardTitle>
-        Overdue Payments Report
+        {t('overdue.title')}
       </CardTitle>
 
       <CardDescription>
-        Unpaid bills that have passed their due dates
-        with financial risk analysis
+        {t('overdue.description')}
       </CardDescription>
     </CardHeader>
 
@@ -837,7 +836,7 @@ const totalOverdueAmount = overdueTableData.reduce(
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
           <p className="text-sm text-muted-foreground mb-2">
-            Total Overdue Amount
+            {t('overdue.totalAmount')}
           </p>
 
           <p className="text-3xl font-bold text-destructive">
@@ -848,7 +847,7 @@ const totalOverdueAmount = overdueTableData.reduce(
 
         <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
           <p className="text-sm text-muted-foreground mb-2">
-            Number of Overdue Bills
+            {t('overdue.numberOfBills')}
           </p>
 
           <p className="text-3xl font-bold text-destructive">
@@ -861,7 +860,7 @@ const totalOverdueAmount = overdueTableData.reduce(
       <form onSubmit={(event) => event.preventDefault()}>
         <div className="flex justify-end">
           <Input
-  placeholder="Search Customer ID"
+  placeholder={t('overdue.searchPlaceholder')}
   value={overdueBill}
   onChange={(event) =>
     setoverdueBill(
@@ -878,12 +877,12 @@ const totalOverdueAmount = overdueTableData.reduce(
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Bill ID</TableHead>
-              <TableHead>Customer ID</TableHead>
-              <TableHead>Customer</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Due Date</TableHead>
-              <TableHead>Days Overdue</TableHead>
+              <TableHead>{t('overdue.table.billId')}</TableHead>
+              <TableHead>{t('overdue.table.customerId')}</TableHead>
+              <TableHead>{t('overdue.table.customer')}</TableHead>
+              <TableHead>{t('overdue.table.amount')}</TableHead>
+              <TableHead>{t('overdue.table.dueDate')}</TableHead>
+              <TableHead>{t('overdue.table.daysOverdue')}</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -916,7 +915,7 @@ const totalOverdueAmount = overdueTableData.reduce(
 
                   <TableCell>
                     <span className="px-3 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
-                      {overdue.daysOverdue} days
+                      {overdue.daysOverdue} {t('overdue.days')}
                     </span>
                   </TableCell>
                 </TableRow>
@@ -927,7 +926,7 @@ const totalOverdueAmount = overdueTableData.reduce(
                   colSpan={6}
                   className="text-center"
                 >
-                  No results found
+                  {t('overdue.table.noResults')}
                 </TableCell>
               </TableRow>
             )}
@@ -952,7 +951,7 @@ const totalOverdueAmount = overdueTableData.reduce(
           }
         >
           <Download className="w-4 h-4 mr-2" />
-          Export as PDF
+          {t('common.exportPdf')}
         </Button>
       </div>
     </CardContent>
