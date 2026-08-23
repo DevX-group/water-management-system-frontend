@@ -208,7 +208,7 @@ export const CustomerPredictionChart: React.FC<
             </div>
 
             <Input
-              placeholder={t('customer.searchPlaceholder')}
+              placeholder="Customer ID (e.g., C001)"
               value={searchId}
               onChange={(event) =>
                 setSearchId(
