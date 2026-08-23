@@ -47,7 +47,11 @@ const languages = [
   { code: "ta", name: "தமிழ்" },
 ];
 
+import { useSystemDetails } from '@/context/SystemDetailsContext';
+
 export const AdminNavbar: React.FC = () => {
+  const { systemDetails } = useSystemDetails();
+  const companyName = systemDetails?.companyName || 'Galle Pradeshiya Sabha';
   const { currentAdmin } = useAdmin();
   const { logout, user } = useAuth();
   const { t, i18n } = useTranslation();

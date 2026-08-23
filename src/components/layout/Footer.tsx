@@ -2,6 +2,7 @@ import '@/index.css';
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Droplets, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
+import { useSystemDetails } from '@/context/SystemDetailsContext';
 
 const footerLinks = {
   product: [
@@ -20,9 +21,14 @@ const footerLinks = {
   ],
 };
 
-
-
 export const Footer = () => {
+  const { systemDetails } = useSystemDetails();
+
+  const companyName = systemDetails?.companyName || 'HydroPay';
+  const email = systemDetails?.officeEmail || 'support@hydropay.com';
+  const phone = systemDetails?.officeContactNumber || '+94 41 227 6365';
+  const address = systemDetails?.officeAddress || 'Galle, Sri Lanka';
+
   return (
     <footer className="relative overflow-hidden">
       {/* Main Footer */}
@@ -49,19 +55,19 @@ export const Footer = () => {
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <Mail className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">support@hydropay.com</span>
+                  <span className="text-sm">{email}</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/60">
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <Phone className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">+94 41 227 6365</span>
+                  <span className="text-sm">{phone}</span>
                 </div>
                 <div className="flex items-center gap-3 text-white/60">
                   <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
                     <MapPin className="w-4 h-4" />
                   </div>
-                  <span className="text-sm">Galle, Sri Lanka</span>
+                  <span className="text-sm">{address}</span>
                 </div>
               </div>
             </div>

@@ -51,9 +51,11 @@ import {
 } from 'lucide-react';
 import { BackupManagementCard } from '@/components/system-settings/BackupManagementCard';
 import { useTranslation } from 'react-i18next';
+import { useSystemDetails } from '@/context/SystemDetailsContext';
 
 export const SystemSettingsPage: React.FC = () => {
   const { t } = useTranslation('systemSettings');
+  const { refresh: refreshGlobalSystemDetails } = useSystemDetails();
   const [systemDetails, setSystemDetails] =
     useState<SystemDetailsRequest>({
       companyName: '',
@@ -139,6 +141,7 @@ export const SystemSettingsPage: React.FC = () => {
       setSavingDetails(true);
 
       await updateSystemDetails(systemDetails);
+      await refreshGlobalSystemDetails();
 
       toast.success(t('systemDetails.updateSuccess', { defaultValue: 'System details updated successfully' }));
     } catch (e: any) {
