@@ -15,9 +15,9 @@ export const SystemUsageChartWidget: React.FC = () => {
     const year = new Date().getFullYear();
     api.get(`/analytics/usage?year=${year}`)
       .then((res) => {
-        const monthly = res.data?.monthlyUsage ?? res.data?.data ?? [];
+        const monthly = res.data?.monthlyData ?? res.data?.monthlyUsage ?? res.data?.data ?? [];
         setData(monthly.map((m: any, i: number) => ({
-          month: m.month ?? m.label ?? `M${i + 1}`,
+          month: m.month ?? m.name ?? m.label ?? `M${i + 1}`,
           usage: m.usage ?? m.usageUnits ?? m.value ?? 0,
         })));
       })
