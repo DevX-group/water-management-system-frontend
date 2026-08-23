@@ -6,6 +6,7 @@ import { Search, Globe, User, ChevronDown, Menu, Droplets, Receipt, MessageSquar
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { NAV_ITEMS, SECTION_PATH_MAP } from '@/constants/adminNav';
+import type { NavItem } from '@/constants/adminNav';
 import { cn } from '@/lib/utils';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
@@ -55,7 +56,7 @@ const GROUP_CONFIG = [
   { id: 'finance', label: 'Finance', icon: Receipt, items: ['billing', 'payments'] },
   { id: 'communications', label: 'Communications', icon: MessageSquare, items: ['messaging', 'internal-chat', 'inquiry', 'blog'] },
   { id: 'analytics', label: 'Analytics', icon: BarChart3, items: ['reports', 'predictions'] },
-  { id: 'settings', label: 'Settings', icon: Settings, items: ['widget-management', 'system-settings'] }
+  { id: 'settings', label: 'Settings', icon: Settings, items: ['activity-logs', 'widget-management', 'system-settings'] }
 ];
 
 export const AdminNavbar: React.FC = () => {
@@ -71,7 +72,7 @@ export const AdminNavbar: React.FC = () => {
   const roleColor = ROLE_COLORS[backendRole] ?? ROLE_COLORS[currentAdmin.role] ?? 'bg-slate-100 text-slate-700';
 
   const getSectionFromPath = (pathname: string) => {
-    const sections = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'widget-management', 'system-settings'];
+    const sections = ['users', 'meter', 'payments', 'billing', 'messaging', 'inquiry', 'reports', 'predictions', 'blog', 'activity-logs', 'widget-management', 'system-settings'];
     return sections.find(s => pathname.startsWith(`/admin/${s}`)) || 'dashboard';
   };
 
@@ -84,7 +85,7 @@ export const AdminNavbar: React.FC = () => {
     localStorage.setItem("admin_language", lang);
   };
 
-  const renderSingleItem = (item: any) => {
+  const renderSingleItem = (item: NavItem) => {
     const Icon = item.icon;
     const isActive = activeSection === item.id;
     return (
@@ -149,7 +150,7 @@ export const AdminNavbar: React.FC = () => {
                           )}
                         >
                           <Icon className="w-5 h-5" />
-                          <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`)}</span>
+                          <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
                         </button>
                       );
                     })}
