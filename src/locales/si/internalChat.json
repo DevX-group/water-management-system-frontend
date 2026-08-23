@@ -1,0 +1,59 @@
+{
+  "page": {
+    "badge": "කාර්යමණ්ඩල සේවා අවකාශය",
+    "title": "අභ්‍යන්තර පරිපාලක සාකච්ඡාව",
+    "subtitle": "ජල කළමනාකරණ කණ්ඩායම හරහා ඉක්මන් සම්බන්ධීකරණය සඳහා කේන්ද්‍රීය නාලිකාවක්."
+  },
+  "connection": {
+    "live": "සජීවී සම්බන්ධතාවය",
+    "connecting": "සම්බන්ධ වෙමින්",
+    "offline": "නොබැඳි මාදිලිය"
+  },
+  "roleTabs": {
+    "ALL": "සියලු කාර්යමණ්ඩලය",
+    "SUPER_ADMIN": "ප්‍රධාන පරිපාලක",
+    "SYSTEM_ADMIN": "පද්ධති පරිපාලක",
+    "PAYMENT_HANDLER": "ගෙවීම් හසුරුවන්නා",
+    "METER_READER": "මීටර කියවන්නා"
+  },
+  "sidebar": {
+    "searchLabel": "සගයෙකු සොයන්න",
+    "searchPlaceholder": "නම හෝ පරිශීලක හැඳුනුම්පත සොයන්න",
+    "conversationsHeading": "සාකච්ඡා",
+    "staffHeading": "කාර්යමණ්ඩල නාමාවලිය",
+    "noMessages": "තවම පණිවිඩ නැත",
+    "noAdmins": "පරිපාලකයන් හමු නොවිණි.",
+    "emptySearch": "මෙම සෙවීමට ගැළපෙන සාකච්ඡා නැත.",
+    "emptyRole": "{{role}}ලා සමඟ සාකච්ඡා නැත.",
+    "emptyDefault": "තවම සාකච්ඡා නැත. ආරම්භ කිරීමට පරිපාලකයෙකු සොයන්න."
+  },
+  "chat": {
+    "directConversation": "සෘජු සාකච්ඡාව",
+    "startTitle": "සාකච්ඡාව ආරම්භ කරන්න",
+    "startSubtitle": "{{name}} ට පණිවිඩයක් යවන්න.",
+    "loadOlder": "පැරණි පණිවිඩ පූරණය කරන්න",
+    "loadingOlder": "පැරණි පණිවිඩ පූරණය වෙමින්",
+    "you": "ඔබ",
+    "messagePlaceholder": "පණිවිඩයක් ටයිප් කරන්න...",
+    "pressEnter": "යැවීමට Enter 누르න්න",
+    "teamTitle": "ඔබේ කණ්ඩායම, සමමුහුර්තව",
+    "teamSubtitle": "ආරම්භ කිරීමට සාකච්ඡාවක් තෝරන්න හෝ කාර්යමණ්ඩල නාමාවලියෙන් සගයෙකු සොයන්න.",
+    "secureNote": "පණිවිඩ ආරක්‍ෂිතව පද්ධතියේ සුරකිනු ලැබේ.",
+    "conversationOptions": "සාකච්ඡා විකල්ප",
+    "sendMessage": "පණිවිඩය යවන්න"
+  },
+  "toasts": {
+    "loadChatTitle": "සාකච්ඡාව පූරණය කළ නොහැක",
+    "loadChatDesc": "නැවත උත්සාහ කරන්න.",
+    "messageUpdateTitle": "පණිවිඩ යාවත්කාලීනය අසාර්ථකයි",
+    "messageUpdateDesc": "තත්‍යකාලීන පණිවිඩයක් කියවිය නොහැකි විය.",
+    "loadMessagesTitle": "පණිවිඩ පූරණය කළ නොහැක",
+    "loadMessagesDesc": "නැවත උත්සාහ කරන්න.",
+    "loadOlderTitle": "පැරණි පණිවිඩ පූරණය කළ නොහැක",
+    "loadOlderDesc": "නැවත උත්සාහ කරන්න.",
+    "startConversationTitle": "සාකච්ඡාව ආරම්භ කළ නොහැක",
+    "startConversationDesc": "මෙම කාර්යමණ්ඩල සාමාජිකයා තවදුරටත් ලබාගත නොහැකි විය හැක.",
+    "sendFailedTitle": "පණිවිඩය යවා නැත",
+    "sendFailedDesc": "ඔබේ සම්බන්ධතාවය පරීක්‍ෂා කර නැවත උත්සාහ කරන්න."
+  }
+}
