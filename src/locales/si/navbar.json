@@ -17,17 +17,34 @@
     "dashboard": "මුල් පිටුව",
     "users": "පරිශීලක කළමනාකරණය",
     "meter": "මීටර් කියවීම්",
-    "billing": "බිල්පත් නිකුත් කිරීම",
-    "payments": "ගෙවීම් කළමනාකරණය",
-    "messaging": "පණිවිඩ",
+    "billing": "බිල්පත්",
+    "payments": "ගෙවීම්",
+    "messaging": "පණිවිඩ යැවීම",
     "internal-chat": "අභ්‍යන්තර කතාබස්",
     "inquiry": "විමසීම්",
     "reports": "වාර්තා",
     "predictions": "පුරෝකථන",
     "blog": "බ්ලොග්",
+    "activity-logs": "ක්‍රියාකාරකම් සටහන්",
+    "widget-management": "විජෙට් කළමනාකරණය",
     "system-settings": "පද්ධති සැකසුම්",
     "myAccount": "මගේ ගිණුම",
     "profileSettings": "පැතිකඩ සැකසුම්",
-    "logout": "පිටවන්න"
+    "logout": "පිටවන්න",
+    "installApp": "යෙදුම ස්ථාපනය කරන්න",
+    "finance": "මුදල් හා ගෙවීම්",
+    "communications": "සන්නිවේදනය",
+    "analytics": "විශ්ලේෂණ",
+    "settings": "සැකසුම්",
+    "roles": {
+      "SUPER_ADMIN": "සුපිරි පරිපාලක",
+      "SYSTEM_ADMIN": "පද්ධති පරිපාලක",
+      "CUSTOMER_HANDLER": "පාරිභෝගික සහායක",
+      "PAYMENT_HANDLER": "පාරිභෝගික සහායක",
+      "METER_READER": "මීටර් කියවන්නා",
+      "main_admin": "ප්‍රධාන පරිපාලක",
+      "meter_reader": "මීටර් කියවන්නා",
+      "payment_handler": "පාරිභෝගික සහායක"
+    }
   }
 }

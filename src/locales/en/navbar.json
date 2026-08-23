@@ -21,14 +21,30 @@
     "payments": "Payments",
     "messaging": "Messaging",
     "internal-chat": "Internal Chat",
-    "inquiry": "Inquiry",
+    "inquiry": "Inquiries",
     "reports": "Reports",
     "predictions": "Predictions",
     "blog": "Blog",
-    "widget-management": "Widgets",
+    "activity-logs": "Activity Logs",
+    "widget-management": "Widget Management",
     "system-settings": "System Settings",
     "myAccount": "My Account",
     "profileSettings": "Profile Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "installApp": "Install App",
+    "finance": "Finance",
+    "communications": "Communications",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "roles": {
+      "SUPER_ADMIN": "Super Admin",
+      "SYSTEM_ADMIN": "System Admin",
+      "CUSTOMER_HANDLER": "Customer Handler",
+      "PAYMENT_HANDLER": "Customer Handler",
+      "METER_READER": "Meter Reader",
+      "main_admin": "Main Admin",
+      "meter_reader": "Meter Reader",
+      "payment_handler": "Customer Handler"
+    }
   }
 }
