@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { useAdmin } from '@/contexts/AdminContext';
 
 export interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -21,7 +22,9 @@ if (typeof window !== 'undefined') {
 
 export const usePWAInstall = () => {
   const { user } = useAuth();
-  const isMeterReader = user?.role === 'METER_READER';
+  const { currentAdmin } = useAdmin();
+  const userRole = user?.role || currentAdmin?.role || '';
+  const isMeterReader = userRole.toUpperCase() === 'METER_READER' || userRole === 'meter_reader';
 
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(
     () => (isMeterReader ? globalDeferredPrompt : null)

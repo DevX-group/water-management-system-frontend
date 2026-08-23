@@ -175,7 +175,7 @@ export const Navbar = ({ isAuthenticated = false }: NavbarProps) => {
       <div className="mx-4 mt-4">
         <nav className="glass rounded-2xl px-4 lg:px-6 py-3 flex items-center justify-between max-w-7xl mx-auto">
           {/* Logo */}
-          <Link to="/customer/dashboard" className="flex items-center gap-3 group">
+          <Link to="/customer/dashboard" className="hidden lg:flex items-center gap-3 group">
             <motion.div
               whileHover={{ scale: 1.05, rotate: 5 }}
               whileTap={{ scale: 0.95 }}
