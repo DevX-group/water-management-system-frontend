@@ -17,6 +17,8 @@ export interface BankSlipUploadResponse {
     status: SlipStatus;
     bankReference: string;
     filePath: string;
+    fileName: string;
+    fileType: string;
     uploadedAt: string;
     bankPaymentDate: string;
 }
@@ -29,6 +31,8 @@ export interface AdminBankSlipResponse {
     amount: number;
     bankReference: string;
     filePath: string;
+    fileName: string;
+    fileType: string;
     uploadedAt: string;
     bankPaymentDate: string;
 }
@@ -38,6 +42,8 @@ export interface CustomerBankSlipResponse {
     amount: number;
     bankReference: string;
     filePath: string;
+    fileName: string;
+    fileType: string;
     status: SlipStatus;
     uploadedAt: string;
     bankPaymentDate: string;

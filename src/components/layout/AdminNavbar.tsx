@@ -59,7 +59,11 @@ const GROUP_CONFIG = [
   { id: 'settings', label: 'Settings', icon: Settings, items: ['activity-logs', 'widget-management', 'system-settings'] }
 ];
 
+import { useSystemDetails } from '@/context/SystemDetailsContext';
+
 export const AdminNavbar: React.FC = () => {
+  const { systemDetails } = useSystemDetails();
+  const companyName = systemDetails?.companyName || 'Galle Pradeshiya Sabha';
   const { currentAdmin } = useAdmin();
   const { logout, user } = useAuth();
   const { t, i18n } = useTranslation();
@@ -187,10 +191,10 @@ export const AdminNavbar: React.FC = () => {
               if (accessibleItems.length === 1 && !group.label) {
                 return renderSingleItem(accessibleItems[0]);
               }
-              
+
               const isGroupActive = accessibleItems.some(nav => nav.id === activeSection);
               const GroupIcon = group.icon || accessibleItems[0].icon;
-              
+
               return (
                 <DropdownMenu key={group.id}>
                   <DropdownMenuTrigger asChild>

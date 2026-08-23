@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import '@/index.css';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { format, isToday, isYesterday } from 'date-fns';
@@ -77,7 +78,26 @@ const mergeMessage = (messages: InternalChatMessage[], incoming: InternalChatMes
 };
 
 export const InternalChatPage = () => {
+  const { t } = useTranslation('internalChat');
   const { toast } = useToast();
+
+  const ROLE_TABS: Array<{ value: InternalChatRoleFilter; label: string }> = [
+    { value: 'ALL', label: t('roleTabs.ALL') },
+    { value: 'SUPER_ADMIN', label: t('roleTabs.SUPER_ADMIN') },
+    { value: 'SYSTEM_ADMIN', label: t('roleTabs.SYSTEM_ADMIN') },
+    { value: 'PAYMENT_HANDLER', label: t('roleTabs.PAYMENT_HANDLER') },
+    { value: 'METER_READER', label: t('roleTabs.METER_READER') },
+  ];
+
+  const ROLE_LABELS: Record<AdminRole, string> = {
+    SUPER_ADMIN: t('roleTabs.SUPER_ADMIN'),
+    SYSTEM_ADMIN: t('roleTabs.SYSTEM_ADMIN'),
+    PAYMENT_HANDLER: t('roleTabs.PAYMENT_HANDLER'),
+    METER_READER: t('roleTabs.METER_READER'),
+  };
+
+  const getRoleLabel = (role: AdminRole) => ROLE_LABELS[role] ?? role;
+
   const [roleFilter, setRoleFilter] = useState<InternalChatRoleFilter>('ALL');
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -126,14 +146,14 @@ export const InternalChatPage = () => {
         }
         if (staffResult.status === 'fulfilled') setStaff(staffResult.value);
         if (conversationResult.status === 'rejected' && staffResult.status === 'rejected') {
-          toast({ title: 'Unable to load chat', description: 'Please try again.', variant: 'destructive' });
+          toast({ title: t('toasts.loadChatTitle'), description: t('toasts.loadChatDesc'), variant: 'destructive' });
         }
       })
       .finally(() => {
         if (!cancelled) setLoadingList(false);
       });
     return () => { cancelled = true; };
-  }, [debouncedSearch, selectedRole, toast]);
+  }, [debouncedSearch, selectedRole, toast, t]);
 
   useEffect(() => {
     // REST remains the source of truth when a broker user-destination frame is missed.
@@ -193,16 +213,16 @@ export const InternalChatPage = () => {
         setConversations((current) => current.map((conversation) => (
           conversation.id === incoming.conversationId
             ? {
-                ...conversation,
-                latestMessagePreview: incoming.content,
-                latestMessageTime: incoming.createdAt,
-                unreadCount: 0,
-              }
+              ...conversation,
+              latestMessagePreview: incoming.content,
+              latestMessageTime: incoming.createdAt,
+              unreadCount: 0,
+            }
             : conversation
         )));
         void internalChatService.markAsRead(incoming.conversationId);
       } catch {
-        toast({ title: 'Message update failed', description: 'A real-time message could not be read.', variant: 'destructive' });
+        toast({ title: t('toasts.messageUpdateTitle'), description: t('toasts.messageUpdateDesc'), variant: 'destructive' });
       }
     }, () => {
       socket.subscribeUserQueue();
@@ -215,7 +235,7 @@ export const InternalChatPage = () => {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [toast]);
+  }, [toast, t]);
 
   useEffect(() => {
     if (socketState !== 'CONNECTED') return;
@@ -239,9 +259,9 @@ export const InternalChatPage = () => {
           conversation.id === selectedConversationId ? { ...conversation, unreadCount: 0 } : conversation
         )));
       })
-      .catch(() => toast({ title: 'Unable to load messages', description: 'Please try again.', variant: 'destructive' }))
+      .catch(() => toast({ title: t('toasts.loadMessagesTitle'), description: t('toasts.loadMessagesDesc'), variant: 'destructive' }))
       .finally(() => setLoadingMessages(false));
-  }, [selectedConversationId, toast]);
+  }, [selectedConversationId, toast, t]);
 
   useEffect(() => {
     if (!selectedConversationId) return;
@@ -282,7 +302,7 @@ export const InternalChatPage = () => {
         if (list) list.scrollTop = list.scrollHeight - previousHeight;
       });
     } catch {
-      toast({ title: 'Unable to load older messages', description: 'Please try again.', variant: 'destructive' });
+      toast({ title: t('toasts.loadOlderTitle'), description: t('toasts.loadOlderDesc'), variant: 'destructive' });
     } finally {
       setLoadingOlder(false);
     }
@@ -300,7 +320,7 @@ export const InternalChatPage = () => {
       setSelectedConversation(conversation);
       setSearch('');
     } catch {
-      toast({ title: 'Unable to start conversation', description: 'This staff member may no longer be available.', variant: 'destructive' });
+      toast({ title: t('toasts.startConversationTitle'), description: t('toasts.startConversationDesc'), variant: 'destructive' });
     }
   };
 
@@ -318,31 +338,31 @@ export const InternalChatPage = () => {
       )));
       setComposer('');
     } catch {
-      toast({ title: 'Message was not sent', description: 'Check your connection and try again.', variant: 'destructive' });
+      toast({ title: t('toasts.sendFailedTitle'), description: t('toasts.sendFailedDesc'), variant: 'destructive' });
     } finally {
       setSending(false);
     }
   };
 
   const emptyConversationText = useMemo(() => {
-    if (debouncedSearch.trim()) return 'No conversations match this search.';
-    if (roleFilter !== 'ALL') return `No conversations with ${getRoleLabel(roleFilter)}s.`;
-    return 'No conversations yet. Search for an admin to start one.';
-  }, [debouncedSearch, roleFilter]);
+    if (debouncedSearch.trim()) return t('sidebar.emptySearch');
+    if (roleFilter !== 'ALL') return t('sidebar.emptyRole', { role: getRoleLabel(roleFilter) });
+    return t('sidebar.emptyDefault');
+  }, [debouncedSearch, roleFilter, t]);
 
   return (
     <div className="space-y-5 pb-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="mb-2 flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-            <Sparkles className="h-4 w-4" /> Staff workspace
+            <Sparkles className="h-4 w-4" /> {t('page.badge')}
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Internal Admin Chat</h1>
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">A focused channel for quick coordination across the water management team.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{t('page.title')}</h1>
+          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{t('page.subtitle')}</p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground">
           {socketState === 'CONNECTED' ? <Wifi className="h-3.5 w-3.5 text-emerald-600" /> : <WifiOff className="h-3.5 w-3.5" />}
-          {socketState === 'CONNECTED' ? 'Live connection' : socketState === 'CONNECTING' ? 'Connecting' : 'Offline mode'}
+          {socketState === 'CONNECTED' ? t('connection.live') : socketState === 'CONNECTING' ? t('connection.connecting') : t('connection.offline')}
         </div>
       </header>
 
@@ -363,7 +383,7 @@ export const InternalChatPage = () => {
         <div className="grid min-h-[620px] lg:grid-cols-[340px_minmax(0,1fr)]">
           <aside className="flex min-h-0 flex-col border-b border-border bg-muted/15 lg:border-b-0 lg:border-r">
             <div className="border-b border-border p-4 sm:p-5">
-              <label htmlFor="chat-search" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">Find a colleague</label>
+              <label htmlFor="chat-search" className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('sidebar.searchLabel')}</label>
               <div className="relative">
                 <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input id="chat-search" value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search name" className="h-11 rounded-xl bg-background pl-9" />
@@ -372,7 +392,7 @@ export const InternalChatPage = () => {
 
             <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4">
               <div className="mb-3 flex items-center justify-between px-1">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Conversations</h2>
+                <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('sidebar.conversationsHeading')}</h2>
                 <MessageCircle className="h-4 w-4 text-muted-foreground" />
               </div>
               {loadingList ? (
@@ -392,7 +412,7 @@ export const InternalChatPage = () => {
                           </div>
                           <p className="mt-0.5 text-[11px] font-semibold text-primary">{getRoleLabel(conversation.otherParticipantRole)}</p>
                           <div className="mt-1 flex items-center justify-between gap-2">
-                            <p className="truncate text-xs text-muted-foreground">{conversation.latestMessagePreview || 'No messages yet'}</p>
+                            <p className="truncate text-xs text-muted-foreground">{conversation.latestMessagePreview || t('sidebar.noMessages')}</p>
                             {conversation.unreadCount > 0 && <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-accent px-1.5 text-[10px] font-bold text-accent-foreground">{conversation.unreadCount}</span>}
                           </div>
                         </div>
@@ -403,11 +423,11 @@ export const InternalChatPage = () => {
               )}
 
               <div className="mb-3 mt-7 flex items-center justify-between px-1">
-                <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Staff directory</h2>
+                <h2 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{t('sidebar.staffHeading')}</h2>
                 <Users className="h-4 w-4 text-muted-foreground" />
               </div>
               {staff.length === 0 ? (
-                <p className="px-1 text-sm text-muted-foreground">No admins found.</p>
+                <p className="px-1 text-sm text-muted-foreground">{t('sidebar.noAdmins')}</p>
               ) : (
                 <div className="space-y-1.5">
                   {staff.map((user) => (
@@ -426,17 +446,17 @@ export const InternalChatPage = () => {
             {selectedConversation ? (
               <>
                 <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-7">
-                  <div className="flex min-w-0 items-center gap-3"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent font-bold text-white">{getInitials(selectedConversation.otherParticipantName)}</div><div className="min-w-0"><h2 className="truncate font-bold">{selectedConversation.otherParticipantName}</h2><p className="text-xs text-muted-foreground">{getRoleLabel(selectedConversation.otherParticipantRole)} <span className="mx-1">·</span> Direct conversation</p></div></div>
-                  <Button variant="ghost" size="icon" aria-label="Conversation options"><MoreHorizontal className="h-5 w-5" /></Button>
+                  <div className="flex min-w-0 items-center gap-3"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent font-bold text-white">{getInitials(selectedConversation.otherParticipantName)}</div><div className="min-w-0"><h2 className="truncate font-bold">{selectedConversation.otherParticipantName}</h2><p className="text-xs text-muted-foreground">{getRoleLabel(selectedConversation.otherParticipantRole)} <span className="mx-1">·</span> {t('chat.directConversation')}</p></div></div>
+                  <Button variant="ghost" size="icon" aria-label={t('chat.conversationOptions')}><MoreHorizontal className="h-5 w-5" /></Button>
                 </div>
                 <div ref={messageListRef} className="flex-1 overflow-y-auto px-5 py-5 sm:px-8">
-                  {hasOlderMessages && <div className="mb-4 text-center"><Button variant="outline" size="sm" onClick={() => void loadOlderMessages()} disabled={loadingOlder}><ChevronUp className="h-4 w-4" />{loadingOlder ? 'Loading older messages' : 'Load older messages'}</Button></div>}
-                  {loadingMessages ? <div className="space-y-3"><div className="h-12 w-2/3 animate-pulse rounded-2xl bg-muted" /><div className="ml-auto h-12 w-1/2 animate-pulse rounded-2xl bg-primary/10" /></div> : messages.length === 0 ? <div className="flex h-full min-h-[300px] flex-col items-center justify-center text-center"><div className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary"><MessageCircle className="h-8 w-8" /></div><h3 className="font-bold">Start the conversation</h3><p className="mt-1 text-sm text-muted-foreground">Send a message to {selectedConversation.otherParticipantName}.</p></div> : <div className="space-y-3">{messages.map((message) => { const mine = message.senderId !== selectedConversation.otherParticipantId; return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[min(78%,540px)] ${mine ? 'items-end' : 'items-start'} flex flex-col`}><div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${mine ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md border border-border bg-card text-foreground'}`}>{message.content}</div><div className="mt-1 flex items-center gap-1.5 px-1 text-[10px] text-muted-foreground"><span>{mine ? 'You' : message.senderName}</span><span>·</span><span>{formatMessageTime(message.createdAt)}</span>{mine && (message.read ? <CheckCheck className="h-3 w-3 text-primary" aria-label="Read" /> : <Check className="h-3 w-3" aria-label="Sent" />)}</div></div></div>; })}</div>}
+                  {hasOlderMessages && <div className="mb-4 text-center"><Button variant="outline" size="sm" onClick={() => void loadOlderMessages()} disabled={loadingOlder}><ChevronUp className="h-4 w-4" />{loadingOlder ? t('chat.loadingOlder') : t('chat.loadOlder')}</Button></div>}
+                  {loadingMessages ? <div className="space-y-3"><div className="h-12 w-2/3 animate-pulse rounded-2xl bg-muted" /><div className="ml-auto h-12 w-1/2 animate-pulse rounded-2xl bg-primary/10" /></div> : messages.length === 0 ? <div className="flex h-full min-h-[300px] flex-col items-center justify-center text-center"><div className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary"><MessageCircle className="h-8 w-8" /></div><h3 className="font-bold">{t('chat.startTitle')}</h3><p className="mt-1 text-sm text-muted-foreground">{t('chat.startSubtitle', { name: selectedConversation.otherParticipantName })}</p></div> : <div className="space-y-3">{messages.map((message) => { const mine = message.senderId !== selectedConversation.otherParticipantId; return <div key={message.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}><div className={`max-w-[min(78%,540px)] ${mine ? 'items-end' : 'items-start'} flex flex-col`}><div className={`rounded-2xl px-4 py-3 text-sm leading-relaxed shadow-sm ${mine ? 'rounded-br-md bg-primary text-primary-foreground' : 'rounded-bl-md border border-border bg-card text-foreground'}`}>{message.content}</div><div className="mt-1 flex items-center gap-1.5 px-1 text-[10px] text-muted-foreground"><span>{mine ? t('chat.you') : message.senderName}</span><span>·</span><span>{formatMessageTime(message.createdAt)}</span>{mine && (message.read ? <CheckCheck className="h-3 w-3 text-primary" aria-label="Read" /> : <Check className="h-3 w-3" aria-label="Sent" />)}</div></div></div>; })}</div>}
                 </div>
-                <div className="border-t border-border bg-card p-4 sm:p-5"><div className="flex items-end gap-2"><Input value={composer} maxLength={2000} onChange={(event) => setComposer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder="Type a message..." className="min-h-11 rounded-xl bg-background" /><Button type="button" size="icon" aria-label="Send message" disabled={!composer.trim() || sending} onClick={() => void sendMessage()}><Send className="h-4 w-4" /></Button></div><div className="mt-1 flex justify-between px-1 text-[10px] text-muted-foreground"><span>Press Enter to send</span><span>{composer.length}/2000</span></div></div>
+                <div className="border-t border-border bg-card p-4 sm:p-5"><div className="flex items-end gap-2"><Input value={composer} maxLength={2000} onChange={(event) => setComposer(event.target.value)} onKeyDown={(event) => { if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={t('chat.messagePlaceholder')} className="min-h-11 rounded-xl bg-background" /><Button type="button" size="icon" aria-label={t('chat.sendMessage')} disabled={!composer.trim() || sending} onClick={() => void sendMessage()}><Send className="h-4 w-4" /></Button></div><div className="mt-1 flex justify-between px-1 text-[10px] text-muted-foreground"><span>{t('chat.pressEnter')}</span><span>{composer.length}/2000</span></div></div>
               </>
             ) : (
-              <div className="flex flex-1 flex-col items-center justify-center px-8 py-16 text-center"><div className="mb-5 rounded-3xl bg-gradient-to-br from-primary/15 to-accent/20 p-5 text-primary"><MessageCircle className="h-10 w-10" /></div><h2 className="text-xl font-bold">Your team, in sync</h2><p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">Choose a conversation or find a colleague in the staff directory to begin.</p><div className="mt-5 flex items-center gap-2 text-xs font-semibold text-muted-foreground"><CircleAlert className="h-4 w-4" />Messages are saved securely in the system.</div></div>
+              <div className="flex flex-1 flex-col items-center justify-center px-8 py-16 text-center"><div className="mb-5 rounded-3xl bg-gradient-to-br from-primary/15 to-accent/20 p-5 text-primary"><MessageCircle className="h-10 w-10" /></div><h2 className="text-xl font-bold">{t('chat.teamTitle')}</h2><p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">{t('chat.teamSubtitle')}</p><div className="mt-5 flex items-center gap-2 text-xs font-semibold text-muted-foreground"><CircleAlert className="h-4 w-4" />{t('chat.secureNote')}</div></div>
             )}
           </section>
         </div>

@@ -15,9 +15,9 @@ const getLocalDateString = () => {
 };
 
 const defaultForm = (): MeterReadingFormData => ({
-  meterNumber: '', 
+  meterNumber: '',
   subscriptionNumber: '',
-  previousReading: '', 
+  previousReading: '',
   currentReading: '',
   readingDate: getLocalDateString(),
   notes: '',
@@ -26,10 +26,10 @@ const defaultForm = (): MeterReadingFormData => ({
 export const useMeterReading = () => {
   const { t } = useTranslation('meterReading');
   const { toast } = useToast();
-  const [formData, setFormData]   = useState<MeterReadingFormData>(defaultForm());
+  const [formData, setFormData] = useState<MeterReadingFormData>(defaultForm());
   const [todaysReadings, setTodaysReadings] = useState<MeterReading[]>([]);
   const [loadingReadings, setLoadingReadings] = useState(false);
-  const [submitting, setSubmitting]           = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [isManualOffline, setIsManualOffline] = useState(false);
   const [pendingCount, setPendingCount] = useState<number>(0);
@@ -49,10 +49,10 @@ export const useMeterReading = () => {
     try {
       const ratesStr = localStorage.getItem(OFFLINE_RATES_KEY);
       if (!ratesStr) return usageUnits * 50; // Fallback
-      
+
       const ratesList = JSON.parse(ratesStr);
       const rate = ratesList.find((r: any) => r.connectionType === 'metered') || ratesList[0];
-      
+
       if (!rate) return usageUnits * 50;
 
       const base = Number(rate.baseRate || 0);
@@ -133,13 +133,13 @@ export const useMeterReading = () => {
   // Fetches a list of all meter readings submitted today.
   const fetchTodaysReadings = async (dateOverride?: string) => {
     if (!isOnline) return; // Don't try to fetch if offline
-    
+
     const targetDate = dateOverride || selectedDate;
     setLoadingReadings(true);
     try {
       api.get('/rates').then(res => {
         localStorage.setItem(OFFLINE_RATES_KEY, JSON.stringify(res.data));
-      }).catch(() => {});
+      }).catch(() => { });
 
       const res = await api.get(`/meter-readings/today?date=${targetDate}`);
       const data = res.data;
@@ -153,7 +153,7 @@ export const useMeterReading = () => {
           billStatus: r.billStatus || 'PENDING_OFFLINE'
         };
       });
-      
+
       setTodaysReadings([...offline, ...data]);
     } catch {
       toast({ title: t('toasts.loadErrorTitle'), description: t('toasts.loadErrorDesc'), variant: 'destructive' });
@@ -173,7 +173,7 @@ export const useMeterReading = () => {
           toast({ title: 'Mismatch Error', description: `Meter ${meterNumber} belongs to subscription ${res.data.subscriptionNumber}, not ${formData.subscriptionNumber}.`, variant: 'destructive' });
           return;
         }
-        
+
         if (res.data.currentReading) {
           setFormData(prev => ({ ...prev, previousReading: res.data.currentReading.toString() }));
           toast({ title: 'Previous Reading Found', description: `Auto-filled with last month's reading: ${res.data.currentReading}` });
@@ -217,32 +217,32 @@ export const useMeterReading = () => {
       toast({ title: 'Validation Error', description: 'Reading date cannot be empty.', variant: 'destructive' });
       return;
     }
-    
+
     const prev = Number(formData.previousReading);
     const curr = Number(formData.currentReading);
-    
+
     if (prev < 0) {
       toast({ title: 'Validation Error', description: 'Previous reading cannot be negative.', variant: 'destructive' });
       return;
     }
-    
+
     if (curr <= 0) {
       toast({ title: 'Validation Error', description: 'Current reading must be greater than 0.', variant: 'destructive' });
       return;
     }
-    
+
     if (curr < prev) {
       toast({ title: 'Validation Error', description: 'Current reading cannot be less than the previous reading.', variant: 'destructive' });
       return;
     }
-    
+
     setSubmitting(true);
     const payload = {
-      meterNumber: formData.meterNumber, 
+      meterNumber: formData.meterNumber,
       subscriptionNumber: formData.subscriptionNumber,
-      previousReading: prev, 
+      previousReading: prev,
       currentReading: curr,
-      readingDate: formData.readingDate, 
+      readingDate: formData.readingDate,
       imageUrl: formData.imageUrl,
       notes: formData.notes,
     };
@@ -251,7 +251,7 @@ export const useMeterReading = () => {
       let offlineReadings = getOfflineReadings();
       const usageUnits = payload.currentReading - payload.previousReading;
       const estimatedTotal = calculateEstimatedBill(usageUnits);
-      
+
       const mockReading = {
         ...payload,
         id: editingId?.startsWith('offline-') ? editingId : `offline-${Date.now()}`,
@@ -265,18 +265,18 @@ export const useMeterReading = () => {
       } else {
         offlineReadings.push(mockReading);
       }
-      
+
       localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
       updatePendingCount();
 
-      toast({ 
-        title: t('toasts.savedOfflineTitle'), 
+      toast({
+        title: t('toasts.savedOfflineTitle'),
         description: t('toasts.savedOfflineDesc', { meterNo: formData.meterNumber, usage: usageUnits, total: estimatedTotal.toFixed(2) })
       });
-      
+
       clearForm();
       setSubmitting(false);
-      
+
       // Update todaysReadings
       if (selectedDate === getLocalDateString()) {
         if (editingId?.startsWith('offline-')) {
@@ -285,7 +285,7 @@ export const useMeterReading = () => {
           setTodaysReadings(prev => [mockReading as unknown as MeterReading, ...prev]);
         }
       }
-      
+
       return;
     }
 
@@ -316,10 +316,10 @@ export const useMeterReading = () => {
       } else {
         res = await api.post('/meter-readings', payload);
       }
-      
+
       const result = res.data;
-      toast({ 
-        title: (editingId && !isOfflineId) ? 'Reading Updated' : t('toasts.submittedTitle'), 
+      toast({
+        title: (editingId && !isOfflineId) ? 'Reading Updated' : t('toasts.submittedTitle'),
         description: t('toasts.submittedDesc', { meterNo: formData.meterNumber, usage: result.usageUnits, billId: result.billId, total: Number(result.totalAmount).toFixed(2) })
       });
       clearForm();
@@ -327,12 +327,12 @@ export const useMeterReading = () => {
     } catch (err: any) {
       if (!err.response || err.code === 'ERR_NETWORK') {
         toast({ title: t('toasts.submissionFailedTitle', { defaultValue: 'Submission Failed' }), description: 'Network error. Saving offline.', variant: 'destructive' });
-        
+
         let offlineReadings = getOfflineReadings();
         const usageUnits = payload.currentReading - payload.previousReading;
         const estimatedTotal = calculateEstimatedBill(usageUnits);
         const isOfflineId = editingId ? String(editingId).startsWith('offline-') : false;
-        
+
         const mockReading = {
           ...payload,
           id: isOfflineId ? editingId : `offline-${Date.now()}`,
@@ -346,10 +346,10 @@ export const useMeterReading = () => {
         } else {
           offlineReadings.push(mockReading);
         }
-        
+
         localStorage.setItem(OFFLINE_STORAGE_KEY, JSON.stringify(offlineReadings));
         updatePendingCount();
-        
+
         if (selectedDate === getLocalDateString()) {
           if (isOfflineId) {
             setTodaysReadings(prev => prev.map(r => String((r as any).id) === String(editingId) ? mockReading as unknown as MeterReading : r));

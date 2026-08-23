@@ -54,8 +54,10 @@ import {
 } from '@/services/backupService';
 import type { BackupFileInfo } from '@/types/backup';
 import { BackupScheduleSettings } from './BackupScheduleSettings';
+import { useTranslation } from 'react-i18next';
 
 export const BackupManagementCard: React.FC = () => {
+  const { t } = useTranslation('systemSettings');
   const [activeTab, setActiveTab] = useState<string>('instant');
   const [backups, setBackups] = useState<BackupFileInfo[]>([]);
   const [loadingList, setLoadingList] = useState(true);
@@ -81,7 +83,7 @@ export const BackupManagementCard: React.FC = () => {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to load backup files list';
+        t('backups.loadFailed', { defaultValue: 'Failed to load backup files list' });
       toast.error(msg);
     } finally {
       setLoadingList(false);
@@ -93,16 +95,16 @@ export const BackupManagementCard: React.FC = () => {
       setCreatingBackup(true);
       const response = await createBackup();
       if (response.success !== false) {
-        toast.success(response.message || 'System backup created successfully');
+        toast.success(response.message || t('backups.createSuccess', { defaultValue: 'System backup created successfully' }));
         await fetchBackups();
       } else {
-        toast.error(response.message || 'Failed to create system backup');
+        toast.error(response.message || t('backups.createFailed', { defaultValue: 'Failed to create system backup' }));
       }
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to create system backup';
+        t('backups.createFailed', { defaultValue: 'Failed to create system backup' });
       toast.error(msg);
     } finally {
       setCreatingBackup(false);
@@ -114,12 +116,12 @@ export const BackupManagementCard: React.FC = () => {
       setDownloadingFile(fileName);
       const blob = await downloadBackupFile(fileName);
       triggerFileDownload(fileName, blob);
-      toast.success(`Downloaded ${fileName}`);
+      toast.success(t('backups.downloadSuccess', { defaultValue: `Downloaded ${fileName}`, fileName }));
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to download backup file';
+        t('backups.downloadFailed', { defaultValue: 'Failed to download backup file' });
       toast.error(msg);
     } finally {
       setDownloadingFile(null);
@@ -133,15 +135,15 @@ export const BackupManagementCard: React.FC = () => {
       setRestoring(true);
       const response = await restoreBackup(restoreModalFile);
       if (response.success !== false) {
-        toast.success(response.message || `System restored from ${restoreModalFile}`);
+        toast.success(response.message || t('backups.restoreSuccess', { defaultValue: `System restored from ${restoreModalFile}`, fileName: restoreModalFile }));
       } else {
-        toast.error(response.message || 'System restoration failed');
+        toast.error(response.message || t('backups.restoreFailed', { defaultValue: 'System restoration failed' }));
       }
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to restore backup';
+        t('backups.restoreFailed', { defaultValue: 'Failed to restore backup' });
       toast.error(msg);
     } finally {
       setRestoring(false);
@@ -155,13 +157,13 @@ export const BackupManagementCard: React.FC = () => {
     try {
       setDeleting(true);
       await deleteBackup(deleteModalFile);
-      toast.success(`Deleted ${deleteModalFile}`);
+      toast.success(t('backups.deleteSuccess', { defaultValue: `Deleted ${deleteModalFile}`, fileName: deleteModalFile }));
       setBackups((prev) => prev.filter((b) => b.fileName !== deleteModalFile));
     } catch (e: any) {
       const msg =
         e?.response?.data?.message ||
         e?.response?.data?.error ||
-        'Failed to delete backup file';
+        t('backups.deleteFailed', { defaultValue: 'Failed to delete backup file' });
       toast.error(msg);
     } finally {
       setDeleting(false);
@@ -205,11 +207,11 @@ export const BackupManagementCard: React.FC = () => {
                 <div className="p-2.5 rounded-xl gradient-primary text-white shadow-sm">
                   <Database className="h-5 w-5" />
                 </div>
-                Database Backup Management
+                {t('backups.title')}
               </CardTitle>
 
               <CardDescription className="text-base ml-14 mt-1">
-                Perform manual database backups, restore archives, or configure automated backup schedules.
+                {t('backups.description')}
               </CardDescription>
             </div>
           </div>
@@ -218,21 +220,21 @@ export const BackupManagementCard: React.FC = () => {
         <CardContent className="pt-6">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             {/* Tabs List */}
-            <TabsList className="grid grid-cols-2 max-w-md bg-secondary/60 p-1 rounded-xl h-11 border border-border/40 mb-6">
+            <TabsList className="grid grid-cols-1 sm:grid-cols-2 max-w-xl w-full bg-secondary/60 p-1 rounded-xl h-auto min-h-11 border border-border/40 mb-6 gap-1">
               <TabsTrigger
                 value="instant"
-                className="rounded-lg gap-2 text-sm font-semibold data-[state=active]:gradient-primary data-[state=active]:text-white transition-all"
+                className="rounded-lg gap-2 text-xs sm:text-sm font-semibold py-2 px-3 h-full min-h-[36px] data-[state=active]:gradient-primary data-[state=active]:text-white transition-all items-center justify-center text-center whitespace-normal"
               >
-                <Database className="h-4 w-4" />
-                Instant Backup
+                <Database className="h-4 w-4 shrink-0" />
+                <span>{t('backups.tabs.instant')}</span>
               </TabsTrigger>
 
               <TabsTrigger
                 value="schedule"
-                className="rounded-lg gap-2 text-sm font-semibold data-[state=active]:gradient-primary data-[state=active]:text-white transition-all"
+                className="rounded-lg gap-2 text-xs sm:text-sm font-semibold py-2 px-3 h-full min-h-[36px] data-[state=active]:gradient-primary data-[state=active]:text-white transition-all items-center justify-center text-center whitespace-normal"
               >
-                <CalendarClock className="h-4 w-4" />
-                Scheduled Backup
+                <CalendarClock className="h-4 w-4 shrink-0" />
+                <span>{t('backups.tabs.schedule')}</span>
               </TabsTrigger>
             </TabsList>
 
@@ -241,10 +243,10 @@ export const BackupManagementCard: React.FC = () => {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between bg-secondary/20 p-4 rounded-xl border border-border/40">
                 <div>
                   <h3 className="text-sm font-semibold text-foreground">
-                    Instant Manual Backup
+                    {t('backups.instant.title')}
                   </h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Generate an immediate snapshot of the current database state.
+                    {t('backups.instant.description')}
                   </p>
                 </div>
 
@@ -256,7 +258,7 @@ export const BackupManagementCard: React.FC = () => {
                     onClick={fetchBackups}
                     disabled={loadingList || creatingBackup}
                     className="rounded-xl border-primary/20 hover:bg-primary/10 h-10 px-3.5"
-                    title="Refresh Backup List"
+                    title={t('backups.instant.refreshTooltip')}
                   >
                     <RefreshCw className={`h-4 w-4 ${loadingList ? 'animate-spin' : ''}`} />
                   </Button>
@@ -272,7 +274,7 @@ export const BackupManagementCard: React.FC = () => {
                     ) : (
                       <Plus className="h-4 w-4" />
                     )}
-                    <span>Create Backup Now</span>
+                    <span>{t('backups.instant.createButton')}</span>
                   </Button>
                 </div>
               </div>
@@ -282,7 +284,7 @@ export const BackupManagementCard: React.FC = () => {
                 {loadingList ? (
                   <div className="flex flex-col justify-center items-center h-[200px] gap-2 text-muted-foreground">
                     <Loader2 className="h-7 w-7 animate-spin text-primary" />
-                    <span className="text-sm">Loading backups...</span>
+                    <span className="text-sm">{t('backups.loading')}</span>
                   </div>
                 ) : backups.length === 0 ? (
                   /* Empty State */
@@ -291,10 +293,10 @@ export const BackupManagementCard: React.FC = () => {
                       <Database className="h-6 w-6" />
                     </div>
                     <h3 className="text-base font-semibold text-foreground">
-                      No backups found
+                      {t('backups.emptyTitle')}
                     </h3>
                     <p className="text-sm text-muted-foreground max-w-xs mt-1 mb-4">
-                      Create a system backup to safeguard your data.
+                      {t('backups.emptyDescription')}
                     </p>
                     <Button
                       onClick={handleCreateBackup}
@@ -307,7 +309,7 @@ export const BackupManagementCard: React.FC = () => {
                       ) : (
                         <Plus className="h-4 w-4" />
                       )}
-                      Create Backup
+                      {t('backups.instant.createButtonShort')}
                     </Button>
                   </div>
                 ) : (
@@ -316,16 +318,16 @@ export const BackupManagementCard: React.FC = () => {
                       <TableHeader className="bg-secondary/40 sticky top-0 z-10 backdrop-blur-md">
                         <TableRow className="hover:bg-transparent border-b border-primary/10">
                           <TableHead className="pl-6 font-semibold text-foreground">
-                            File Name
+                            {t('backups.table.fileName')}
                           </TableHead>
                           <TableHead className="font-semibold text-foreground">
-                            Size
+                            {t('backups.table.size')}
                           </TableHead>
                           <TableHead className="font-semibold text-foreground">
-                            Created Date
+                            {t('backups.table.createdDate')}
                           </TableHead>
                           <TableHead className="w-[180px] text-right pr-6 font-semibold text-foreground">
-                            Actions
+                            {t('backups.table.actions')}
                           </TableHead>
                         </TableRow>
                       </TableHeader>
@@ -361,7 +363,7 @@ export const BackupManagementCard: React.FC = () => {
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  title="Download"
+                                  title={t('common.download')}
                                   onClick={() => handleDownload(backup.fileName)}
                                   disabled={downloadingFile === backup.fileName}
                                   className="h-8 px-2.5 text-muted-foreground hover:text-primary rounded-lg gap-1.5"
@@ -371,31 +373,31 @@ export const BackupManagementCard: React.FC = () => {
                                   ) : (
                                     <Download className="h-3.5 w-3.5" />
                                   )}
-                                  <span className="hidden lg:inline text-xs">Download</span>
+                                  <span className="hidden lg:inline text-xs">{t('common.download')}</span>
                                 </Button>
 
                                 {/* Restore */}
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  title="Restore"
+                                  title={t('common.restore')}
                                   onClick={() => setRestoreModalFile(backup.fileName)}
                                   className="h-8 px-2.5 text-muted-foreground hover:text-amber-600 dark:hover:text-amber-400 rounded-lg gap-1.5"
                                 >
                                   <RotateCcw className="h-3.5 w-3.5" />
-                                  <span className="hidden lg:inline text-xs">Restore</span>
+                                  <span className="hidden lg:inline text-xs">{t('common.restore')}</span>
                                 </Button>
 
                                 {/* Delete */}
                                 <Button
                                   variant="ghost"
                                   size="sm"
-                                  title="Delete"
+                                  title={t('common.delete')}
                                   onClick={() => setDeleteModalFile(backup.fileName)}
                                   className="h-8 px-2.5 text-muted-foreground hover:text-destructive rounded-lg gap-1.5"
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
-                                  <span className="hidden lg:inline text-xs">Delete</span>
+                                  <span className="hidden lg:inline text-xs">{t('common.delete')}</span>
                                 </Button>
                               </div>
                             </TableCell>
@@ -427,21 +429,21 @@ export const BackupManagementCard: React.FC = () => {
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-amber-600 dark:text-amber-400">
               <AlertTriangle className="h-5 w-5" />
-              Restore System Backup?
+              {t('backups.restoreModal.title')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm pt-2 space-y-2">
-              <span>Are you sure you want to restore the system state from:</span>
+              <span>{t('backups.restoreModal.desc1')}</span>
               <span className="block font-mono text-xs font-semibold bg-secondary p-2 rounded-lg text-foreground break-all">
                 {restoreModalFile}
               </span>
               <span className="block text-xs text-muted-foreground">
-                This will replace the current database state with the data from this backup.
+                {t('backups.restoreModal.desc2')}
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-4">
             <AlertDialogCancel disabled={restoring} className="rounded-xl">
-              Cancel
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmRestore}
@@ -451,12 +453,12 @@ export const BackupManagementCard: React.FC = () => {
               {restoring ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Restoring...</span>
+                  <span>{t('backups.restoreModal.restoring')}</span>
                 </>
               ) : (
                 <>
                   <RotateCcw className="h-4 w-4" />
-                  <span>Restore</span>
+                  <span>{t('backups.restoreModal.confirm')}</span>
                 </>
               )}
             </AlertDialogAction>
@@ -473,9 +475,9 @@ export const BackupManagementCard: React.FC = () => {
       >
         <AlertDialogContent className="rounded-2xl max-w-md">
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Backup File?</AlertDialogTitle>
+            <AlertDialogTitle>{t('backups.deleteModal.title')}</AlertDialogTitle>
             <AlertDialogDescription className="text-sm pt-2 space-y-2">
-              <span>This will permanently delete the backup file:</span>
+              <span>{t('backups.deleteModal.desc')}</span>
               <span className="block font-mono text-xs font-semibold bg-secondary p-2 rounded-lg text-foreground break-all">
                 {deleteModalFile}
               </span>
@@ -483,7 +485,7 @@ export const BackupManagementCard: React.FC = () => {
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-4">
             <AlertDialogCancel disabled={deleting} className="rounded-xl">
-              Cancel
+              {t('common.cancel')}
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleConfirmDelete}
@@ -493,12 +495,12 @@ export const BackupManagementCard: React.FC = () => {
               {deleting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Deleting...</span>
+                  <span>{t('backups.deleteModal.deleting')}</span>
                 </>
               ) : (
                 <>
                   <Trash2 className="h-4 w-4" />
-                  <span>Delete</span>
+                  <span>{t('common.delete')}</span>
                 </>
               )}
             </AlertDialogAction>

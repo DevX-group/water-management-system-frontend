@@ -1,0 +1,58 @@
+{
+  "page": {
+    "title": "கணிப்புகள்",
+    "subtitle": "3 மாதங்கள் வரை கண்காணிப்பு மற்றும் பகுப்பாய்வுக்கான கணிக்கப்பட்ட தரவு"
+  },
+  "tabs": {
+    "monthly": "மாதாந்திர அறிக்கை கணிப்பு",
+    "customer": "வாடிக்கையாளர் அறிக்கை கணிப்பு",
+    "area": "பகுதி அறிக்கை கணிப்பு"
+  },
+  "monthly": {
+    "title": "மாதாந்திர பயன்பாடு மற்றும் வருவாய் அறிக்கை கணிப்பு - 2026",
+    "description": "3 மாதங்கள் வரை கணிக்கப்பட்ட தனிப்பட்ட வாடிக்கையாளர் நுகர்வு மற்றும் பில்லிங் போக்குகள்",
+    "usageLabel": "பயன்பாடு (L)",
+    "predictionStart": "கணிப்பு தொடக்கம்",
+    "actualUsage": "உண்மையான பயன்பாடு",
+    "predictedUsage": "கணிக்கப்பட்ட பயன்பாடு",
+    "tooltipActualUsage": "உண்மையான பயன்பாடு: {{value}} L",
+    "tooltipActualRevenue": "உண்மையான வருவாய்: LKR {{value}}",
+    "tooltipPredictedUsage": "கணிக்கப்பட்ட பயன்பாடு: {{value}} L",
+    "tooltipPredictedRevenue": "கணிக்கப்பட்ட வருவாய்: LKR {{value}}"
+  },
+  "customer": {
+    "title": "வாடிக்கையாளர் பயன்பாடு கணிப்பு - 2026",
+    "description": "3 மாதங்கள் வரை தேர்ந்தெடுக்கப்பட்ட வாடிக்கையாளருக்கான முன்னறிவிக்கப்பட்ட பயன்பாடு",
+    "searchPlaceholder": "வாடிக்கையாளர் ஐடி (எ.கா., C001)",
+    "usageLabel": "பயன்பாடு (L)",
+    "predictionStart": "கணிப்பு தொடக்கம்",
+    "actualUsage": "உண்மையான பயன்பாடு",
+    "predictedUsage": "கணிக்கப்பட்ட பயன்பாடு",
+    "tooltipActualUsage": "உண்மையான பயன்பாடு: {{value}} L",
+    "tooltipActualRevenue": "உண்மையான வருவாய்: LKR {{value}}",
+    "tooltipPredictedUsage": "கணிக்கப்பட்ட பயன்பாடு: {{value}} L",
+    "tooltipPredictedRevenue": "கணிக்கப்பட்ட வருவாய்: LKR {{value}}"
+  },
+  "area": {
+    "title": "பகுதி வாரியான பயன்பாடு மற்றும் வருவாய் அறிக்கை கணிப்பு - {{year}}",
+    "description": "3 மாதங்கள் வரை கணிக்கப்பட்ட போக்குகள்",
+    "allAreas": "அனைத்து பகுதிகள்",
+    "area1": "பகுதி 1",
+    "area2": "பகுதி 2",
+    "area3": "பகுதி 3",
+    "series": {
+      "area1Usage": "பகுதி 1 பயன்பாடு",
+      "area1Revenue": "பகுதி 1 வருவாய்",
+      "predictedArea1Usage": "கணிக்கப்பட்ட பகுதி 1 பயன்பாடு",
+      "predictedArea1Revenue": "கணிக்கப்பட்ட பகுதி 1 வருவாய்",
+      "area2Usage": "பகுதி 2 பயன்பாடு",
+      "area2Revenue": "பகுதி 2 வருவாய்",
+      "predictedArea2Usage": "கணிக்கப்பட்ட பகுதி 2 பயன்பாடு",
+      "predictedArea2Revenue": "கணிக்கப்பட்ட பகுதி 2 வருவாய்",
+      "area3Usage": "பகுதி 3 பயன்பாடு",
+      "area3Revenue": "பகுதி 3 வருவாய்",
+      "predictedArea3Usage": "கணிக்கப்பட்ட பகுதி 3 பயன்பாடு",
+      "predictedArea3Revenue": "கணிக்கப்பட்ட பகுதி 3 வருவாய்"
+    }
+  }
+}

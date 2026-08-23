@@ -35,6 +35,7 @@ import { ProtectedRoute } from "@/routes/ProtectedRoute";
 
 import { ThemeProvider } from "./contexts/ThemeProvider";
 import { FontSizeProvider } from "./contexts/FontSizeProvider";
+import { SystemDetailsProvider } from "./context/SystemDetailsContext";
 
 const PWAManifestController: React.FC = () => {
   const { user } = useAuth();
@@ -79,6 +80,7 @@ const App = () => (
     <FontSizeProvider defaultSize="medium" storageKey="vite-ui-font-size">
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <SystemDetailsProvider>
           <PWAManifestController />
           <TooltipProvider>
             <Toaster />
@@ -122,6 +124,7 @@ const App = () => (
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
+          </SystemDetailsProvider>
         </AuthProvider>
       </QueryClientProvider>
     </FontSizeProvider>

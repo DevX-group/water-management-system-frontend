@@ -29,6 +29,21 @@ import taUserManagement from "./locales/ta/userManagement.json";
 import enNavbar from "./locales/en/navbar.json";
 import siNavbar from "./locales/si/navbar.json";
 import taNavbar from "./locales/ta/navbar.json";
+import enMessaging from "./locales/en/messaging.json";
+import siMessaging from "./locales/si/messaging.json";
+import taMessaging from "./locales/ta/messaging.json";
+import enSystemSettings from "./locales/en/systemSettings.json";
+import siSystemSettings from "./locales/si/systemSettings.json";
+import taSystemSettings from "./locales/ta/systemSettings.json";
+import enReports from "./locales/en/reports.json";
+import siReports from "./locales/si/reports.json";
+import taReports from "./locales/ta/reports.json";
+import enPredictions from "./locales/en/predictions.json";
+import siPredictions from "./locales/si/predictions.json";
+import taPredictions from "./locales/ta/predictions.json";
+import enInternalChat from "./locales/en/internalChat.json";
+import siInternalChat from "./locales/si/internalChat.json";
+import taInternalChat from "./locales/ta/internalChat.json";
 
 i18n
   .use(LanguageDetector)
@@ -45,6 +60,11 @@ i18n
         usage: enUsage,
         alerts: enAlerts,
         navbar: enNavbar,
+        messaging: enMessaging,
+        systemSettings: enSystemSettings,
+        reports: enReports,
+        predictions: enPredictions,
+        internalChat: enInternalChat,
       },
       si: {
         payments: siPayments,
@@ -56,6 +76,11 @@ i18n
         usage: siUsage,
         alerts: siAlerts,
         navbar: siNavbar,
+        messaging: siMessaging,
+        systemSettings: siSystemSettings,
+        reports: siReports,
+        predictions: siPredictions,
+        internalChat: siInternalChat,
       },
       ta: {
         payments: taPayments,
@@ -67,6 +92,11 @@ i18n
         usage: taUsage,
         alerts: taAlerts,
         navbar: taNavbar,
+        messaging: taMessaging,
+        systemSettings: taSystemSettings,
+        reports: taReports,
+        predictions: taPredictions,
+        internalChat: taInternalChat,
       },
     },
 

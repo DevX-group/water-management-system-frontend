@@ -1,0 +1,117 @@
+{
+  "title": "System Settings",
+  "subtitle": "Manage global system configurations and operating regions.",
+  "common": {
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "download": "Download",
+    "restore": "Restore",
+    "error": "Error"
+  },
+  "systemDetails": {
+    "title": "System Details",
+    "description": "Update the core business information used across the system.",
+    "bankInfoTitle": "Bank Information",
+    "saveButton": "Save Configuration",
+    "fields": {
+      "companyName": "Company Name",
+      "defaultCurrency": "Default Currency",
+      "officeContactNumber": "Contact Number",
+      "officeEmail": "Email Address",
+      "officeAddress": "Office Address",
+      "bankName": "Bank Name",
+      "branch": "Branch",
+      "accountName": "Account Name",
+      "accountNumber": "Account Number"
+    }
+  },
+  "regions": {
+    "title": "Regions",
+    "description": "Manage the active operating regions available in the system.",
+    "activeCount": "Active Regions",
+    "placeholder": "Enter region name",
+    "addButton": "Add Region",
+    "helpText": "Add regions that will be available for customer registration and system operations.",
+    "loading": "Loading regions...",
+    "emptyTitle": "No regions available",
+    "emptyDescription": "Add your first operating region using the form above.",
+    "table": {
+      "code": "Region Code",
+      "name": "Region Name",
+      "actions": "Actions"
+    },
+    "deleteDialog": {
+      "title": "Delete Region?",
+      "description": "This action cannot be undone. This will permanently delete the region {{name}} and remove its configurations from the system.",
+      "confirm": "Delete Region"
+    }
+  },
+  "backups": {
+    "title": "Database Backup Management",
+    "description": "Perform manual database backups, restore archives, or configure automated backup schedules.",
+    "tabs": {
+      "instant": "Instant Backup",
+      "schedule": "Scheduled Backup"
+    },
+    "instant": {
+      "title": "Instant Manual Backup",
+      "description": "Generate an immediate snapshot of the current database state.",
+      "createButton": "Create Backup Now",
+      "createButtonShort": "Create Backup",
+      "refreshTooltip": "Refresh Backup List"
+    },
+    "loading": "Loading backups...",
+    "emptyTitle": "No backups found",
+    "emptyDescription": "Create a system backup to safeguard your data.",
+    "table": {
+      "fileName": "File Name",
+      "size": "Size",
+      "createdDate": "Created Date",
+      "actions": "Actions"
+    },
+    "restoreModal": {
+      "title": "Restore System Backup?",
+      "desc1": "Are you sure you want to restore the system state from:",
+      "desc2": "This will replace the current database state with the data from this backup.",
+      "confirm": "Restore",
+      "restoring": "Restoring..."
+    },
+    "deleteModal": {
+      "title": "Delete Backup File?",
+      "desc": "This will permanently delete the backup file:",
+      "deleting": "Deleting..."
+    }
+  },
+  "schedule": {
+    "title": "Automated Backup Schedule",
+    "subtitle": "Configure recurring automatic database backups and execution timing.",
+    "frequencyLabel": "Select Backup Frequency",
+    "timingTitle": "Schedule Timing Configuration",
+    "executionTime": "Execution Time",
+    "dayOfWeek": "Day of the Week",
+    "dayOfMonth": "Day of the Month (1–31)",
+    "cronLabel": "Generated Cron Expression:",
+    "lastBackupLabel": "Last Successful Backup: ",
+    "saveButton": "Save Schedule Settings",
+    "status": {
+      "success": "Last Status: Success",
+      "failed": "Last Status: Failed",
+      "running": "Backup Running..."
+    },
+    "frequencies": {
+      "DISABLE": "Disabled",
+      "DAILY": "Daily",
+      "WEEKLY": "Weekly",
+      "MONTHLY": "Monthly"
+    }
+  },
+  "days": {
+    "MONDAY": "Monday",
+    "TUESDAY": "Tuesday",
+    "WEDNESDAY": "Wednesday",
+    "THURSDAY": "Thursday",
+    "FRIDAY": "Friday",
+    "SATURDAY": "Saturday",
+    "SUNDAY": "Sunday"
+  }
+}

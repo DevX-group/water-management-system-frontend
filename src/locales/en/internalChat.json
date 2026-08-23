@@ -1,0 +1,59 @@
+{
+  "page": {
+    "badge": "Staff workspace",
+    "title": "Internal Admin Chat",
+    "subtitle": "A focused channel for quick coordination across the water management team."
+  },
+  "connection": {
+    "live": "Live connection",
+    "connecting": "Connecting",
+    "offline": "Offline mode"
+  },
+  "roleTabs": {
+    "ALL": "All staff",
+    "SUPER_ADMIN": "Super Admin",
+    "SYSTEM_ADMIN": "System Admin",
+    "PAYMENT_HANDLER": "Payment Handler",
+    "METER_READER": "Meter Reader"
+  },
+  "sidebar": {
+    "searchLabel": "Find a colleague",
+    "searchPlaceholder": "Search name or user ID",
+    "conversationsHeading": "Conversations",
+    "staffHeading": "Staff directory",
+    "noMessages": "No messages yet",
+    "noAdmins": "No admins found.",
+    "emptySearch": "No conversations match this search.",
+    "emptyRole": "No conversations with {{role}}s.",
+    "emptyDefault": "No conversations yet. Search for an admin to start one."
+  },
+  "chat": {
+    "directConversation": "Direct conversation",
+    "startTitle": "Start the conversation",
+    "startSubtitle": "Send a message to {{name}}.",
+    "loadOlder": "Load older messages",
+    "loadingOlder": "Loading older messages",
+    "you": "You",
+    "messagePlaceholder": "Type a message...",
+    "pressEnter": "Press Enter to send",
+    "teamTitle": "Your team, in sync",
+    "teamSubtitle": "Choose a conversation or find a colleague in the staff directory to begin.",
+    "secureNote": "Messages are saved securely in the system.",
+    "conversationOptions": "Conversation options",
+    "sendMessage": "Send message"
+  },
+  "toasts": {
+    "loadChatTitle": "Unable to load chat",
+    "loadChatDesc": "Please try again.",
+    "messageUpdateTitle": "Message update failed",
+    "messageUpdateDesc": "A real-time message could not be read.",
+    "loadMessagesTitle": "Unable to load messages",
+    "loadMessagesDesc": "Please try again.",
+    "loadOlderTitle": "Unable to load older messages",
+    "loadOlderDesc": "Please try again.",
+    "startConversationTitle": "Unable to start conversation",
+    "startConversationDesc": "This staff member may no longer be available.",
+    "sendFailedTitle": "Message was not sent",
+    "sendFailedDesc": "Check your connection and try again."
+  }
+}

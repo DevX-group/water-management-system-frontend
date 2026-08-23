@@ -6,10 +6,12 @@ import { MessageHistoryPage } from '@/pages/messageHistoryPage';
 import { ScheduledMessageSection } from '@/components/messaging/ScheduledMessageSection';
 import { TriggeredMessageSection } from '@/components/messaging/TriggeredMessageSection';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import type { MessagingEnumResponse } from '@/types/messaging';
 import * as messageApi from '@/services/messageService';
 
 export const MessagingPage = () => {
+  const { t } = useTranslation('messaging');
   const location = useLocation();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -32,24 +34,24 @@ export const MessagingPage = () => {
       .catch((error) => {
         const message = error instanceof Error
           ? error.message
-          : 'Failed to load message options.';
-        toast({ title: 'Error', description: message, variant: 'destructive' });
+          : t('toasts.failedLoadOptions');
+        toast({ title: t('common.error'), description: message, variant: 'destructive' });
       });
-  }, [toast]);
+  }, [toast, t]);
 
   return (
     <div className="space-y-6 p-6 pb-24 px-24">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Messaging</h1>
-          <p className="text-muted-foreground">Manage automated and custom messages for customers.</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
+          <p className="text-muted-foreground">{t('subtitle')}</p>
         </div>
       </div>
 
       <Tabs value={activeTab} onValueChange={(val) => navigate(`/admin/messaging/${val}`)} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
-          <TabsTrigger value="scheduled" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Scheduled Messages</TabsTrigger>
-          <TabsTrigger value="triggered" className="data-[state=active]:bg-[#161E54] data-[state=active]:text-white">Triggered Messages</TabsTrigger>
+        <TabsList className="inline-flex h-auto p-1 gap-1 max-w-full flex-wrap sm:flex-nowrap bg-muted rounded-lg">
+          <TabsTrigger value="scheduled" className="h-auto py-2 px-4 whitespace-normal text-center leading-snug data-[state=active]:bg-[#161E54] data-[state=active]:text-white transition-all">{t('tabs.scheduled')}</TabsTrigger>
+          <TabsTrigger value="triggered" className="h-auto py-2 px-4 whitespace-normal text-center leading-snug data-[state=active]:bg-[#161E54] data-[state=active]:text-white transition-all">{t('tabs.triggered')}</TabsTrigger>
         </TabsList>
         {/* Only render the list tabs when not showing history. */}
         {!isHistory && (

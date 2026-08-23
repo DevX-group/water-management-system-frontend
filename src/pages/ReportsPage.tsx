@@ -212,8 +212,8 @@ export const ReportsPage: React.FC = () => {
         .get<BillApiResponse[]>("/bills_report", {
           params: normalizedCustomerId
             ? {
-                customerId: normalizedCustomerId,
-              }
+              customerId: normalizedCustomerId,
+            }
             : {},
           signal: controller.signal,
         })
@@ -268,8 +268,8 @@ export const ReportsPage: React.FC = () => {
           {
             params: normalizedCustomerId
               ? {
-                  customerId: normalizedCustomerId,
-                }
+                customerId: normalizedCustomerId,
+              }
               : {},
             signal: controller.signal,
           }
@@ -295,7 +295,7 @@ export const ReportsPage: React.FC = () => {
                 Math.floor(
                   (today.getTime() -
                     dueDate.getTime()) /
-                    millisecondsPerDay
+                  millisecondsPerDay
                 ),
                 0
               );
