@@ -47,11 +47,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard');
         }}
         className={cn(
-          "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative outline-none",
+          "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative !outline-none !ring-0",
           isActive 
             ? "border-primary-foreground text-primary-foreground bg-white/10" 
             : "border-transparent text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/5"
         )}
+        style={{ outline: 'none', boxShadow: 'none' }}
       >
         <Icon className="w-4 h-4 flex-shrink-0" />
         <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
@@ -80,11 +81,12 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 <DropdownMenuTrigger asChild>
                   <button
                     className={cn(
-                      "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative outline-none",
+                      "flex items-center gap-2 px-4 py-3 transition-all duration-200 whitespace-nowrap border-b-2 relative !outline-none !ring-0",
                       isGroupActive 
                         ? "border-primary-foreground text-primary-foreground bg-white/10" 
                         : "border-transparent text-primary-foreground/70 hover:text-primary-foreground hover:bg-white/5"
                     )}
+                    style={{ outline: 'none', boxShadow: 'none' }}
                   >
                     <GroupIcon className="w-4 h-4 flex-shrink-0" />
                     <span className="font-medium text-sm">{group.label || t(`navbar:admin.${accessibleItems[0].id}`, accessibleItems[0].label)}</span>
