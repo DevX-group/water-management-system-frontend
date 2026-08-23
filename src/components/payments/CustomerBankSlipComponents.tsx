@@ -402,6 +402,11 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
   selectedSlip, setSelectedSlip, statusClass, handleDeleteSlip
 }) => {
   const { t } = useTranslation('payments');
+  const [imgErrorCount, setImgErrorCount] = React.useState(0);
+
+  React.useEffect(() => {
+    setImgErrorCount(0);
+  }, [selectedSlip?.slipId]);
   if (!selectedSlip) return null;
 
   return (
@@ -414,21 +419,46 @@ export const CustomerBankSlipModal: React.FC<CustomerBankSlipModalProps> = ({
           <X className="w-5 h-5 text-gray-600" />
         </button>
         <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-          {/* LEFT: SLIP IMAGE */}
+          {/* LEFT: SLIP PREVIEW */}
           <div className="flex items-center justify-center bg-gray-100 p-6 border-r overflow-hidden h-full">
-            {selectedSlip.filePath?.includes(".pdf") ? (
-              <iframe
-                src={selectedSlip.filePath}
-                className="w-full h-full rounded-lg shadow"
-                title={t('payments.bankSlipModal.bankSlipPdf')}
-              />
-            ) : (
-              <img
-                src={selectedSlip.filePath}
-                alt={t('payments.bankSlipModal.bankSlipImage')}
-                className="w-full h-full object-contain rounded-lg shadow hover:scale-[1.02] transition"
-              />
-            )}
+            {(() => {
+              const isPdf =
+                selectedSlip.fileType === "application/pdf" ||
+                (Boolean(selectedSlip.filePath) && String(selectedSlip.filePath).toLowerCase().includes(".pdf")) ||
+                (Boolean(selectedSlip.fileName) && String(selectedSlip.fileName).toLowerCase().endsWith(".pdf")) ||
+                imgErrorCount > 0;
+
+              const isCloudinaryImage = selectedSlip.filePath?.includes("/image/upload/");
+              const isCloudinaryRaw = selectedSlip.filePath?.includes("/raw/upload/");
+
+              let previewUrl = selectedSlip.filePath || "";
+
+              if (isPdf && isCloudinaryImage && imgErrorCount < 2) {
+                previewUrl = previewUrl.replace("/image/upload/", "/image/upload/f_jpg,pg_1/");
+                if (previewUrl.toLowerCase().endsWith(".pdf")) {
+                  previewUrl = previewUrl.replace(/\.pdf$/i, ".jpg");
+                }
+              }
+
+              if ((isPdf && isCloudinaryRaw) || imgErrorCount >= 2) {
+                return (
+                  <iframe
+                    src={selectedSlip.filePath}
+                    className="w-full h-full rounded-lg shadow border-0"
+                    title={t('payments.bankSlipModal.bankSlipPdf')}
+                  />
+                );
+              }
+
+              return (
+                <img
+                  src={previewUrl}
+                  alt={t('payments.bankSlipModal.bankSlipImage')}
+                  onError={() => setImgErrorCount((prev) => prev + 1)}
+                  className="w-full h-full object-contain rounded-lg shadow hover:scale-[1.02] transition"
+                />
+              );
+            })()}
           </div>
           {/* RIGHT: DETAILS */}
           <div className="p-6 flex flex-col justify-between overflow-auto">
