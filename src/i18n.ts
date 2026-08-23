@@ -38,6 +38,9 @@ import taSystemSettings from "./locales/ta/systemSettings.json";
 import enReports from "./locales/en/reports.json";
 import siReports from "./locales/si/reports.json";
 import taReports from "./locales/ta/reports.json";
+import enPredictions from "./locales/en/predictions.json";
+import siPredictions from "./locales/si/predictions.json";
+import taPredictions from "./locales/ta/predictions.json";
 
 i18n
   .use(LanguageDetector)
@@ -57,6 +60,7 @@ i18n
         messaging: enMessaging,
         systemSettings: enSystemSettings,
         reports: enReports,
+        predictions: enPredictions,
       },
       si: {
         payments: siPayments,
@@ -71,6 +75,7 @@ i18n
         messaging: siMessaging,
         systemSettings: siSystemSettings,
         reports: siReports,
+        predictions: siPredictions,
       },
       ta: {
         payments: taPayments,
@@ -85,6 +90,7 @@ i18n
         messaging: taMessaging,
         systemSettings: taSystemSettings,
         reports: taReports,
+        predictions: taPredictions,
       },
     },
 

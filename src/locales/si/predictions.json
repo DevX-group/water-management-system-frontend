@@ -1,0 +1,58 @@
+{
+  "page": {
+    "title": "අනාවැකි",
+    "subtitle": "මාස 3 දක්වා නිරීක්ෂණය සහ විශ්ලේෂණය සඳහා පුරෝකථනය කරන ලද දත්ත"
+  },
+  "tabs": {
+    "monthly": "මාසික වාර්තා අනාවැකිය",
+    "customer": "පාරිභෝගික වාර්තා අනාවැකිය",
+    "area": "ප්‍රදේශ වාර්තා අනාවැකිය"
+  },
+  "monthly": {
+    "title": "මාසික භාවිත සහ ආදායම් වාර්තා අනාවැකිය - 2026",
+    "description": "මාස 3 දක්වා පුරෝකථනය කරන ලද තනි පාරිභෝගික පරිභෝජනය සහ බිල්පත් ප්‍රවණතා",
+    "usageLabel": "භාවිතය (L)",
+    "predictionStart": "අනාවැකිය ආරම්භය",
+    "actualUsage": "සත්‍ය භාවිතය",
+    "predictedUsage": "අනාවැකි භාවිතය",
+    "tooltipActualUsage": "සත්‍ය භාවිතය: {{value}} L",
+    "tooltipActualRevenue": "සත්‍ය ආදායම: LKR {{value}}",
+    "tooltipPredictedUsage": "අනාවැකි භාවිතය: {{value}} L",
+    "tooltipPredictedRevenue": "අනාවැකි ආදායම: LKR {{value}}"
+  },
+  "customer": {
+    "title": "පාරිභෝගික භාවිත අනාවැකිය - 2026",
+    "description": "මාස 3 දක්වා තෝරාගත් පාරිභෝගිකයා සඳහා පුරෝකථනය කරන ලද භාවිතය",
+    "searchPlaceholder": "පාරිභෝගික හැඳුනුම්පත (උදා., C001)",
+    "usageLabel": "භාවිතය (L)",
+    "predictionStart": "අනාවැකිය ආරම්භය",
+    "actualUsage": "සත්‍ය භාවිතය",
+    "predictedUsage": "අනාවැකි භාවිතය",
+    "tooltipActualUsage": "සත්‍ය භාවිතය: {{value}} L",
+    "tooltipActualRevenue": "සත්‍ය ආදායම: LKR {{value}}",
+    "tooltipPredictedUsage": "අනාවැකි භාවිතය: {{value}} L",
+    "tooltipPredictedRevenue": "අනාවැකි ආදායම: LKR {{value}}"
+  },
+  "area": {
+    "title": "ප්‍රදේශ අනුව භාවිත සහ ආදායම් වාර්තා අනාවැකිය - {{year}}",
+    "description": "මාස 3 දක්වා පුරෝකථනය කරන ලද ප්‍රවණතා",
+    "allAreas": "සියලු ප්‍රදේශ",
+    "area1": "ප්‍රදේශ 1",
+    "area2": "ප්‍රදේශ 2",
+    "area3": "ප්‍රදේශ 3",
+    "series": {
+      "area1Usage": "ප්‍රදේශ 1 භාවිතය",
+      "area1Revenue": "ප්‍රදේශ 1 ආදායම",
+      "predictedArea1Usage": "ප්‍රදේශ 1 අනාවැකි භාවිතය",
+      "predictedArea1Revenue": "ප්‍රදේශ 1 අනාවැකි ආදායම",
+      "area2Usage": "ප්‍රදේශ 2 භාවිතය",
+      "area2Revenue": "ප්‍රදේශ 2 ආදායම",
+      "predictedArea2Usage": "ප්‍රදේශ 2 අනාවැකි භාවිතය",
+      "predictedArea2Revenue": "ප්‍රදේශ 2 අනාවැකි ආදායම",
+      "area3Usage": "ප්‍රදේශ 3 භාවිතය",
+      "area3Revenue": "ප්‍රදේශ 3 ආදායම",
+      "predictedArea3Usage": "ප්‍රදේශ 3 අනාවැකි භාවිතය",
+      "predictedArea3Revenue": "ප්‍රදේශ 3 අනාවැකි ආදායම"
+    }
+  }
+}
