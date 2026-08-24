@@ -52,6 +52,13 @@ export const useLogin = () => {
         navigate('/customer/dashboard');
       }
     } catch (error: any) {
+      console.error('[auth] Login UI error', {
+        nic: formData.nic,
+        status: error?.response?.status ?? null,
+        backendMessage: error?.response?.data?.message ?? null,
+        networkError: !error?.response,
+      });
+
       if (error.response && error.response.data && error.response.data.message) {
         setLoginError(error.response.data.message);
       } else {
