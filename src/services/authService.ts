@@ -51,8 +51,32 @@ export interface PasswordResetCompleteResponse {
 
 export const authService = {
   login: async (credentials: LoginRequest): Promise<LoginResponse> => {
-    const response = await api.post<LoginResponse>('/auth/login', credentials);
-    return response.data;
+    console.info('[auth] Login request started', {
+      endpoint: '/auth/login',
+      nic: credentials.nic,
+      hasPassword: Boolean(credentials.password),
+    });
+
+    try {
+      const response = await api.post<LoginResponse>('/auth/login', credentials);
+      console.info('[auth] Login response received', {
+        status: response.status,
+        nic: response.data?.nic,
+        role: response.data?.role,
+        hasToken: Boolean(response.data?.token),
+      });
+      return response.data;
+    } catch (error: any) {
+      console.error('[auth] Login request failed', {
+        nic: credentials.nic,
+        status: error?.response?.status ?? null,
+        responseData: error?.response?.data ?? null,
+        message: error?.message ?? 'Unknown error',
+        requestUrl: error?.config?.url ?? '/auth/login',
+        baseURL: error?.config?.baseURL ?? api.defaults.baseURL,
+      });
+      throw error;
+    }
   },
   activate: async (payload: ActivationRequest): Promise<ActivationResponse> => {
     const response = await api.post<ActivationResponse>('/auth/activate', payload);

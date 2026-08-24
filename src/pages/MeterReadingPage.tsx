@@ -4,6 +4,7 @@ import { Wifi, WifiOff } from 'lucide-react';
 import { MeterReadingForm } from '@/components/meter-reading/MeterReadingForm';
 import { MeterReadingInstructions } from '@/components/meter-reading/MeterReadingInstructions';
 import { MeterReadingsTable } from '@/components/meter-reading/MeterReadingsTable';
+import { PWAInstallButton } from '@/components/pwa/PWAInstallButton';
 
 import { useMeterReading } from '@/hooks/useMeterReading';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +41,7 @@ export const MeterReadingPage = () => {
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
+          <PWAInstallButton size="sm" variant="outline" className="shadow-sm" />
           <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium border ${isOnline
             ? 'bg-green-500/10 text-green-600 border-green-500/20'
             : 'bg-red-500/10 text-red-600 border-red-500/20'

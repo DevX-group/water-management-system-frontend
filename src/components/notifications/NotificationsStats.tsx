@@ -44,7 +44,7 @@ export const NotificationsStats: React.FC<NotificationsStatsProps> = ({ counts }
   );
 };
 
-export const NotificationsFilter: React.FC<any> = ({ filter, setFilter }) => {
+export const NotificationsFilter: React.FC<any> = ({ filter, setFilter }) => {  
   const { t } = useTranslation('alerts');
   return (
   <div className="flex flex-col items-center justify-center w-full mt-4">
