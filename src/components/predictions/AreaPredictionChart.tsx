@@ -68,6 +68,8 @@ export const AreaPredictionChart: React.FC<
   setSelectedArea,
   selectedYear,
 }) => {
+    const { t } = useTranslation("predictions");
+
     const [
       areaPredictionData,
       setAreaPredictionData,
@@ -129,12 +131,11 @@ export const AreaPredictionChart: React.FC<
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>
-                Area-wise Usage and Revenue Prediction -{" "}
-                {selectedYear}
+                {t("area.title", { year: selectedYear })}
               </CardTitle>
 
               <CardDescription>
-                Predicted trends up to 3 months
+                {t("area.description")}
               </CardDescription>
             </div>
 
@@ -152,19 +153,19 @@ export const AreaPredictionChart: React.FC<
 
                 <SelectContent>
                   <SelectItem value="all">
-                    All Areas
+                    {t("area.allAreas")}
                   </SelectItem>
 
                   <SelectItem value="area1">
-                    Area 1
+                    {t("area.area1")}
                   </SelectItem>
 
                   <SelectItem value="area2">
-                    Area 2
+                    {t("area.area2")}
                   </SelectItem>
 
                   <SelectItem value="area3">
-                    Area 3
+                    {t("area.area3")}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -229,28 +230,28 @@ export const AreaPredictionChart: React.FC<
                         <Bar
                           yAxisId="left"
                           dataKey="area1Usage"
-                          name="Area 1 Usage"
+                          name={t("area.series.area1Usage")}
                           fill="#0ea5e9"
                         />
 
                         <Bar
                           yAxisId="right"
                           dataKey="area1Revenue"
-                          name="Area 1 Revenue"
+                          name={t("area.series.area1Revenue")}
                           fill="#0369a1"
                         />
 
                         <Bar
                           yAxisId="left"
                           dataKey="predictedArea1Usage"
-                          name="Predicted Area 1 Usage"
+                          name={t("area.series.predictedArea1Usage")}
                           fill="#93c5fd"
                         />
 
                         <Bar
                           yAxisId="right"
                           dataKey="predictedArea1Revenue"
-                          name="Predicted Area 1 Revenue"
+                          name={t("area.series.predictedArea1Revenue")}
                           fill="#60a5fa"
                         />
                       </>
@@ -263,28 +264,28 @@ export const AreaPredictionChart: React.FC<
                         <Bar
                           yAxisId="left"
                           dataKey="area2Usage"
-                          name="Area 2 Usage"
+                          name={t("area.series.area2Usage")}
                           fill="#22c55e"
                         />
 
                         <Bar
                           yAxisId="right"
                           dataKey="area2Revenue"
-                          name="Area 2 Revenue"
+                          name={t("area.series.area2Revenue")}
                           fill="#15803d"
                         />
 
                         <Bar
                           yAxisId="left"
                           dataKey="predictedArea2Usage"
-                          name="Predicted Area 2 Usage"
+                          name={t("area.series.predictedArea2Usage")}
                           fill="#86efac"
                         />
 
                         <Bar
                           yAxisId="right"
                           dataKey="predictedArea2Revenue"
-                          name="Predicted Area 2 Revenue"
+                          name={t("area.series.predictedArea2Revenue")}
                           fill="#4ade80"
                         />
                       </>
@@ -297,28 +298,28 @@ export const AreaPredictionChart: React.FC<
                         <Bar
                           yAxisId="left"
                           dataKey="area3Usage"
-                          name="Area 3 Usage"
+                          name={t("area.series.area3Usage")}
                           fill="#f59e0b"
                         />
 
                         <Bar
                           yAxisId="right"
                           dataKey="area3Revenue"
-                          name="Area 3 Revenue"
+                          name={t("area.series.area3Revenue")}
                           fill="#b45309"
                         />
 
                         <Bar
                           yAxisId="left"
                           dataKey="predictedArea3Usage"
-                          name="Predicted Area 3 Usage"
+                          name={t("area.series.predictedArea3Usage")}
                           fill="#fde68a"
                         />
 
                         <Bar
                           yAxisId="right"
                           dataKey="predictedArea3Revenue"
-                          name="Predicted Area 3 Revenue"
+                          name={t("area.series.predictedArea3Revenue")}
                           fill="#facc15"
                         />
                       </>
