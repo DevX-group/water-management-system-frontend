@@ -33,6 +33,7 @@ import {
 } from "@/components/ui/select";
 
 import { exportPDF } from "@/util/exportPDF";
+import { useTranslation } from "react-i18next";
 
 export interface AreaReportRow {
   month: string;
@@ -77,27 +78,25 @@ export const AreaReportTab: React.FC<
   setAreaYear,
   areaData,
 }) => {
+  const { t } = useTranslation("reports");
+
   /*
    * Decide which areas should appear in the PDF.
-   *
-   * This is not database filtering. The backend has
-   * already returned the requested data. This only
-   * changes the PDF row layout.
    */
   const includedAreas =
     selectedArea === "all"
       ? [
           {
             key: "area1",
-            label: "Area 1",
+            label: t("area.area1"),
           },
           {
             key: "area2",
-            label: "Area 2",
+            label: t("area.area2"),
           },
           {
             key: "area3",
-            label: "Area 3",
+            label: t("area.area3"),
           },
         ]
       : [
@@ -105,10 +104,10 @@ export const AreaReportTab: React.FC<
             key: selectedArea,
             label:
               selectedArea === "area1"
-                ? "Area 1"
+                ? t("area.area1")
                 : selectedArea === "area2"
-                  ? "Area 2"
-                  : "Area 3",
+                  ? t("area.area2")
+                  : t("area.area3"),
           },
         ];
 
@@ -144,12 +143,12 @@ export const AreaReportTab: React.FC<
 
   const selectedAreaLabel =
     selectedArea === "all"
-      ? "All Areas"
+      ? t("area.allAreas")
       : selectedArea === "area1"
-        ? "Area 1"
+        ? t("area.area1")
         : selectedArea === "area2"
-          ? "Area 2"
-          : "Area 3";
+          ? t("area.area2")
+          : t("area.area3");
 
   return (
     <Card>
@@ -157,12 +156,11 @@ export const AreaReportTab: React.FC<
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>
-              Area-wise Usage and Revenue Report
+              {t("area.title")}
             </CardTitle>
 
             <CardDescription>
-              Usage and revenue trends summarized by
-              area for comparison across regions
+              {t("area.description")}
             </CardDescription>
           </div>
 
@@ -180,19 +178,19 @@ export const AreaReportTab: React.FC<
 
               <SelectContent>
                 <SelectItem value="all">
-                  All Areas
+                  {t("area.allAreas")}
                 </SelectItem>
 
                 <SelectItem value="area1">
-                  Area 1
+                  {t("area.area1")}
                 </SelectItem>
 
                 <SelectItem value="area2">
-                  Area 2
+                  {t("area.area2")}
                 </SelectItem>
 
                 <SelectItem value="area3">
-                  Area 3
+                  {t("area.area3")}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -375,7 +373,7 @@ export const AreaReportTab: React.FC<
                   <Bar
                     yAxisId="left"
                     dataKey="area1Usage"
-                    name="Area 1 Usage (L)"
+                    name={t("area.series.area1Usage")}
                     fill="hsl(187, 75%, 35%)"
                     radius={[4, 4, 0, 0]}
                   />
@@ -384,7 +382,7 @@ export const AreaReportTab: React.FC<
                     yAxisId="right"
                     type="monotone"
                     dataKey="area1Revenue"
-                    name="Area 1 Revenue (LKR)"
+                    name={t("area.series.area1Revenue")}
                     stroke="hsl(187, 75%, 55%)"
                     strokeWidth={2}
                   />
@@ -398,7 +396,7 @@ export const AreaReportTab: React.FC<
                   <Bar
                     yAxisId="left"
                     dataKey="area2Usage"
-                    name="Area 2 Usage (L)"
+                    name={t("area.series.area2Usage")}
                     fill="hsl(152, 70%, 40%)"
                     radius={[4, 4, 0, 0]}
                   />
@@ -407,7 +405,7 @@ export const AreaReportTab: React.FC<
                     yAxisId="right"
                     type="monotone"
                     dataKey="area2Revenue"
-                    name="Area 2 Revenue (LKR)"
+                    name={t("area.series.area2Revenue")}
                     stroke="hsl(152, 70%, 60%)"
                     strokeWidth={2}
                   />
@@ -421,7 +419,7 @@ export const AreaReportTab: React.FC<
                   <Bar
                     yAxisId="left"
                     dataKey="area3Usage"
-                    name="Area 3 Usage (L)"
+                    name={t("area.series.area3Usage")}
                     fill="hsl(38, 92%, 55%)"
                     radius={[4, 4, 0, 0]}
                   />
@@ -430,7 +428,7 @@ export const AreaReportTab: React.FC<
                     yAxisId="right"
                     type="monotone"
                     dataKey="area3Revenue"
-                    name="Area 3 Revenue (LKR)"
+                    name={t("area.series.area3Revenue")}
                     stroke="hsl(38, 92%, 75%)"
                     strokeWidth={2}
                   />
@@ -446,7 +444,7 @@ export const AreaReportTab: React.FC<
             onClick={() =>
               exportPDF(
                 areaPdfData,
-                `Area Report - ${selectedAreaLabel} - ${areaYear}`,
+                `${t("area.title")} - ${selectedAreaLabel} - ${areaYear}`,
                 `AreaReport-${selectedArea}-${areaYear}.pdf`,
                 [
                   {
@@ -484,7 +482,7 @@ export const AreaReportTab: React.FC<
             }
           >
             <Download className="w-4 h-4 mr-2" />
-            Export as PDF
+            {t("common.exportPdf")}
           </Button>
         </div>
       </CardContent>

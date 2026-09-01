@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { exportPDF } from "@/util/exportPDF";
+import { useTranslation } from "react-i18next";
 
 export interface MonthlyReportRow {
   month: string;
@@ -48,6 +49,8 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
   setYear,
   reports,
 }) => {
+  const { t } = useTranslation("reports");
+
   const pdfData = reports.map((item) => ({
     month: item.month,
     usage: Number(item.usage ?? item.totalUsage ?? 0),
@@ -59,9 +62,9 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Monthly Usage and Revenue Report</CardTitle>
+            <CardTitle>{t("monthly.title")}</CardTitle>
             <CardDescription>
-              Usage and revenue trends across months for a selected year
+              {t("monthly.description")}
             </CardDescription>
           </div>
 
@@ -70,7 +73,7 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
             onValueChange={(value) => setYear(Number(value))}
           >
             <SelectTrigger className="w-32">
-              <SelectValue placeholder="Year" />
+              <SelectValue placeholder={t("common.year")} />
             </SelectTrigger>
 
             <SelectContent>
@@ -101,7 +104,7 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
               <YAxis
                 stroke="hsl(var(--muted-foreground))"
                 label={{
-                  value: "Usage (L)",
+                  value: t("monthly.usageLabel"),
                   position: "top",
                   offset: 10,
                 }}
@@ -117,7 +120,7 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
 
               <Bar
                 dataKey="usage"
-                name="Usage (L)"
+                name={t("monthly.usageSeries")}
                 fill="hsl(187, 75%, 35%)"
                 radius={[4, 4, 0, 0]}
               />
@@ -125,7 +128,7 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
               <Line
                 type="monotone"
                 dataKey="revenue"
-                name="Revenue (LKR)"
+                name={t("monthly.revenueSeries")}
                 stroke="hsl(152, 70%, 40%)"
                 strokeWidth={2}
               />
@@ -135,22 +138,22 @@ export const MonthlyReportTab: React.FC<MonthlyReportTabProps> = ({
 
         <div className="flex justify-end mt-4">
           <Button
-  disabled={reports.length === 0}
-  onClick={() =>
-    exportPDF(
-      reports.map((item) => ({
-        month: item.month,
-        usage: Number(item.usage ?? item.totalUsage ?? 0),
-        revenue: Number(item.revenue ?? item.totalRevenue ?? 0),
-      })),
-      `Monthly Usage and Revenue Report - ${year}`,
-      `MonthlyReport-${year}.pdf`
-    )
-  }
->
-  <Download className="w-4 h-4 mr-2" />
-  Export as PDF
-</Button>
+            disabled={reports.length === 0}
+            onClick={() =>
+              exportPDF(
+                reports.map((item) => ({
+                  month: item.month,
+                  usage: Number(item.usage ?? item.totalUsage ?? 0),
+                  revenue: Number(item.revenue ?? item.totalRevenue ?? 0),
+                })),
+                `${t("monthly.title")} - ${year}`,
+                `MonthlyReport-${year}.pdf`
+              )
+            }
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {t("common.exportPdf")}
+          </Button>
         </div>
       </CardContent>
     </Card>
