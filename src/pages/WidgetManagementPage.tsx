@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useTranslation } from 'react-i18next';
 
 const ALL_ROLES = ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER', 'CUSTOMER'];
 
@@ -21,6 +22,7 @@ const WidgetCatalogCard: React.FC<{
   onSaved: () => void;
 }> = ({ widget, initialAssignedRoles, onSaved }) => {
   const { toast } = useToast();
+  const { t } = useTranslation('widgetManagement');
   const [name, setName] = useState(widget.name);
   const [active, setActive] = useState(widget.active);
   const [assignedRoles, setAssignedRoles] = useState<Set<string>>(new Set(initialAssignedRoles));
@@ -77,10 +79,10 @@ const WidgetCatalogCard: React.FC<{
         await removeWidgetFromRole(role, widget.id).catch(() => {});
       }
 
-      toast({ title: 'Widget updated successfully.' });
+      toast({ title: t('card.saveSuccess') });
       onSaved();
     } catch (err: any) {
-      toast({ title: 'Failed to update widget.', variant: 'destructive' });
+      toast({ title: t('card.saveError'), variant: 'destructive' });
     } finally {
       setSaving(false);
     }
@@ -104,7 +106,7 @@ const WidgetCatalogCard: React.FC<{
 
         {/* Name Edit */}
         <div>
-          <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">Widget Name</label>
+          <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">{t('card.widgetName')}</label>
           <Input 
             value={name} 
             onChange={(e) => setName(e.target.value)}
@@ -114,7 +116,7 @@ const WidgetCatalogCard: React.FC<{
         
         {/* Role Assignment */}
         <div className="flex-1">
-          <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">Assigned Roles</label>
+          <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">{t('card.assignedRoles')}</label>
           <div className="flex flex-wrap gap-2">
             {availableRoles.map(role => {
               const isAssigned = assignedRoles.has(role);
@@ -135,7 +137,7 @@ const WidgetCatalogCard: React.FC<{
 
         {/* Status Toggle */}
         <div className="flex items-center justify-between pt-2 border-t">
-          <span className="text-sm font-medium">{active ? 'Active' : 'Deactivated'}</span>
+          <span className="text-sm font-medium">{active ? t('card.active') : t('card.deactivated')}</span>
           <Switch 
             checked={active} 
             onCheckedChange={setActive}
@@ -146,7 +148,7 @@ const WidgetCatalogCard: React.FC<{
         <div className={`transition-all duration-300 overflow-hidden ${hasChanges ? 'max-h-12 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'}`}>
           <Button onClick={handleSave} disabled={saving} className="w-full h-9 text-sm">
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-            Save Changes
+            {t('card.saveChanges')}
           </Button>
         </div>
       </div>
@@ -156,6 +158,7 @@ const WidgetCatalogCard: React.FC<{
 
 export const WidgetManagementPage: React.FC = () => {
   const { toast } = useToast();
+  const { t } = useTranslation('widgetManagement');
 
   const [catalog, setCatalog] = useState<WidgetDefinition[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -193,9 +196,9 @@ export const WidgetManagementPage: React.FC = () => {
         // Sort by ID to ensure position stability
         setCatalog(data.sort((a, b) => a.id - b.id));
       })
-      .catch(() => toast({ title: 'Failed to load widget catalog', variant: 'destructive' }))
+      .catch(() => toast({ title: t('loadError'), variant: 'destructive' }))
       .finally(() => setCatalogLoading(false));
-  }, [toast]);
+  }, [toast, t]);
 
   const loadDashboard = useCallback((role: string) => {
     setDashLoading(true);
@@ -240,10 +243,10 @@ export const WidgetManagementPage: React.FC = () => {
         };
       });
       await updateDashboardLayout(dashConfig.dashboardId, payload as any);
-      toast({ title: 'Dashboard layout saved successfully.' });
+      toast({ title: t('dashboard.saveSuccess') });
       refreshAll();
     } catch (err: any) {
-      toast({ title: 'Failed to save layout: ' + (err.message || ''), variant: 'destructive' });
+      toast({ title: t('dashboard.saveError') + ' ' + (err.message || ''), variant: 'destructive' });
     } finally {
       setSavingDash(false);
     }
@@ -313,17 +316,17 @@ export const WidgetManagementPage: React.FC = () => {
           <LayoutGrid className="w-6 h-6 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Widget Management</h1>
-          <p className="mt-1 text-muted-foreground">Manage the widget catalog and configure role dashboards.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('page.title')}</h1>
+          <p className="mt-1 text-muted-foreground">{t('page.subtitle')}</p>
         </div>
       </div>
 
       {/* Widget Catalog Section */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Widget Catalog</h2>
+          <h2 className="text-xl font-semibold">{t('catalog.title')}</h2>
           <Button variant="outline" size="sm" onClick={refreshAll}>
-            <RefreshCw className={`w-4 h-4 mr-2 ${catalogLoading ? 'animate-spin' : ''}`} /> Refresh
+            <RefreshCw className={`w-4 h-4 mr-2 ${catalogLoading ? 'animate-spin' : ''}`} /> {t('catalog.refresh')}
           </Button>
         </div>
         
@@ -353,7 +356,7 @@ export const WidgetManagementPage: React.FC = () => {
 
       {/* Dashboard Configuration Section */}
       <section className="space-y-4 pt-8 border-t">
-        <h2 className="text-xl font-semibold">Dashboard Configurations</h2>
+        <h2 className="text-xl font-semibold">{t('dashboard.title')}</h2>
         <Tabs value={selectedRole} onValueChange={setSelectedRole} className="w-full">
           <TabsList className="mb-6 flex flex-wrap h-auto">
             {ALL_ROLES.map(role => (
@@ -366,12 +369,12 @@ export const WidgetManagementPage: React.FC = () => {
           <TabsContent value={selectedRole} className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-medium">{selectedRole.replace('_', ' ')} Dashboard</h3>
-                <p className="text-sm text-muted-foreground">Add, resize, and reorder widgets for this role.</p>
+                <h3 className="text-lg font-medium">{t('dashboard.roleTitle', { role: selectedRole.replace('_', ' ') })}</h3>
+                <p className="text-sm text-muted-foreground">{t('dashboard.roleSubtitle')}</p>
               </div>
               <Button onClick={saveLayout} disabled={savingDash || dashLoading}>
                 {savingDash ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-                Save Layout
+                {t('dashboard.saveLayout')}
               </Button>
             </div>
 
@@ -379,17 +382,17 @@ export const WidgetManagementPage: React.FC = () => {
               <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
             ) : !dashConfig ? (
               <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
-                No active dashboard found for {selectedRole}.
+                {t('dashboard.noActiveDashboard', { role: selectedRole })}
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 
                 {/* Placed Widgets */}
                 <div className="lg:col-span-2 space-y-3">
-                  <h4 className="text-sm font-semibold uppercase text-muted-foreground mb-2">Placed Widgets</h4>
+                  <h4 className="text-sm font-semibold uppercase text-muted-foreground mb-2">{t('dashboard.placedWidgets')}</h4>
                   {placements.length === 0 ? (
                     <div className="text-center py-8 text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
-                      Dashboard is empty. Add widgets from the panel.
+                      {t('dashboard.emptyDashboard')}
                     </div>
                   ) : (
                     placements.map((p, idx) => (
@@ -406,7 +409,7 @@ export const WidgetManagementPage: React.FC = () => {
                         {/* Size Controls */}
                         <div className="flex gap-4 mr-4">
                           <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase">Width</span>
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase">{t('dashboard.width')}</span>
                             <div className="flex items-center gap-1 mt-1 bg-muted rounded-md p-0.5">
                               <button onClick={() => changeSpan(idx, 'colSpan', -1)} disabled={p.colSpan <= 1} className="w-5 h-5 flex items-center justify-center bg-background rounded shadow-sm text-xs disabled:opacity-50">-</button>
                               <span className="text-xs font-mono w-4 text-center">{p.colSpan}</span>
@@ -414,7 +417,7 @@ export const WidgetManagementPage: React.FC = () => {
                             </div>
                           </div>
                           <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-semibold text-muted-foreground uppercase">Height</span>
+                            <span className="text-[10px] font-semibold text-muted-foreground uppercase">{t('dashboard.height')}</span>
                             <div className="flex items-center gap-1 mt-1 bg-muted rounded-md p-0.5">
                               <button onClick={() => changeSpan(idx, 'rowSpan', -1)} disabled={p.rowSpan <= 1} className="w-5 h-5 flex items-center justify-center bg-background rounded shadow-sm text-xs disabled:opacity-50">-</button>
                               <span className="text-xs font-mono w-4 text-center">{p.rowSpan}</span>
@@ -433,10 +436,10 @@ export const WidgetManagementPage: React.FC = () => {
 
                 {/* Available Widgets */}
                 <div className="space-y-3">
-                  <h4 className="text-sm font-semibold uppercase text-muted-foreground mb-2">Available Widgets</h4>
+                  <h4 className="text-sm font-semibold uppercase text-muted-foreground mb-2">{t('dashboard.availableWidgets')}</h4>
                   <div className="bg-muted/30 rounded-xl border p-4 space-y-3 min-h-[300px]">
                     {availableWidgetsForRole.length === 0 ? (
-                      <p className="text-sm text-muted-foreground text-center py-4">No other widgets available for this role.</p>
+                      <p className="text-sm text-muted-foreground text-center py-4">{t('dashboard.noWidgetsAvailable')}</p>
                     ) : (
                       availableWidgetsForRole.map(w => (
                         <div key={w.id} className="flex items-center justify-between bg-card border rounded-lg p-3 shadow-sm">
@@ -445,7 +448,7 @@ export const WidgetManagementPage: React.FC = () => {
                             <p className="text-[10px] text-muted-foreground">{w.widgetType}</p>
                           </div>
                           <Button size="sm" variant="secondary" onClick={() => addWidgetToDash(w)}>
-                            <Plus className="w-4 h-4 mr-1" /> Add
+                            <Plus className="w-4 h-4 mr-1" /> {t('dashboard.add')}
                           </Button>
                         </div>
                       ))

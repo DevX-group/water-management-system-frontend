@@ -1,0 +1,36 @@
+{
+  "page": {
+    "title": "Widget Management",
+    "subtitle": "Manage the widget catalog and configure role dashboards."
+  },
+  "catalog": {
+    "title": "Widget Catalog",
+    "refresh": "Refresh"
+  },
+  "card": {
+    "widgetName": "Widget Name",
+    "assignedRoles": "Assigned Roles",
+    "active": "Active",
+    "deactivated": "Deactivated",
+    "saveChanges": "Save Changes",
+    "saveSuccess": "Widget updated successfully.",
+    "saveError": "Failed to update widget."
+  },
+  "dashboard": {
+    "title": "Dashboard Configurations",
+    "roleTitle": "{{role}} Dashboard",
+    "roleSubtitle": "Add, resize, and reorder widgets for this role.",
+    "saveLayout": "Save Layout",
+    "saveSuccess": "Dashboard layout saved successfully.",
+    "saveError": "Failed to save layout.",
+    "noActiveDashboard": "No active dashboard found for {{role}}.",
+    "placedWidgets": "Placed Widgets",
+    "availableWidgets": "Available Widgets",
+    "emptyDashboard": "Dashboard is empty. Add widgets from the panel.",
+    "noWidgetsAvailable": "No other widgets available for this role.",
+    "add": "Add",
+    "width": "Width",
+    "height": "Height"
+  },
+  "loadError": "Failed to load widget catalog"
+}

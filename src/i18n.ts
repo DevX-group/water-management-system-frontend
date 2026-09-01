@@ -44,6 +44,9 @@ import taPredictions from "./locales/ta/predictions.json";
 import enInternalChat from "./locales/en/internalChat.json";
 import siInternalChat from "./locales/si/internalChat.json";
 import taInternalChat from "./locales/ta/internalChat.json";
+import enWidgetManagement from "./locales/en/widgetManagement.json";
+import siWidgetManagement from "./locales/si/widgetManagement.json";
+import taWidgetManagement from "./locales/ta/widgetManagement.json";
 
 i18n
   .use(LanguageDetector)
@@ -65,6 +68,7 @@ i18n
         reports: enReports,
         predictions: enPredictions,
         internalChat: enInternalChat,
+        widgetManagement: enWidgetManagement,
       },
       si: {
         payments: siPayments,
@@ -81,6 +85,7 @@ i18n
         reports: siReports,
         predictions: siPredictions,
         internalChat: siInternalChat,
+        widgetManagement: siWidgetManagement,
       },
       ta: {
         payments: taPayments,
@@ -97,6 +102,7 @@ i18n
         reports: taReports,
         predictions: taPredictions,
         internalChat: taInternalChat,
+        widgetManagement: taWidgetManagement,
       },
     },
 
