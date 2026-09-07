@@ -64,7 +64,7 @@ const Bills = () => {
           <motion.div variants={itemVariants} className="mb-8">
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {t('history.title')} {t('history.titleHighlight')}
-            </h1><p className="mt-1 text-muted-foreground">View your past billing history and download invoices.</p>
+            </h1><p className="mt-1 text-muted-foreground">{t('history.subtitle')}</p>
           </motion.div>
 
           {/* normalize billId to string to satisfy BillsSummaryStats Bill type */}
