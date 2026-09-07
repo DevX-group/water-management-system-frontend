@@ -29,6 +29,8 @@ import ForgotPassword from "./pages/ForgotPassword";
 import VerifyResetOtp from "./pages/VerifyResetOtp";
 import ResetPassword from "./pages/ResetPassword";
 
+import { SharedBillView } from "./pages/SharedBillView";
+
 // Auth integrations
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/routes/ProtectedRoute";
@@ -101,6 +103,7 @@ const App = () => (
                 <Route path="/terms" element={<TermsOfService />} />
                 <Route path="/cookies" element={<CookiePolicy />} />
                 <Route path="/blog" element={<Blog />} />
+                <Route path="/bills/shared/:token" element={<SharedBillView />} />
 
                 {/* Customer Routes */}
                 <Route element={<ProtectedRoute allowedRoles={['CUSTOMER']} />}>

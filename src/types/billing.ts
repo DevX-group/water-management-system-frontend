@@ -18,9 +18,18 @@ export interface BillResponse {
   billDate:      string;
   dueDate:       string;
   usageUnits:    number;
+  previousReading?: number;
+  currentReading?: number;
+  baseCharge?:   number;
+  usageCharge?:  number;
+  taxAmount?:    number;
   totalAmount:   number;
   balanceDue:    number;
   status:        string;
+  customerName?: string;
+  nic?:          string;
+  subscriptionNumber?: string;
+  shareToken?:   string;
 }
 
 export interface BillBreakdown {
