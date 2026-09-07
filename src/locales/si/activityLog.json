@@ -1,0 +1,156 @@
+{
+  "page": {
+    "title": "ක්‍රියාකාරකම් ලොග",
+    "subtitle": "පරිපාලන සමාලෝචනය සඳහා කියවීමට පමණ වන පද්ධති ක්‍රියාකාරකම් වාර්තා."
+  },
+  "filters": {
+    "title": "පෙරීම",
+    "subtitle": "පෞද්ගලික පාරිභෝගික හෝ ගෙවීම් තොරතුරු හෙළිදරව් නොකර ප්‍රතිඵල සීමා කරන්න.",
+    "from": "සිට (ඇතුළත්)",
+    "to": "දක්වා (ඇතුළත්)",
+    "actor": "ක්‍රියාකරු",
+    "actorPlaceholder": "ප්‍රදර්ශන නාමය සොයන්න",
+    "action": "ක්‍රියාව",
+    "entityType": "ආකාරය",
+    "source": "මූලාශ්‍රය",
+    "sortBy": "අනුව වර්ග කරන්න",
+    "direction": "දිශාව",
+    "apply": "පෙරීම යොදන්න",
+    "reset": "යළි සකසන්න",
+    "all": "සියල්ල",
+    "validationError": "ආරම්භ දිනය හා වේලාව අවසාන දිනයට වඩා පසු නොවිය යුතුය."
+  },
+  "results": {
+    "title": "වාර්තා ක්‍රියාකාරකම්",
+    "totalRecords_one": "මුළු {{count}} වාර්තාව",
+    "totalRecords_other": "මුළු {{count}} වාර්තා",
+    "tryAgain": "නැවත උත්සාහ කරන්න",
+    "emptyFiltered": "මෙම පෙරීම් සඳහා ක්‍රියාකාරකම් නොමැත.",
+    "emptyFilteredHint": "ඉදිරියට යාමට පෙරීම් සකස් කරන්න හෝ යළි සකසන්න.",
+    "emptyDefault": "ක්‍රියාකාරකම් තවම වාර්තා නොකරයි.",
+    "emptyDefaultHint": "නව කියවීමට පමණ වාර්තා මෙහි දිස් වනු ඇත.",
+    "page": "{{current}} / {{total}} පිටුව",
+    "previous": "පෙර",
+    "next": "ඊළඟ"
+  },
+  "table": {
+    "occurred": "සිදු වූ දිනය",
+    "actor": "ක්‍රියාකරු",
+    "action": "ක්‍රියාව",
+    "entity": "ආකාරය",
+    "summary": "සාරාංශය",
+    "source": "මූලාශ්‍රය",
+    "details": "විස්තර",
+    "view": "බලන්න",
+    "viewAriaLabel": "ක්‍රියාකාරකම {{id}} සඳහා විස්තර බලන්න"
+  },
+  "detail": {
+    "title": "ක්‍රියාකාරකම් විස්තර",
+    "subtitle": "පද්ධතිය විසින් වාර්තා කරන ලද කියවීමට පමණ, සනීකරණ කරන ලද තොරතුරු.",
+    "occurred": "සිදු වූ දිනය",
+    "source": "මූලාශ්‍රය",
+    "actor": "ක්‍රියාකරු",
+    "actorRole": "ක්‍රියාකරු භූමිකාව",
+    "action": "ක්‍රියාව",
+    "entityType": "ආකාරය",
+    "entityId": "ආකාර ID",
+    "summary": "සාරාංශය",
+    "changedFields": "වෙනස් කරන ලද ක්ෂේත්‍ර",
+    "fieldColumn": "ක්ෂේත්‍රය",
+    "valueColumn": "ආරක්ෂිත අගය",
+    "noChangedFields": "වෙනස් කරන ලද ක්ෂේත්‍ර වාර්තා නොකළේය.",
+    "loadError": "ක්‍රියාකාරකම් විස්තර පූරණය කළ නොහැක.",
+    "notAuthorized": "ඔබට ක්‍රියාකාරකම් ලොග් බැලීමට අවසර නැත.",
+    "notFound": "ඉල්ලූ ක්‍රියාකාරකම් වාර්තාව හමු නොවීය."
+  },
+  "actions": {
+    "USER_CREATED": "පරිශීලක සාදන ලදී",
+    "USER_PROFILE_UPDATED": "පරිශීලක පැතිකඩ යාවත්කාලීන කරන ලදී",
+    "USER_STATUS_CHANGED": "පරිශීලක තත්ත්වය වෙනස් කරන ලදී",
+    "USER_ROLE_CHANGED": "පරිශීලක භූමිකාව වෙනස් කරන ලදී",
+    "USER_ACTIVATED": "පරිශීලක සක්‍රිය කරන ලදී",
+    "PAYMENT_CREATED": "ගෙවීම සාදන ලදී",
+    "PAYMENT_UPDATED": "ගෙවීම යාවත්කාලීන කරන ලදී",
+    "PAYMENT_STATUS_CHANGED": "ගෙවීම් තත්ත්වය වෙනස් කරන ලදී",
+    "PAYMENT_DELETED": "ගෙවීම මකා දමන ලදී",
+    "METER_READING_CREATED": "මීටර් කියවීම ඇතුළත් කරන ලදී",
+    "METER_READING_UPDATED": "මීටර් කියවීම යාවත්කාලීන කරන ලදී"
+  },
+  "entityTypes": {
+    "USER": "පරිශීලක",
+    "PAYMENT": "ගෙවීම",
+    "METER_READING": "මීටර් කියවීම"
+  },
+  "sources": {
+    "WEB": "වෙබ්",
+    "SYSTEM": "පද්ධතිය",
+    "MCP": "MCP"
+  },
+  "roles": {
+    "SUPER_ADMIN": "ප්‍රධාන පරිපාලක",
+    "SYSTEM_ADMIN": "පද්ධති පරිපාලක",
+    "CUSTOMER_HANDLER": "පාරිභෝගික භාරකරු",
+    "METER_READER": "මීටර් කියවන්නා",
+    "CUSTOMER": "පාරිභෝගිකයා"
+  },
+  "statuses": {
+    "ACTIVE": "සක්‍රිය",
+    "INACTIVE": "අක්‍රිය",
+    "SUSPENDED": "අත්හිටුවන ලදී",
+    "PENDING": "පොරොත්තුවේ",
+    "COMPLETED": "සම්පූර්ණයි",
+    "PAID": "ගෙවා ඇත",
+    "REJECTED": "ප්‍රතික්ෂේපිතයි",
+    "APPROVED": "අනුමතයි",
+    "VERIFIED": "තහවුරු කර ඇත",
+    "FAILED": "අසාර්ථකයි",
+    "CANCELLED": "අවලංගුයි"
+  },
+  "sortFields": {
+    "occurredAt": "සිදු වූ වේලාව",
+    "action": "ක්‍රියාව",
+    "entityType": "ආකාරය",
+    "source": "මූලාශ්‍රය"
+  },
+  "sortDirections": {
+    "asc": "ආරෝහණ",
+    "desc": "අවරෝහණ"
+  },
+  "fields": {
+    "role": "භූමිකාව",
+    "status": "තත්ත්වය",
+    "amount": "මුදල",
+    "method": "ක්‍රමය",
+    "paymentMethod": "ගෙවීම් ක්‍රමය",
+    "readingDate": "කියවීමේ දිනය",
+    "readingValue": "කියවීමේ අගය",
+    "name": "නම",
+    "email": "විද්‍යුත් තැපෑල",
+    "phone": "දුරකථන අංකය",
+    "address": "ලිපිනය",
+    "nic": "ජා.හැ.අංකය",
+    "connectionType": "සම්බන්ධතා වර්ගය",
+    "region": "කලාපය"
+  },
+  "time": {
+    "am": "පෙ.ව.",
+    "pm": "ප.ව."
+  },
+  "summaryTemplates": {
+    "userCreated": "{{name}} පරිශීලක සාදන ලදී",
+    "userProfileUpdated": "{{name}} පරිශීලක පැතිකඩ යාවත්කාලීන කරන ලදී",
+    "userStatusChanged": "පරිශීලක තත්ත්වය {{status}} බවට වෙනස් කරන ලදී",
+    "userRoleChanged": "පරිශීලක භූමිකාව {{role}} බවට වෙනස් කරන ලදී",
+    "userActivated": "{{name}} පරිශීලක ගිණුම සක්‍රිය කරන ලදී",
+    "paymentCreated": "{{amount}} මුදලක ගෙවීමක් සාදන ලදී",
+    "paymentUpdated": "{{id}} ගෙවීම යාවත්කාලීන කරන ලදී",
+    "paymentStatusChanged": "ගෙවීම් තත්ත්වය {{status}} බවට වෙනස් කරන ලදී",
+    "paymentDeleted": "{{id}} ගෙවීම මකා දමන ලදී",
+    "meterReadingCreated": "ඒකක {{reading}} ක මීටර් කියවීමක් ඇතුළත් කරන ලදී",
+    "meterReadingUpdated": "{{id}} සඳහා මීටර් කියවීම යාවත්කාලීන කරන ලදී"
+  },
+  "loadError": "ක්‍රියාකාරකම් ලොග් පූරණය කළ නොහැක. ඔබේ සම්බන්ධතාව පරීක්ෂා කර නැවත උත්සාහ කරන්න.",
+  "notAvailable": "ලබාගත නොහැකිය",
+  "changed": "වෙනස් කෙරිණි",
+  "none": "කිසිවක් නැත"
+}

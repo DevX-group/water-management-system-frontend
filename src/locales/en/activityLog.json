@@ -1,0 +1,156 @@
+{
+  "page": {
+    "title": "Activity Logs",
+    "subtitle": "Read-only system activity records for administrative review."
+  },
+  "filters": {
+    "title": "Filters",
+    "subtitle": "Narrow results without exposing private customer or payment information.",
+    "from": "From (inclusive)",
+    "to": "To (inclusive)",
+    "actor": "Actor",
+    "actorPlaceholder": "Search display name",
+    "action": "Action",
+    "entityType": "Entity type",
+    "source": "Source",
+    "sortBy": "Sort by",
+    "direction": "Direction",
+    "apply": "Apply filters",
+    "reset": "Reset",
+    "all": "All",
+    "validationError": "Start date and time must not be after the end date and time."
+  },
+  "results": {
+    "title": "Recorded activity",
+    "totalRecords_one": "{{count}} total record",
+    "totalRecords_other": "{{count}} total records",
+    "tryAgain": "Try again",
+    "emptyFiltered": "No activity matches these filters.",
+    "emptyFilteredHint": "Adjust or reset the filters to continue.",
+    "emptyDefault": "No activity has been recorded yet.",
+    "emptyDefaultHint": "New read-only records will appear here.",
+    "page": "Page {{current}} of {{total}}",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "table": {
+    "occurred": "Occurred",
+    "actor": "Actor",
+    "action": "Action",
+    "entity": "Entity",
+    "summary": "Summary",
+    "source": "Source",
+    "details": "Details",
+    "view": "View",
+    "viewAriaLabel": "View details for activity {{id}}"
+  },
+  "detail": {
+    "title": "Activity details",
+    "subtitle": "Read-only, sanitized information recorded by the system.",
+    "occurred": "Occurred",
+    "source": "Source",
+    "actor": "Actor",
+    "actorRole": "Actor role",
+    "action": "Action",
+    "entityType": "Entity type",
+    "entityId": "Entity ID",
+    "summary": "Summary",
+    "changedFields": "Changed fields",
+    "fieldColumn": "Field",
+    "valueColumn": "Safe value",
+    "noChangedFields": "No changed fields were recorded.",
+    "loadError": "Unable to load activity details.",
+    "notAuthorized": "You are not authorized to view activity logs.",
+    "notFound": "The requested activity record was not found."
+  },
+  "actions": {
+    "USER_CREATED": "User Created",
+    "USER_PROFILE_UPDATED": "User Profile Updated",
+    "USER_STATUS_CHANGED": "User Status Changed",
+    "USER_ROLE_CHANGED": "User Role Changed",
+    "USER_ACTIVATED": "User Activated",
+    "PAYMENT_CREATED": "Payment Created",
+    "PAYMENT_UPDATED": "Payment Updated",
+    "PAYMENT_STATUS_CHANGED": "Payment Status Changed",
+    "PAYMENT_DELETED": "Payment Deleted",
+    "METER_READING_CREATED": "Meter Reading Created",
+    "METER_READING_UPDATED": "Meter Reading Updated"
+  },
+  "entityTypes": {
+    "USER": "User",
+    "PAYMENT": "Payment",
+    "METER_READING": "Meter Reading"
+  },
+  "sources": {
+    "WEB": "Web",
+    "SYSTEM": "System",
+    "MCP": "MCP"
+  },
+  "roles": {
+    "SUPER_ADMIN": "Super Admin",
+    "SYSTEM_ADMIN": "System Administrator",
+    "CUSTOMER_HANDLER": "Customer Handler",
+    "METER_READER": "Meter Reader",
+    "CUSTOMER": "Customer"
+  },
+  "statuses": {
+    "ACTIVE": "Active",
+    "INACTIVE": "Inactive",
+    "SUSPENDED": "Suspended",
+    "PENDING": "Pending",
+    "COMPLETED": "Completed",
+    "PAID": "Paid",
+    "REJECTED": "Rejected",
+    "APPROVED": "Approved",
+    "VERIFIED": "Verified",
+    "FAILED": "Failed",
+    "CANCELLED": "Cancelled"
+  },
+  "sortFields": {
+    "occurredAt": "Occurred Time",
+    "action": "Action",
+    "entityType": "Entity Type",
+    "source": "Source"
+  },
+  "sortDirections": {
+    "asc": "Ascending",
+    "desc": "Descending"
+  },
+  "fields": {
+    "role": "Role",
+    "status": "Status",
+    "amount": "Amount",
+    "method": "Method",
+    "paymentMethod": "Payment Method",
+    "readingDate": "Reading Date",
+    "readingValue": "Reading Value",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "address": "Address",
+    "nic": "NIC",
+    "connectionType": "Connection Type",
+    "region": "Region"
+  },
+  "time": {
+    "am": "AM",
+    "pm": "PM"
+  },
+  "summaryTemplates": {
+    "userCreated": "Created user {{name}}",
+    "userProfileUpdated": "Updated user profile for {{name}}",
+    "userStatusChanged": "Changed user status to {{status}}",
+    "userRoleChanged": "Changed user role to {{role}}",
+    "userActivated": "Activated user account {{name}}",
+    "paymentCreated": "Created payment of {{amount}}",
+    "paymentUpdated": "Updated payment {{id}}",
+    "paymentStatusChanged": "Changed payment status to {{status}}",
+    "paymentDeleted": "Deleted payment {{id}}",
+    "meterReadingCreated": "Created meter reading of {{reading}} units",
+    "meterReadingUpdated": "Updated meter reading for {{id}}"
+  },
+  "loadError": "Unable to load activity logs. Check your connection and try again.",
+  "notAvailable": "Not available",
+  "changed": "Changed",
+  "none": "None"
+}
