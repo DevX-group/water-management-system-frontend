@@ -120,9 +120,8 @@ export const useBilling = () => {
     setHasSearched(true);
     setSearchedSub(sub);
     try {
-      const res = await api.get<BillResponse[]>(`/bills/customer/${encodeURIComponent(sub)}`);
+      const res = await api.get<BillResponse[]>(`/bills/search?query=${encodeURIComponent(sub)}`);
       setBills(res.data);
-      // Fetch customer profile to display name/address/meter on bill
       try {
         const custRes = await api.get(`/customers/${encodeURIComponent(sub)}`);
         setSearchedProfile(custRes.data);
@@ -158,6 +157,20 @@ export const useBilling = () => {
     }
   };
 
+  const handlePrint = async (billId: number) => {
+    try {
+      const b = bills.find(b => b.billId === billId);
+      if (b) {
+        // use local print generation
+        const { printWaterBill } = await import('@/util/generateWaterBillPDF');
+        await printWaterBill(b, searchedProfile);
+      }
+    } catch (e) {
+      console.error('Print failed', e);
+      toast({ title: 'Error', description: 'Failed to print bill.', variant: 'destructive' });
+    }
+  };
+
   return {
     activeTab, setActiveTab,
     selectedType, setSelectedType,
@@ -169,6 +182,6 @@ export const useBilling = () => {
     bills, loadingBills, searchedProfile,
     searchedSub, hasSearched,
     billIndex, setBillIndex, billsPerPage,
-    handleSearch, handleDownload,
+    handleSearch, handleDownload, handlePrint,
   };
 };

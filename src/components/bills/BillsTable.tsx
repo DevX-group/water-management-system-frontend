@@ -2,7 +2,7 @@ import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Eye, Download, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Eye, Download, Printer, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -25,10 +25,11 @@ interface BillsTableProps {
   setPageIndex: (fn: (prev: number) => number) => void;
   onView:       (bill: Bill) => void;
   onDownload:   (bill: Bill) => void;
+  onPrint:      (bill: Bill) => void;
 }
 
 export const BillsTable: React.FC<BillsTableProps> = ({
-  bills, pageIndex, totalPages, totalElements, itemsPerPage, setPageIndex, onView, onDownload,
+  bills, pageIndex, totalPages, totalElements, itemsPerPage, setPageIndex, onView, onDownload, onPrint
 }) => {
   const { t } = useTranslation('billing');
   const page = bills; // backend already returns a page of items
@@ -62,6 +63,7 @@ export const BillsTable: React.FC<BillsTableProps> = ({
                   <div className="flex items-center justify-end gap-2">
                     <Button variant="ghost" size="icon" onClick={() => onView(bill)}><Eye className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => onDownload(bill)}><Download className="w-4 h-4" /></Button>
+                    <Button variant="ghost" size="icon" onClick={() => onPrint(bill)}><Printer className="w-4 h-4" /></Button>
                   </div>
                 </td>
               </motion.tr>

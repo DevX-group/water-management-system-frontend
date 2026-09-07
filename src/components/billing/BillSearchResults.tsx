@@ -1,6 +1,6 @@
 import '@/index.css';
 import React from 'react';
-import { FileText, Eye, Download, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
+import { FileText, Eye, Download, Printer, Loader2, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,12 +24,13 @@ interface BillSearchResultsProps {
   billsPerPage:   number;
   onSearch:       () => void;
   onDownload:     (billId: number) => void;
+  onPrint:        (billId: number) => void;
 }
 
 export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
   searchQuery, setSearchQuery, customers = [], loadingBills, hasSearched,
   searchedSub, searchedProfile, bills, billIndex, setBillIndex, billsPerPage,
-  onSearch, onDownload,
+  onSearch, onDownload, onPrint,
 }) => {
   const { t } = useTranslation('billing');
   const { toast } = useToast();
@@ -145,8 +146,11 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
                       }}>
                         <Eye className="w-3 h-3 mr-1" /> {t('search.viewDetails')}
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleLocalDownload(b)}>
+                      <Button variant="ghost" size="icon" onClick={() => handleLocalDownload(b)}>
                         <Download className="w-4 h-4" />
+                      </Button>
+                      <Button variant="ghost" size="icon" onClick={() => onPrint(b.billId)}>
+                        <Printer className="w-4 h-4" />
                       </Button>
                     </div>
                   </div>
@@ -185,6 +189,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
           imageError={false}
           onClose={() => setViewingBill(null)}
           onDownload={() => handleLocalDownload(viewingBill)}
+          onPrint={() => onPrint(viewingBill.billId)}
           onZoomIn={() => setViewerZoom(z => Math.min(2, z + 0.1))}
           onZoomOut={() => setViewerZoom(z => Math.max(0.5, z - 0.1))}
           onRotate={() => setViewerRotation(r => r + 90)}
