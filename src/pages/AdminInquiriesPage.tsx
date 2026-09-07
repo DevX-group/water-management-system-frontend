@@ -53,7 +53,7 @@ export const AdminInquiriesPage: React.FC = () => {
           <div>
             <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
               {t('admin.title')} {t('admin.titleHighlight')}
-            </h1><p className="mt-1 text-muted-foreground">Manage and respond to customer inquiries.</p>
+            </h1><p className="mt-1 text-muted-foreground">{t('admin.subtitle')}</p>
           </div>
           <div className="flex gap-2">
             <Badge variant="outline" className="px-4 py-2 text-sm">{stats.open} {t('admin.open')}</Badge>

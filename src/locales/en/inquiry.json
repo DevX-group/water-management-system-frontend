@@ -47,6 +47,7 @@
   "admin": {
     "title": "Customer",
     "titleHighlight": "Inquiries",
+    "subtitle": "Manage and respond to customer inquiries.",
     "open": "Open",
     "resolved": "Resolved",
     "search": "Search tickets...",
