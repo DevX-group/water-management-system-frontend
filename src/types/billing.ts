@@ -29,6 +29,7 @@ export interface BillResponse {
   customerName?: string;
   nic?:          string;
   subscriptionNumber?: string;
+  shareToken?:   string;
 }
 
 export interface BillBreakdown {

@@ -2,10 +2,11 @@ import '@/index.css';
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { Eye, Download, Printer, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Eye, Download, Printer, Link as LinkIcon, ArrowLeft, ArrowRight } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast';
 
 interface Bill {
   billId:        string;
@@ -14,6 +15,7 @@ interface Bill {
   usageUnits:    number;
   status:        string;
   dueDate:       string;
+  shareToken?:   string;
 }
 
 interface BillsTableProps {
@@ -29,10 +31,21 @@ interface BillsTableProps {
 }
 
 export const BillsTable: React.FC<BillsTableProps> = ({
-  bills, pageIndex, totalPages, totalElements, itemsPerPage, setPageIndex, onView, onDownload, onPrint
+  bills, pageIndex, totalPages, totalElements, itemsPerPage, setPageIndex, onView, onDownload, onPrint,
 }) => {
   const { t } = useTranslation('billing');
+  const { toast } = useToast();
   const page = bills; // backend already returns a page of items
+
+  const handleCopyLink = (bill: Bill) => {
+    if (bill.shareToken) {
+      const link = `${window.location.origin}/bills/shared/${bill.shareToken}`;
+      navigator.clipboard.writeText(link);
+      toast({ title: 'Copied', description: 'Shareable bill link copied to clipboard.' });
+    } else {
+      toast({ title: 'Error', description: 'No share token found for this bill.', variant: 'destructive' });
+    }
+  };
 
   return (
     <Card className="shadow-card border-none overflow-hidden">
@@ -61,6 +74,7 @@ export const BillsTable: React.FC<BillsTableProps> = ({
                 <td className="p-5 text-muted-foreground">{bill.dueDate}</td>
                 <td className="p-5 text-right">
                   <div className="flex items-center justify-end gap-2">
+                    <Button variant="ghost" size="icon" onClick={() => handleCopyLink(bill)}><LinkIcon className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => onView(bill)}><Eye className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => onDownload(bill)}><Download className="w-4 h-4" /></Button>
                     <Button variant="ghost" size="icon" onClick={() => onPrint(bill)}><Printer className="w-4 h-4" /></Button>
