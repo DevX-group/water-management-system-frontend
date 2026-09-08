@@ -104,7 +104,9 @@
     "APPROVED": "Approved",
     "VERIFIED": "Verified",
     "FAILED": "Failed",
-    "CANCELLED": "Cancelled"
+    "CANCELLED": "Cancelled",
+    "FULL": "Full",
+    "PARTIAL": "Partial"
   },
   "sortFields": {
     "occurredAt": "Occurred Time",

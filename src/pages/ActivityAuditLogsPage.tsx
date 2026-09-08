@@ -204,7 +204,7 @@ const localizeSummary = (
   }
 
   let localized = summary;
-  const statusKeys = ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING', 'COMPLETED', 'PAID', 'REJECTED', 'APPROVED', 'VERIFIED', 'FAILED', 'CANCELLED'];
+  const statusKeys = ['ACTIVE', 'INACTIVE', 'SUSPENDED', 'PENDING', 'COMPLETED', 'PAID', 'REJECTED', 'APPROVED', 'VERIFIED', 'FAILED', 'CANCELLED', 'FULL', 'PARTIAL'];
   for (const st of statusKeys) {
     if (localized.includes(st)) {
       localized = localized.replace(new RegExp(st, 'g'), t(`statuses.${st}`, { defaultValue: st }));

@@ -104,7 +104,9 @@
     "APPROVED": "අනුමතයි",
     "VERIFIED": "තහවුරු කර ඇත",
     "FAILED": "අසාර්ථකයි",
-    "CANCELLED": "අවලංගුයි"
+    "CANCELLED": "අවලංගුයි",
+    "FULL": "සම්පූර්ණ",
+    "PARTIAL": "අර්ධ"
   },
   "sortFields": {
     "occurredAt": "සිදු වූ වේලාව",
