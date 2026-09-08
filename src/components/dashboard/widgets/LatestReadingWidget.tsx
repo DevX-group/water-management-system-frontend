@@ -36,8 +36,8 @@ export const LatestReadingWidget: React.FC = () => {
 
   return (
     <ul className="space-y-1.5">
-      {readings.map((r) => (
-        <li key={r.id} className="flex items-center justify-between text-xs p-2 rounded-lg bg-muted/30">
+      {readings.map((r: any) => (
+        <li key={r.readingId || r.meterNumber} className="flex items-center justify-between text-xs p-2 rounded-lg bg-muted/30">
           <div className="flex items-center gap-2">
             <Gauge className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono font-medium">{r.subscriptionNumber}</span>

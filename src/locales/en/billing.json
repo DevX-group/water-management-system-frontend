@@ -42,7 +42,7 @@
   },
 
   "search": {
-    "title": "Search Bills by Subscription Number",
+    "title": "Search Bills by Subscription Number, ID, Bill nu or Name",
     "placeholder": "e.g., SUB-0001",
     "searching": "Searching...",
     "searchBtn": "Search",

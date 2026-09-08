@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { BillResponse } from '@/types/billing';
 import { CUSTOMER_SUBSCRIPTION_NUMBER } from '@/constants/customer';
 import { api } from '@/services/api';
-import { generateWaterBillPDF } from '@/util/generateWaterBillPDF';
+import { generateWaterBillPDF, printWaterBill } from '@/util/generateWaterBillPDF';
 import type { CustomerProfile } from '@/components/profile/ProfileForm';
 
 const SUBSCRIPTION_NUMBER = CUSTOMER_SUBSCRIPTION_NUMBER;
@@ -58,6 +58,12 @@ export const useBills = () => {
     } catch (e) { console.error(e); }
   };
 
+  const handlePrint = async (bill: BillResponse) => {
+    try {
+      await printWaterBill(bill, profile);
+    } catch (e) { console.error(e); }
+  };
+
   const handleCloseView = () => { 
     setViewingBill(null); 
     setZoom(1); 
@@ -95,6 +101,7 @@ export const useBills = () => {
     setImageError,
     filteredBills,
     handleDownload,
+    handlePrint,
     handleCloseView,
     handleView,
     SUBSCRIPTION_NUMBER

@@ -103,6 +103,7 @@ export const BillingPage = () => {
           billsPerPage={billing.billsPerPage}
           onSearch={billing.handleSearch}
           onDownload={billing.handleDownload}
+          onPrint={billing.handlePrint}
         />
       )}
     </div>
