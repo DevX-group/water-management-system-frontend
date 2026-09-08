@@ -3,9 +3,11 @@ import { Bell, CheckCircle } from 'lucide-react';
 import { getCustomerNotifications, markNotificationAsRead } from '@/services/notificationService';
 import type { NotificationResponse } from '@/types/customerNotification';
 import { useTranslation } from 'react-i18next';
+import { translateNotificationMessage } from '@/utils/notificationTranslationUtils';
 
 export const CustomerNotificationsWidget: React.FC = () => {
   const { t } = useTranslation('widgetManagement');
+  const { t: tAlerts } = useTranslation('alerts');
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -51,7 +53,7 @@ export const CustomerNotificationsWidget: React.FC = () => {
           onClick={() => !n.readStatus && handleRead(n.id)}
         >
           <Bell className="w-3 h-3 mt-0.5 flex-shrink-0 text-primary" />
-          <span className="text-foreground">{n.message}</span>
+          <span className="text-foreground">{translateNotificationMessage(n.notificationType, n.message, tAlerts)}</span>
         </li>
       ))}
     </ul>

@@ -14,6 +14,42 @@
     "dismiss": "Dismiss",
     "previous": "Previous",
     "next": "Next",
-    "noAlerts": "No alerts found"
+    "noAlerts": "No alerts found",
+    "usage": "Usage"
+  },
+  "notification": {
+    "newNotifications": "New Notifications",
+    "markAllRead": "Mark all read",
+    "loading": "Loading...",
+    "loadingNotifications": "Loading notifications...",
+    "noNew": "No new notifications",
+    "seeAll": "See all notifications",
+    "historyTitle": "Notifications History",
+    "unread": "unread",
+    "all": "All",
+    "unreadFilter": "Unread",
+    "noUnread": "No unread notifications",
+    "noFound": "No notifications found",
+    "types": {
+      "MANUAL_PAYMENT": "Manual Payment",
+      "BANK_SLIP_APPROVED": "Bank Slip Approved",
+      "BANK_SLIP_REJECTED": "Bank Slip Rejected",
+      "MONTHLY_BILL": "New Bill Issue",
+      "DEFAULT": "Notification"
+    },
+    "messages": {
+      "MANUAL_PAYMENT": "Your manual payment of Rs. {{amount}} has been added successfully.",
+      "BANK_SLIP_APPROVED": "Your bank slip payment has been approved successfully.",
+      "BANK_SLIP_REJECTED": "Your bank slip payment has been rejected. Please check the payment details and try again.",
+      "MONTHLY_BILL": "Your new monthly water bill is ready. Please check the payments section.",
+      "DEFAULT": "You have received a new notification."
+    },
+    "titles": {
+      "MANUAL_PAYMENT": "Payment Successful",
+      "BANK_SLIP_APPROVED": "Bank Slip Approved",
+      "BANK_SLIP_REJECTED": "Bank Slip Rejected",
+      "MONTHLY_BILL": "New Bill Issued",
+      "DEFAULT": "Notification"
+    }
   }
 }

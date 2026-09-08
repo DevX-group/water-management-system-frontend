@@ -18,6 +18,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { NotificationResponse, NotificationType } from "@/types/customerNotification";
+import { useTranslation } from "react-i18next";
+import { translateNotificationTitle, translateNotificationMessage } from "@/utils/notificationTranslationUtils";
 
 interface CustomerNotificationModalProps {
   open: boolean;
@@ -42,36 +44,11 @@ const formatDate = (dateString: string): string => {
 
 const getTypeConfig = (type: NotificationType) => {
   switch (type) {
-    case "MANUAL_PAYMENT":
-      return {
-        label: "Manual Payment",
-        icon: CheckCircle2,
-        color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400",
-      };
-    case "BANK_SLIP_APPROVED":
-      return {
-        label: "Bank Slip Approved",
-        icon: ShieldCheck,
-        color: "text-teal-600 bg-teal-50 dark:bg-teal-950/40 dark:text-teal-400",
-      };
-    case "BANK_SLIP_REJECTED":
-      return {
-        label: "Bank Slip Rejected",
-        icon: XCircle,
-        color: "text-rose-600 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-400",
-      };
-    case "MONTHLY_BILL":
-      return {
-        label: "New Bill Issue",
-        icon: Receipt,
-        color: "text-blue-600 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-400",
-      };
-    default:
-      return {
-        label: "Notification",
-        icon: Bell,
-        color: "text-slate-600 bg-slate-50 dark:bg-slate-800 dark:text-slate-300",
-      };
+    case "MANUAL_PAYMENT":     return { icon: CheckCircle2, color: "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 dark:text-emerald-400" };
+    case "BANK_SLIP_APPROVED": return { icon: ShieldCheck,  color: "text-teal-600 bg-teal-50 dark:bg-teal-950/40 dark:text-teal-400" };
+    case "BANK_SLIP_REJECTED": return { icon: XCircle,      color: "text-rose-600 bg-rose-50 dark:bg-rose-950/40 dark:text-rose-400" };
+    case "MONTHLY_BILL":       return { icon: Receipt,      color: "text-blue-600 bg-blue-50 dark:bg-blue-950/40 dark:text-blue-400" };
+    default:                   return { icon: Bell,         color: "text-slate-600 bg-slate-50 dark:bg-slate-800 dark:text-slate-300" };
   }
 };
 
@@ -83,7 +60,14 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
   onMarkAsRead,
   onMarkAllAsRead,
 }) => {
+  const { t } = useTranslation('alerts');
   const [filter, setFilter] = useState<"all" | "unread">("all");
+
+  const getTypeLabel = (type: NotificationType): string => {
+    const key = `notification.types.${type}` as const;
+    const translated = t(key);
+    return translated !== key ? translated : t('notification.types.DEFAULT');
+  };
 
   const unreadCount = notifications.filter((n) => !n.readStatus).length;
 
@@ -99,11 +83,11 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
         <DialogHeader className="p-4 border-b border-border flex flex-row items-center justify-between space-y-0 bg-muted/20 pr-12 shrink-0">
           <div className="flex items-center gap-2.5">
             <DialogTitle className="text-base font-bold text-foreground">
-              Notifications History
+              {t('notification.historyTitle')}
             </DialogTitle>
             {unreadCount > 0 && (
               <span className="bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 text-xs font-semibold px-2 py-0.5 rounded-full">
-                {unreadCount} unread
+                {unreadCount} {t('notification.unread')}
               </span>
             )}
           </div>
@@ -116,7 +100,7 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
               className="text-xs text-primary hover:text-primary/80 gap-1.5 h-8 px-2.5 rounded-xl font-medium"
             >
               <CheckCheck className="w-3.5 h-3.5" />
-              Mark all read
+              {t('notification.markAllRead')}
             </Button>
           )}
         </DialogHeader>
@@ -131,7 +115,7 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
                   : "text-muted-foreground hover:text-foreground"
                 }`}
             >
-              All ({notifications.length})
+              {t('notification.all')} ({notifications.length})
             </button>
             <button
               onClick={() => setFilter("unread")}
@@ -140,7 +124,7 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
                   : "text-muted-foreground hover:text-foreground"
                 }`}
             >
-              Unread ({unreadCount})
+              {t('notification.unreadFilter')} ({unreadCount})
             </button>
           </div>
         </div>
@@ -150,18 +134,19 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
           {loading ? (
             <div className="py-20 text-center flex items-center justify-center gap-2 text-xs text-muted-foreground">
               <Loader2 className="w-4 h-4 text-primary animate-spin" />
-              Loading notifications...
+              {t('notification.loadingNotifications')}
             </div>
           ) : filteredNotifications.length === 0 ? (
             <div className="py-20 text-center flex flex-col items-center justify-center gap-2">
               <Inbox className="w-8 h-8 text-muted-foreground/40" />
               <p className="text-xs font-medium text-muted-foreground">
-                {filter === "unread" ? "No unread notifications" : "No notifications found"}
+                {filter === "unread" ? t('notification.noUnread') : t('notification.noFound')}
               </p>
             </div>
           ) : (
             filteredNotifications.map((notification) => {
-              const { icon: IconComponent, color, label } = getTypeConfig(notification.notificationType);
+              const { icon: IconComponent, color } = getTypeConfig(notification.notificationType);
+              const label = getTypeLabel(notification.notificationType);
 
               return (
                 <div
@@ -180,7 +165,7 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <p className="text-xs font-semibold text-foreground truncate">
-                          {notification.title}
+                          {translateNotificationTitle(notification.notificationType, notification.title, t)}
                         </p>
                         <span className="text-[10px] px-1.5 py-0.2 rounded font-medium bg-muted text-muted-foreground shrink-0">
                           {label}
@@ -193,7 +178,7 @@ export const CustomerNotificationModal: React.FC<CustomerNotificationModalProps>
                     </div>
 
                     <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      {notification.message}
+                      {translateNotificationMessage(notification.notificationType, notification.message, t)}
                     </p>
                   </div>
 
