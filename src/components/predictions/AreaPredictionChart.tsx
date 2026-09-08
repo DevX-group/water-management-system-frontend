@@ -110,7 +110,7 @@ export const AreaPredictionChart: React.FC<
             );
 
             setError(
-              "Failed to load area prediction data."
+              t("area.error", "Failed to load area prediction data.")
             );
           }
         })
@@ -123,7 +123,7 @@ export const AreaPredictionChart: React.FC<
       return () => {
         controller.abort();
       };
-    }, [selectedArea, selectedYear]);
+    }, [selectedArea, selectedYear, t]);
 
     return (
       <Card>
@@ -176,7 +176,7 @@ export const AreaPredictionChart: React.FC<
         <CardContent>
           {isLoading ? (
             <div className="h-80 flex items-center justify-center text-muted-foreground">
-              Loading area predictions...
+              {t("area.loading", "Loading area predictions...")}
             </div>
           ) : error ? (
             <div className="h-80 flex items-center justify-center text-destructive">
@@ -184,7 +184,7 @@ export const AreaPredictionChart: React.FC<
             </div>
           ) : areaPredictionData.length === 0 ? (
             <div className="h-80 flex items-center justify-center text-muted-foreground">
-              No prediction data found.
+              {t("area.noData", "No prediction data found.")}
             </div>
           ) : (
             <div className="h-80">

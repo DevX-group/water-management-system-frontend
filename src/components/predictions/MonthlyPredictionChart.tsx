@@ -139,7 +139,7 @@ export const MonthlyPredictionChart: React.FC<
           );
 
           setError(
-            "Failed to load monthly prediction data."
+            t("monthly.error", "Failed to load monthly prediction data.")
           );
         }
       })
@@ -152,7 +152,7 @@ export const MonthlyPredictionChart: React.FC<
     return () => {
       controller.abort();
     };
-  }, [selectedYear]);
+  }, [selectedYear, t]);
 
   /*
    * Find the first predicted month dynamically.
@@ -180,7 +180,7 @@ export const MonthlyPredictionChart: React.FC<
       <CardContent>
         {isLoading ? (
           <div className="h-80 flex items-center justify-center text-muted-foreground">
-            Loading monthly predictions...
+            {t("monthly.loading", "Loading monthly predictions...")}
           </div>
         ) : error ? (
           <div className="h-80 flex items-center justify-center text-destructive">
@@ -188,8 +188,7 @@ export const MonthlyPredictionChart: React.FC<
           </div>
         ) : monthlyPredictionData.length === 0 ? (
           <div className="h-80 flex items-center justify-center text-muted-foreground">
-            No prediction data found for the current
-            year.
+            {t("monthly.noData", "No prediction data found for the current year.")}
           </div>
         ) : (
           <div className="h-80">

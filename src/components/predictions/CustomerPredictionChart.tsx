@@ -159,7 +159,7 @@ export const CustomerPredictionChart: React.FC<
               );
 
               setError(
-                "Failed to load customer prediction data."
+                t("customer.error", "Failed to load customer prediction data.")
               );
             }
           })
@@ -174,7 +174,7 @@ export const CustomerPredictionChart: React.FC<
         window.clearTimeout(timer);
         controller.abort();
       };
-    }, [searchId, selectedYear]);
+    }, [searchId, selectedYear, t]);
 
     /*
      * Find the first predicted month dynamically.
@@ -217,7 +217,7 @@ export const CustomerPredictionChart: React.FC<
         <CardContent>
           {isLoading ? (
             <div className="h-80 flex items-center justify-center text-muted-foreground">
-              Loading customer predictions...
+              {t("customer.loading", "Loading customer predictions...")}
             </div>
           ) : error ? (
             <div className="h-80 flex items-center justify-center text-destructive">
@@ -225,7 +225,7 @@ export const CustomerPredictionChart: React.FC<
             </div>
           ) : customerPredictionData.length === 0 ? (
             <div className="h-80 flex items-center justify-center text-muted-foreground">
-              No prediction data found for this customer.
+              {t("customer.noData", "No prediction data found for this customer.")}
             </div>
           ) : (
             <div className="h-80">
