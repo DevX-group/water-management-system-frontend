@@ -32,5 +32,147 @@
     "width": "Width",
     "height": "Height"
   },
+  "types": {
+    "STAT": "Stat",
+    "CHART": "Chart",
+    "TABLE": "Table",
+    "LIST": "List",
+    "ALERT": "Alert",
+    "ACTION": "Action",
+    "PROGRESS": "Progress",
+    "ANNOUNCEMENT": "Announcement"
+  },
+  "roles": {
+    "SUPER_ADMIN": "Super Admin",
+    "SYSTEM_ADMIN": "System Admin",
+    "CUSTOMER_HANDLER": "Customer Handler",
+    "METER_READER": "Meter Reader",
+    "CUSTOMER": "Customer"
+  },
+  "widgets": {
+    "customer-current-bill": "Current Bill",
+    "customer-outstanding": "Outstanding Balance",
+    "customer-pay-now": "Pay Now",
+    "customer-usage-trend": "Usage Trend",
+    "customer-recent-payments": "Recent Payments",
+    "customer-notifications": "Notifications",
+    "customer-bank-slip-status": "Bank Slip Status",
+    "customer-inquiries": "My Inquiries",
+    "meter-quick-entry": "Quick Meter Entry",
+    "meter-latest-reading": "Latest Reading",
+    "meter-reading-history": "Reading History",
+    "internal-chat-link": "Internal Chat",
+    "handler-pending-slips": "Pending Slips",
+    "handler-recent-payments": "Recent Payments",
+    "handler-open-inquiries": "Open Inquiries",
+    "handler-customer-search": "Customer Search",
+    "admin-system-summary": "System Summary",
+    "admin-usage-chart": "System Usage Chart",
+    "admin-revenue-chart": "Monthly Revenue",
+    "admin-alerts": "Active Alerts",
+    "admin-messaging-link": "Customer Messaging",
+    "admin-blogs-link": "Blog Management",
+    "admin-predictions-link": "Usage Predictions",
+    "superadmin-admin-count": "Administrator Count",
+    "superadmin-region-summary": "Region Summary",
+    "superadmin-widget-management-link": "Widget Management",
+    "superadmin-user-management-link": "User Management",
+    "quick-link": "Quick Links"
+  },
+  "quickLinks": {
+    "payNow": {
+      "label": "Pay Now",
+      "description": "Make a payment online"
+    },
+    "myInquiries": {
+      "label": "My Inquiries",
+      "description": "View or submit support requests"
+    },
+    "meterEntry": {
+      "label": "Enter Meter Reading",
+      "description": "Record a new meter reading"
+    },
+    "internalChat": {
+      "label": "Internal Chat",
+      "description": "Staff messaging"
+    },
+    "customerSearch": {
+      "label": "Customer Management",
+      "description": "Search and manage customers"
+    },
+    "messaging": {
+      "label": "Messaging",
+      "description": "Send bulk SMS / notifications"
+    },
+    "blogs": {
+      "label": "Blog Management",
+      "description": "Create and manage blog posts"
+    },
+    "predictions": {
+      "label": "Predictions",
+      "description": "AI-powered usage forecasts"
+    },
+    "widgetManagement": {
+      "label": "Widget Management",
+      "description": "Configure dashboard widgets"
+    },
+    "adminManagement": {
+      "label": "Admin Management",
+      "description": "Manage admin users and roles"
+    }
+  },
+  "widgetContent": {
+    "noActiveAlerts": "No active alerts",
+    "noCurrentBill": "No current bill",
+    "noOpenInquiries": "No open inquiries",
+    "noRecentPayments": "No recent payments",
+    "noNotifications": "No new notifications",
+    "noPendingSlips": "No pending bank slips",
+    "noRegionData": "No region data",
+    "noReadings": "No readings today",
+    "noSlipsSubmitted": "No bank slips submitted",
+    "noUsageData": "No usage data",
+    "noData": "No data",
+    "due": "Due",
+    "units": "units",
+    "usage": "Usage",
+    "revenue": "Revenue",
+    "customers": "Customers",
+    "pendingSlips": "Pending Slips",
+    "outstanding": "Outstanding",
+    "paidThisMonth": "Paid This Month",
+    "openInquiries": "Open Inquiries",
+    "adminUsers": "Admin Users",
+    "totalPending": "Total Pending",
+    "unpaidBills": "unpaid bill(s)",
+    "pending": "pending",
+    "subscription": "Subscription",
+    "amount": "Amount",
+    "method": "Method",
+    "status": "Status",
+    "currency": "Rs."
+  },
+  "paymentMethods": {
+    "ONLINE": "Online",
+    "BANK_TRANSFER": "Bank Transfer",
+    "MANUAL": "Manual"
+  },
+  "paymentTypes": {
+    "MONTHLY": "Monthly",
+    "OUTSTANDING": "Outstanding"
+  },
+  "statuses": {
+    "COMPLETED": "Completed",
+    "PENDING": "Pending",
+    "FAILED": "Failed",
+    "PAID": "Paid",
+    "UNPAID": "Unpaid",
+    "APPROVED": "Approved",
+    "REJECTED": "Rejected",
+    "FULL": "Full",
+    "PARTIAL": "Partial",
+    "full": "Full",
+    "partial": "Partial"
+  },
   "loadError": "Failed to load widget catalog"
 }

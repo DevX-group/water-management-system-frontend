@@ -11,10 +11,9 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useTranslation } from 'react-i18next';
+import { getWidgetTitleForLang, setCustomWidgetTranslation } from '@/utils/widgetTranslationUtils';
 
 const ALL_ROLES = ['SUPER_ADMIN', 'SYSTEM_ADMIN', 'CUSTOMER_HANDLER', 'METER_READER', 'CUSTOMER'];
-
-
 
 const WidgetCatalogCard: React.FC<{
   widget: WidgetDefinition;
@@ -22,22 +21,30 @@ const WidgetCatalogCard: React.FC<{
   onSaved: () => void;
 }> = ({ widget, initialAssignedRoles, onSaved }) => {
   const { toast } = useToast();
-  const { t } = useTranslation('widgetManagement');
-  const [name, setName] = useState(widget.name);
+  const { t, i18n } = useTranslation('widgetManagement');
+  const currentLang = i18n.language || 'en';
+
+  const localizedDefaultName = getWidgetTitleForLang(
+    widget.widgetKey || widget.componentKey,
+    widget.name,
+    currentLang
+  );
+
+  const [name, setName] = useState(localizedDefaultName);
   const [active, setActive] = useState(widget.active);
   const [assignedRoles, setAssignedRoles] = useState<Set<string>>(new Set(initialAssignedRoles));
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     setAssignedRoles(new Set(initialAssignedRoles));
-    setName(widget.name);
+    setName(getWidgetTitleForLang(widget.widgetKey || widget.componentKey, widget.name, currentLang));
     setActive(widget.active);
-  }, [initialAssignedRoles, widget]);
+  }, [initialAssignedRoles, widget, currentLang]);
 
   const availableRoles = widget.allowedRoles || ALL_ROLES;
 
   const hasChanges = 
-    name !== widget.name || 
+    name !== localizedDefaultName || 
     active !== widget.active ||
     assignedRoles.size !== initialAssignedRoles.length ||
     ![...assignedRoles].every(r => initialAssignedRoles.includes(r));
@@ -52,23 +59,28 @@ const WidgetCatalogCard: React.FC<{
   const handleSave = async () => {
     setSaving(true);
     try {
-      // 1. Update Widget Definition (Name & Active status)
-      if (name !== widget.name || active !== widget.active) {
+      const widgetKeyToUse = widget.widgetKey || widget.componentKey;
+
+      // 1. Save language translation
+      setCustomWidgetTranslation(widgetKeyToUse, currentLang, name);
+
+      // 2. If editing in English or active status changed, update backend definition
+      if (currentLang === 'en' || active !== widget.active) {
         const payload = {
           widgetKey: widget.widgetKey,
-          name: name,
+          name: currentLang === 'en' ? name : widget.name,
           description: widget.description,
           widgetType: widget.widgetType,
           componentKey: widget.componentKey,
           active: active,
-          allowedRoles: widget.allowedRoles, // Preserve existing allowed roles
+          allowedRoles: widget.allowedRoles,
           defaultColSpan: widget.defaultColSpan,
           defaultRowSpan: widget.defaultRowSpan
         };
         await updateWidget(widget.id, payload as any);
       }
 
-      // 2. Add/Remove from role dashboards
+      // 3. Add/Remove from role dashboards
       const addedRoles = [...assignedRoles].filter(r => !initialAssignedRoles.includes(r));
       const removedRoles = initialAssignedRoles.filter(r => !assignedRoles.has(r));
 
@@ -92,7 +104,7 @@ const WidgetCatalogCard: React.FC<{
     <div className={`bg-card border rounded-xl flex flex-col transition-all shadow-sm ${!active ? 'opacity-70' : ''}`}>
       {/* Visual Preview */}
       <div className="bg-muted/30 p-4 flex justify-center items-center border-b min-h-[160px] pointer-events-none transform scale-90 origin-center">
-        <WidgetContainer name={name} className="w-full max-w-sm m-0 shadow-lg bg-card">
+        <WidgetContainer name={name} widgetKey={widget.widgetKey} componentKey={widget.componentKey} className="w-full max-w-sm m-0 shadow-lg bg-card">
           <WidgetRenderer componentKey={widget.componentKey} name={name} />
         </WidgetContainer>
       </div>
@@ -100,35 +112,40 @@ const WidgetCatalogCard: React.FC<{
       <div className="p-4 space-y-4 flex-1 flex flex-col relative">
         <div className="absolute top-2 right-2">
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider border border-primary/20">
-            {widget.widgetType}
+            {t(`types.${widget.widgetType}`, { defaultValue: widget.widgetType })}
           </span>
         </div>
 
         {/* Name Edit */}
         <div>
-          <label className="text-xs font-semibold text-muted-foreground uppercase mb-1 block">{t('card.widgetName')}</label>
+          <div className="flex items-center justify-between mb-1">
+            <label className="text-xs font-semibold text-muted-foreground uppercase">{t('card.widgetName')}</label>
+            <span className="text-[10px] uppercase font-bold text-primary px-1.5 py-0.5 rounded bg-primary/10">
+              {currentLang.toUpperCase()}
+            </span>
+          </div>
           <Input 
             value={name} 
             onChange={(e) => setName(e.target.value)}
             className="h-8 font-medium"
           />
         </div>
-        
-        {/* Role Assignment */}
-        <div className="flex-1">
-          <label className="text-xs font-semibold text-muted-foreground uppercase mb-2 block">{t('card.assignedRoles')}</label>
-          <div className="flex flex-wrap gap-2">
+
+        {/* Roles Access Assignment */}
+        <div className="space-y-1.5 flex-1">
+          <label className="text-xs font-semibold text-muted-foreground uppercase">{t('card.assignedRoles')}</label>
+          <div className="flex flex-wrap gap-1.5 pt-1">
             {availableRoles.map(role => {
               const isAssigned = assignedRoles.has(role);
               return (
-                <div 
-                  key={role} 
+                <div
+                  key={role}
                   onClick={() => toggleRole(role)}
                   className={`text-[10px] px-2 py-1 rounded-full cursor-pointer transition-colors border ${
                     isAssigned ? 'bg-primary text-primary-foreground border-primary' : 'bg-transparent text-muted-foreground hover:bg-muted border-border'
                   }`}
                 >
-                  {role.replace('_', ' ')}
+                  {t(`roles.${role}`, { defaultValue: role.replace('_', ' ') })}
                 </div>
               );
             })}
@@ -145,8 +162,13 @@ const WidgetCatalogCard: React.FC<{
         </div>
 
         {/* Save Button */}
-        <div className={`transition-all duration-300 overflow-hidden ${hasChanges ? 'max-h-12 opacity-100 mt-2' : 'max-h-0 opacity-0 mt-0'}`}>
-          <Button onClick={handleSave} disabled={saving} className="w-full h-9 text-sm">
+        <div className="pt-2">
+          <Button 
+            size="sm" 
+            className="w-full" 
+            disabled={!hasChanges || saving}
+            onClick={handleSave}
+          >
             {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
             {t('card.saveChanges')}
           </Button>
@@ -158,7 +180,8 @@ const WidgetCatalogCard: React.FC<{
 
 export const WidgetManagementPage: React.FC = () => {
   const { toast } = useToast();
-  const { t } = useTranslation('widgetManagement');
+  const { t, i18n } = useTranslation('widgetManagement');
+  const currentLang = i18n.language || 'en';
 
   const [catalog, setCatalog] = useState<WidgetDefinition[]>([]);
   const [catalogLoading, setCatalogLoading] = useState(true);
@@ -361,7 +384,7 @@ export const WidgetManagementPage: React.FC = () => {
           <TabsList className="mb-6 flex flex-wrap h-auto">
             {ALL_ROLES.map(role => (
               <TabsTrigger key={role} value={role} className="flex-1 min-w-[120px] py-2">
-                {role.replace('_', ' ')}
+                {t(`roles.${role}`, { defaultValue: role.replace('_', ' ') })}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -369,7 +392,7 @@ export const WidgetManagementPage: React.FC = () => {
           <TabsContent value={selectedRole} className="space-y-6">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-medium">{t('dashboard.roleTitle', { role: selectedRole.replace('_', ' ') })}</h3>
+                <h3 className="text-lg font-medium">{t('dashboard.roleTitle', { role: t(`roles.${selectedRole}`, { defaultValue: selectedRole.replace('_', ' ') }) })}</h3>
                 <p className="text-sm text-muted-foreground">{t('dashboard.roleSubtitle')}</p>
               </div>
               <Button onClick={saveLayout} disabled={savingDash || dashLoading}>
@@ -382,7 +405,7 @@ export const WidgetManagementPage: React.FC = () => {
               <div className="flex justify-center py-12"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>
             ) : !dashConfig ? (
               <div className="text-center py-12 text-muted-foreground bg-muted/20 rounded-xl border border-dashed">
-                {t('dashboard.noActiveDashboard', { role: selectedRole })}
+                {t('dashboard.noActiveDashboard', { role: t(`roles.${selectedRole}`, { defaultValue: selectedRole.replace('_', ' ') }) })}
               </div>
             ) : (
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -395,15 +418,17 @@ export const WidgetManagementPage: React.FC = () => {
                       {t('dashboard.emptyDashboard')}
                     </div>
                   ) : (
-                    placements.map((p, idx) => (
+                    placements.map((p, idx) => {
+                      const widgetDisplayName = getWidgetTitleForLang(p.widgetKey || p.componentKey, p.name, currentLang);
+                      return (
                       <div key={p.id + '-' + idx} className="flex items-center gap-4 bg-card border rounded-xl p-3 shadow-sm">
                         <div className="flex flex-col gap-1">
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveUp(idx)} disabled={idx === 0}><ArrowUp className="w-3 h-3" /></Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => moveDown(idx)} disabled={idx === placements.length - 1}><ArrowDown className="w-3 h-3" /></Button>
                         </div>
                         <div className="flex-1">
-                          <p className="font-semibold text-sm">{p.name}</p>
-                          <p className="text-xs text-muted-foreground">{p.widgetType}</p>
+                          <p className="font-semibold text-sm">{widgetDisplayName}</p>
+                          <p className="text-xs text-muted-foreground">{t(`types.${p.widgetType}`, { defaultValue: p.widgetType })}</p>
                         </div>
                         
                         {/* Size Controls */}
@@ -430,7 +455,8 @@ export const WidgetManagementPage: React.FC = () => {
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
 
@@ -441,17 +467,20 @@ export const WidgetManagementPage: React.FC = () => {
                     {availableWidgetsForRole.length === 0 ? (
                       <p className="text-sm text-muted-foreground text-center py-4">{t('dashboard.noWidgetsAvailable')}</p>
                     ) : (
-                      availableWidgetsForRole.map(w => (
+                      availableWidgetsForRole.map(w => {
+                        const widgetDisplayName = getWidgetTitleForLang(w.widgetKey || w.componentKey, w.name, currentLang);
+                        return (
                         <div key={w.id} className="flex items-center justify-between bg-card border rounded-lg p-3 shadow-sm">
                           <div>
-                            <p className="font-semibold text-sm leading-tight">{w.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{w.widgetType}</p>
+                            <p className="font-semibold text-sm leading-tight">{widgetDisplayName}</p>
+                            <p className="text-[10px] text-muted-foreground">{t(`types.${w.widgetType}`, { defaultValue: w.widgetType })}</p>
                           </div>
                           <Button size="sm" variant="secondary" onClick={() => addWidgetToDash(w)}>
                             <Plus className="w-4 h-4 mr-1" /> {t('dashboard.add')}
                           </Button>
                         </div>
-                      ))
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -464,5 +493,3 @@ export const WidgetManagementPage: React.FC = () => {
     </div>
   );
 };
-
-

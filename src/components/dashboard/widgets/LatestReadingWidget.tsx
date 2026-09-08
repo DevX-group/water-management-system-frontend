@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Gauge, Calendar } from 'lucide-react';
 import { api } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Reading {
   id: string;
@@ -11,6 +12,7 @@ interface Reading {
 }
 
 export const LatestReadingWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [readings, setReadings] = useState<Reading[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +29,7 @@ export const LatestReadingWidget: React.FC = () => {
     return (
       <div className="flex flex-col items-center gap-1 text-muted-foreground py-4">
         <Calendar className="w-4 h-4" />
-        <span className="text-xs">No readings today</span>
+        <span className="text-xs">{t('widgetContent.noReadings')}</span>
       </div>
     );
   }
@@ -40,7 +42,7 @@ export const LatestReadingWidget: React.FC = () => {
             <Gauge className="w-3.5 h-3.5 text-primary" />
             <span className="font-mono font-medium">{r.subscriptionNumber}</span>
           </div>
-          <span className="font-bold text-foreground">{r.usageUnits} <span className="text-muted-foreground font-normal">units</span></span>
+          <span className="font-bold text-foreground">{r.usageUnits} <span className="text-muted-foreground font-normal">{t('widgetContent.units')}</span></span>
         </li>
       ))}
     </ul>

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Clock, CheckCircle, XCircle } from 'lucide-react';
+import { Clock, CheckCircle } from 'lucide-react';
 import { getAllPendingSlips } from '@/services/bankSlipService';
 import type { AdminBankSlipResponse } from '@/types/bankSlip';
+import { useTranslation } from 'react-i18next';
 
 export const PendingSlipsWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [slips, setSlips] = useState<AdminBankSlipResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -20,7 +22,7 @@ export const PendingSlipsWidget: React.FC = () => {
     return (
       <div className="flex items-center gap-2 text-success text-xs">
         <CheckCircle className="w-4 h-4" />
-        No pending bank slips
+        {t('widgetContent.noPendingSlips')}
       </div>
     );
   }
@@ -29,13 +31,13 @@ export const PendingSlipsWidget: React.FC = () => {
     <div>
       <div className="flex items-center gap-2 mb-2">
         <Clock className="w-4 h-4 text-warning" />
-        <span className="text-sm font-semibold text-warning">{slips.length} pending</span>
+        <span className="text-sm font-semibold text-warning">{slips.length} {t('widgetContent.pending')}</span>
       </div>
       <ul className="space-y-1">
         {slips.map((s) => (
           <li key={s.slipId} className="flex justify-between items-center text-xs py-1 border-b border-border/40">
             <span className="font-medium text-foreground">{s.subscriptionNumber}</span>
-            <span className="text-muted-foreground">Rs. {Number(s.amount).toLocaleString()}</span>
+            <span className="text-muted-foreground">{t('widgetContent.currency')} {Number(s.amount).toLocaleString()}</span>
           </li>
         ))}
       </ul>

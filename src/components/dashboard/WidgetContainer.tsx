@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Loader2 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { getWidgetTitleForLang } from '@/utils/widgetTranslationUtils';
 
 interface WidgetContainerProps {
   name: string;
+  widgetKey?: string;
+  componentKey?: string;
   colSpan?: number;
   rowSpan?: number;
   children: React.ReactNode;
@@ -16,11 +20,12 @@ interface WidgetContainerProps {
 /**
  * Card wrapper for all dashboard widgets.
  * Handles loading skeletons, error states, and grid sizing.
- *
- * Grid columns are driven by CSS variables set from the server-provided colSpan/rowSpan.
+ * Supports localized display names based on widgetKey or componentKey.
  */
 export const WidgetContainer: React.FC<WidgetContainerProps> = ({
   name,
+  widgetKey,
+  componentKey,
   colSpan = 1,
   rowSpan = 1,
   children,
@@ -29,6 +34,18 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
   className,
   style,
 }) => {
+  const { i18n } = useTranslation('widgetManagement');
+  const [, setRenderTrigger] = useState(0);
+
+  useEffect(() => {
+    const handleUpdate = () => setRenderTrigger(n => n + 1);
+    window.addEventListener('wms-widget-translation-updated', handleUpdate);
+    return () => window.removeEventListener('wms-widget-translation-updated', handleUpdate);
+  }, []);
+
+  const keyToLookup = widgetKey || componentKey;
+  const displayName = getWidgetTitleForLang(keyToLookup, name, i18n.language || 'en');
+
   const colSpanMap: Record<number, string> = {
     1: 'md:col-span-1',
     2: 'md:col-span-2',
@@ -60,7 +77,7 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
       {/* Widget header */}
       <div className="flex items-center justify-between mb-1">
         <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-          {name}
+          {displayName}
         </h3>
       </div>
 
@@ -75,7 +92,7 @@ export const WidgetContainer: React.FC<WidgetContainerProps> = ({
             <p className="text-xs text-destructive text-center">{error}</p>
           </div>
         ) : (
-          <WidgetErrorBoundary name={name}>
+          <WidgetErrorBoundary name={displayName}>
             {children}
           </WidgetErrorBoundary>
         )}

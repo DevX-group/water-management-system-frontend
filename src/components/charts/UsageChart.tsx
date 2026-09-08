@@ -2,9 +2,18 @@ import '@/index.css';
 import React from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { mockWaterUsageData } from '@/data/mockData';
-
+import { useTranslation } from 'react-i18next';
+import { formatMonthLabel } from '@/utils/monthTranslationUtils';
 
 export const UsageChart: React.FC = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || 'en';
+
+  const chartData = mockWaterUsageData.map((item) => ({
+    ...item,
+    displayName: formatMonthLabel(item.name, currentLang),
+  }));
+
   return (
     <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up" style={{ animationDelay: '200ms' }}>
       <div className="flex items-center justify-between mb-6">
@@ -15,7 +24,7 @@ export const UsageChart: React.FC = () => {
       </div>
       <div className="h-64">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={mockWaterUsageData}>
+          <AreaChart data={chartData}>
             <defs>
               <linearGradient id="usageGradient" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
@@ -28,7 +37,7 @@ export const UsageChart: React.FC = () => {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
             <XAxis 
-              dataKey="name" 
+              dataKey="displayName" 
               tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
               axisLine={{ stroke: 'hsl(var(--border))' }}
             />
@@ -67,4 +76,4 @@ export const UsageChart: React.FC = () => {
       </div>
     </div>
   );
-};
+};

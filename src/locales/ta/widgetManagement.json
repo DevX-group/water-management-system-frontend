@@ -1,10 +1,10 @@
 {
   "page": {
     "title": "விட்ஜெட் மேலாண்மை",
-    "subtitle": "விட்ஜெட் கட்டாளகத்தை நிர்வகிக்கவும் மற்றும் பங்கு டாஷ்போர்டுகளை உள்ளமைக்கவும்."
+    "subtitle": "விட்ஜெட் பட்டியலை நிர்வகிக்கவும் மற்றும் பங்கு டாஷ்போர்டுகளை உள்ளமைக்கவும்."
   },
   "catalog": {
-    "title": "விட்ஜெட் கட்டாளகம்",
+    "title": "விட்ஜெட் பட்டியல்",
     "refresh": "புதுப்பிக்கவும்"
   },
   "card": {
@@ -32,5 +32,147 @@
     "width": "அகலம்",
     "height": "உயரம்"
   },
-  "loadError": "விட்ஜெட் கட்டாளகத்தை ஏற்ற முடியவில்லை"
+  "types": {
+    "STAT": "புள்ளிவிவரம்",
+    "CHART": "வரைபடம்",
+    "TABLE": "அட்டவணை",
+    "LIST": "பட்டியல்",
+    "ALERT": "விழிப்பூட்டல்",
+    "ACTION": "செயல்",
+    "PROGRESS": "முன்னேற்றம்",
+    "ANNOUNCEMENT": "அறிவிப்பு"
+  },
+  "roles": {
+    "SUPER_ADMIN": "முதன்மை நிர்வாகி",
+    "SYSTEM_ADMIN": "அமைப்பு நிர்வாகி",
+    "CUSTOMER_HANDLER": "வாடிக்கையாளர் உதவியாளர்",
+    "METER_READER": "மீட்டர் வாசிப்பாளர்",
+    "CUSTOMER": "வாடிக்கையாளர்"
+  },
+  "widgets": {
+    "customer-current-bill": "தற்போதைய பில்",
+    "customer-outstanding": "நிலுவைத் தொகை",
+    "customer-pay-now": "இப்போது செலுத்துங்கள்",
+    "customer-usage-trend": "பயன்பாட்டு போக்கு",
+    "customer-recent-payments": "சமீபத்திய கொடுப்பனவுகள்",
+    "customer-notifications": "அறிவிப்புகள்",
+    "customer-bank-slip-status": "வங்கி சீட்டு நிலை",
+    "customer-inquiries": "எனது விசாரணைகள்",
+    "meter-quick-entry": "விரைவு மீட்டர் பதிவு",
+    "meter-latest-reading": "சமீபத்திய வாசிப்பு",
+    "meter-reading-history": "வாசிப்பு வரலாறு",
+    "internal-chat-link": "உள் அரட்டை",
+    "handler-pending-slips": "நிலுவையில் உள்ள சீட்டுகள்",
+    "handler-recent-payments": "சமீபத்திய கொடுப்பனவுகள்",
+    "handler-open-inquiries": "திறந்த விசாரணைகள்",
+    "handler-customer-search": "வாடிக்கையாளர் தேடல்",
+    "admin-system-summary": "கணினி சுருக்கம்",
+    "admin-usage-chart": "கணினி பயன்பாட்டு வரைபடம்",
+    "admin-revenue-chart": "மாதாந்திர வருவாய்",
+    "admin-alerts": "செயலில் உள்ள விழிப்பூட்டல்கள்",
+    "admin-messaging-link": "வாடிக்கையாளர் செய்தி அனுப்புதல்",
+    "admin-blogs-link": "வலைப்பதிவு மேலாண்மை",
+    "admin-predictions-link": "பயன்பாட்டு முன்னறிவிப்புகள்",
+    "superadmin-admin-count": "நிர்வாகி எண்ணிக்கை",
+    "superadmin-region-summary": "பிராந்திய சுருக்கம்",
+    "superadmin-widget-management-link": "விட்ஜெட் மேலாண்மை",
+    "superadmin-user-management-link": "பயனர் மேலாண்மை",
+    "quick-link": "விரைவு இணைப்புகள்"
+  },
+  "quickLinks": {
+    "payNow": {
+      "label": "இப்போது செலுத்துங்கள்",
+      "description": "ஆன்லைனில் பணம் செலுத்துங்கள்"
+    },
+    "myInquiries": {
+      "label": "எனது விசாரணைகள்",
+      "description": "ஆதரவு கோரிக்கைகளைப் பார்க்கவும் அல்லது சமர்ப்பிக்கவும்"
+    },
+    "meterEntry": {
+      "label": "மீட்டர் வாசிப்பை உள்ளிடவும்",
+      "description": "புதிய மீட்டர் வாசிப்பைப் பதிவு செய்யவும்"
+    },
+    "internalChat": {
+      "label": "உள் அரட்டை",
+      "description": "ஊழியர் செய்தி அனுப்புதல்"
+    },
+    "customerSearch": {
+      "label": "வாடிக்கையாளர் மேலாண்மை",
+      "description": "வாடிக்கையாளர்களைத் தேடவும் நிர்வகிக்கவும்"
+    },
+    "messaging": {
+      "label": "செய்தியிடல்",
+      "description": "மொத்த SMS / அறிவிப்புகளை அனுப்பவும்"
+    },
+    "blogs": {
+      "label": "வலைப்பதிவு மேலாண்மை",
+      "description": "வலைப்பதிவு இடுகைகளை உருவாக்கி நிர்வகிக்கவும்"
+    },
+    "predictions": {
+      "label": "முன்னறிவிப்புகள்",
+      "description": "AI-இயங்கும் பயன்பாட்டு முன்னறிவிப்புகள்"
+    },
+    "widgetManagement": {
+      "label": "விட்ஜெட் மேலாண்மை",
+      "description": "டாஷ்போர்டு விட்ஜெட்களை உள்ளமைக்கவும்"
+    },
+    "adminManagement": {
+      "label": "நிர்வாக மேலாண்மை",
+      "description": "நிர்வாக பயனர்கள் மற்றும் பாத்திரங்களை நிர்வகிக்கவும்"
+    }
+  },
+  "widgetContent": {
+    "noActiveAlerts": "செயலில் உள்ள விழிப்பூட்டல்கள் இல்லை",
+    "noCurrentBill": "தற்போதைய பில் இல்லை",
+    "noOpenInquiries": "திறந்த விசாரணைகள் இல்லை",
+    "noRecentPayments": "சமீபத்திய கொடுப்பனவுகள் இல்லை",
+    "noNotifications": "புதிய அறிவிப்புகள் இல்லை",
+    "noPendingSlips": "நிலுவையில் உள்ள வங்கி சீட்டுகள் இல்லை",
+    "noRegionData": "பிராந்திய தரவு இல்லை",
+    "noReadings": "இன்று வாசிப்புகள் எதுவும் பதிவு செய்யப்படவில்லை",
+    "noSlipsSubmitted": "வங்கி சீட்டுகள் எதுவும் சமர்ப்பிக்கப்படவில்லை",
+    "noUsageData": "பயன்பாட்டு தரவு இல்லை",
+    "noData": "தரவு இல்லை",
+    "due": "செலுத்த வேண்டிய தேதி",
+    "units": "அலகுகள்",
+    "usage": "பயன்பாடு",
+    "revenue": "வருவாய்",
+    "customers": "வாடிக்கையாளர்கள்",
+    "pendingSlips": "நிலுவையில் உள்ள சீட்டுகள்",
+    "outstanding": "நிலுவை",
+    "paidThisMonth": "இந்த மாதம் செலுத்தப்பட்டது",
+    "openInquiries": "திறந்த விசாரணைகள்",
+    "adminUsers": "நிர்வாக பயனர்கள்",
+    "totalPending": "மொத்த நிலுவை",
+    "unpaidBills": "செலுத்தப்படாத பில்கள்",
+    "pending": "நிலுவையில்",
+    "subscription": "சந்தா",
+    "amount": "தொகை",
+    "method": "முறை",
+    "status": "நிலை",
+    "currency": "ரூ."
+  },
+  "paymentMethods": {
+    "ONLINE": "ஆன்லைன்",
+    "BANK_TRANSFER": "வங்கி பரிமாற்றம்",
+    "MANUAL": "நேரடி"
+  },
+  "paymentTypes": {
+    "MONTHLY": "மாதாந்திர",
+    "OUTSTANDING": "நிலுவை"
+  },
+  "statuses": {
+    "COMPLETED": "முடிந்தது",
+    "PENDING": "நிலுவையில்",
+    "FAILED": "தோல்வியடைந்தது",
+    "PAID": "செலுத்தப்பட்டது",
+    "UNPAID": "செலுத்தப்படாதது",
+    "APPROVED": "அங்கீகரிக்கப்பட்டது",
+    "REJECTED": "நிராகரிக்கப்பட்டது",
+    "FULL": "முழுமையான",
+    "PARTIAL": "பகுதி",
+    "full": "முழுமையான",
+    "partial": "பகுதி"
+  },
+  "loadError": "விட்ஜெட் பட்டியலை ஏற்ற முடியவில்லை"
 }

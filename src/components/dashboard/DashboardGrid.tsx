@@ -167,6 +167,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
               <WidgetContainer
                 key={widget.id}
                 name={widget.name}
+                widgetKey={widget.widgetKey}
+                componentKey={widget.componentKey}
                 colSpan={widget.colSpan}
                 rowSpan={widget.rowSpan}
                 className="animate-slide-up"

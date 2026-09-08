@@ -1,6 +1,7 @@
 import React from 'react';
 import type { WidgetComponentKey } from '@/types/dashboard';
 import { WidgetUnavailable } from './WidgetUnavailable';
+import { useTranslation } from 'react-i18next';
 
 // Customer widgets
 import { CurrentBillWidget } from './widgets/CurrentBillWidget';
@@ -24,7 +25,7 @@ import { RegionSummaryWidget } from './widgets/RegionSummaryWidget';
 // Quick link / action widget
 import { QuickLinkWidget } from './widgets/QuickLinkWidget';
 import {
-  CreditCard, Gauge, MessageSquare, HelpCircle, Send,
+  CreditCard, Gauge, HelpCircle, Send,
   BookOpen, TrendingUp, Settings, Users, LayoutDashboard,
   Search, MessageCircle,
 } from 'lucide-react';
@@ -35,15 +36,139 @@ export interface WidgetRendererProps {
   configJson?: string | null;
 }
 
+// Localized Quick Link Wrappers
+const PayNowQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.payNow.label')}
+      description={t('quickLinks.payNow.description')}
+      to="/customer/payments"
+      icon={CreditCard}
+      variant="primary"
+    />
+  );
+};
+
+const CustomerInquiriesQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.myInquiries.label')}
+      description={t('quickLinks.myInquiries.description')}
+      to="/customer/inquiry"
+      icon={HelpCircle}
+      variant="accent"
+    />
+  );
+};
+
+const MeterQuickEntryQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.meterEntry.label')}
+      description={t('quickLinks.meterEntry.description')}
+      to="/admin/meter"
+      icon={Gauge}
+      variant="primary"
+    />
+  );
+};
+
+const InternalChatQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.internalChat.label')}
+      description={t('quickLinks.internalChat.description')}
+      to="/admin/internal-chat"
+      icon={MessageCircle}
+      variant="accent"
+    />
+  );
+};
+
+const CustomerSearchQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.customerSearch.label')}
+      description={t('quickLinks.customerSearch.description')}
+      to="/admin/users"
+      icon={Search}
+      variant="default"
+    />
+  );
+};
+
+const MessagingQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.messaging.label')}
+      description={t('quickLinks.messaging.description')}
+      to="/admin/messaging"
+      icon={Send}
+      variant="primary"
+    />
+  );
+};
+
+const BlogsQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.blogs.label')}
+      description={t('quickLinks.blogs.description')}
+      to="/admin/blog"
+      icon={BookOpen}
+      variant="accent"
+    />
+  );
+};
+
+const PredictionsQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.predictions.label')}
+      description={t('quickLinks.predictions.description')}
+      to="/admin/predictions"
+      icon={TrendingUp}
+      variant="accent"
+    />
+  );
+};
+
+const WidgetManagementQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.widgetManagement.label')}
+      description={t('quickLinks.widgetManagement.description')}
+      to="/admin/widget-management"
+      icon={Settings}
+      variant="default"
+    />
+  );
+};
+
+const AdminManagementQuickLink = () => {
+  const { t } = useTranslation('widgetManagement');
+  return (
+    <QuickLinkWidget
+      label={t('quickLinks.adminManagement.label')}
+      description={t('quickLinks.adminManagement.description')}
+      to="/admin/users"
+      icon={Users}
+      variant="default"
+    />
+  );
+};
+
 /**
  * Static allow-listed widget registry.
- *
- * Maps each {@link WidgetComponentKey} to a concrete React component.
- * Unknown keys render {@link WidgetUnavailable} as a safe fallback.
- *
- * SECURITY: This map is the sole authoritative source for widget rendering.
- * The backend componentKey value is treated as an opaque string that is
- * looked up here — it is never used as a dynamic import path or eval target.
  */
 const WIDGET_REGISTRY: Record<
   WidgetComponentKey,
@@ -52,121 +177,41 @@ const WIDGET_REGISTRY: Record<
   // ── Customer ──────────────────────────────────────────────────────────────
   'customer-current-bill': () => <CurrentBillWidget />,
   'customer-outstanding': () => <OutstandingBalanceWidget />,
-  'customer-pay-now': () => (
-    <QuickLinkWidget
-      label="Pay Now"
-      description="Make a payment online"
-      to="/customer/payments"
-      icon={CreditCard}
-      variant="primary"
-    />
-  ),
+  'customer-pay-now': () => <PayNowQuickLink />,
   'customer-usage-trend': () => <CustomerUsageTrendWidget />,
   'customer-recent-payments': () => <CustomerRecentPaymentsWidget />,
   'customer-notifications': () => <CustomerNotificationsWidget />,
   'customer-bank-slip-status': () => <BankSlipStatusWidget />,
-  'customer-inquiries': () => (
-    <QuickLinkWidget
-      label="My Inquiries"
-      description="View or submit support requests"
-      to="/customer/inquiry"
-      icon={HelpCircle}
-      variant="accent"
-    />
-  ),
+  'customer-inquiries': () => <CustomerInquiriesQuickLink />,
 
   // ── Meter Reader ──────────────────────────────────────────────────────────
-  'meter-quick-entry': () => (
-    <QuickLinkWidget
-      label="Enter Meter Reading"
-      description="Record a new meter reading"
-      to="/admin/meter"
-      icon={Gauge}
-      variant="primary"
-    />
-  ),
+  'meter-quick-entry': () => <MeterQuickEntryQuickLink />,
   'meter-latest-reading': () => <LatestReadingWidget />,
   'meter-reading-history': () => <LatestReadingWidget />,
 
   // ── Shared Staff ──────────────────────────────────────────────────────────
-  'internal-chat-link': () => (
-    <QuickLinkWidget
-      label="Internal Chat"
-      description="Staff messaging"
-      to="/admin/internal-chat"
-      icon={MessageCircle}
-      variant="accent"
-    />
-  ),
+  'internal-chat-link': () => <InternalChatQuickLink />,
 
   // ── Customer Handler ──────────────────────────────────────────────────────
   'handler-pending-slips': () => <PendingSlipsWidget />,
   'handler-recent-payments': () => <AdminRecentPaymentsWidget />,
   'handler-open-inquiries': () => <OpenInquiriesWidget />,
-  'handler-customer-search': () => (
-    <QuickLinkWidget
-      label="Customer Management"
-      description="Search and manage customers"
-      to="/admin/users"
-      icon={Search}
-      variant="default"
-    />
-  ),
+  'handler-customer-search': () => <CustomerSearchQuickLink />,
 
   // ── System Admin ──────────────────────────────────────────────────────────
   'admin-system-summary': () => <SystemSummaryWidget />,
   'admin-usage-chart': () => <SystemUsageChartWidget />,
   'admin-revenue-chart': () => <MonthlyRevenueChartWidget />,
   'admin-alerts': () => <ActiveAlertsWidget />,
-  'admin-messaging-link': () => (
-    <QuickLinkWidget
-      label="Messaging"
-      description="Send bulk SMS / notifications"
-      to="/admin/messaging"
-      icon={Send}
-      variant="primary"
-    />
-  ),
-  'admin-blogs-link': () => (
-    <QuickLinkWidget
-      label="Blog Management"
-      description="Create and manage blog posts"
-      to="/admin/blog"
-      icon={BookOpen}
-      variant="accent"
-    />
-  ),
-  'admin-predictions-link': () => (
-    <QuickLinkWidget
-      label="Predictions"
-      description="AI-powered usage forecasts"
-      to="/admin/predictions"
-      icon={TrendingUp}
-      variant="accent"
-    />
-  ),
+  'admin-messaging-link': () => <MessagingQuickLink />,
+  'admin-blogs-link': () => <BlogsQuickLink />,
+  'admin-predictions-link': () => <PredictionsQuickLink />,
 
   // ── Super Admin ───────────────────────────────────────────────────────────
   'superadmin-admin-count': () => <SystemSummaryWidget />,
   'superadmin-region-summary': () => <RegionSummaryWidget />,
-  'superadmin-widget-management-link': () => (
-    <QuickLinkWidget
-      label="Widget Management"
-      description="Configure dashboard widgets"
-      to="/admin/widget-management"
-      icon={Settings}
-      variant="default"
-    />
-  ),
-  'superadmin-user-management-link': () => (
-    <QuickLinkWidget
-      label="Admin Management"
-      description="Manage admin users and roles"
-      to="/admin/users"
-      icon={Users}
-      variant="default"
-    />
-  ),
+  'superadmin-widget-management-link': () => <WidgetManagementQuickLink />,
+  'superadmin-user-management-link': () => <AdminManagementQuickLink />,
 
   // ── Generic ───────────────────────────────────────────────────────────────
   'quick-link': ({ configJson }) => {

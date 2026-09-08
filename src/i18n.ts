@@ -119,4 +119,19 @@ i18n
     },
   });
 
+// Load any custom widget name translations saved by admin
+if (typeof window !== 'undefined') {
+  try {
+    ['en', 'si', 'ta'].forEach((lang) => {
+      const raw = localStorage.getItem(`wms_widget_custom_names_${lang}`);
+      if (raw) {
+        const custom: Record<string, string> = JSON.parse(raw);
+        i18n.addResourceBundle(lang, 'widgetManagement', { widgets: custom }, true, true);
+      }
+    });
+  } catch {
+    // ignore
+  }
+}
+
 export default i18n;

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Bell, CheckCircle } from 'lucide-react';
 import { getCustomerNotifications, markNotificationAsRead } from '@/services/notificationService';
 import type { NotificationResponse } from '@/types/customerNotification';
+import { useTranslation } from 'react-i18next';
 
 export const CustomerNotificationsWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +35,7 @@ export const CustomerNotificationsWidget: React.FC = () => {
     return (
       <div className="flex flex-col items-center gap-1 text-muted-foreground py-4">
         <CheckCircle className="w-5 h-5 text-success" />
-        <span className="text-xs">No new notifications</span>
+        <span className="text-xs">{t('widgetContent.noNotifications')}</span>
       </div>
     );
   }

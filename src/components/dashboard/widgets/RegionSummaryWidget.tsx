@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface RegionStat {
   regionCode: string;
@@ -8,6 +9,7 @@ interface RegionStat {
 }
 
 export const RegionSummaryWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [regions, setRegions] = useState<RegionStat[]>([]);
   const [loading, setLoading] = useState(true);
   const [total, setTotal] = useState(0);
@@ -36,7 +38,7 @@ export const RegionSummaryWidget: React.FC = () => {
   }, []);
 
   if (loading) return <div className="animate-pulse h-32 bg-muted rounded" />;
-  if (!regions.length) return <p className="text-xs text-muted-foreground">No region data.</p>;
+  if (!regions.length) return <p className="text-xs text-muted-foreground">{t('widgetContent.noRegionData')}</p>;
 
   return (
     <ul className="space-y-2">

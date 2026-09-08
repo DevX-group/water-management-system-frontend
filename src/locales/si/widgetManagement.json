@@ -1,36 +1,178 @@
 {
   "page": {
-    "title": "විජෙට් කළමනාකරණය",
-    "subtitle": "විජෙට් නාමාවලිය කළමනාකරණය කර භූමිකාව මෙනෑ දැලි වින්‍යාස කරන්න."
+    "title": "උපාංග කළමනාකරණය",
+    "subtitle": "උපාංග නාමාවලිය කළමනාකරණය කර භූමිකාවන් සඳහා පාලක පුවරුව වින්‍යාස කරන්න."
   },
   "catalog": {
-    "title": "විජෙට් නාමාවලිය",
+    "title": "උපාංග නාමාවලිය",
     "refresh": "යළි පූරණය"
   },
   "card": {
-    "widgetName": "විජෙට් නම",
+    "widgetName": "උපාංගයේ නම",
     "assignedRoles": "පවරන ලද භූමිකාවන්",
     "active": "සක්‍රිය",
     "deactivated": "අක්‍රිය",
     "saveChanges": "වෙනස්කම් සුරකින්න",
-    "saveSuccess": "විජෙට් සාර්ථකව යාවත්කාලීන කරන ලදී.",
-    "saveError": "විජෙට් යාවත්කාලීන කිරීම අසාර්ථකයි."
+    "saveSuccess": "උපාංගය සාර්ථකව යාවත්කාලීන කරන ලදී.",
+    "saveError": "උපාංගය යාවත්කාලීන කිරීම අසාර්ථකයි."
   },
   "dashboard": {
-    "title": "ඩෑෂ්බෝඩ් වින්‍යාසයන්",
-    "roleTitle": "{{role}} ඩෑෂ්බෝඩ්",
-    "roleSubtitle": "මෙම භූමිකාව සඳහා විජෙට් එකතු කිරීම, ප්‍රමාණය වෙනස් කිරීම සහ නැවත සකස් කිරීම.",
+    "title": "පාලක පුවරු වින්‍යාසයන්",
+    "roleTitle": "{{role}} පාලක පුවරුව",
+    "roleSubtitle": "මෙම භූමිකාව සඳහා උපාංග එකතු කිරීම, ප්‍රමාණය වෙනස් කිරීම සහ නැවත සකස් කිරීම.",
     "saveLayout": "සැකල්ල සුරකින්න",
-    "saveSuccess": "ඩෑෂ්බෝඩ් සැකල්ල සාර්ථකව සුරකින ලදී.",
+    "saveSuccess": "පාලක පුවරු සැකල්ල සාර්ථකව සුරකින ලදී.",
     "saveError": "සැකල්ල සුරැකීම අසාර්ථකයි.",
-    "noActiveDashboard": "{{role}} සඳහා සක්‍රිය ඩෑෂ්බෝඩ් හමු නොවීය.",
-    "placedWidgets": "ස්ථාපිත විජෙට්",
-    "availableWidgets": "ලබාගත හැකි විජෙට්",
-    "emptyDashboard": "ඩෑෂ්බෝඩ් හිස්ය. පැනලයෙන් විජෙට් එකතු කරන්න.",
-    "noWidgetsAvailable": "මෙම භූමිකාව සඳහා වෙනත් විජෙට් නොමැත.",
+    "noActiveDashboard": "{{role}} සඳහා සක්‍රිය පාලක පුවරුවක් හමු නොවීය.",
+    "placedWidgets": "ස්ථාපිත උපාංග",
+    "availableWidgets": "ලබාගත හැකි උපාංග",
+    "emptyDashboard": "පාලක පුවරුව හිස්ය. පැනලයෙන් උපාංග එකතු කරන්න.",
+    "noWidgetsAvailable": "මෙම භූමිකාව සඳහා වෙනත් උපාංග නොමැත.",
     "add": "එකතු කරන්න",
     "width": "පළල",
     "height": "උස"
   },
-  "loadError": "විජෙට් නාමාවලිය පූරණය කිරීම අසාර්ථකයි"
+  "types": {
+    "STAT": "සංඛ්‍යාලේඛන",
+    "CHART": "ප්‍රස්තාරය",
+    "TABLE": "වගුව",
+    "LIST": "ලැයිස්තුව",
+    "ALERT": "අනතුරු ඇඟවීම",
+    "ACTION": "ක්‍රියාව",
+    "PROGRESS": "ප්‍රගතිය",
+    "ANNOUNCEMENT": "නිවේදනය"
+  },
+  "roles": {
+    "SUPER_ADMIN": "ප්‍රධාන පරිපාලක",
+    "SYSTEM_ADMIN": "පද්ධති පරිපාලක",
+    "CUSTOMER_HANDLER": "පාරිභෝගික සහායක",
+    "METER_READER": "මීටර් කියවන්නා",
+    "CUSTOMER": "පාරිභෝගික"
+  },
+  "widgets": {
+    "customer-current-bill": "වත්මන් බිල්පත",
+    "customer-outstanding": "හිඟ ශේෂය",
+    "customer-pay-now": "දැන් ගෙවන්න",
+    "customer-usage-trend": "භාවිත ප්‍රවණතාව",
+    "customer-recent-payments": "මෑත ගෙවීම්",
+    "customer-notifications": "දැනුම්දීම්",
+    "customer-bank-slip-status": "බැංකු රිසිට්පත් තත්ත්වය",
+    "customer-inquiries": "මගේ විමසීම්",
+    "meter-quick-entry": "ක්ෂණික මීටර් සටහන",
+    "meter-latest-reading": "නවතම මීටර් කියවීම",
+    "meter-reading-history": "කියවීම් ඉතිහාසය",
+    "internal-chat-link": "අභ්‍යන්තර කතාබහ",
+    "handler-pending-slips": "පොරොත්තු රිසිට්පත්",
+    "handler-recent-payments": "මෑත ගෙවීම්",
+    "handler-open-inquiries": "විවෘත විමසීම්",
+    "handler-customer-search": "පාරිභෝගික සෙවීම",
+    "admin-system-summary": "පද්ධති සාරාංශය",
+    "admin-usage-chart": "පද්ධති භාවිත සටහන",
+    "admin-revenue-chart": "මාසික ආදායම",
+    "admin-alerts": "ක්‍රියාකාරී අනතුරු ඇඟවීම්",
+    "admin-messaging-link": "පාරිභෝගික පණිවිඩ යැවීම",
+    "admin-blogs-link": "බ්ලොග් කළමනාකරණය",
+    "admin-predictions-link": "භාවිත අනාවැකි",
+    "superadmin-admin-count": "පරිපාලක සංඛ්‍යාව",
+    "superadmin-region-summary": "කලාප සාරාංශය",
+    "superadmin-widget-management-link": "උපාංග කළමනාකරණය",
+    "superadmin-user-management-link": "පරිශීලක කළමනාකරණය",
+    "quick-link": "ක්ෂණික සබැඳි"
+  },
+  "quickLinks": {
+    "payNow": {
+      "label": "දැන් ගෙවන්න",
+      "description": "මාර්ගගතව ගෙවීමක් කරන්න"
+    },
+    "myInquiries": {
+      "label": "මගේ විමසීම්",
+      "description": "සහාය ඉල්ලීම් බලන්න හෝ යොමු කරන්න"
+    },
+    "meterEntry": {
+      "label": "මීටර් කියවීම ඇතුළත් කරන්න",
+      "description": "නව මීටර් කියවීමක් සටහන් කරන්න"
+    },
+    "internalChat": {
+      "label": "අභ්‍යන්තර කතාබහ",
+      "description": "කාර්ය මණ්ඩල පණිවිඩ"
+    },
+    "customerSearch": {
+      "label": "පාරිභෝගික කළමනාකරණය",
+      "description": "පාරිභෝගිකයින් සොයන්න සහ කළමනාකරණය කරන්න"
+    },
+    "messaging": {
+      "label": "පණිවිඩ යැවීම",
+      "description": "තොග SMS / දැනුම්දීම් යවන්න"
+    },
+    "blogs": {
+      "label": "බ්ලොග් කළමනාකරණය",
+      "description": "බ්ලොග් සටහන් සාදන්න සහ කළමනාකරණය කරන්න"
+    },
+    "predictions": {
+      "label": "අනාවැකි",
+      "description": "AI මඟින් ක්‍රියාත්මක වන භාවිත අනාවැකි"
+    },
+    "widgetManagement": {
+      "label": "උපාංග කළමනාකරණය",
+      "description": "පාලක පුවරු උපාංග වින්‍යාස කරන්න"
+    },
+    "adminManagement": {
+      "label": "පරිපාලක කළමනාකරණය",
+      "description": "පරිපාලක පරිශීලකයින් සහ භූමිකාවන් කළමනාකරණය කරන්න"
+    }
+  },
+  "widgetContent": {
+    "noActiveAlerts": "ක්‍රියාකාරී අනතුරු ඇඟවීම් නොමැත",
+    "noCurrentBill": "වත්මන් බිල්පතක් නොමැත",
+    "noOpenInquiries": "විවෘත විමසීම් නොමැත",
+    "noRecentPayments": "මෑත ගෙවීම් නොමැත",
+    "noNotifications": "නව දැනුම්දීම් නොමැත",
+    "noPendingSlips": "පොරොත්තු බැංකු රිසිට්පත් නොමැත",
+    "noRegionData": "කලාප දත්ත නොමැත",
+    "noReadings": "අද දින කියවීම් නොමැත",
+    "noSlipsSubmitted": "බැංකු රිසිට්පත් යොමු කර නොමැත",
+    "noUsageData": "භාවිත දත්ත නොමැත",
+    "noData": "දත්ත නොමැත",
+    "due": "නියමිත දිනය",
+    "units": "ඒකක",
+    "usage": "භාවිතය",
+    "revenue": "ආදායම",
+    "customers": "පාරිභෝගිකයින්",
+    "pendingSlips": "පොරොත්තු රිසිට්පත්",
+    "outstanding": "හිඟ මුදල",
+    "paidThisMonth": "මෙම මස ගෙවූ මුදල",
+    "openInquiries": "විවෘත විමසීම්",
+    "adminUsers": "පරිපාලක පරිශීලකයින්",
+    "totalPending": "මුළු පොරොත්තු මුදල",
+    "unpaidBills": "නොගෙවූ බිල්පත්",
+    "pending": "පොරොත්තුවේ",
+    "subscription": "දායකත්වය",
+    "amount": "මුදල",
+    "method": "ක්‍රමය",
+    "status": "තත්ත්වය",
+    "currency": "රු."
+  },
+  "paymentMethods": {
+    "ONLINE": "මාර්ගගත",
+    "BANK_TRANSFER": "බැංකු හුවමාරුව",
+    "MANUAL": "අතින්"
+  },
+  "paymentTypes": {
+    "MONTHLY": "මාසික",
+    "OUTSTANDING": "හිඟ"
+  },
+  "statuses": {
+    "COMPLETED": "සම්පූර්ණයි",
+    "PENDING": "පොරොත්තුවේ",
+    "FAILED": "අසාර්ථකයි",
+    "PAID": "ගෙවා ඇත",
+    "UNPAID": "නොගෙවූ",
+    "APPROVED": "අනුමතයි",
+    "REJECTED": "ප්‍රතික්ෂේපිතයි",
+    "FULL": "සම්පූර්ණ",
+    "PARTIAL": "අර්ධ",
+    "full": "සම්පූර්ණ",
+    "partial": "අර්ධ"
+  },
+  "loadError": "උපාංග නාමාවලිය පූරණය කිරීම අසාර්ථකයි"
 }
