@@ -56,6 +56,9 @@ import taLanding from "./locales/ta/landing.json";
 import enAuth from "./locales/en/auth.json";
 import siAuth from "./locales/si/auth.json";
 import taAuth from "./locales/ta/auth.json";
+import enToasts from "./locales/en/toasts.json";
+import siToasts from "./locales/si/toasts.json";
+import taToasts from "./locales/ta/toasts.json";
 
 i18n
   .use(LanguageDetector)
@@ -81,6 +84,7 @@ i18n
         activityLog: enActivityLog,
         landing: enLanding,
         auth: enAuth,
+        toasts: enToasts,
       },
       si: {
         payments: siPayments,
@@ -101,6 +105,7 @@ i18n
         activityLog: siActivityLog,
         landing: siLanding,
         auth: siAuth,
+        toasts: siToasts,
       },
       ta: {
         payments: taPayments,
@@ -121,6 +126,7 @@ i18n
         activityLog: taActivityLog,
         landing: taLanding,
         auth: taAuth,
+        toasts: taToasts,
       },
     },
 

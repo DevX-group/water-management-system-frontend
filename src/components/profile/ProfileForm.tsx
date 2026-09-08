@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { User, Loader2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { EditableProfileFields } from './EditableProfileFields';
 import { ReadOnlyProfileFields } from './ReadOnlyProfileFields';
 
@@ -26,6 +27,7 @@ interface ProfileFormProps {
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProfileUpdated }) => {
   const { toast } = useToast();
+  const { t } = useTranslation('toasts');
   
   // Editable fields state
   const [name, setName] = useState(initialProfile.accountHolderName || '');
@@ -37,7 +39,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !phone.trim()) {
-      toast({ title: 'Error', description: 'Please fill out all editable fields.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('fillEditableFields'), variant: 'destructive' });
       return;
     }
     
@@ -48,13 +50,13 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
         email: email,
         phoneNumber: phone
       });
-      toast({ title: 'Success', description: 'Your profile has been updated successfully.' });
+      toast({ title: t('success'), description: t('profileUpdated') });
       onProfileUpdated(res.data);
     } catch (err: any) {
       console.error(err);
       toast({ 
-        title: 'Error', 
-        description: err.response?.data?.message || 'Failed to update profile.', 
+        title: t('error'),
+        description: err.response?.data?.message || t('profileUpdateFailed'),
         variant: 'destructive' 
       });
     } finally {

@@ -15,6 +15,7 @@ const validateNIC   = (n: string) => /^[0-9]{9}[VvXx]$/.test(n) || /^[0-9]{12}$/
 
 const Signup = () => {
   const { t } = useTranslation('auth');
+  const { t: toastT } = useTranslation('toasts');
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
@@ -54,11 +55,11 @@ const Signup = () => {
           password: formData.password,
           confirmPassword: formData.confirmPassword,
         });
-        toast({ title: 'Account Activated', description: 'You can now log in with your NIC and password.' });
+        toast({ title: t('signup.activateTitle', 'Account Activated'), description: toastT('accountActivated') });
         navigate('/login');
       } catch (error: any) {
         const message = error?.response?.data?.message || 'Activation failed. Please try again.';
-        toast({ title: 'Activation Failed', description: message, variant: 'destructive' });
+        toast({ title: t('signup.activationFailedTitle', 'Activation Failed'), description: message || toastT('activationFailed'), variant: 'destructive' });
       }
       return;
     }

@@ -31,6 +31,7 @@ import { useTranslation } from "react-i18next";
 
 export const CustomerPayments = () => {
   const { t } = useTranslation('payments');
+  const { t: toastT } = useTranslation('toasts');
 
   const [currentBill, setCurrentBill] = useState<CurrentBillResponse | null>(null);
   const [outstandingBillsSummary, setOutstandingBillsSummary] = useState<OutstandingBillsSummaryResponse | null>(null);
@@ -292,7 +293,7 @@ export const CustomerPayments = () => {
     // AI Vision extraction
     try {
       setIsExtracting(true);
-      showToast("AI scanning bank slip...");
+      showToast(toastT('aiScanning'));
 
       const extracted = await extractBankSlipData(file);
 
@@ -316,16 +317,14 @@ export const CustomerPayments = () => {
         if (hasRef) filled.push("Reference"); else missing.push("Reference");
 
         if (missing.length === 0) {
-          showToast("All fields auto-filled by AI! Check and edit if needed.");
+          showToast(toastT('aiAllFieldsFilled'));
         } else if (filled.length === 0) {
-          showToast("Could not auto-read slip. Please fill all fields manually.");
+          showToast(toastT('aiNoFieldsFilled'));
         } else {
-          showToast(
-            `Auto-filled: ${filled.join(", ")}  |  Fill manually: ${missing.join(", ")}`
-          );
+          showToast(toastT('aiPartialFieldsFilled', { filled: filled.join(', '), missing: missing.join(', ') }));
         }
       } else {
-        showToast("Could not auto-read slip. Please fill fields manually.");
+        showToast(toastT('aiManualFields'));
       }
     } catch (err) {
       console.warn("AI extraction unavailable:", err);
