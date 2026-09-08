@@ -116,10 +116,13 @@ class WidgetErrorBoundary extends React.Component<{name: string, children: React
     if (this.state.hasError) {
       return (
         <div className="flex items-center justify-center h-full min-h-[80px]">
-          <p className="text-xs text-destructive text-center">Failed to load widget preview.</p>
+          <p className="text-xs text-destructive text-center">
+            Failed to load widget preview.
+          </p>
         </div>
       );
     }
     return this.props.children;
   }
 }
+

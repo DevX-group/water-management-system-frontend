@@ -174,5 +174,68 @@
     "full": "Full",
     "partial": "Partial"
   },
-  "loadError": "Failed to load widget catalog"
+  "loadError": "Failed to load widget catalog",
+  "dashboardPage": {
+    "customerGreeting": "Welcome Back",
+    "customerSubtitle": "Your water account at a glance",
+    "roleGreeting": {
+      "SUPER_ADMIN": "Super Admin Dashboard",
+      "SYSTEM_ADMIN": "System Admin Dashboard",
+      "CUSTOMER_HANDLER": "Customer Handler Dashboard",
+      "METER_READER": "Meter Reader Dashboard"
+    },
+    "roleSubtitle": {
+      "SUPER_ADMIN": "Full system overview and management",
+      "SYSTEM_ADMIN": "System operations and monitoring",
+      "CUSTOMER_HANDLER": "Customer payments, slips, and inquiries",
+      "METER_READER": "Meter reading entry and history"
+    }
+  },
+  "grid": {
+    "initializing": "Initializing workspace...",
+    "loadError": "Failed to load dashboard configuration. Please refresh.",
+    "noConfig": "No dashboard configuration found.",
+    "unavailable": "This widget is currently unavailable.",
+    "previewFailed": "Failed to load widget preview.",
+    "badges": {
+      "meterStaff": "Water Management — Field Staff",
+      "systemActive": "System Active",
+      "liveMeterSync": "Live Meter Sync",
+      "offlineReady": "Offline Ready",
+      "fieldOperations": "Field Operations"
+    },
+    "meterReaderSection": {
+      "label": "Field Operations Suite",
+      "title": "Built for Meter Readers in the Field",
+      "sub": "Smart tools designed to make your daily reading operations faster and more accurate."
+    },
+    "generalSection": {
+      "label": "Platform Highlights",
+      "title": "Everything you need, in one place",
+      "sub": "A powerful management workspace with real-time insights and quick access to all modules."
+    },
+    "features": {
+      "meterReader": {
+        "ocrTitle": "AI-Powered OCR",
+        "ocrDesc": "Camera scans meter digits automatically using Python OCR",
+        "offlineTitle": "Offline Mode",
+        "offlineDesc": "Readings saved locally and synced when internet returns",
+        "trackingTitle": "Live Tracking",
+        "trackingDesc": "All readings captured today are visible in real time",
+        "secureTitle": "Secure & Accurate",
+        "secureDesc": "Every reading is validated and stored securely"
+      },
+      "general": {
+        "analyticsTitle": "Real-time Analytics",
+        "analyticsDesc": "Live system data updated every session",
+        "actionsTitle": "Instant Actions",
+        "actionsDesc": "Navigate to any module with a single click",
+        "accessTitle": "Role-Based Access",
+        "accessDesc": "You only see what your role needs",
+        "healthTitle": "System Health",
+        "healthDesc": "All services running normally"
+      }
+    }
+  }
 }
+

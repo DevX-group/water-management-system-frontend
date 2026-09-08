@@ -18,7 +18,10 @@
     "message": "Message Details",
     "messagePlaceholder": "Please provide details about the issue...",
     "submitting": "Sending Inquiry...",
-    "submit": "Submit Support Request"
+    "submit": "Submit Support Request",
+    "attachment": "Attachment",
+    "chooseFile": "Choose File",
+    "noFileChosen": "No file chosen"
   },
   "categories": {
     "Billing": "Billing & Payments",
