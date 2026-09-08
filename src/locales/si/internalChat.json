@@ -14,6 +14,7 @@
     "SUPER_ADMIN": "ප්‍රධාන පරිපාලක",
     "SYSTEM_ADMIN": "පද්ධති පරිපාලක",
     "PAYMENT_HANDLER": "ගෙවීම් හසුරුවන්නා",
+    "CUSTOMER_HANDLER": "පාරිභෝගික හසුරුවන්නා",
     "METER_READER": "මීටර කියවන්නා"
   },
   "sidebar": {
@@ -40,7 +41,9 @@
     "teamSubtitle": "ආරම්භ කිරීමට සාකච්ඡාවක් තෝරන්න හෝ කාර්යමණ්ඩල නාමාවලියෙන් සගයෙකු සොයන්න.",
     "secureNote": "පණිවිඩ ආරක්‍ෂිතව පද්ධතියේ සුරකිනු ලැබේ.",
     "conversationOptions": "සාකච්ඡා විකල්ප",
-    "sendMessage": "පණිවිඩය යවන්න"
+    "sendMessage": "පණිවිඩය යවන්න",
+    "deleteConversation": "සාකච්ඡාව මකන්න",
+    "deleteConversationConfirm": "මෙම සාකච්ඡාව ඔබගේ ලැයිස්තුවෙන් මකන්නද? පණිවිඩ සුරැකෙනු ඇත."
   },
   "toasts": {
     "loadChatTitle": "සාකච්ඡාව පූරණය කළ නොහැක",
@@ -54,6 +57,10 @@
     "startConversationTitle": "සාකච්ඡාව ආරම්භ කළ නොහැක",
     "startConversationDesc": "මෙම කාර්යමණ්ඩල සාමාජිකයා තවදුරටත් ලබාගත නොහැකි විය හැක.",
     "sendFailedTitle": "පණිවිඩය යවා නැත",
-    "sendFailedDesc": "ඔබේ සම්බන්ධතාවය පරීක්‍ෂා කර නැවත උත්සාහ කරන්න."
+    "sendFailedDesc": "ඔබේ සම්බන්ධතාවය පරීක්‍ෂා කර නැවත උත්සාහ කරන්න.",
+    "deleteConversationTitle": "සාකච්ඡාව මකා ඇත",
+    "deleteConversationDesc": "සාකච්ඡාව ඔබගේ ලැයිස්තුවෙන් ඉවත් කරන ලදී.",
+    "deleteConversationFailedTitle": "සාකච්ඡාව මකා දැමිය නොහැක",
+    "deleteConversationFailedDesc": "නැවත උත්සාහ කරන්න."
   }
 }

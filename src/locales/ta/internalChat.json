@@ -14,6 +14,7 @@
     "SUPER_ADMIN": "சூப்பர் நிர்வாகி",
     "SYSTEM_ADMIN": "கணினி நிர்வாகி",
     "PAYMENT_HANDLER": "கட்டண கையாளுநர்",
+    "CUSTOMER_HANDLER": "வாடிக்கையாளர் கையாளுநர்",
     "METER_READER": "மீட்டர் வாசிப்பாளர்"
   },
   "sidebar": {
@@ -40,7 +41,9 @@
     "teamSubtitle": "தொடங்க ஒரு உரையாடலை தேர்ந்தெடுக்கவும் அல்லது பணியாளர் அட்டவணையில் ஒரு சக பணியாளரை கண்டுபிடிக்கவும்.",
     "secureNote": "செய்திகள் கணினியில் பாதுகாப்பாக சேமிக்கப்படுகின்றன.",
     "conversationOptions": "உரையாடல் விருப்பங்கள்",
-    "sendMessage": "செய்தி அனுப்பு"
+    "sendMessage": "செய்தி அனுப்பு",
+    "deleteConversation": "உரையாடலை நீக்கு",
+    "deleteConversationConfirm": "இந்த உரையாடலை உங்கள் பட்டியலில் இருந்து நீக்கவா? செய்திகள் சேமிக்கப்படும்."
   },
   "toasts": {
     "loadChatTitle": "அரட்டையை ஏற்ற முடியவில்லை",
@@ -54,6 +57,10 @@
     "startConversationTitle": "உரையாடலை தொடங்க முடியவில்லை",
     "startConversationDesc": "இந்த பணியாளர் இனி கிடைக்காமல் போயிருக்கலாம்.",
     "sendFailedTitle": "செய்தி அனுப்பப்படவில்லை",
-    "sendFailedDesc": "உங்கள் இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்."
+    "sendFailedDesc": "உங்கள் இணைப்பை சரிபார்த்து மீண்டும் முயற்சிக்கவும்.",
+    "deleteConversationTitle": "உரையாடல் நீக்கப்பட்டது",
+    "deleteConversationDesc": "உரையாடல் உங்கள் பட்டியலில் இருந்து அகற்றப்பட்டது.",
+    "deleteConversationFailedTitle": "உரையாடலை நீக்க முடியவில்லை",
+    "deleteConversationFailedDesc": "மீண்டும் முயற்சிக்கவும்."
   }
 }

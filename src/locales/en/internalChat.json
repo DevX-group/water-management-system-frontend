@@ -14,6 +14,7 @@
     "SUPER_ADMIN": "Super Admin",
     "SYSTEM_ADMIN": "System Admin",
     "PAYMENT_HANDLER": "Payment Handler",
+    "CUSTOMER_HANDLER": "Customer Handler",
     "METER_READER": "Meter Reader"
   },
   "sidebar": {
@@ -40,7 +41,9 @@
     "teamSubtitle": "Choose a conversation or find a colleague in the staff directory to begin.",
     "secureNote": "Messages are saved securely in the system.",
     "conversationOptions": "Conversation options",
-    "sendMessage": "Send message"
+    "sendMessage": "Send message",
+    "deleteConversation": "Delete conversation",
+    "deleteConversationConfirm": "Delete this conversation from your list? Messages will be kept."
   },
   "toasts": {
     "loadChatTitle": "Unable to load chat",
@@ -54,6 +57,10 @@
     "startConversationTitle": "Unable to start conversation",
     "startConversationDesc": "This staff member may no longer be available.",
     "sendFailedTitle": "Message was not sent",
-    "sendFailedDesc": "Check your connection and try again."
+    "sendFailedDesc": "Check your connection and try again.",
+    "deleteConversationTitle": "Conversation deleted",
+    "deleteConversationDesc": "The conversation was removed from your list.",
+    "deleteConversationFailedTitle": "Unable to delete conversation",
+    "deleteConversationFailedDesc": "Please try again."
   }
 }
