@@ -50,6 +50,12 @@ import taWidgetManagement from "./locales/ta/widgetManagement.json";
 import enActivityLog from "./locales/en/activityLog.json";
 import siActivityLog from "./locales/si/activityLog.json";
 import taActivityLog from "./locales/ta/activityLog.json";
+import enLanding from "./locales/en/landing.json";
+import siLanding from "./locales/si/landing.json";
+import taLanding from "./locales/ta/landing.json";
+import enAuth from "./locales/en/auth.json";
+import siAuth from "./locales/si/auth.json";
+import taAuth from "./locales/ta/auth.json";
 
 i18n
   .use(LanguageDetector)
@@ -73,6 +79,8 @@ i18n
         internalChat: enInternalChat,
         widgetManagement: enWidgetManagement,
         activityLog: enActivityLog,
+        landing: enLanding,
+        auth: enAuth,
       },
       si: {
         payments: siPayments,
@@ -91,6 +99,8 @@ i18n
         internalChat: siInternalChat,
         widgetManagement: siWidgetManagement,
         activityLog: siActivityLog,
+        landing: siLanding,
+        auth: siAuth,
       },
       ta: {
         payments: taPayments,
@@ -109,6 +119,8 @@ i18n
         internalChat: taInternalChat,
         widgetManagement: taWidgetManagement,
         activityLog: taActivityLog,
+        landing: taLanding,
+        auth: taAuth,
       },
     },
 
