@@ -1,6 +1,24 @@
 {
   "title": "System Settings",
   "subtitle": "Manage global system configurations and operating regions.",
+  "interfaceSubtitle": "Manage your interface preferences and accessibility settings.",
+  "appearance": {
+    "title": "Appearance",
+    "description": "Customize the look and feel of the application.",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "typography": {
+    "title": "Typography",
+    "description": "Adjust the global font size for better readability.",
+    "small": "Small",
+    "smallDescription": "Compact view, more information.",
+    "medium": "Medium (Default)",
+    "mediumDescription": "Standard comfortable reading size.",
+    "large": "Large",
+    "largeDescription": "Enhanced readability and accessibility."
+  },
   "common": {
     "cancel": "Cancel",
     "delete": "Delete",

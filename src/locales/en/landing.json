@@ -42,6 +42,8 @@
   },
   "footer": {
     "description": "A beautifully engineered platform designed to simplify utility management for the modern home. Track, pay, and resolve issues effortlessly.",
+    "product": "Product",
+    "company": "Company",
     "platform": "Platform",
     "legal": "Legal",
     "connect": "Connect",

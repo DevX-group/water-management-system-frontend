@@ -11,6 +11,7 @@ import {
   ShieldCheck 
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -24,27 +25,29 @@ const itemVariants = {
 
 export const AboutUs = () => {
   const { isAuthenticated } = useAuth();
+  const { t, i18n } = useTranslation('info');
+  const isSinhala = i18n.language.startsWith('si');
 
   const pillars = [
     {
       icon: <Activity className="text-primary" size={24} />,
-      title: "Smart Monitoring",
-      desc: "Automated tracking of meter readings to prevent manual errors and provide instant usage data."
+      title: t('about.smartMonitoring'),
+      desc: t('about.smartMonitoringDesc')
     },
     {
       icon: <BellRing className="text-amber-500" size={24} />,
-      title: "Intelligent Alerts",
-      desc: "Real-time notification systems that detect usage spikes, potential leaks, and overdue payments."
+      title: t('about.intelligentAlerts'),
+      desc: t('about.intelligentAlertsDesc')
     },
     {
       icon: <CreditCard className="text-success" size={24} />,
-      title: "Transparent Billing",
-      desc: "A secure, digital-first approach to financial management, allowing customers to view history and settle balances."
+      title: t('about.transparentBilling'),
+      desc: t('about.transparentBillingDesc')
     },
     {
       icon: <Headphones className="text-purple-500" size={24} />,
-      title: "Reliable Support",
-      desc: "Integrated communication channels connecting customers directly with technical and billing teams."
+      title: t('about.reliableSupport'),
+      desc: t('about.reliableSupportDesc')
     }
   ];
 
@@ -61,10 +64,14 @@ export const AboutUs = () => {
           <motion.div variants={itemVariants} className="text-center space-y-4">
            
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight">
-              About <span className="text-gradient">HydroPay</span>
+              {isSinhala ? (
+                <><span className="text-gradient">{t('about.brand')}</span> {t('about.title')}</>
+              ) : (
+                <>{t('about.title')} <span className="text-gradient">{t('about.brand')}</span></>
+              )}
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              HydroPay is a comprehensive water management solution designed to bridge the gap between utility providers and consumers. Built with a focus on efficiency, transparency, and sustainability.
+              {t('about.description')}
             </p>
           </motion.div>
 
@@ -74,13 +81,10 @@ export const AboutUs = () => {
               <CardContent className="p-8 md:p-12 flex flex-col md:flex-row gap-8 items-center">
                 <div className="flex-1 space-y-4">
                   <h2 className="text-2xl font-bold flex items-center gap-2">
-                    <ShieldCheck className="text-primary" /> Our Mission
+                    <ShieldCheck className="text-primary" /> {t('about.missionTitle')}
                   </h2>
                   <p className="text-muted-foreground leading-relaxed">
-                    We transform traditional utility management into a seamless digital experience. 
-                    Our system empowers users with real-time insights into their water consumption 
-                    while providing administrators with powerful tools for automated billing and 
-                    smart anomaly detection.
+                    {t('about.mission')}
                   </p>
                 </div>
                 <div className="w-full md:w-1/3 h-48 bg-gradient-to-br from-primary to-accent rounded-2xl flex items-center justify-center text-white shadow-lg">
@@ -93,7 +97,7 @@ export const AboutUs = () => {
           {/* Pillars Grid */}
           <div className="space-y-8">
             <motion.h2 variants={itemVariants} className="text-3xl font-bold text-center">
-              Our Core <span className="text-primary">Pillars</span>
+              {t('about.pillarsTitle')} <span className="text-primary">{t('about.pillarsHighlight')}</span>
             </motion.h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -120,7 +124,7 @@ export const AboutUs = () => {
           {/* Call to Action/Closing */}
           <motion.div variants={itemVariants} className="text-center py-8">
             <p className="text-xl font-medium text-slate-700 italic">
-              "Dedicated to modernizing the way we manage our most precious resource."
+              {`"${t('about.closing')}"`}
             </p>
           </motion.div>
         </motion.div>

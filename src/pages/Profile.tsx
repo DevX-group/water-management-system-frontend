@@ -8,7 +8,8 @@ import { ProfileForm, CustomerProfile } from '@/components/profile/ProfileForm';
 
 const Profile = () => {
   const { toast } = useToast();
-  const { t } = useTranslation('toasts');
+  const { t: toastT } = useTranslation('toasts');
+  const { t } = useTranslation('customerSettings');
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
   const [fetching, setFetching] = useState(true);
 
@@ -21,7 +22,7 @@ const Profile = () => {
         }
       } catch (err) {
         console.error('Failed to fetch profile', err);
-        toast({ title: t('error'), description: t('profileLoadFailed'), variant: 'destructive' });
+        toast({ title: toastT('error'), description: toastT('profileLoadFailed'), variant: 'destructive' });
       } finally {
         setFetching(false);
       }
@@ -43,9 +44,9 @@ const Profile = () => {
     <MainLayout isAuthenticated={true}>
       <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto p-4 md:p-6 mt-20">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Profile</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">{t('profile.title')}</h1>
           <p className="mt-1 text-muted-foreground">
-            View and update your personal information.
+            {t('profile.subtitle')}
           </p>
         </div>
 

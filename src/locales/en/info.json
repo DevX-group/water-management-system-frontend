@@ -1,0 +1,57 @@
+{
+  "about": {
+    "title": "About",
+    "brand": "HydroPay",
+    "description": "HydroPay is a comprehensive water management solution designed to bridge the gap between utility providers and consumers. Built with a focus on efficiency, transparency, and sustainability.",
+    "missionTitle": "Our Mission",
+    "mission": "We transform traditional utility management into a seamless digital experience. Our system empowers users with real-time insights into their water consumption while providing administrators with powerful tools for automated billing and smart anomaly detection.",
+    "pillarsTitle": "Our Core",
+    "pillarsHighlight": "Pillars",
+    "smartMonitoring": "Smart Monitoring",
+    "smartMonitoringDesc": "Automated tracking of meter readings to prevent manual errors and provide instant usage data.",
+    "intelligentAlerts": "Intelligent Alerts",
+    "intelligentAlertsDesc": "Real-time notification systems that detect usage spikes, potential leaks, and overdue payments.",
+    "transparentBilling": "Transparent Billing",
+    "transparentBillingDesc": "A secure, digital-first approach to financial management, allowing customers to view history and settle balances.",
+    "reliableSupport": "Reliable Support",
+    "reliableSupportDesc": "Integrated communication channels connecting customers directly with technical and billing teams.",
+    "closing": "Dedicated to modernizing the way we manage our most precious resource."
+  },
+  "blog": {
+    "title": "HydroPay Blog",
+    "readMore": "Read More",
+    "back": "Back to Blog",
+    "joinMission": "Join HydroPay in our mission to conserve water and protect our natural resources for future generations."
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "subtitle": "How we handle and protect your data",
+    "commitment": "Data Protection Commitment",
+    "collectionTitle": "1. Data Collection",
+    "collection": "HydroPay collects essential information such as your name, email address, and water usage data strictly to provide accurate billing services and system notifications.",
+    "usageTitle": "2. Data Usage",
+    "usage": "Your information is used solely for processing payments, identifying anomalies in usage, and responding to your support inquiries. We never sell your data to third parties.",
+    "securityTitle": "3. Security",
+    "security": "We implement industry-standard encryption to protect your personal and financial information. Our database is monitored 24/7 to prevent unauthorized access."
+  },
+  "terms": {
+    "title": "Terms & Service",
+    "notice": "Last Updated: April 2026. By using the HydroPay platform, you agree to the following conditions.",
+    "responsibilitiesTitle": "User Responsibilities",
+    "responsibilities": "Users are responsible for providing accurate meter readings and ensuring timely payments for water services.",
+    "paymentTitle": "Payment Terms",
+    "payment": "All payments are processed securely. Overdue balances may trigger automated system alerts as defined in your service agreement.",
+    "liabilityTitle": "Limitation of Liability",
+    "liability": "HydroPay is a management platform and is not responsible for physical infrastructure failures of the water utility provider."
+  },
+  "cookies": {
+    "title": "Cookie Policy",
+    "description": "HydroPay uses cookies to enhance your dashboard experience.",
+    "essentialTitle": "Essential Cookies:",
+    "essential": "Required for secure login and account management.",
+    "preferenceTitle": "Preference Cookies:",
+    "preference": "Used to remember your dashboard layout and filter settings.",
+    "analyticsTitle": "Analytics:",
+    "analytics": "Help us understand how the system is used to improve performance."
+  }
+}
