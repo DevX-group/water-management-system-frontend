@@ -107,7 +107,7 @@ export const AdminNavbar: React.FC = () => {
         <button
           onClick={() => navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard')}
           className={cn(
-            "inline-flex items-center justify-center gap-2 h-9 px-3 text-sm font-medium rounded-lg relative transition-all duration-300 outline-none",
+            "inline-flex shrink-0 items-center justify-center gap-2 min-h-9 h-auto py-1 px-3 text-sm font-medium leading-tight text-center rounded-lg relative transition-all duration-300 outline-none whitespace-normal",
             isActive
               ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
               : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/50"
@@ -172,7 +172,7 @@ export const AdminNavbar: React.FC = () => {
                             )}
                           >
                             <Icon className="w-5 h-5" />
-                            <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
+                            <span className="font-medium text-sm whitespace-nowrap">{t(`navbar:admin.${item.id}`, item.label)}</span>
                           </button>
                         );
                       })}
@@ -226,7 +226,7 @@ export const AdminNavbar: React.FC = () => {
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <button
                         className={cn(
-                          "inline-flex items-center justify-center gap-1 h-9 px-2.5 text-sm font-medium rounded-lg relative transition-all duration-300 outline-none",
+                          "inline-flex shrink-0 items-center justify-center gap-1 min-h-9 h-auto py-1 px-2.5 text-sm font-medium leading-tight text-center rounded-lg relative transition-all duration-300 outline-none whitespace-normal",
                           isGroupActive
                             ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
                             : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/50"
