@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import '@/index.css';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { format, isToday, isYesterday } from 'date-fns';
 import {
   Check,
@@ -12,6 +12,7 @@ import {
   Search,
   Send,
   Sparkles,
+  Trash2,
   Users,
   Wifi,
   WifiOff,
@@ -85,14 +86,14 @@ export const InternalChatPage = () => {
     { value: 'ALL', label: t('roleTabs.ALL') },
     { value: 'SUPER_ADMIN', label: t('roleTabs.SUPER_ADMIN') },
     { value: 'SYSTEM_ADMIN', label: t('roleTabs.SYSTEM_ADMIN') },
-    { value: 'PAYMENT_HANDLER', label: t('roleTabs.PAYMENT_HANDLER') },
+    { value: 'CUSTOMER_HANDLER', label: t('roleTabs.CUSTOMER_HANDLER') },
     { value: 'METER_READER', label: t('roleTabs.METER_READER') },
   ];
 
   const ROLE_LABELS: Record<AdminRole, string> = {
     SUPER_ADMIN: t('roleTabs.SUPER_ADMIN'),
     SYSTEM_ADMIN: t('roleTabs.SYSTEM_ADMIN'),
-    PAYMENT_HANDLER: t('roleTabs.PAYMENT_HANDLER'),
+    CUSTOMER_HANDLER: t('roleTabs.CUSTOMER_HANDLER'),
     METER_READER: t('roleTabs.METER_READER'),
   };
 
@@ -344,11 +345,28 @@ export const InternalChatPage = () => {
     }
   };
 
-  const emptyConversationText = useMemo(() => {
-    if (debouncedSearch.trim()) return t('sidebar.emptySearch');
-    if (roleFilter !== 'ALL') return t('sidebar.emptyRole', { role: getRoleLabel(roleFilter) });
-    return t('sidebar.emptyDefault');
-  }, [debouncedSearch, roleFilter, t]);
+  const deleteConversation = async () => {
+    if (!selectedConversation) return;
+    const confirmed = window.confirm(t('chat.deleteConversationConfirm'));
+    if (!confirmed) return;
+
+    try {
+      await internalChatService.deleteConversation(selectedConversation.id);
+      socketRef.current?.clearConversationSubscription();
+      setConversations((current) => current.filter((conversation) => conversation.id !== selectedConversation.id));
+      setSelectedConversation(null);
+      setMessages([]);
+      toast({ title: t('toasts.deleteConversationTitle'), description: t('toasts.deleteConversationDesc') });
+    } catch {
+      toast({ title: t('toasts.deleteConversationFailedTitle'), description: t('toasts.deleteConversationFailedDesc'), variant: 'destructive' });
+    }
+  };
+
+  const emptyConversationText = debouncedSearch.trim()
+    ? t('sidebar.emptySearch')
+    : roleFilter !== 'ALL'
+      ? t('sidebar.emptyRole', { role: ROLE_LABELS[roleFilter] })
+      : t('sidebar.emptyDefault');
 
   return (
     <div className="space-y-5 pb-8">
@@ -445,7 +463,10 @@ export const InternalChatPage = () => {
               <>
                 <div className="flex items-center justify-between border-b border-border px-5 py-4 sm:px-7">
                   <div className="flex min-w-0 items-center gap-3"><div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-accent font-bold text-white">{getInitials(selectedConversation.otherParticipantName)}</div><div className="min-w-0"><h2 className="truncate font-bold">{selectedConversation.otherParticipantName}</h2><p className="text-xs text-muted-foreground">{getRoleLabel(selectedConversation.otherParticipantRole)} <span className="mx-1">·</span> {t('chat.directConversation')}</p></div></div>
-                  <Button variant="ghost" size="icon" aria-label={t('chat.conversationOptions')}><MoreHorizontal className="h-5 w-5" /></Button>
+                  <div className="flex items-center gap-1">
+                    <Button variant="ghost" size="icon" aria-label={t('chat.deleteConversation')} onClick={() => void deleteConversation()}><Trash2 className="h-4 w-4" /></Button>
+                    <Button variant="ghost" size="icon" aria-label={t('chat.conversationOptions')}><MoreHorizontal className="h-5 w-5" /></Button>
+                  </div>
                 </div>
                 <div ref={messageListRef} className="flex-1 overflow-y-auto px-5 py-5 sm:px-8">
                   {hasOlderMessages && <div className="mb-4 text-center"><Button variant="outline" size="sm" onClick={() => void loadOlderMessages()} disabled={loadingOlder}><ChevronUp className="h-4 w-4" />{loadingOlder ? t('chat.loadingOlder') : t('chat.loadOlder')}</Button></div>}

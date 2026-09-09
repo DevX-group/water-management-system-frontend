@@ -55,6 +55,11 @@ export class InternalChatSocket {
     );
   }
 
+  clearConversationSubscription() {
+    this.conversationSubscription?.unsubscribe();
+    this.conversationSubscription = null;
+  }
+
   subscribeUserQueue() {
     if (!this.client?.connected) return;
     this.userSubscription?.unsubscribe();
