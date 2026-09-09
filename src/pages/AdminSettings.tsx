@@ -6,17 +6,19 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Monitor, Moon, Sun, Type } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export const AdminSettings: React.FC = () => {
   const { theme, setTheme } = useTheme();
   const { fontSize, setFontSize } = useFontSize();
+  const { t } = useTranslation('systemSettings');
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 max-w-4xl mx-auto p-4 md:p-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">System Settings</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground mt-2">
-          Manage your interface preferences and accessibility settings.
+          {t('interfaceSubtitle')}
         </p>
       </div>
 
@@ -28,10 +30,10 @@ export const AdminSettings: React.FC = () => {
               <div className="p-2 rounded-lg bg-primary/10 text-primary">
                 <Monitor className="h-5 w-5" />
               </div>
-              Appearance
+              {t('appearance.title')}
             </CardTitle>
             <CardDescription>
-              Customize the look and feel of the application.
+              {t('appearance.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -50,7 +52,7 @@ export const AdminSettings: React.FC = () => {
                     theme === 'light' ? 'border-primary bg-primary/5 text-primary' : ''
                   )}>
                     <Sun className="mb-3 h-6 w-6" />
-                    <span className="font-semibold">Light</span>
+                    <span className="font-semibold">{t('appearance.light')}</span>
                   </div>
                 </Label>
                 <RadioGroupItem value="light" id="theme-light" className="sr-only" />
@@ -66,7 +68,7 @@ export const AdminSettings: React.FC = () => {
                     theme === 'dark' ? 'border-primary bg-primary/5 text-primary' : ''
                   )}>
                     <Moon className="mb-3 h-6 w-6" />
-                    <span className="font-semibold">Dark</span>
+                    <span className="font-semibold">{t('appearance.dark')}</span>
                   </div>
                 </Label>
                 <RadioGroupItem value="dark" id="theme-dark" className="sr-only" />
@@ -82,7 +84,7 @@ export const AdminSettings: React.FC = () => {
                     theme === 'system' ? 'border-primary bg-primary/5 text-primary' : ''
                   )}>
                     <Monitor className="mb-3 h-6 w-6" />
-                    <span className="font-semibold">System</span>
+                    <span className="font-semibold">{t('appearance.system')}</span>
                   </div>
                 </Label>
                 <RadioGroupItem value="system" id="theme-system" className="sr-only" />
@@ -98,10 +100,10 @@ export const AdminSettings: React.FC = () => {
               <div className="p-2 rounded-lg bg-primary/10 text-primary">
                 <Type className="h-5 w-5" />
               </div>
-              Typography
+              {t('typography.title')}
             </CardTitle>
             <CardDescription>
-              Adjust the global font size for better readability.
+              {t('typography.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -116,8 +118,8 @@ export const AdminSettings: React.FC = () => {
               )}>
                 <Label htmlFor="font-small" className="flex flex-1 cursor-pointer items-center justify-between">
                   <div className="space-y-1">
-                    <p className="font-medium text-sm">Small</p>
-                    <p className="text-xs text-muted-foreground">Compact view, more information.</p>
+                    <p className="font-medium text-sm">{t('typography.small')}</p>
+                    <p className="text-xs text-muted-foreground">{t('typography.smallDescription')}</p>
                   </div>
                   <Type className="h-4 w-4 text-muted-foreground" />
                 </Label>
@@ -130,8 +132,8 @@ export const AdminSettings: React.FC = () => {
               )}>
                 <Label htmlFor="font-medium" className="flex flex-1 cursor-pointer items-center justify-between">
                   <div className="space-y-1">
-                    <p className="font-medium text-base">Medium (Default)</p>
-                    <p className="text-sm text-muted-foreground">Standard comfortable reading size.</p>
+                    <p className="font-medium text-base">{t('typography.medium')}</p>
+                    <p className="text-sm text-muted-foreground">{t('typography.mediumDescription')}</p>
                   </div>
                   <Type className="h-5 w-5 text-muted-foreground" />
                 </Label>
@@ -144,8 +146,8 @@ export const AdminSettings: React.FC = () => {
               )}>
                 <Label htmlFor="font-large" className="flex flex-1 cursor-pointer items-center justify-between">
                   <div className="space-y-1">
-                    <p className="font-medium text-lg">Large</p>
-                    <p className="text-base text-muted-foreground">Enhanced readability and accessibility.</p>
+                    <p className="font-medium text-lg">{t('typography.large')}</p>
+                    <p className="text-base text-muted-foreground">{t('typography.largeDescription')}</p>
                   </div>
                   <Type className="h-6 w-6 text-muted-foreground" />
                 </Label>

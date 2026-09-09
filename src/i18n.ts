@@ -59,6 +59,9 @@ import taAuth from "./locales/ta/auth.json";
 import enToasts from "./locales/en/toasts.json";
 import siToasts from "./locales/si/toasts.json";
 import taToasts from "./locales/ta/toasts.json";
+import enCustomerSettings from "./locales/en/customerSettings.json";
+import siCustomerSettings from "./locales/si/customerSettings.json";
+import taCustomerSettings from "./locales/ta/customerSettings.json";
 import enInfo from "./locales/en/info.json";
 import siInfo from "./locales/si/info.json";
 import taInfo from "./locales/ta/info.json";
@@ -89,6 +92,7 @@ i18n
         auth: enAuth,
         toasts: enToasts,
         info: enInfo,
+        customerSettings: enCustomerSettings,
       },
       si: {
         payments: siPayments,
@@ -111,6 +115,7 @@ i18n
         auth: siAuth,
         toasts: siToasts,
         info: siInfo,
+        customerSettings: siCustomerSettings,
       },
       ta: {
         payments: taPayments,
@@ -133,6 +138,7 @@ i18n
         auth: taAuth,
         toasts: taToasts,
         info: taInfo,
+        customerSettings: taCustomerSettings,
       },
     },
 

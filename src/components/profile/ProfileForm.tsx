@@ -27,7 +27,8 @@ interface ProfileFormProps {
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProfileUpdated }) => {
   const { toast } = useToast();
-  const { t } = useTranslation('toasts');
+  const { t: toastT } = useTranslation('toasts');
+  const { t } = useTranslation('customerSettings');
   
   // Editable fields state
   const [name, setName] = useState(initialProfile.accountHolderName || '');
@@ -39,7 +40,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !phone.trim()) {
-      toast({ title: t('error'), description: t('fillEditableFields'), variant: 'destructive' });
+      toast({ title: toastT('error'), description: toastT('fillEditableFields'), variant: 'destructive' });
       return;
     }
     
@@ -50,13 +51,13 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
         email: email,
         phoneNumber: phone
       });
-      toast({ title: t('success'), description: t('profileUpdated') });
+      toast({ title: toastT('success'), description: toastT('profileUpdated') });
       onProfileUpdated(res.data);
     } catch (err: any) {
       console.error(err);
       toast({ 
-        title: t('error'),
-        description: err.response?.data?.message || t('profileUpdateFailed'),
+        title: toastT('error'),
+        description: err.response?.data?.message || toastT('profileUpdateFailed'),
         variant: 'destructive' 
       });
     } finally {
@@ -71,10 +72,10 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
           <div className="p-2 rounded-lg bg-primary/10 text-primary">
             <User className="h-5 w-5" />
           </div>
-          Personal Details
+          {t('profile.personalDetails')}
         </CardTitle>
         <CardDescription>
-          Update your contact details and account holder name.
+          {t('profile.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -92,7 +93,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
           <div className="flex justify-end pt-4">
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? t('profile.saving') : t('profile.saveChanges')}
             </Button>
           </div>
         </form>
