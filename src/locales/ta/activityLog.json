@@ -93,6 +93,15 @@
     "METER_READER": "மீட்டர் ரீடர்",
     "CUSTOMER": "வாடிக்கையாளர்"
   },
+  "paymentTypes": {
+    "MONTHLY": "மாதாந்திர",
+    "OUTSTANDING": "நிலுவையில்"
+  },
+  "paymentMethods": {
+    "MANUAL": "கைமுறை",
+    "ONLINE": "ஆன்லைன்",
+    "BANK_TRANSFER": "வங்கி பரிமாற்றம்"
+  },
   "statuses": {
     "ACTIVE": "செயலில் உள்ளது",
     "INACTIVE": "செயலற்றது",
@@ -103,7 +112,9 @@
     "REJECTED": "நிராகரிக்கப்பட்டது",
     "APPROVED": "அங்கீகரிக்கப்பட்டது",
     "VERIFIED": "சரிபார்க்கப்பட்டது",
+    "SUCCESS": "வெற்றி",
     "FAILED": "தோல்வியடைந்தது",
+    "EXPIRED": "காலாவதியானது",
     "CANCELLED": "ரத்து செய்யப்பட்டது",
     "FULL": "முழுமையான",
     "PARTIAL": "பகுதி"
@@ -123,6 +134,8 @@
     "status": "நிலை",
     "amount": "தொகை",
     "method": "முறை",
+    "paymentType": "கட்டண வகை",
+    "paymentStatus": "கட்டண நிலை",
     "paymentMethod": "கட்டண முறை",
     "readingDate": "வாசிப்பு தேதி",
     "readingValue": "வாசிப்பு மதிப்பு",

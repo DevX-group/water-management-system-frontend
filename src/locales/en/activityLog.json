@@ -93,6 +93,15 @@
     "METER_READER": "Meter Reader",
     "CUSTOMER": "Customer"
   },
+  "paymentTypes": {
+    "MONTHLY": "Monthly",
+    "OUTSTANDING": "Outstanding"
+  },
+  "paymentMethods": {
+    "MANUAL": "Manual",
+    "ONLINE": "Online",
+    "BANK_TRANSFER": "Bank Transfer"
+  },
   "statuses": {
     "ACTIVE": "Active",
     "INACTIVE": "Inactive",
@@ -103,7 +112,9 @@
     "REJECTED": "Rejected",
     "APPROVED": "Approved",
     "VERIFIED": "Verified",
+    "SUCCESS": "Success",
     "FAILED": "Failed",
+    "EXPIRED": "Expired",
     "CANCELLED": "Cancelled",
     "FULL": "Full",
     "PARTIAL": "Partial"
@@ -123,6 +134,8 @@
     "status": "Status",
     "amount": "Amount",
     "method": "Method",
+    "paymentType": "Payment Type",
+    "paymentStatus": "Payment Status",
     "paymentMethod": "Payment Method",
     "readingDate": "Reading Date",
     "readingValue": "Reading Value",

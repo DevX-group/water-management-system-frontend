@@ -93,6 +93,15 @@
     "METER_READER": "මීටර් කියවන්නා",
     "CUSTOMER": "පාරිභෝගිකයා"
   },
+  "paymentTypes": {
+    "MONTHLY": "මාසික",
+    "OUTSTANDING": "හිඟ"
+  },
+  "paymentMethods": {
+    "MANUAL": "අතින්",
+    "ONLINE": "මාර්ගගත",
+    "BANK_TRANSFER": "බැංකු මාරු කිරීම"
+  },
   "statuses": {
     "ACTIVE": "සක්‍රිය",
     "INACTIVE": "අක්‍රිය",
@@ -103,7 +112,9 @@
     "REJECTED": "ප්‍රතික්ෂේපිතයි",
     "APPROVED": "අනුමතයි",
     "VERIFIED": "තහවුරු කර ඇත",
+    "SUCCESS": "සාර්ථකයි",
     "FAILED": "අසාර්ථකයි",
+    "EXPIRED": "කල් ඉකුත් වී ඇත",
     "CANCELLED": "අවලංගුයි",
     "FULL": "සම්පූර්ණ",
     "PARTIAL": "අර්ධ"
@@ -123,6 +134,8 @@
     "status": "තත්ත්වය",
     "amount": "මුදල",
     "method": "ක්‍රමය",
+    "paymentType": "ගෙවීම් වර්ගය",
+    "paymentStatus": "ගෙවීම් තත්ත්වය",
     "paymentMethod": "ගෙවීම් ක්‍රමය",
     "readingDate": "කියවීමේ දිනය",
     "readingValue": "කියවීමේ අගය",
@@ -144,7 +157,7 @@
     "userStatusChanged": "පරිශීලක තත්ත්වය {{status}} බවට වෙනස් කරන ලදී",
     "userRoleChanged": "පරිශීලක භූමිකාව {{role}} බවට වෙනස් කරන ලදී",
     "userActivated": "{{name}} පරිශීලක ගිණුම සක්‍රිය කරන ලදී",
-    "paymentCreated": "{{amount}} මුදලක ගෙවීමක් සාදන ලදී",
+    "paymentCreated": "{{amount}} ගෙවීම සාදන ලදී",
     "paymentUpdated": "{{id}} ගෙවීම යාවත්කාලීන කරන ලදී",
     "paymentStatusChanged": "ගෙවීම් තත්ත්වය {{status}} බවට වෙනස් කරන ලදී",
     "paymentDeleted": "{{id}} ගෙවීම මකා දමන ලදී",
