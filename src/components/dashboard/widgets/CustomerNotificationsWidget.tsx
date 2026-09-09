@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Bell, CheckCircle } from 'lucide-react';
 import { getCustomerNotifications, markNotificationAsRead } from '@/services/notificationService';
 import type { NotificationResponse } from '@/types/customerNotification';
+import { useTranslation } from 'react-i18next';
+import { translateNotificationMessage } from '@/utils/notificationTranslationUtils';
 
 export const CustomerNotificationsWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
+  const { t: tAlerts } = useTranslation('alerts');
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +37,7 @@ export const CustomerNotificationsWidget: React.FC = () => {
     return (
       <div className="flex flex-col items-center gap-1 text-muted-foreground py-4">
         <CheckCircle className="w-5 h-5 text-success" />
-        <span className="text-xs">No new notifications</span>
+        <span className="text-xs">{t('widgetContent.noNotifications')}</span>
       </div>
     );
   }
@@ -49,7 +53,7 @@ export const CustomerNotificationsWidget: React.FC = () => {
           onClick={() => !n.readStatus && handleRead(n.id)}
         >
           <Bell className="w-3 h-3 mt-0.5 flex-shrink-0 text-primary" />
-          <span className="text-foreground">{n.message}</span>
+          <span className="text-foreground">{translateNotificationMessage(n.notificationType, n.message, tAlerts)}</span>
         </li>
       ))}
     </ul>

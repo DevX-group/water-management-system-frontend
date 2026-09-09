@@ -34,6 +34,7 @@ export const BillsTable: React.FC<BillsTableProps> = ({
   bills, pageIndex, totalPages, totalElements, itemsPerPage, setPageIndex, onView, onDownload, onPrint,
 }) => {
   const { t } = useTranslation('billing');
+  const { t: toastT } = useTranslation('toasts');
   const { toast } = useToast();
   const page = bills; // backend already returns a page of items
 
@@ -41,9 +42,9 @@ export const BillsTable: React.FC<BillsTableProps> = ({
     if (bill.shareToken) {
       const link = `${window.location.origin}/bills/shared/${bill.shareToken}`;
       navigator.clipboard.writeText(link);
-      toast({ title: 'Copied', description: 'Shareable bill link copied to clipboard.' });
+      toast({ title: toastT('success'), description: toastT('billLinkCopied') });
     } else {
-      toast({ title: 'Error', description: 'No share token found for this bill.', variant: 'destructive' });
+      toast({ title: toastT('error'), description: toastT('billShareTokenMissing'), variant: 'destructive' });
     }
   };
 

@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, Send, HeadphonesIcon } from 'lucide-react';
+import { Loader2, Send, HeadphonesIcon, Paperclip } from 'lucide-react';
 import type { InquiryFormData, InquiryCategory } from '@/types/inquiry';
 
 const CATEGORIES: { value: InquiryCategory; icon: string }[] = [
@@ -25,6 +25,8 @@ import { useTranslation } from 'react-i18next';
 
 export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm, errors, submitting, onSubmit }) => {
   const { t } = useTranslation('inquiry');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const [fileName, setFileName] = React.useState<string>('');
   
   return (
   <Card className="shadow-card border-none overflow-hidden bg-card">
@@ -57,9 +59,29 @@ export const InquiryFormCard: React.FC<InquiryFormCardProps> = ({ form, setForm,
         {errors.message && <p className="text-[10px] text-destructive font-medium">{errors.message}</p>}
       </div>
       <div className="space-y-2">
-        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Attachment</label>
-        <div className="flex items-center gap-2">
-           <input type="file" onChange={(e) => setForm({...form, file: e.target.files?.[0] || null})} className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" />
+        <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{t('form.attachment')}</label>
+        <div className="flex items-center gap-3">
+          <input
+            type="file"
+            ref={fileInputRef}
+            className="hidden"
+            onChange={(e) => {
+              const selected = e.target.files?.[0] || null;
+              setForm({ ...form, file: selected });
+              setFileName(selected ? selected.name : '');
+            }}
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-input bg-primary/10 text-primary text-sm font-semibold hover:bg-primary/20 transition-colors shrink-0"
+          >
+            <Paperclip size={14} />
+            {t('form.chooseFile')}
+          </button>
+          <span className="text-sm text-muted-foreground truncate">
+            {fileName || t('form.noFileChosen')}
+          </span>
         </div>
       </div>
       <Button onClick={onSubmit} disabled={submitting} className="w-full h-14 text-base font-bold rounded-xl gradient-primary transition-transform active:scale-[0.98]">

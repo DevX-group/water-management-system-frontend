@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Users, BadgeCheck, AlertTriangle, DollarSign, FileText, MessageSquare } from 'lucide-react';
 import { getSystemSummary } from '@/services/dashboardService';
 import type { SystemDashboardSummary } from '@/types/dashboard';
+import { useTranslation } from 'react-i18next';
 
 export const SystemSummaryWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [data, setData] = useState<SystemDashboardSummary | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -24,46 +26,46 @@ export const SystemSummaryWidget: React.FC = () => {
     );
   }
 
-  if (!data) return <p className="text-xs text-destructive">Failed to load summary.</p>;
+  if (!data) return <p className="text-xs text-destructive">{t('loadError')}</p>;
 
   const stats = [
     {
-      label: 'Customers',
+      label: t('widgetContent.customers'),
       value: data.customerCount.toLocaleString(),
       icon: Users,
       color: 'text-primary',
       bg: 'bg-primary/10',
     },
     {
-      label: 'Pending Slips',
+      label: t('widgetContent.pendingSlips'),
       value: data.pendingSlipCount.toLocaleString(),
       icon: FileText,
       color: 'text-warning',
       bg: 'bg-warning/10',
     },
     {
-      label: 'Outstanding',
-      value: `Rs. ${Math.round(data.outstandingAmount).toLocaleString()}`,
+      label: t('widgetContent.outstanding'),
+      value: `${t('widgetContent.currency')} ${Math.round(data.outstandingAmount).toLocaleString()}`,
       icon: AlertTriangle,
       color: 'text-destructive',
       bg: 'bg-destructive/10',
     },
     {
-      label: 'Paid This Month',
-      value: `Rs. ${Math.round(data.paidThisMonth).toLocaleString()}`,
+      label: t('widgetContent.paidThisMonth'),
+      value: `${t('widgetContent.currency')} ${Math.round(data.paidThisMonth).toLocaleString()}`,
       icon: DollarSign,
       color: 'text-success',
       bg: 'bg-success/10',
     },
     {
-      label: 'Open Inquiries',
+      label: t('widgetContent.openInquiries'),
       value: data.openInquiryCount.toLocaleString(),
       icon: MessageSquare,
       color: 'text-accent',
       bg: 'bg-accent/10',
     },
     {
-      label: 'Admin Users',
+      label: t('widgetContent.adminUsers'),
       value: data.activeAdminCount.toLocaleString(),
       icon: BadgeCheck,
       color: 'text-primary',

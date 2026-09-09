@@ -6,6 +6,7 @@ import { Eye, EyeOff, Mail, Lock, User, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useTranslation } from 'react-i18next';
 
 import type { SignupFormData, SignupFormErrors } from '@/types/auth';
 
@@ -34,89 +35,93 @@ export const SignupForm: React.FC<SignupFormProps> = ({
   formData, formErrors, showPassword, showConfirmPassword,
   onTogglePassword, onToggleConfirm, onChangeField, onSubmit,
   activationMode = false, submitLabel,
-}) => (
-  <motion.form
-    initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-    onSubmit={onSubmit} className="space-y-5"
-  >
-    {!activationMode && (
-      <>
-        {/* Account Holder */}
-        <div className="space-y-2">
-          <Label htmlFor="accountHolder">Account Holder Name</Label>
-          <div className="relative">
-            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-            <Input id="accountHolder" placeholder="Enter account holder name" value={formData.accountHolder}
-              onChange={(e) => onChangeField('accountHolder', e.target.value)}
-              className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
-          </div>
-        </div>
+}) => {
+  const { t } = useTranslation('auth');
 
-        {/* Email */}
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <div className="relative">
-            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-            <Input id="email" type="email" placeholder="Enter your email" value={formData.email}
-              onChange={(e) => onChangeField('email', e.target.value)}
-              className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+  return (
+    <motion.form
+      initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
+      onSubmit={onSubmit} className="space-y-5"
+    >
+      {!activationMode && (
+        <>
+          {/* Account Holder */}
+          <div className="space-y-2">
+            <Label htmlFor="accountHolder">{t('signup.accountHolderLabel', 'Account Holder Name')}</Label>
+            <div className="relative">
+              <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+              <Input id="accountHolder" placeholder={t('signup.accountHolderPlaceholder', 'Enter account holder name')} value={formData.accountHolder}
+                onChange={(e) => onChangeField('accountHolder', e.target.value)}
+                className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+            </div>
           </div>
-          <ErrorMsg msg={formErrors.email} />
-        </div>
 
-        {/* NIC */}
-        <div className="space-y-2">
-          <Label htmlFor="nic">NIC Number</Label>
-          <div className="relative">
-            <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-            <Input id="nic" placeholder="Enter your NIC (e.g., 123456789V)" value={formData.nic}
-              onChange={(e) => onChangeField('nic', e.target.value)}
-              className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+          {/* Email */}
+          <div className="space-y-2">
+            <Label htmlFor="email">{t('signup.emailLabel', 'Email')}</Label>
+            <div className="relative">
+              <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+              <Input id="email" type="email" placeholder={t('signup.emailPlaceholder', 'Enter your email')} value={formData.email}
+                onChange={(e) => onChangeField('email', e.target.value)}
+                className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+            </div>
+            <ErrorMsg msg={formErrors.email} />
           </div>
-          <ErrorMsg msg={formErrors.nic} />
-        </div>
-      </>
-    )}
 
-    {/* Password */}
-    <div className="space-y-2">
-      <Label htmlFor="password">Password</Label>
-      <div className="relative">
-        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-        <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Create a password" value={formData.password}
-          onChange={(e) => onChangeField('password', e.target.value)}
-          className="h-12 pl-12 pr-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
-        <button type="button" onClick={onTogglePassword}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-        </button>
+          {/* NIC */}
+          <div className="space-y-2">
+            <Label htmlFor="nic">{t('signup.nicLabel', 'NIC Number')}</Label>
+            <div className="relative">
+              <CreditCard className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+              <Input id="nic" placeholder={t('signup.nicPlaceholder', 'Enter your NIC (e.g., 123456789V)')} value={formData.nic}
+                onChange={(e) => onChangeField('nic', e.target.value)}
+                className="h-12 pl-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+            </div>
+            <ErrorMsg msg={formErrors.nic} />
+          </div>
+        </>
+      )}
+
+      {/* Password */}
+      <div className="space-y-2">
+        <Label htmlFor="password">{t('signup.passwordLabel', 'Password')}</Label>
+        <div className="relative">
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder={t('signup.passwordPlaceholder', 'Create a password')} value={formData.password}
+            onChange={(e) => onChangeField('password', e.target.value)}
+            className="h-12 pl-12 pr-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+          <button type="button" onClick={onTogglePassword}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        </div>
+        <ErrorMsg msg={formErrors.password} />
       </div>
-      <ErrorMsg msg={formErrors.password} />
-    </div>
 
-    {/* Confirm Password */}
-    <div className="space-y-2">
-      <Label htmlFor="confirmPassword">Confirm Password</Label>
-      <div className="relative">
-        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-        <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} placeholder="Confirm your password" value={formData.confirmPassword}
-          onChange={(e) => onChangeField('confirmPassword', e.target.value)}
-          className="h-12 pl-12 pr-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
-        <button type="button" onClick={onToggleConfirm}
-          className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
-          {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-        </button>
+      {/* Confirm Password */}
+      <div className="space-y-2">
+        <Label htmlFor="confirmPassword">{t('signup.confirmPasswordLabel', 'Confirm Password')}</Label>
+        <div className="relative">
+          <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
+          <Input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} placeholder={t('signup.confirmPasswordPlaceholder', 'Confirm your password')} value={formData.confirmPassword}
+            onChange={(e) => onChangeField('confirmPassword', e.target.value)}
+            className="h-12 pl-12 pr-12 bg-background border-input text-foreground placeholder:text-muted-foreground" />
+          <button type="button" onClick={onToggleConfirm}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
+            {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+          </button>
+        </div>
+        <ErrorMsg msg={formErrors.confirmPassword} />
       </div>
-      <ErrorMsg msg={formErrors.confirmPassword} />
-    </div>
 
-    <Button type="submit" className="w-full h-12 gradient-primary shadow-soft hover:opacity-90 transition-opacity">
-      {submitLabel || (activationMode ? 'Activate Account' : 'Register')}
-    </Button>
+      <Button type="submit" className="w-full h-12 gradient-primary shadow-soft hover:opacity-90 transition-opacity">
+        {submitLabel || (activationMode ? t('signup.activateButton', 'Activate Account') : t('signup.registerButton', 'Register'))}
+      </Button>
 
-    <p className="text-center text-muted-foreground">
-      Already have an account?{' '}
-      <Link to="/login" className="text-primary font-medium hover:underline">Login</Link>
-    </p>
-  </motion.form>
-);
+      <p className="text-center text-muted-foreground">
+        {t('signup.hasAccount', 'Already have an account?')}{' '}
+        <Link to="/login" className="text-primary font-medium hover:underline">{t('signup.loginLink', 'Login')}</Link>
+      </p>
+    </motion.form>
+  );
+};

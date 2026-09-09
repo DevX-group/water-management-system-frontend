@@ -12,6 +12,7 @@ import {
 import { usePWAInstall } from '@/hooks/usePWAInstall';
 import { useAuth } from '@/contexts/AuthContext';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useTranslation } from 'react-i18next';
 
 interface PWAInstallButtonProps {
   size?: 'default' | 'sm' | 'lg' | 'icon';
@@ -26,9 +27,11 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
   variant = 'default',
   className = '',
   requireMeterReaderRole = true,
-  label = 'Install App',
+  label,
 }) => {
+  const { t } = useTranslation();
   const { user } = useAuth();
+  const displayLabel = label || t('navbar:admin.installApp', 'Install App');
   const { currentAdmin } = useAdmin();
   const {
     isInstalled,
@@ -66,7 +69,7 @@ export const PWAInstallButton: React.FC<PWAInstallButtonProps> = ({
         className={`${defaultClasses} ${className}`}
       >
         <Smartphone className="w-4 h-4 text-current opacity-90 group-hover:scale-110 transition-transform duration-200" />
-        <span className="font-medium text-xs sm:text-sm">{label}</span>
+        <span className="font-medium text-xs sm:text-sm">{displayLabel}</span>
       </Button>
 
       {/* iOS Instruction Modal */}

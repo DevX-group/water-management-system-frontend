@@ -3,6 +3,15 @@
     "title": "Payments",
     "subtitle": "Manage your water bill payments",
     "adminSubtitle": "Manage customer payments and collections",
+    "paymentMethods": {
+      "ONLINE": "Online",
+      "BANK_TRANSFER": "Bank Transfer",
+      "MANUAL": "Manual"
+    },
+    "paymentTypes": {
+      "MONTHLY": "Monthly",
+      "OUTSTANDING": "Outstanding"
+    },
     "billPayment": {
       "title": "Bill Payment",
       "makePayment": "Make a Payment",

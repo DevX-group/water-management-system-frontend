@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { MessageSquare, CheckCircle } from 'lucide-react';
 import { api } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface InquirySummary {
   id: string;
@@ -11,6 +12,7 @@ interface InquirySummary {
 }
 
 export const OpenInquiriesWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [inquiries, setInquiries] = useState<InquirySummary[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +32,7 @@ export const OpenInquiriesWidget: React.FC = () => {
     return (
       <div className="flex items-center gap-2 text-success text-xs">
         <CheckCircle className="w-4 h-4" />
-        No open inquiries
+        {t('widgetContent.noOpenInquiries')}
       </div>
     );
   }

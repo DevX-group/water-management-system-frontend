@@ -44,6 +44,21 @@ import taPredictions from "./locales/ta/predictions.json";
 import enInternalChat from "./locales/en/internalChat.json";
 import siInternalChat from "./locales/si/internalChat.json";
 import taInternalChat from "./locales/ta/internalChat.json";
+import enWidgetManagement from "./locales/en/widgetManagement.json";
+import siWidgetManagement from "./locales/si/widgetManagement.json";
+import taWidgetManagement from "./locales/ta/widgetManagement.json";
+import enActivityLog from "./locales/en/activityLog.json";
+import siActivityLog from "./locales/si/activityLog.json";
+import taActivityLog from "./locales/ta/activityLog.json";
+import enLanding from "./locales/en/landing.json";
+import siLanding from "./locales/si/landing.json";
+import taLanding from "./locales/ta/landing.json";
+import enAuth from "./locales/en/auth.json";
+import siAuth from "./locales/si/auth.json";
+import taAuth from "./locales/ta/auth.json";
+import enToasts from "./locales/en/toasts.json";
+import siToasts from "./locales/si/toasts.json";
+import taToasts from "./locales/ta/toasts.json";
 
 i18n
   .use(LanguageDetector)
@@ -65,6 +80,11 @@ i18n
         reports: enReports,
         predictions: enPredictions,
         internalChat: enInternalChat,
+        widgetManagement: enWidgetManagement,
+        activityLog: enActivityLog,
+        landing: enLanding,
+        auth: enAuth,
+        toasts: enToasts,
       },
       si: {
         payments: siPayments,
@@ -81,6 +101,11 @@ i18n
         reports: siReports,
         predictions: siPredictions,
         internalChat: siInternalChat,
+        widgetManagement: siWidgetManagement,
+        activityLog: siActivityLog,
+        landing: siLanding,
+        auth: siAuth,
+        toasts: siToasts,
       },
       ta: {
         payments: taPayments,
@@ -97,6 +122,11 @@ i18n
         reports: taReports,
         predictions: taPredictions,
         internalChat: taInternalChat,
+        widgetManagement: taWidgetManagement,
+        activityLog: taActivityLog,
+        landing: taLanding,
+        auth: taAuth,
+        toasts: taToasts,
       },
     },
 
@@ -106,5 +136,20 @@ i18n
       escapeValue: false,
     },
   });
+
+// Load any custom widget name translations saved by admin
+if (typeof window !== 'undefined') {
+  try {
+    ['en', 'si', 'ta'].forEach((lang) => {
+      const raw = localStorage.getItem(`wms_widget_custom_names_${lang}`);
+      if (raw) {
+        const custom: Record<string, string> = JSON.parse(raw);
+        i18n.addResourceBundle(lang, 'widgetManagement', { widgets: custom }, true, true);
+      }
+    });
+  } catch {
+    // ignore
+  }
+}
 
 export default i18n;

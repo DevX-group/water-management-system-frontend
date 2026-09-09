@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import type { ConnectionType, ConnectionRate, BillResponse, BillingPageTab } from '@/types/billing';
 import { INITIAL_RATES } from '@/utils/billingUtils';
 import { api } from '@/services/api';
 
 export const useBilling = () => {
   const { toast } = useToast();
+  const { t } = useTranslation('toasts');
 
   // Tab
   const [activeTab, setActiveTab] = useState<BillingPageTab>('calculator');
@@ -99,13 +101,13 @@ export const useBilling = () => {
         const savedRate = res.data;
         setRates(prev => ({ ...prev, [type]: savedRate }));
         cancelEditing(type);
-        toast({ title: 'Success', description: `${typeMeta.label} rates updated in database!` });
+        toast({ title: t('success'), description: t('ratesUpdated', { label: typeMeta.label }) });
       } else {
         throw new Error('Failed to save rate');
       }
     } catch (error) {
       console.error(error);
-      toast({ title: 'Error', description: 'Failed to update rates', variant: 'destructive' });
+      toast({ title: t('error'), description: t('ratesUpdateFailed'), variant: 'destructive' });
     }
   };
 
@@ -130,7 +132,7 @@ export const useBilling = () => {
         setSearchedProfile(null);
       }
     } catch (err: any) {
-      toast({ title: 'Error', description:  'Could not fetch bills.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('billsFetchFailed'), variant: 'destructive' });
       setBills([]);
       setSearchedProfile(null);
     } finally {
@@ -153,7 +155,7 @@ export const useBilling = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Download failed', error);
-      toast({ title: 'Error', description: 'Failed to download bill.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('billDownloadFailed'), variant: 'destructive' });
     }
   };
 
@@ -167,7 +169,7 @@ export const useBilling = () => {
       }
     } catch (e) {
       console.error('Print failed', e);
-      toast({ title: 'Error', description: 'Failed to print bill.', variant: 'destructive' });
+      toast({ title: t('error'), description: t('billPrintFailed'), variant: 'destructive' });
     }
   };
 

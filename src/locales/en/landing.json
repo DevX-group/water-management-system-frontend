@@ -1,0 +1,57 @@
+{
+  "nav": {
+    "brand": "HydroPay",
+    "signIn": "Sign In",
+    "getStarted": "Get Started",
+    "dashboard": "Dashboard"
+  },
+  "hero": {
+    "badge": "Hydropay is live now",
+    "titleLine1": "Fluid tracking.",
+    "titleLine2": "Crystal clear.",
+    "subtitle": "An immersive platform to monitor every drop, settle bills instantly, and gain unparalleled insight into your utility flow.",
+    "diveIn": "Dive In Now",
+    "enterDashboard": "Enter Dashboard",
+    "realtimeMeterSync": "Real-time Meter Sync",
+    "currentMonth": "Current Month",
+    "estimatedBill": "Estimated Bill",
+    "safeUsageZone": "Safe Usage Zone",
+    "avgUsage": "62% of monthly average"
+  },
+  "features": {
+    "sectionTitle": "Engineered for clarity.",
+    "sectionSubtitle": "Built for scale.",
+    "analytics": {
+      "title": "Deep Dive Analytics",
+      "subtitle": "Insights that flow",
+      "description": "Monitor your daily water consumption with beautiful, easy-to-understand charts. Catch anomalies instantly and understand your usage patterns like never before.",
+      "trends": "Usage Trends"
+    },
+    "payments": {
+      "title": "Instant Smart Payments",
+      "subtitle": "Frictionless checkout",
+      "description": "Settle your bills in seconds. Secure, encrypted transactions with instant confirmation and automated digital receipts delivered right to your dashboard."
+    },
+    "ai": {
+      "title": "AI-Powered Assistance",
+      "subtitle": "Always on duty",
+      "description": "Have a question? Our 24/7 intelligent assistant is always ready to help you with billing queries, leak detection tips, or service requests without waiting on hold.",
+      "userQuery": "Why is my bill higher this month?",
+      "botResponse": "I noticed a 15% increase in your usage between the 12th and 14th. This pattern usually indicates a small leak or leaving a tap running. Would you like me to schedule an inspection?"
+    }
+  },
+  "footer": {
+    "description": "A beautifully engineered platform designed to simplify utility management for the modern home. Track, pay, and resolve issues effortlessly.",
+    "platform": "Platform",
+    "legal": "Legal",
+    "connect": "Connect",
+    "signIn": "Sign In",
+    "createAccount": "Create Account",
+    "terms": "Terms of Service",
+    "privacy": "Privacy Policy",
+    "cookies": "Cookie Policy",
+    "about": "About Us",
+    "blog": "Blog",
+    "rights": "All rights reserved."
+  }
+}

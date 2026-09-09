@@ -19,7 +19,7 @@
   },
   "sidebar": {
     "searchLabel": "Find a colleague",
-    "searchPlaceholder": "Search name or user ID",
+    "searchPlaceholder": "Search name...",
     "conversationsHeading": "Conversations",
     "staffHeading": "Staff directory",
     "noMessages": "No messages yet",

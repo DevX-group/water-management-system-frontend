@@ -80,7 +80,16 @@
       "title": "Delete Backup File?",
       "desc": "This will permanently delete the backup file:",
       "deleting": "Deleting..."
-    }
+    },
+    "loadFailed": "Failed to load backup files list",
+    "createSuccess": "System backup created successfully",
+    "createFailed": "Failed to create system backup",
+    "downloadSuccess": "Downloaded {{fileName}}",
+    "downloadFailed": "Failed to download backup file",
+    "restoreSuccess": "System restored from {{fileName}}",
+    "restoreFailed": "Failed to restore backup",
+    "deleteSuccess": "Deleted {{fileName}}",
+    "deleteFailed": "Failed to delete backup file"
   },
   "schedule": {
     "title": "Automated Backup Schedule",
@@ -103,7 +112,13 @@
       "DAILY": "Daily",
       "WEEKLY": "Weekly",
       "MONTHLY": "Monthly"
-    }
+    },
+    "loadFailed": "Failed to load backup schedule settings",
+    "selectTimeError": "Please select a backup execution time",
+    "selectDayOfWeekError": "Please select a day of the week",
+    "selectDayOfMonthError": "Please select a valid day of the month (1-31)",
+    "updateSuccess": "Backup schedule configuration updated successfully",
+    "updateFailed": "Failed to update backup schedule settings"
   },
   "days": {
     "MONDAY": "Monday",

@@ -29,6 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { exportPDF } from "@/util/exportPDF";
+import { useTranslation } from "react-i18next";
 
 export interface BillReportRow {
   id: string;
@@ -57,34 +58,43 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
   billsTableData,
   billsData,
 }) => {
+  const { t } = useTranslation("reports");
+
   const pdfData = billsTableData.map((bill) => ({
     month: bill.dueDate,
     usage: 1,
     revenue: Number(bill.amount ?? 0),
   }));
 
+  const translatedBillsData = billsData.map((item) => ({
+    ...item,
+    statusDisplay:
+      item.status === "Paid"
+        ? t("bills.status.paid")
+        : t("bills.status.unpaid"),
+  }));
+
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Paid vs Unpaid Bills Report</CardTitle>
+        <CardTitle>{t("bills.title")}</CardTitle>
         <CardDescription>
-          Overview of bill payment status with comparison and detailed
-          listings
+          {t("bills.description")}
         </CardDescription>
       </CardHeader>
 
       <CardContent className="space-y-6">
         <div className="h-72">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={billsData}>
+            <BarChart data={translatedBillsData}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="status" />
+              <XAxis dataKey="statusDisplay" />
               <YAxis allowDecimals={false} />
               <Tooltip />
 
               <Bar
                 dataKey="count"
-                name="Number of Bills"
+                name={t("bills.chart.numberOfBills")}
                 fill="hsl(187, 75%, 35%)"
                 radius={[4, 4, 0, 0]}
               />
@@ -94,7 +104,7 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
 
         <div className="flex justify-end">
           <Input
-            placeholder="Search Customer ID (C001,...)"
+            placeholder={t("bills.searchPlaceholder")}
             value={customerSearchBill}
             onChange={(event) =>
               setCustomerSearchBill(event.target.value.toUpperCase())
@@ -107,12 +117,12 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Bill ID</TableHead>
-                <TableHead>Customer ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead>{t("bills.table.billId")}</TableHead>
+                <TableHead>{t("bills.table.customerId")}</TableHead>
+                <TableHead>{t("bills.table.customer")}</TableHead>
+                <TableHead>{t("bills.table.amount")}</TableHead>
+                <TableHead>{t("bills.table.dueDate")}</TableHead>
+                <TableHead>{t("bills.table.status")}</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -138,7 +148,9 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {bill.status}
+                        {bill.status === "Paid"
+                          ? t("bills.status.paid")
+                          : t("bills.status.unpaid")}
                       </span>
                     </TableCell>
                   </TableRow>
@@ -146,7 +158,7 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center">
-                    No results found
+                    {t("bills.table.noResults")}
                   </TableCell>
                 </TableRow>
               )}
@@ -156,63 +168,66 @@ export const BillsReportTab: React.FC<BillsReportTabProps> = ({
 
         <div className="flex justify-end">
           <Button
-  disabled={billsTableData.length === 0}
-  onClick={() =>
-    exportPDF(
-      billsTableData,
-      `Bills Report${
-        customerSearchBill
-          ? ` - ${customerSearchBill}`
-          : ""
-      }`,
-      `BillsReport${
-        customerSearchBill
-          ? `-${customerSearchBill}`
-          : ""
-      }.pdf`,
-      [
-        {
-          header: "Bill ID",
-          value: (bill) => bill.id,
-          width: 1,
-        },
-        {
-          header: "Customer ID",
-          value: (bill) => bill.customerid,
-          width: 1.2,
-        },
-        {
-          header: "Customer",
-          value: (bill) => bill.customer,
-          width: 1.5,
-        },
-        {
-          header: "Amount",
-          value: (bill) =>
-            `LKR ${Number(
-              bill.amount ?? 0
-            ).toLocaleString()}`,
-          width: 1.3,
-          align: "right",
-        },
-        {
-          header: "Due Date",
-          value: (bill) => bill.dueDate,
-          width: 1.2,
-        },
-        {
-          header: "Status",
-          value: (bill) => bill.status,
-          width: 1,
-          align: "center",
-        },
-      ]
-    )
-  }
->
-  <Download className="w-4 h-4 mr-2" />
-  Export as PDF
-</Button>
+            disabled={billsTableData.length === 0}
+            onClick={() =>
+              exportPDF(
+                billsTableData,
+                `${t("bills.title")}${
+                  customerSearchBill
+                    ? ` - ${customerSearchBill}`
+                    : ""
+                }`,
+                `BillsReport${
+                  customerSearchBill
+                    ? `-${customerSearchBill}`
+                    : ""
+                }.pdf`,
+                [
+                  {
+                    header: t("bills.table.billId"),
+                    value: (bill) => bill.id,
+                    width: 1,
+                  },
+                  {
+                    header: t("bills.table.customerId"),
+                    value: (bill) => bill.customerid,
+                    width: 1.2,
+                  },
+                  {
+                    header: t("bills.table.customer"),
+                    value: (bill) => bill.customer,
+                    width: 1.5,
+                  },
+                  {
+                    header: t("bills.table.amount"),
+                    value: (bill) =>
+                      `LKR ${Number(
+                        bill.amount ?? 0
+                      ).toLocaleString()}`,
+                    width: 1.3,
+                    align: "right",
+                  },
+                  {
+                    header: t("bills.table.dueDate"),
+                    value: (bill) => bill.dueDate,
+                    width: 1.2,
+                  },
+                  {
+                    header: t("bills.table.status"),
+                    value: (bill) =>
+                      bill.status === "Paid"
+                        ? t("bills.status.paid")
+                        : t("bills.status.unpaid"),
+                    width: 1,
+                    align: "center",
+                  },
+                ]
+              )
+            }
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {t("common.exportPdf")}
+          </Button>
         </div>
       </CardContent>
     </Card>

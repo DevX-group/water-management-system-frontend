@@ -3,6 +3,15 @@
     "title": "கொடுப்பனவுகள்",
     "subtitle": "உங்கள் நீர் கட்டண கொடுப்பனவுகளை நிர்வகிக்கவும்",
     "adminSubtitle": "வாடிக்கையாளர் கொடுப்பனவுகள் மற்றும் வசூல்களை நிர்வகிக்கவும்",
+    "paymentMethods": {
+      "ONLINE": "ஆன்லைன்",
+      "BANK_TRANSFER": "வங்கி பரிமாற்றம்",
+      "MANUAL": "நேரடி"
+    },
+    "paymentTypes": {
+      "MONTHLY": "மாதாந்திர",
+      "OUTSTANDING": "நிலுவை"
+    },
     "billPayment": {
       "title": "பில் கொடுப்பனவு",
       "makePayment": "பணம் செலுத்த",

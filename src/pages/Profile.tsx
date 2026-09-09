@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { MainLayout } from '@/components/layout/MainLayout';
 import { ProfileForm, CustomerProfile } from '@/components/profile/ProfileForm';
 
 const Profile = () => {
   const { toast } = useToast();
+  const { t } = useTranslation('toasts');
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
   const [fetching, setFetching] = useState(true);
 
@@ -19,7 +21,7 @@ const Profile = () => {
         }
       } catch (err) {
         console.error('Failed to fetch profile', err);
-        toast({ title: 'Error', description: 'Failed to load profile data.', variant: 'destructive' });
+        toast({ title: t('error'), description: t('profileLoadFailed'), variant: 'destructive' });
       } finally {
         setFetching(false);
       }

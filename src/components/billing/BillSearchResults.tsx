@@ -33,6 +33,7 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
   onSearch, onDownload, onPrint,
 }) => {
   const { t } = useTranslation('billing');
+  const { t: toastT } = useTranslation('toasts');
   const { toast } = useToast();
   const [viewingBill, setViewingBill] = React.useState<BillResponse | null>(null);
   const [viewerZoom, setViewerZoom] = React.useState(1);
@@ -41,9 +42,9 @@ export const BillSearchResults: React.FC<BillSearchResultsProps> = ({
   const handleLocalDownload = async (bill: BillResponse) => {
     try {
       await generateWaterBillPDF(bill, searchedProfile);
-      toast({ title: 'Success', description: 'Bill downloaded successfully.' });
+      toast({ title: toastT('success'), description: toastT('billDownloaded') });
     } catch (e) {
-      toast({ title: 'Error', description: 'Failed to download bill.', variant: 'destructive' });
+      toast({ title: toastT('error'), description: toastT('billDownloadFailed'), variant: 'destructive' });
     }
   };
 

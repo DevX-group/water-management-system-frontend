@@ -12,7 +12,11 @@ import { MonthlyPredictionChart } from "@/components/predictions/MonthlyPredicti
 import { CustomerPredictionChart } from "@/components/predictions/CustomerPredictionChart";
 import { AreaPredictionChart } from "@/components/predictions/AreaPredictionChart";
 
+import { useTranslation } from "react-i18next";
+
 export const PredictionsPage = () => {
+  const { t } = useTranslation("predictions");
+
   const [searchId, setSearchId] =
     useState("C001");
 
@@ -31,12 +35,11 @@ export const PredictionsPage = () => {
       {/* Page heading */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Predictions
+          {t("page.title")}
         </h1>
 
         <p className="mt-1 text-muted-foreground">
-          Predicted data for monitoring and analysis
-          up to 3 months
+          {t("page.subtitle")}
         </p>
       </div>
 
@@ -46,15 +49,15 @@ export const PredictionsPage = () => {
       >
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="monthly">
-            Monthly Report Prediction
+            {t("tabs.monthly")}
           </TabsTrigger>
 
           <TabsTrigger value="customer">
-            Customer Report Prediction
+            {t("tabs.customer")}
           </TabsTrigger>
 
           <TabsTrigger value="area">
-            Area Report Prediction
+            {t("tabs.area")}
           </TabsTrigger>
         </TabsList>
 

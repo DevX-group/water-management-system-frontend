@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import type {
   MessageChannel,
   MessageTemplate,
@@ -59,6 +60,7 @@ export const useMessageForm = ({
   triggerTypeOptions,
 }: UseMessageFormParams) => {
   const { toast } = useToast();
+  const { t } = useTranslation('toasts');
   const seed = initialData
     ? cloneMessage(initialData)
     : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
@@ -174,7 +176,7 @@ export const useMessageForm = ({
         });
         updateTemplate(templateType, { sections: newSections });
       } else {
-        toast({ description: 'Please click on a text area first.' });
+        toast({ description: t('placeholderTextArea') });
       }
     }
   };

@@ -4,6 +4,7 @@ import type { DashboardConfig } from '@/types/dashboard';
 import { WidgetContainer } from './WidgetContainer';
 import { WidgetRenderer } from './WidgetRenderer';
 import { Loader2, LayoutDashboard, Gauge, Droplets, Wifi, MapPin, Shield, Activity, Zap, BarChart3 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface DashboardGridProps {
   greeting?: string;
@@ -12,7 +13,7 @@ interface DashboardGridProps {
 }
 
 /* ── theme config per role ── */
-const getTheme = (role?: string) => {
+const getTheme = (role: string | undefined, t: (key: string) => string) => {
   if (role === 'METER_READER') {
     return {
       from: 'from-teal-50/80',
@@ -24,10 +25,10 @@ const getTheme = (role?: string) => {
       accent: 'text-teal-600',
       pillBg: 'bg-teal-100/50 border-teal-200 text-teal-700',
       featureTitle: 'text-teal-600',
-      sectionTitle: 'Built for Meter Readers in the Field',
-      sectionSub: 'Smart tools designed to make your daily reading operations faster and more accurate.',
-      sectionLabel: 'Field Operations Suite',
-      badgeText: 'Water Management — Field Staff',
+      sectionTitle: t('grid.meterReaderSection.title'),
+      sectionSub: t('grid.meterReaderSection.sub'),
+      sectionLabel: t('grid.meterReaderSection.label'),
+      badgeText: t('grid.badges.meterStaff'),
       badgeIcon: <Droplets className="w-3.5 h-3.5" />,
       rightBadges: true,
       textMain: 'text-slate-900',
@@ -45,10 +46,10 @@ const getTheme = (role?: string) => {
     accent: 'text-blue-600',
     pillBg: 'bg-blue-100/50 border-blue-200 text-blue-700',
     featureTitle: 'text-blue-600',
-    sectionTitle: 'Everything you need, in one place',
-    sectionSub: 'A powerful management workspace with real-time insights and quick access to all modules.',
-    sectionLabel: 'Platform Highlights',
-    badgeText: 'System Active',
+    sectionTitle: t('grid.generalSection.title'),
+    sectionSub: t('grid.generalSection.sub'),
+    sectionLabel: t('grid.generalSection.label'),
+    badgeText: t('grid.badges.systemActive'),
     badgeIcon: <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />,
     rightBadges: false,
     textMain: 'text-slate-900',
@@ -57,22 +58,24 @@ const getTheme = (role?: string) => {
   };
 };
 
-const getFeatures = (role?: string) =>
+const getFeatures = (role: string | undefined, t: (key: string) => string) =>
   role === 'METER_READER'
     ? [
-        { icon: Gauge,    title: 'AI-Powered OCR',   desc: 'Camera scans meter digits automatically using Python OCR', colorIcon: 'text-teal-400', colorBg: 'bg-teal-500/15 border-teal-500/20' },
-        { icon: Wifi,     title: 'Offline Mode',      desc: 'Readings saved locally and synced when internet returns',  colorIcon: 'text-cyan-400',  colorBg: 'bg-cyan-500/15  border-cyan-500/20'  },
-        { icon: Activity, title: 'Live Tracking',     desc: 'All readings captured today are visible in real time',     colorIcon: 'text-blue-400',  colorBg: 'bg-blue-500/15  border-blue-500/20'  },
-        { icon: Shield,   title: 'Secure & Accurate', desc: 'Every reading is validated and stored securely',           colorIcon: 'text-emerald-400',colorBg: 'bg-emerald-500/15 border-emerald-500/20' },
+        { icon: Gauge,    title: t('grid.features.meterReader.ocrTitle'),   desc: t('grid.features.meterReader.ocrDesc'), colorIcon: 'text-teal-400', colorBg: 'bg-teal-500/15 border-teal-500/20' },
+        { icon: Wifi,     title: t('grid.features.meterReader.offlineTitle'),      desc: t('grid.features.meterReader.offlineDesc'),  colorIcon: 'text-cyan-400',  colorBg: 'bg-cyan-500/15  border-cyan-500/20'  },
+        { icon: Activity, title: t('grid.features.meterReader.trackingTitle'),     desc: t('grid.features.meterReader.trackingDesc'),     colorIcon: 'text-blue-400',  colorBg: 'bg-blue-500/15  border-blue-500/20'  },
+        { icon: Shield,   title: t('grid.features.meterReader.secureTitle'), desc: t('grid.features.meterReader.secureDesc'),           colorIcon: 'text-emerald-400',colorBg: 'bg-emerald-500/15 border-emerald-500/20' },
       ]
     : [
-        { icon: BarChart3, title: 'Real-time Analytics', desc: 'Live system data updated every session',            colorIcon: 'text-blue-400',   colorBg: 'bg-blue-500/15   border-blue-500/20'   },
-        { icon: Zap,       title: 'Instant Actions',     desc: 'Navigate to any module with a single click',        colorIcon: 'text-violet-400', colorBg: 'bg-violet-500/15 border-violet-500/20' },
-        { icon: Shield,    title: 'Role-Based Access',   desc: 'You only see what your role needs',                 colorIcon: 'text-indigo-400', colorBg: 'bg-indigo-500/15 border-indigo-500/20' },
-        { icon: Activity,  title: 'System Health',       desc: 'All services running normally',                     colorIcon: 'text-sky-400',    colorBg: 'bg-sky-500/15    border-sky-500/20'    },
+        { icon: BarChart3, title: t('grid.features.general.analyticsTitle'), desc: t('grid.features.general.analyticsDesc'),            colorIcon: 'text-blue-400',   colorBg: 'bg-blue-500/15   border-blue-500/20'   },
+        { icon: Zap,       title: t('grid.features.general.actionsTitle'),     desc: t('grid.features.general.actionsDesc'),        colorIcon: 'text-violet-400', colorBg: 'bg-violet-500/15 border-violet-500/20' },
+        { icon: Shield,    title: t('grid.features.general.accessTitle'),   desc: t('grid.features.general.accessDesc'),                 colorIcon: 'text-indigo-400', colorBg: 'bg-indigo-500/15 border-indigo-500/20' },
+        { icon: Activity,  title: t('grid.features.general.healthTitle'),       desc: t('grid.features.general.healthDesc'),                     colorIcon: 'text-sky-400',    colorBg: 'bg-sky-500/15    border-sky-500/20'    },
       ];
 
 export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle, role }) => {
+  const { t, i18n } = useTranslation('widgetManagement');
+  const isSinhala = i18n.language === 'si';
   const [config, setConfig] = useState<DashboardConfig | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -80,7 +83,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
   useEffect(() => {
     getDashboardConfig()
       .then(setConfig)
-      .catch(() => setError('Failed to load dashboard configuration. Please refresh.'))
+      .catch(() => setError('FAILED'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -88,7 +91,7 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-primary/40" />
-        <p className="text-sm font-medium tracking-wide text-muted-foreground animate-pulse">Initializing workspace...</p>
+        <p className="text-sm font-medium tracking-wide text-muted-foreground animate-pulse">{t('grid.initializing')}</p>
       </div>
     );
   }
@@ -97,14 +100,14 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
     return (
       <div className="flex flex-col items-center justify-center py-32 gap-3 text-muted-foreground">
         <LayoutDashboard className="w-12 h-12 opacity-20 mb-2" />
-        <p className="text-sm font-medium">{error ?? 'No dashboard configuration found.'}</p>
+        <p className="text-sm font-medium">{error ? t('grid.loadError') : t('grid.noConfig')}</p>
       </div>
     );
   }
 
   const title = greeting ?? config.name;
-  const theme = getTheme(role);
-  const features = getFeatures(role);
+  const theme = getTheme(role, t);
+  const features = getFeatures(role, t);
 
   return (
     <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -mt-6">
@@ -126,9 +129,9 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
           {role === 'METER_READER' && (
             <div className="absolute top-8 right-8 hidden lg:flex flex-col gap-3">
               {[
-                { icon: <Gauge className="w-4 h-4 text-teal-600" />, label: 'Live Meter Sync', extra: <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse ml-1" /> },
-                { icon: <Wifi className="w-4 h-4 text-cyan-600" />, label: 'Offline Ready' },
-                { icon: <MapPin className="w-4 h-4 text-blue-600" />, label: 'Field Operations' },
+                { icon: <Gauge className="w-4 h-4 text-teal-600" />, label: t('grid.badges.liveMeterSync'), extra: <span className="w-2 h-2 rounded-full bg-teal-500 animate-pulse ml-1" /> },
+                { icon: <Wifi className="w-4 h-4 text-cyan-600" />, label: t('grid.badges.offlineReady') },
+                { icon: <MapPin className="w-4 h-4 text-blue-600" />, label: t('grid.badges.fieldOperations') },
               ].map((b, i) => (
                 <div key={i} className="flex items-center gap-2 bg-white/60 backdrop-blur-md border border-white/80 rounded-2xl px-4 py-2.5 shadow-sm">
                   {b.icon}
@@ -148,9 +151,10 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
 
           {/* Title */}
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className={'text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4 ' + theme.textMain}>{title}</h1>
+            <h1 className={(isSinhala ? 'text-2xl sm:text-3xl font-bold' : 'text-4xl sm:text-5xl font-extrabold') + ' tracking-tight leading-tight mb-4 ' + theme.textMain}>{title}</h1>
             {subtitle && <p className={'text-base font-medium ' + theme.textSub}>{subtitle}</p>}
           </div>
+
 
           {/* Wave at bottom of hero — seamlessly connects to widget area */}
           {role === 'METER_READER' && (
@@ -167,6 +171,8 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
               <WidgetContainer
                 key={widget.id}
                 name={widget.name}
+                widgetKey={widget.widgetKey}
+                componentKey={widget.componentKey}
                 colSpan={widget.colSpan}
                 rowSpan={widget.rowSpan}
                 className="animate-slide-up"
@@ -214,3 +220,4 @@ export const DashboardGrid: React.FC<DashboardGridProps> = ({ greeting, subtitle
     </div>
   );
 };
+
