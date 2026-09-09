@@ -3,42 +3,41 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShieldCheck } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const PrivacyPolicy = () => {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation('info');
   
   return (
   <MainLayout isAuthenticated={isAuthenticated}>
     <div className="container mx-auto px-4 py-12 max-w-4xl">
       <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold mb-4 text-gradient">Privacy Policy</h1>
-        <p className="text-muted-foreground">How we handle and protect your data</p>
+        <h1 className="text-4xl font-bold mb-4 text-gradient">{t('privacy.title')}</h1>
+        <p className="text-muted-foreground">{t('privacy.subtitle')}</p>
       </div>
       <Card className="border-none shadow-card overflow-hidden">
         <div className="p-6 bg-primary/5 border-b flex items-center gap-4 text-primary font-semibold">
           <ShieldCheck size={20} />
-          Data Protection Commitment
+          {t('privacy.commitment')}
         </div>
         <CardContent className="p-8 prose prose-slate max-w-none">
           <section className="mb-8">
-            <h3 className="text-xl font-bold mb-4">1. Data Collection</h3>
+            <h3 className="text-xl font-bold mb-4">{t('privacy.collectionTitle')}</h3>
             <p className="text-muted-foreground leading-relaxed">
-              HydroPay collects essential information such as your name, email address, and water usage data 
-              strictly to provide accurate billing services and system notifications.
+              {t('privacy.collection')}
             </p>
           </section>
           <section className="mb-8">
-            <h3 className="text-xl font-bold mb-4">2. Data Usage</h3>
+            <h3 className="text-xl font-bold mb-4">{t('privacy.usageTitle')}</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Your information is used solely for processing payments, identifying anomalies in usage, 
-              and responding to your support inquiries. We never sell your data to third parties.
+              {t('privacy.usage')}
             </p>
           </section>
           <section>
-            <h3 className="text-xl font-bold mb-4">3. Security</h3>
+            <h3 className="text-xl font-bold mb-4">{t('privacy.securityTitle')}</h3>
             <p className="text-muted-foreground leading-relaxed">
-              We implement industry-standard encryption to protect your personal and financial information. 
-              Our database is monitored 24/7 to prevent unauthorized access.
+              {t('privacy.security')}
             </p>
           </section>
         </CardContent>

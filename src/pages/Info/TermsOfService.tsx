@@ -3,34 +3,36 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { FileText } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const TermsOfService = () => {
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation('info');
   
   return (
   <MainLayout isAuthenticated={isAuthenticated}>
     <div className="container mx-auto px-4 py-12 max-w-4xl">
-      <h1 className="text-4xl font-bold mb-6 text-gradient">Terms & Service</h1>
+      <h1 className="text-4xl font-bold mb-6 text-gradient">{t('terms.title')}</h1>
       <Card className="border-none shadow-card">
         <CardContent className="p-8">
           <div className="flex items-start gap-4 mb-8 p-4 bg-secondary/20 rounded-xl border border-secondary/30">
             <FileText className="text-primary mt-1" />
             <p className="text-sm text-muted-foreground">
-              Last Updated: April 2026. By using the HydroPay platform, you agree to the following conditions.
+              {t('terms.notice')}
             </p>
           </div>
           <div className="space-y-8">
             <div>
-              <h3 className="text-lg font-bold mb-2">User Responsibilities</h3>
-              <p className="text-muted-foreground">Users are responsible for providing accurate meter readings and ensuring timely payments for water services.</p>
+              <h3 className="text-lg font-bold mb-2">{t('terms.responsibilitiesTitle')}</h3>
+              <p className="text-muted-foreground">{t('terms.responsibilities')}</p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">Payment Terms</h3>
-              <p className="text-muted-foreground">All payments are processed securely. Overdue balances may trigger automated system alerts as defined in your service agreement.</p>
+              <h3 className="text-lg font-bold mb-2">{t('terms.paymentTitle')}</h3>
+              <p className="text-muted-foreground">{t('terms.payment')}</p>
             </div>
             <div>
-              <h3 className="text-lg font-bold mb-2">Limitation of Liability</h3>
-              <p className="text-muted-foreground">HydroPay is a management platform and is not responsible for physical infrastructure failures of the water utility provider.</p>
+              <h3 className="text-lg font-bold mb-2">{t('terms.liabilityTitle')}</h3>
+              <p className="text-muted-foreground">{t('terms.liability')}</p>
             </div>
           </div>
         </CardContent>
