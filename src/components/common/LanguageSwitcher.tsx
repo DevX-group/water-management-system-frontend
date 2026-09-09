@@ -33,6 +33,7 @@ export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
   const changeLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
     localStorage.setItem("language", lang);
+    localStorage.setItem("admin_language", lang);
     localStorage.setItem("i18nextLng", lang);
   };
 
