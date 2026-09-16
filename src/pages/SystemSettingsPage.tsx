@@ -67,6 +67,9 @@ export const SystemSettingsPage: React.FC = () => {
       branch: '',
       accountNumber: '',
       accountName: '',
+      overdueThreshold: undefined,
+      disconnectionGracePeriodDays: undefined,
+      reconnectionFee: undefined,
     });
 
   const [loadingDetails, setLoadingDetails] = useState(true);
@@ -124,18 +127,42 @@ export const SystemSettingsPage: React.FC = () => {
   const handleSystemDetailsChange = (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
-    const { name, value } = e.target;
+    const { name, value, type } = e.target;
 
     setSystemDetails((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'number' ? (value === '' ? undefined : Number(value)) : value,
     }));
   };
 
-  const handleSaveSystemDetails = async (
+  const validateSystemDetails = (): boolean => {
+    const errors: string[] = [];
+
+    if (!systemDetails.companyName?.trim()) errors.push('Company name is required.');
+    if (!systemDetails.officeAddress?.trim()) errors.push('Office address is required.');
+    if (!systemDetails.officeContactNumber?.trim()) errors.push('Contact number is required.');
+    if (!systemDetails.officeEmail?.trim()) errors.push('Email address is required.');
+    if (systemDetails.officeEmail?.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(systemDetails.officeEmail.trim()))
+      errors.push('Please enter a valid email address.');
+    if (!systemDetails.defaultCurrency?.trim()) errors.push('Default currency is required.');
+    if (!systemDetails.bankName?.trim()) errors.push('Bank name is required.');
+    if (!systemDetails.branch?.trim()) errors.push('Branch is required.');
+    if (!systemDetails.accountNumber?.trim()) errors.push('Account number is required.');
+    if (!systemDetails.accountName?.trim()) errors.push('Account name is required.');
+
+    if (errors.length > 0) {
+      errors.forEach((msg) => toast.error(msg));
+      return false;
+    }
+    return true;
+  };
+
+    const handleSaveSystemDetails = async (
     e: React.FormEvent
   ) => {
     e.preventDefault();
+
+    if (!validateSystemDetails()) return;
 
     try {
       setSavingDetails(true);
@@ -428,6 +455,83 @@ export const SystemSettingsPage: React.FC = () => {
                         className="rounded-xl border-primary/20 focus-visible:ring-primary/30"
                         required
                       />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Overdue & Disconnection Policy */}
+                <div className="pt-6 border-t border-border/50 mt-2">
+                  <h3 className="text-lg font-bold text-foreground/90 mb-5 flex items-center gap-2">
+                    <span className="w-1.5 h-5 rounded-full gradient-primary inline-block"></span>
+                    {t('systemDetails.disconnectionInfoTitle', { defaultValue: 'Overdue & Disconnection Policy' })}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                    <div className="space-y-2.5">
+                      <Label
+                        htmlFor="overdueThreshold"
+                        className="text-sm font-semibold text-foreground/80"
+                      >
+                        {t('systemDetails.fields.overdueThreshold', { defaultValue: 'Overdue Alert Threshold' })} ({systemDetails.defaultCurrency || 'LKR'})
+                      </Label>
+
+                      <Input
+                        id="overdueThreshold"
+                        name="overdueThreshold"
+                        type="number"
+                        value={systemDetails.overdueThreshold ?? ''}
+                        onChange={handleSystemDetailsChange}
+                        placeholder="e.g. 5000.00"
+                        className="rounded-xl border-primary/20 focus-visible:ring-primary/30"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {t('systemDetails.fields.overdueThresholdHelp', { defaultValue: 'Threshold balance exceeding which overdue alerts are triggered.' })}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      <Label
+                        htmlFor="disconnectionGracePeriodDays"
+                        className="text-sm font-semibold text-foreground/80"
+                      >
+                        {t('systemDetails.fields.disconnectionGracePeriodDays', { defaultValue: 'Disconnection Grace Period (Days)' })}
+                      </Label>
+
+                      <Input
+                        id="disconnectionGracePeriodDays"
+                        name="disconnectionGracePeriodDays"
+                        type="number"
+                        value={systemDetails.disconnectionGracePeriodDays ?? ''}
+                        onChange={handleSystemDetailsChange}
+                        placeholder="e.g. 14"
+                        className="rounded-xl border-primary/20 focus-visible:ring-primary/30"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {t('systemDetails.fields.disconnectionGracePeriodDaysHelp', { defaultValue: 'Days given to settle overdue balance before disconnection.' })}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      <Label
+                        htmlFor="reconnectionFee"
+                        className="text-sm font-semibold text-foreground/80"
+                      >
+                        {t('systemDetails.fields.reconnectionFee', { defaultValue: 'Reconnection Fee' })} ({systemDetails.defaultCurrency || 'LKR'})
+                      </Label>
+
+                      <Input
+                        id="reconnectionFee"
+                        name="reconnectionFee"
+                        type="number"
+                        value={systemDetails.reconnectionFee ?? ''}
+                        onChange={handleSystemDetailsChange}
+                        placeholder="e.g. 1500.00"
+                        className="rounded-xl border-primary/20 focus-visible:ring-primary/30"
+                      />
+                      <p className="text-xs text-muted-foreground">
+                        {t('systemDetails.fields.reconnectionFeeHelp', { defaultValue: 'Fee charged to reconnect the water service after cutoff.' })}
+                      </p>
                     </div>
                   </div>
                 </div>

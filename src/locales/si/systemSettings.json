@@ -40,8 +40,15 @@
       "bankName": "බැංකුවේ නම",
       "branch": "ශාඛාව",
       "accountName": "ගිණුමේ නම",
-      "accountNumber": "ගිණුම් අංකය"
-    }
+      "accountNumber": "ගිණුම් අංකය",
+      "overdueThreshold": "හිඟ මුදල් අනතුරු ඇඟවීමේ සීමාව",
+      "overdueThresholdHelp": "මෙම මුදල ඉක්මවන විට පාරිභෝගිකයාට අනතුරු ඇඟවීම් යවනු ලැබේ.",
+      "disconnectionGracePeriodDays": "විසන්ධි කිරීමට පෙර සහන කාලය (දින)",
+      "disconnectionGracePeriodDaysHelp": "ජල සැපයුම විසන්ධි කිරීමට පෙර මුදල් ගෙවීමට ලබා දෙන දින ගණන.",
+      "reconnectionFee": "නැවත සම්බන්ධ කිරීමේ ගාස්තුව",
+      "reconnectionFeeHelp": "විසන්ධි කිරීමෙන් පසු නැවත සම්බන්ධ කිරීම සඳහා අය කෙරෙන ගාස්තුව."
+    },
+    "disconnectionInfoTitle": "හිඟ ශේෂ සහ විසන්ධි කිරීමේ ප්‍රතිපත්තිය"
   },
   "regions": {
     "title": "ප්‍රදේශ",

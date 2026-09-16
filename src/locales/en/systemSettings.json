@@ -40,8 +40,15 @@
       "bankName": "Bank Name",
       "branch": "Branch",
       "accountName": "Account Name",
-      "accountNumber": "Account Number"
-    }
+      "accountNumber": "Account Number",
+      "overdueThreshold": "Overdue Alert Threshold",
+      "overdueThresholdHelp": "Threshold balance exceeding which overdue alerts are triggered.",
+      "disconnectionGracePeriodDays": "Disconnection Grace Period (Days)",
+      "disconnectionGracePeriodDaysHelp": "Days given to settle overdue balance before disconnection.",
+      "reconnectionFee": "Reconnection Fee",
+      "reconnectionFeeHelp": "Fee charged to reconnect the water service after cutoff."
+    },
+    "disconnectionInfoTitle": "Overdue & Disconnection Policy"
   },
   "regions": {
     "title": "Regions",
