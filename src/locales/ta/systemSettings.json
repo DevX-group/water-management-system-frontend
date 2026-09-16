@@ -40,8 +40,15 @@
       "bankName": "வங்கியின் பெயர்",
       "branch": "கிளை",
       "accountName": "கணக்கின் பெயர்",
-      "accountNumber": "கணக்கு எண்"
-    }
+      "accountNumber": "கணக்கு எண்",
+      "overdueThreshold": "நிலுவை எச்சரிக்கை வரம்பு",
+      "overdueThresholdHelp": "நிலுவைத் தொகை இந்த வரம்பை தாண்டும்போது எச்சரிக்கை அனுப்பப்படும்.",
+      "disconnectionGracePeriodDays": "துண்டிப்புக்கு முந்தைய அவகாசம் (நாட்கள்)",
+      "disconnectionGracePeriodDaysHelp": "நீர் விநியோகம் துண்டிக்கப்படுவதற்கு முன் நிலுவையை செலுத்த வழங்கப்படும் நாட்கள்.",
+      "reconnectionFee": "மறு இணைப்பு கட்டணம்",
+      "reconnectionFeeHelp": "துண்டிக்கப்பட்ட பிறகு மீண்டும் இணைக்க செலுத்த வேண்டிய கட்டணம்."
+    },
+    "disconnectionInfoTitle": "நிலுவைத் தொகை & துண்டிப்புக் கொள்கை"
   },
   "regions": {
     "title": "மண்டலங்கள்",
