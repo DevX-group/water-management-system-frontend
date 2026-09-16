@@ -30,6 +30,8 @@ const defaultScheduledMessage: ScheduledMessage = {
   templates: {
     sms: { isCustom: true, sections: [], content: '' },
     email: { isCustom: true, sections: [], content: '' },
+    overdueAlertSms: null,
+    overdueAlertEmail: null,
   },
   isDefault: false,
 };
@@ -42,6 +44,8 @@ const defaultTriggeredMessage: TriggeredMessage = {
   templates: {
     sms: { isCustom: true, sections: [], content: '' },
     email: { isCustom: true, sections: [], content: '' },
+    overdueAlertSms: null,
+    overdueAlertEmail: null,
   },
   isDefault: false,
   triggerType: 'Payment Confirmed',
@@ -141,7 +145,10 @@ export const useMessageForm = ({
     setFormData({ ...formData, channels: newChannels });
   };
 
-  const updateTemplate = (type: 'sms' | 'email', updates: Partial<MessageTemplate>) => {
+  const updateTemplate = (
+    type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail',
+    updates: Partial<MessageTemplate>,
+  ) => {
     setFormData({
       ...formData,
       templates: {
@@ -151,7 +158,7 @@ export const useMessageForm = ({
     });
   };
 
-  const moveSection = (type: 'sms' | 'email', fromIndex: number, toIndex: number) => {
+  const moveSection = (type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail', fromIndex: number, toIndex: number) => {
     const sections = [...(formData.templates[type]?.sections || [])];
     if (toIndex < 0 || toIndex >= sections.length) return;
     const [moved] = sections.splice(fromIndex, 1);
