@@ -123,6 +123,36 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
     const template = formData.templates[type];
     if (!template) return null;
     if (template.isCustom) {
+      if (isCombinedMessage) {
+        const alertType = type === 'sms' ? 'overdueAlertSms' : 'overdueAlertEmail';
+        const alertTemplate = formData.templates[alertType];
+        return (
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-xl font-semibold text-sky-600">Monthly Bill</h3>
+              <Textarea
+                placeholder={t('templateEditor.contentPlaceholder')}
+                value={template.content}
+                onChange={(event) => onUpdateTemplate(type, { content: event.target.value })}
+                className="min-h-[120px]"
+                onFocus={() => onFocusSection({ sectionId: null, templateType: type })}
+              />
+            </div>
+            <div className="space-y-3 border-t pt-4">
+              <h3 className="text-xl font-semibold text-red-500">Outstanding Alert</h3>
+              {alertTemplate && (
+                <Textarea
+                  placeholder={t('templateEditor.contentPlaceholder')}
+                  value={alertTemplate.content}
+                  onChange={(event) => onUpdateTemplate(alertType, { content: event.target.value })}
+                  className="min-h-[120px]"
+                  onFocus={() => onFocusSection({ sectionId: null, templateType: alertType })}
+                />
+              )}
+            </div>
+          </div>
+        );
+      }
       return (
         <Textarea
           placeholder={t('templateEditor.contentPlaceholder')}

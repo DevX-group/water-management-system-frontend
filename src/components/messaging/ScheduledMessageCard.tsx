@@ -25,15 +25,18 @@ export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ mess
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <div className="flex items-center gap-2">
           <CardTitle className="text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
+        </div>
+        <div className="flex flex-col items-end gap-1">
+          <span className={`px-2 py-1 rounded text-xs font-medium ${
+            message.schedule.type === 'Recurring' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+          }`}>
+            {t(`scheduleTypes.${message.schedule.type}`, { defaultValue: message.schedule.type })}
+          </span>
           {message.name === 'Monthly Bill + Outstanding Alert' && (
             <span className="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">Default</span>
           )}
         </div>
-        <span className={`px-2 py-1 rounded text-xs font-medium ${
-          message.schedule.type === 'Recurring' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-        }`}>
-          {t(`scheduleTypes.${message.schedule.type}`, { defaultValue: message.schedule.type })}
-        </span>
+        
       </CardHeader>
       <CardContent>
         <div className="space-y-2 text-sm text-muted-foreground mt-2">
