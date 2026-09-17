@@ -137,6 +137,9 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
     const alertType = type === 'sms' ? 'overdueAlertSms' : 'overdueAlertEmail';
     return (
       <div className="space-y-6">
+        {isCombinedMessage && (
+          <h3 className="text-xl font-semibold text-sky-600">Monthly Bill</h3>
+        )}
         {renderSections(type)}
         {isCombinedMessage && (
           <div className="space-y-3 border-t pt-4">

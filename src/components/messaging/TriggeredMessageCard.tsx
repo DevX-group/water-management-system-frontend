@@ -24,7 +24,12 @@ export const TriggeredMessageCard: React.FC<TriggeredMessageCardProps> = ({ mess
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
+        <div className="flex items-center gap-2">
+          <CardTitle className="text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
+          {message.name === 'Monthly Bill + Outstanding Alert' && (
+            <span className="rounded bg-amber-100 px-2 py-1 text-xs font-medium text-amber-700">Default</span>
+          )}
+        </div>
         <span className={`px-2 py-1 rounded text-xs font-medium ${
           message.active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'
         }`}>

@@ -56,6 +56,23 @@ const cloneMessage = <T extends ScheduledMessage | TriggeredMessage>(message: T)
   return JSON.parse(JSON.stringify(message)) as T;
 };
 
+type TemplateKey = 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail';
+
+const ensureCombinedTemplates = <T extends ScheduledMessage | TriggeredMessage>(message: T): T => {
+  if (message.name !== 'Monthly Bill + Outstanding Alert') {
+    return message;
+  }
+
+  return {
+    ...message,
+    templates: {
+      ...message.templates,
+      overdueAlertSms: message.templates.overdueAlertSms ?? { isCustom: false, sections: [], content: '' },
+      overdueAlertEmail: message.templates.overdueAlertEmail ?? { isCustom: false, sections: [], content: '' },
+    },
+  } as T;
+};
+
 export const useMessageForm = ({
   initialData,
   mode,
@@ -66,14 +83,14 @@ export const useMessageForm = ({
   const { toast } = useToast();
   const { t } = useTranslation('toasts');
   const seed = initialData
-    ? cloneMessage(initialData)
+    ? ensureCombinedTemplates(cloneMessage(initialData))
     : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
 
   const [formData, setFormData] = useState<ScheduledMessage | TriggeredMessage>(seed);
   const [activeTab, setActiveTab] = useState<'SMS' | 'Email'>('SMS');
   const [lastFocusedInput, setLastFocusedInput] = useState<{
     sectionId: string | null;
-    templateType: 'sms' | 'email';
+    templateType: TemplateKey;
   } | null>(null);
 
   const selectedScheduleType = mode === 'scheduled'
@@ -82,7 +99,7 @@ export const useMessageForm = ({
 
   useEffect(() => {
     const nextSeed = initialData
-      ? cloneMessage(initialData)
+      ? ensureCombinedTemplates(cloneMessage(initialData))
       : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
     setFormData(nextSeed);
     setActiveTab('SMS');
@@ -167,7 +184,8 @@ export const useMessageForm = ({
   };
 
   const insertPlaceholder = (placeholder: string) => {
-    const templateType = activeTab === 'SMS' ? 'sms' : 'email';
+    const templateType = lastFocusedInput?.templateType
+      ?? (activeTab === 'SMS' ? 'sms' : 'email');
     const template = formData.templates[templateType];
     if (template?.isCustom) {
       const content = template.content || '';
