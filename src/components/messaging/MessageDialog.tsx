@@ -41,13 +41,13 @@ export const MessageDialog: React.FC<MessageDialogProps> = ({
     : ['SMS', 'Email']);
   const recipientOptions: RecipientType[] = (enumOptions?.recipientTypes?.length
     ? enumOptions.recipientTypes
-    : ['All Customers', 'Overdue Customers']);
+    : ['All Customers']);
   const scheduleTypeOptions: ScheduleType[] = (enumOptions?.scheduleTypes?.length
     ? enumOptions.scheduleTypes
     : ['Recurring', 'One-Time']);
   const triggerTypeOptions: TriggerType[] = (enumOptions?.triggerTypes?.length
     ? enumOptions.triggerTypes
-    : ['Payment Confirmed', 'Bank Slip Rejected', 'Email Verification', 'Phone Verification']);
+    : ['Payment Confirmed', 'Bank Slip Rejected', 'Bill and Overdue', 'Email Verification', 'Phone Verification']);
   const placeholders = enumOptions?.placeholders ?? [];
   const {
     formData,

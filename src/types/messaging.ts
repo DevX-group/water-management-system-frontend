@@ -1,8 +1,8 @@
 // Core types for scheduled and triggered messaging.
 export type MessageChannel = 'SMS' | 'Email';
 export type ScheduleType = 'Recurring' | 'One-Time';
-export type RecipientType = 'All Customers' | 'Overdue Customers';
-export type TriggerType = 'Payment Confirmed' | 'Bank Slip Rejected' | 'Email Verification' | 'Phone Verification';
+export type RecipientType = 'All Customers';
+export type TriggerType = 'Payment Confirmed' | 'Bank Slip Rejected' | 'Bill and Overdue' | 'Email Verification' | 'Phone Verification';
 
 export interface TemplateSection {
   id: string;
@@ -32,6 +32,8 @@ export interface MessageBase {
   templates: {
     sms: MessageTemplate;
     email: MessageTemplate;
+    overdueAlertSms?: MessageTemplate | null;
+    overdueAlertEmail?: MessageTemplate | null;
   };
   isDefault: boolean;
 }
