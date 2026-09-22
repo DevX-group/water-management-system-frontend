@@ -21,8 +21,8 @@ export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ mess
 
   // Compact card showing schedule and recipients with edit/delete actions.
   return (
-    <Card className="flex h-full min-h-[270px] flex-col">
-      <CardHeader className="flex h-[92px] shrink-0 flex-row items-start justify-between space-y-0 overflow-hidden pb-2">
+    <Card className="flex h-full min-h-[250px] flex-col">
+      <CardHeader className="flex h-[82px] shrink-0 flex-row items-start justify-between space-y-0 overflow-hidden pb-2">
         <div className="min-w-0 pr-3">
           <CardTitle className="line-clamp-2 text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
         </div>
@@ -38,7 +38,7 @@ export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ mess
         </div>
         
       </CardHeader>
-      <CardContent className="h-[110px] shrink-0 overflow-hidden">
+      <CardContent className="h-[100px] shrink-0 overflow-hidden">
         <div className="mt-2 space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center">
             <Calendar className="mr-2 h-4 w-4" />
@@ -59,7 +59,7 @@ export const ScheduledMessageCard: React.FC<ScheduledMessageCardProps> = ({ mess
           </div>
         </div>
       </CardContent>
-      <CardFooter className="mt-auto flex h-[68px] shrink-0 items-center justify-between pt-2">
+      <CardFooter className="mt-auto flex h-[62px] shrink-0 items-center justify-between pt-2">
         <Button variant="outline" size="sm" onClick={onEdit}>
           <Edit className="mr-2 h-4 w-4" /> {t('common.edit')}
         </Button>
