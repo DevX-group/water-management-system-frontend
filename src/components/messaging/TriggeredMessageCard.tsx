@@ -22,10 +22,10 @@ export const TriggeredMessageCard: React.FC<TriggeredMessageCardProps> = ({ mess
 
   // Compact card showing trigger type and active status with edit/delete actions.
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <div className="flex items-center gap-2">
-          <CardTitle className="text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
+    <Card className="flex h-full min-h-[270px] flex-col">
+      <CardHeader className="flex h-[92px] shrink-0 flex-row items-start justify-between space-y-0 overflow-hidden pb-2">
+        <div className="min-w-0 pr-3">
+          <CardTitle className="line-clamp-2 text-lg font-medium">{t(`messageNames.${message.name}`, { defaultValue: message.name })}</CardTitle>
         </div>
         <div className="flex flex-col items-end gap-1">
           <span className={`px-2 py-1 rounded text-xs font-medium ${
@@ -38,8 +38,8 @@ export const TriggeredMessageCard: React.FC<TriggeredMessageCardProps> = ({ mess
           )}
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-2 text-sm text-muted-foreground mt-2">
+      <CardContent className="h-[110px] shrink-0 overflow-hidden">
+        <div className="mt-2 space-y-2 text-sm text-muted-foreground">
           <div className="flex items-center">
             <MessageSquare className="mr-2 h-4 w-4" />
             <span>{t(`triggerTypes.${formatTriggerType(message.triggerType)}`, { defaultValue: formatTriggerType(message.triggerType) })}</span>
@@ -50,7 +50,7 @@ export const TriggeredMessageCard: React.FC<TriggeredMessageCardProps> = ({ mess
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+      <CardFooter className="mt-auto flex h-[68px] shrink-0 items-center justify-between pt-2">
         <Button variant="outline" size="sm" onClick={onEdit}>
           <Edit className="mr-2 h-4 w-4" /> {t('common.edit')}
         </Button>
