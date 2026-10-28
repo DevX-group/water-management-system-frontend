@@ -29,6 +29,8 @@ import {
   disconnectCustomerNotificationSocket,
 } from "@/services/websocketService";
 import { CustomerNotificationModal } from "./CustomerNotificationModal";
+import { useTranslation } from "react-i18next";
+import { translateNotificationTitle, translateNotificationMessage } from "@/utils/notificationTranslationUtils";
 
 const formatTimeAgo = (dateString: string): string => {
   if (!dateString) return "";
@@ -73,6 +75,7 @@ const getTypeIcon = (type: NotificationType) => {
 };
 
 export const CustomerNotificationBell: React.FC = () => {
+  const { t } = useTranslation('alerts');
   const [notifications, setNotifications] = useState<NotificationResponse[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
@@ -179,7 +182,7 @@ export const CustomerNotificationBell: React.FC = () => {
           {/* Header */}
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-sm text-foreground">New Notifications</h3>
+              <h3 className="font-semibold text-sm text-foreground">{t('notification.newNotifications')}</h3>
               {unreadCount > 0 && (
                 <span className="bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300 text-[11px] font-semibold px-2 py-0.5 rounded-full">
                   {unreadCount}
@@ -193,7 +196,7 @@ export const CustomerNotificationBell: React.FC = () => {
                 className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
-                Mark all read
+                {t('notification.markAllRead')}
               </button>
             )}
           </div>
@@ -208,7 +211,7 @@ export const CustomerNotificationBell: React.FC = () => {
             ) : unreadNotifications.length === 0 ? (
               <div className="py-8 text-center flex flex-col items-center justify-center gap-2">
                 <Inbox className="w-6 h-6 text-muted-foreground/60" />
-                <p className="text-xs text-muted-foreground">No new notifications</p>
+                <p className="text-xs text-muted-foreground">{t('notification.noNew')}</p>
               </div>
             ) : (
               unreadNotifications.map((notification) => {
@@ -227,7 +230,7 @@ export const CustomerNotificationBell: React.FC = () => {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between gap-1">
                         <p className="text-xs font-semibold text-foreground truncate">
-                          {notification.title}
+                          {translateNotificationTitle(notification.notificationType, notification.title, t)}
                         </p>
                         <span className="text-[10px] text-muted-foreground whitespace-nowrap">
                           {formatTimeAgo(notification.createdAt)}
@@ -235,7 +238,7 @@ export const CustomerNotificationBell: React.FC = () => {
                       </div>
 
                       <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
-                        {notification.message}
+                        {translateNotificationMessage(notification.notificationType, notification.message, t)}
                       </p>
                     </div>
 
@@ -252,7 +255,7 @@ export const CustomerNotificationBell: React.FC = () => {
               onClick={handleOpenModal}
               className="text-xs text-primary font-medium hover:underline inline-flex items-center justify-center gap-1 py-1 w-full"
             >
-              See all notifications
+              {t('notification.seeAll')}
               <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>

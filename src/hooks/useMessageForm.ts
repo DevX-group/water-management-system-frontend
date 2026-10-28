@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import type {
   MessageChannel,
   MessageTemplate,
@@ -29,6 +30,8 @@ const defaultScheduledMessage: ScheduledMessage = {
   templates: {
     sms: { isCustom: true, sections: [], content: '' },
     email: { isCustom: true, sections: [], content: '' },
+    overdueAlertSms: null,
+    overdueAlertEmail: null,
   },
   isDefault: false,
 };
@@ -41,6 +44,8 @@ const defaultTriggeredMessage: TriggeredMessage = {
   templates: {
     sms: { isCustom: true, sections: [], content: '' },
     email: { isCustom: true, sections: [], content: '' },
+    overdueAlertSms: null,
+    overdueAlertEmail: null,
   },
   isDefault: false,
   triggerType: 'Payment Confirmed',
@@ -51,6 +56,23 @@ const cloneMessage = <T extends ScheduledMessage | TriggeredMessage>(message: T)
   return JSON.parse(JSON.stringify(message)) as T;
 };
 
+type TemplateKey = 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail';
+
+const ensureCombinedTemplates = <T extends ScheduledMessage | TriggeredMessage>(message: T): T => {
+  if (message.name !== 'Monthly Bill + Outstanding Alert') {
+    return message;
+  }
+
+  return {
+    ...message,
+    templates: {
+      ...message.templates,
+      overdueAlertSms: message.templates.overdueAlertSms ?? { isCustom: false, sections: [], content: '' },
+      overdueAlertEmail: message.templates.overdueAlertEmail ?? { isCustom: false, sections: [], content: '' },
+    },
+  } as T;
+};
+
 export const useMessageForm = ({
   initialData,
   mode,
@@ -59,15 +81,16 @@ export const useMessageForm = ({
   triggerTypeOptions,
 }: UseMessageFormParams) => {
   const { toast } = useToast();
+  const { t } = useTranslation('toasts');
   const seed = initialData
-    ? cloneMessage(initialData)
+    ? ensureCombinedTemplates(cloneMessage(initialData))
     : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
 
   const [formData, setFormData] = useState<ScheduledMessage | TriggeredMessage>(seed);
   const [activeTab, setActiveTab] = useState<'SMS' | 'Email'>('SMS');
   const [lastFocusedInput, setLastFocusedInput] = useState<{
     sectionId: string | null;
-    templateType: 'sms' | 'email';
+    templateType: TemplateKey;
   } | null>(null);
 
   const selectedScheduleType = mode === 'scheduled'
@@ -76,7 +99,7 @@ export const useMessageForm = ({
 
   useEffect(() => {
     const nextSeed = initialData
-      ? cloneMessage(initialData)
+      ? ensureCombinedTemplates(cloneMessage(initialData))
       : (mode === 'scheduled' ? defaultScheduledMessage : defaultTriggeredMessage);
     setFormData(nextSeed);
     setActiveTab('SMS');
@@ -139,7 +162,10 @@ export const useMessageForm = ({
     setFormData({ ...formData, channels: newChannels });
   };
 
-  const updateTemplate = (type: 'sms' | 'email', updates: Partial<MessageTemplate>) => {
+  const updateTemplate = (
+    type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail',
+    updates: Partial<MessageTemplate>,
+  ) => {
     setFormData({
       ...formData,
       templates: {
@@ -149,7 +175,7 @@ export const useMessageForm = ({
     });
   };
 
-  const moveSection = (type: 'sms' | 'email', fromIndex: number, toIndex: number) => {
+  const moveSection = (type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail', fromIndex: number, toIndex: number) => {
     const sections = [...(formData.templates[type]?.sections || [])];
     if (toIndex < 0 || toIndex >= sections.length) return;
     const [moved] = sections.splice(fromIndex, 1);
@@ -158,7 +184,8 @@ export const useMessageForm = ({
   };
 
   const insertPlaceholder = (placeholder: string) => {
-    const templateType = activeTab === 'SMS' ? 'sms' : 'email';
+    const templateType = lastFocusedInput?.templateType
+      ?? (activeTab === 'SMS' ? 'sms' : 'email');
     const template = formData.templates[templateType];
     if (template?.isCustom) {
       const content = template.content || '';
@@ -174,7 +201,7 @@ export const useMessageForm = ({
         });
         updateTemplate(templateType, { sections: newSections });
       } else {
-        toast({ description: 'Please click on a text area first.' });
+        toast({ description: t('placeholderTextArea') });
       }
     }
   };

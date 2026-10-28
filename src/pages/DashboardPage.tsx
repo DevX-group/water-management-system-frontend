@@ -2,6 +2,7 @@ import '@/index.css';
 import React from 'react';
 import { DashboardGrid } from '@/components/dashboard/DashboardGrid';
 import { useAdmin } from '@/contexts/AdminContext';
+import { useTranslation } from 'react-i18next';
 
 /**
  * Admin dashboard page — served to SUPER_ADMIN, SYSTEM_ADMIN,
@@ -9,28 +10,20 @@ import { useAdmin } from '@/contexts/AdminContext';
  */
 export const DashboardPage: React.FC = () => {
   const { currentAdmin } = useAdmin();
+  const { t } = useTranslation('widgetManagement');
 
-  const roleGreeting: Record<string, string> = {
-    SUPER_ADMIN: 'Super Admin Dashboard',
-    SYSTEM_ADMIN: 'System Admin Dashboard',
-    CUSTOMER_HANDLER: 'Customer Handler Dashboard',
-    METER_READER: 'Meter Reader Dashboard',
-  };
-
-  const roleSubtitle: Record<string, string> = {
-    SUPER_ADMIN: 'Full system overview and management',
-    SYSTEM_ADMIN: 'System operations and monitoring',
-    CUSTOMER_HANDLER: 'Customer payments, slips, and inquiries',
-    METER_READER: 'Meter reading entry and history',
-  };
+  const role = currentAdmin.role;
+  const greeting = t(`dashboardPage.roleGreeting.${role}`, t('page.title'));
+  const subtitle = t(`dashboardPage.roleSubtitle.${role}`, '');
 
   return (
     <div className="w-full">
       <DashboardGrid
-        greeting={roleGreeting[currentAdmin.role] ?? 'Dashboard'}
-        subtitle={roleSubtitle[currentAdmin.role]}
-        role={currentAdmin.role}
+        greeting={greeting}
+        subtitle={subtitle}
+        role={role}
       />
     </div>
   );
 };
+

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Clock, CheckCircle, XCircle } from 'lucide-react';
 import { getMySlips } from '@/services/bankSlipService';
+import { useTranslation } from 'react-i18next';
 
 interface SlipItem {
   slipId: number;
@@ -11,6 +12,7 @@ interface SlipItem {
 }
 
 export const BankSlipStatusWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [slips, setSlips] = useState<SlipItem[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +32,7 @@ export const BankSlipStatusWidget: React.FC = () => {
   if (loading) return <div className="animate-pulse h-16 bg-muted rounded" />;
 
   if (!slips.length) {
-    return <p className="text-xs text-muted-foreground text-center py-4">No bank slips submitted.</p>;
+    return <p className="text-xs text-muted-foreground text-center py-4">{t('widgetContent.noSlipsSubmitted')}</p>;
   }
 
   return (
@@ -39,7 +41,7 @@ export const BankSlipStatusWidget: React.FC = () => {
         <li key={s.slipId} className="flex items-center justify-between text-xs">
           <div className="flex items-center gap-1.5">
             {statusIcon(s.status)}
-            <span className="font-medium">Rs. {Number(s.amount).toLocaleString()}</span>
+            <span className="font-medium">{t('widgetContent.currency')} {Number(s.amount).toLocaleString()}</span>
           </div>
           <span className="text-muted-foreground">
             {new Date(s.uploadedAt).toLocaleDateString()}

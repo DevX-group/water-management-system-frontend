@@ -2,6 +2,7 @@ import '@/index.css';
 import React from 'react';
 import { AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 const statusStyles = {
   paid: 'bg-success/10 text-success',
@@ -17,31 +18,35 @@ const statusIcons = {
   overdue: AlertCircle,
 } as const;
 
-export const RecentlyAddedPayments: React.FC<{ payments: any[] }> = ({ payments }) => (
-  <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up bg-primary/5">
-    <h3 className="text-lg font-semibold text-foreground mb-4">Recently Added</h3>
-    <div className="space-y-3">
-      {payments.map((payment) => {
-        const StatusIcon = statusIcons[payment.status as keyof typeof statusIcons];
-        return (
-          <div key={payment.id} className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-start justify-between mb-1">
-              <p className="font-medium text-foreground text-sm">{payment.customerName}</p>
-              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[payment.status as keyof typeof statusStyles]}`}>
-                <StatusIcon className="w-3 h-3" /> {payment.status}
-              </span>
+export const RecentlyAddedPayments: React.FC<{ payments: any[] }> = ({ payments }) => {
+  const { t } = useTranslation('payments');
+  return (
+    <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up bg-primary/5">
+      <h3 className="text-lg font-semibold text-foreground mb-4">{t('adminPayments.recentlyAdded', { defaultValue: 'Recently Added' })}</h3>
+      <div className="space-y-3">
+        {payments.map((payment) => {
+          const StatusIcon = statusIcons[payment.status as keyof typeof statusIcons] || Clock;
+          const statusKey = payment.status ? String(payment.status).toLowerCase() : '';
+          return (
+            <div key={payment.id} className="p-3 rounded-xl bg-primary/5 shadow-sm hover:shadow-md transition-all">
+              <div className="flex items-start justify-between mb-1">
+                <p className="font-medium text-foreground text-sm">{payment.customerName}</p>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium ${statusStyles[payment.status as keyof typeof statusStyles] || 'bg-muted text-muted-foreground'}`}>
+                  <StatusIcon className="w-3 h-3" /> {t(`filters.${statusKey}`, { defaultValue: payment.status })}
+                </span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>{payment.subscriptionNo}</span>
+                <span className="font-medium text-foreground">{t('billPayment.currency', { defaultValue: 'Rs.' })} {payment.amount.toLocaleString()}</span>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">{payment.date}</p>
             </div>
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{payment.subscriptionNo}</span>
-              <span className="font-medium text-foreground">Rs. {payment.amount.toLocaleString()}</span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">{payment.date}</p>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const PendingBankSlips: React.FC<{ slips: any[]; onReview: (id: string) => void }> = ({ slips, onReview }) => (
   <div className="bg-card rounded-2xl p-6 shadow-md animate-slide-up lg:w-[60%]">

@@ -2,10 +2,15 @@ import '@/index.css';
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { mockRevenueData, mockExpensesData } from '@/data/mockData';
+import { useTranslation } from 'react-i18next';
+import { formatMonthLabel } from '@/utils/monthTranslationUtils';
 
 export const IncomeChart: React.FC = () => {
+  const { i18n } = useTranslation();
+  const currentLang = i18n.language || 'en';
+
   const combinedData = mockRevenueData.map((item, index) => ({
-    name: item.name,
+    name: formatMonthLabel(item.name, currentLang),
     revenue: item.value,
     expenses: mockExpensesData[index]?.value || 0,
   }));
@@ -49,4 +54,4 @@ export const IncomeChart: React.FC = () => {
       </div>
     </div>
   );
-};
+};

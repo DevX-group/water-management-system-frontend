@@ -42,12 +42,12 @@ export const InquiryList: React.FC<InquiryListProps> = ({
           />
         </div>
         <div className="flex gap-2 mt-3 overflow-x-auto pb-1">
-          {['all', 'open', 'pending', 'resolved'].map((tab) => (     // Filter buttons
+          {['all', 'open', 'resolved'].map((tab) => (     // Filter buttons
             <Button
               key={tab}
-              variant={filter === tab ? 'default' : 'ghost'}
+              variant={filter === tab ? 'default' : 'outline'}
               size="sm"
-              className="capitalize rounded-full px-4"
+              className={`capitalize rounded-full px-4 ${filter !== tab ? 'hover:bg-primary hover:text-primary-foreground' : ''}`}
               onClick={() => setFilter(tab)}
             >
               {t(`admin.filter.${tab}`)}

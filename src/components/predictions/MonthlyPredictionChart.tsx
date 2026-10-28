@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/card";
 
 import { api } from "@/services/api";
+import { useTranslation } from "react-i18next";
 
 interface MonthlyPredictionRow {
   month: string;
@@ -45,6 +46,8 @@ const PredictionTooltip = ({
   active,
   payload,
 }: PredictionTooltipProps) => {
+  const { t } = useTranslation("predictions");
+
   if (!active || !payload?.length) {
     return null;
   }
@@ -63,34 +66,25 @@ const PredictionTooltip = ({
 
       {data.usage != null && (
         <p>
-          Actual Usage:{" "}
-          {Number(data.usage).toLocaleString()} L
+          {t("monthly.tooltipActualUsage", { value: Number(data.usage).toLocaleString() })}
         </p>
       )}
 
       {data.revenue != null && (
         <p>
-          Actual Revenue: LKR{" "}
-          {Number(data.revenue).toLocaleString()}
+          {t("monthly.tooltipActualRevenue", { value: Number(data.revenue).toLocaleString() })}
         </p>
       )}
 
       {data.predictedUsage != null && (
         <p className="text-orange-500">
-          Predicted Usage:{" "}
-          {Number(
-            data.predictedUsage
-          ).toLocaleString()}{" "}
-          L
+          {t("monthly.tooltipPredictedUsage", { value: Number(data.predictedUsage).toLocaleString() })}
         </p>
       )}
 
       {data.predictedRevenue != null && (
         <p className="text-orange-500">
-          Predicted Revenue: LKR{" "}
-          {Number(
-            data.predictedRevenue
-          ).toLocaleString()}
+          {t("monthly.tooltipPredictedRevenue", { value: Number(data.predictedRevenue).toLocaleString() })}
         </p>
       )}
     </div>
@@ -104,6 +98,8 @@ interface MonthlyPredictionChartProps {
 export const MonthlyPredictionChart: React.FC<
   MonthlyPredictionChartProps
 > = ({ selectedYear }) => {
+  const { t } = useTranslation("predictions");
+
   const [
     monthlyPredictionData,
     setMonthlyPredictionData,
@@ -143,7 +139,7 @@ export const MonthlyPredictionChart: React.FC<
           );
 
           setError(
-            "Failed to load monthly prediction data."
+            t("monthly.error", "Failed to load monthly prediction data.")
           );
         }
       })
@@ -156,7 +152,7 @@ export const MonthlyPredictionChart: React.FC<
     return () => {
       controller.abort();
     };
-  }, [selectedYear]);
+  }, [selectedYear, t]);
 
   /*
    * Find the first predicted month dynamically.
@@ -173,20 +169,18 @@ export const MonthlyPredictionChart: React.FC<
     <Card>
       <CardHeader>
         <CardTitle>
-          Monthly Usage and Revenue Prediction -{" "}
-          {selectedYear}
+          {t("monthly.title")}
         </CardTitle>
 
         <CardDescription>
-          Overall consumption and revenue trends
-          predicted up to 3 months
+          {t("monthly.description")}
         </CardDescription>
       </CardHeader>
 
       <CardContent>
         {isLoading ? (
           <div className="h-80 flex items-center justify-center text-muted-foreground">
-            Loading monthly predictions...
+            {t("monthly.loading", "Loading monthly predictions...")}
           </div>
         ) : error ? (
           <div className="h-80 flex items-center justify-center text-destructive">
@@ -194,8 +188,7 @@ export const MonthlyPredictionChart: React.FC<
           </div>
         ) : monthlyPredictionData.length === 0 ? (
           <div className="h-80 flex items-center justify-center text-muted-foreground">
-            No prediction data found for the current
-            year.
+            {t("monthly.noData", "No prediction data found for the current year.")}
           </div>
         ) : (
           <div className="h-80">
@@ -211,7 +204,7 @@ export const MonthlyPredictionChart: React.FC<
                     x={firstPredictionMonth}
                     stroke="gray"
                     strokeDasharray="3 3"
-                    label="Prediction Start"
+                    label={t("monthly.predictionStart")}
                   />
                 )}
 
@@ -228,7 +221,7 @@ export const MonthlyPredictionChart: React.FC<
                 <YAxis
                   stroke="hsl(var(--muted-foreground))"
                   label={{
-                    value: "Usage (L)",
+                    value: t("monthly.usageLabel"),
                     position: "top",
                     offset: 10,
                   }}
@@ -243,7 +236,7 @@ export const MonthlyPredictionChart: React.FC<
                   dataKey="usage"
                   stroke="#2563eb"
                   strokeWidth={2}
-                  name="Actual Usage"
+                  name={t("monthly.actualUsage")}
                   connectNulls
                 />
 
@@ -253,7 +246,7 @@ export const MonthlyPredictionChart: React.FC<
                   stroke="#f97316"
                   strokeWidth={2}
                   strokeDasharray="5 5"
-                  name="Predicted Usage"
+                  name={t("monthly.predictedUsage")}
                   connectNulls
                 />
               </LineChart>

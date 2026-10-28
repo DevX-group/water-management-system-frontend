@@ -28,6 +28,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { exportPDF } from "@/util/exportPDF";
+import { useTranslation } from "react-i18next";
 
 export interface CustomerReportRow {
   month: string;
@@ -50,6 +51,8 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
   setCustomerYear,
   data,
 }) => {
+  const { t } = useTranslation("reports");
+
   const pdfData = data.map((item) => ({
     month: item.month,
     usage: Number(item.totalUsage ?? 0),
@@ -62,18 +65,17 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <CardTitle>
-              Customer-wise Usage and Revenue Report
+              {t("customer.title")}
             </CardTitle>
 
             <CardDescription>
-              Individual customer consumption and billing trends for a
-              selected year
+              {t("customer.description")}
             </CardDescription>
           </div>
 
           <div className="flex items-center gap-2">
             <Input
-              placeholder="Search Customer ID (e.g. C001)"
+              placeholder={t("customer.searchPlaceholder")}
               value={customerId}
               onChange={(event) =>
                 setCustomerId(event.target.value.toUpperCase())
@@ -86,7 +88,7 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
               onValueChange={setCustomerYear}
             >
               <SelectTrigger className="w-32">
-                <SelectValue placeholder="Year" />
+                <SelectValue placeholder={t("common.year")} />
               </SelectTrigger>
 
               <SelectContent>
@@ -118,7 +120,7 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
               <YAxis
                 stroke="hsl(var(--muted-foreground))"
                 label={{
-                  value: "Usage (L)",
+                  value: t("monthly.usageLabel"),
                   position: "top",
                   offset: 10,
                 }}
@@ -135,13 +137,11 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
                   return (
                     <div className="bg-card border border-border rounded-lg p-2 text-sm">
                       <p>
-                        Usage:{" "}
-                        {Number(row.totalUsage ?? 0).toLocaleString()} L
+                        {t("customer.tooltipUsage", { value: Number(row.totalUsage ?? 0).toLocaleString() })}
                       </p>
 
                       <p>
-                        Revenue: LKR{" "}
-                        {Number(row.totalAmount ?? 0).toLocaleString()}
+                        {t("customer.tooltipRevenue", { value: Number(row.totalAmount ?? 0).toLocaleString() })}
                       </p>
                     </div>
                   );
@@ -151,7 +151,7 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
               <Line
                 type="monotone"
                 dataKey="totalUsage"
-                name="Customer Usage (L)"
+                name={t("customer.seriesUsage")}
                 stroke="hsl(187, 75%, 35%)"
                 strokeWidth={2}
               />
@@ -161,22 +161,22 @@ export const CustomerReportTab: React.FC<CustomerReportTabProps> = ({
 
         <div className="flex justify-end mt-4">
           <Button
-  disabled={data.length === 0}
-  onClick={() =>
-    exportPDF(
-      data.map((item) => ({
-        month: item.month,
-        usage: Number(item.totalUsage ?? 0),
-        revenue: Number(item.totalAmount ?? 0),
-      })),
-      `Customer Report - ${customerId} - ${customerYear}`,
-      `CustomerReport-${customerId || "all"}-${customerYear}.pdf`
-    )
-  }
->
-  <Download className="w-4 h-4 mr-2" />
-  Export as PDF
-</Button>
+            disabled={data.length === 0}
+            onClick={() =>
+              exportPDF(
+                data.map((item) => ({
+                  month: item.month,
+                  usage: Number(item.totalUsage ?? 0),
+                  revenue: Number(item.totalAmount ?? 0),
+                })),
+                `${t("customer.title")} - ${customerId} - ${customerYear}`,
+                `CustomerReport-${customerId || "all"}-${customerYear}.pdf`
+              )
+            }
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {t("common.exportPdf")}
+          </Button>
         </div>
       </CardContent>
     </Card>

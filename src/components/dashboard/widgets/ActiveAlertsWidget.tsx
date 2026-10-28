@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AlertCircle, CheckCircle, XCircle, Info } from 'lucide-react';
 import { api } from '@/services/api';
+import { useTranslation } from 'react-i18next';
 
 interface Alert {
   id: number;
@@ -19,6 +20,7 @@ const severityIcon = (sev: string) => {
 };
 
 export const ActiveAlertsWidget: React.FC = () => {
+  const { t } = useTranslation('widgetManagement');
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +37,7 @@ export const ActiveAlertsWidget: React.FC = () => {
     return (
       <div className="flex items-center gap-2 text-success text-xs">
         <CheckCircle className="w-4 h-4" />
-        No active alerts
+        {t('widgetContent.noActiveAlerts')}
       </div>
     );
   }

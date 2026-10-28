@@ -4,7 +4,7 @@ import { createPortal } from 'react-dom';
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
-import { FileText, Loader2, Download, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';
+import { FileText, Loader2, Download, Printer, ZoomIn, ZoomOut, RotateCw, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { WaterBillTemplate } from './WaterBillTemplate';
@@ -28,6 +28,7 @@ interface BillImageViewerProps {
   imageError: boolean;
   onClose: () => void;
   onDownload: (bill: Bill) => void;
+  onPrint?: (bill: Bill) => void;
   onZoomIn: () => void;
   onZoomOut: () => void;
   onRotate: () => void;
@@ -37,13 +38,12 @@ interface BillImageViewerProps {
 
 export const BillImageViewer: React.FC<BillImageViewerProps> = ({
   bill, profile, zoom, rotation, imageLoading, imageError,
-  onClose, onDownload, onZoomIn, onZoomOut, onRotate, onImageLoad, onImageError,
+  onClose, onDownload, onPrint, onZoomIn, onZoomOut, onRotate, onImageLoad, onImageError,
 }) => {
   const { t } = useTranslation('billing');
 
   useEffect(() => {
     if (bill) {
-      // instantly dismiss loading state since we generate locally
       onImageLoad();
     }
   }, [bill, onImageLoad]);
@@ -68,6 +68,7 @@ export const BillImageViewer: React.FC<BillImageViewerProps> = ({
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={onZoomIn}><ZoomIn className="w-4 h-4" /></Button>
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={onRotate}><RotateCw className="w-4 h-4" /></Button>
               <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={() => onDownload(bill)}><Download className="w-4 h-4" /></Button>
+              <Button variant="ghost" size="icon" className="text-white/70 hover:text-white hover:bg-white/10" onClick={() => onPrint?.(bill)}><Printer className="w-4 h-4" /></Button>
               <Button variant="destructive" className="ml-4 px-4" onClick={onClose}>
                 <X className="w-4 h-4 mr-2" /> Close
               </Button>

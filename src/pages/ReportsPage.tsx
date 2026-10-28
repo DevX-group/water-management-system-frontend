@@ -35,6 +35,8 @@ import {
 
 import { api } from "@/services/api";
 
+import { useTranslation } from "react-i18next";
+
 interface BillApiResponse {
   id: string;
   customerId: string;
@@ -46,6 +48,8 @@ interface BillApiResponse {
 }
 
 export const ReportsPage: React.FC = () => {
+  const { t } = useTranslation("reports");
+
   /*
    * Monthly report state
    */
@@ -373,11 +377,10 @@ export const ReportsPage: React.FC = () => {
       {/* Page heading */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Reports
+          {t("page.title")}
         </h1>
         <p className="mt-1 text-muted-foreground">
-          Summarized and detailed views of system data
-          for monitoring and analysis
+          {t("page.subtitle")}
         </p>
       </div>
 
@@ -387,23 +390,23 @@ export const ReportsPage: React.FC = () => {
       >
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="monthly">
-            Monthly Report
+            {t("tabs.monthly")}
           </TabsTrigger>
 
           <TabsTrigger value="customer">
-            Customer Report
+            {t("tabs.customer")}
           </TabsTrigger>
 
           <TabsTrigger value="area">
-            Area Report
+            {t("tabs.area")}
           </TabsTrigger>
 
           <TabsTrigger value="bills">
-            Bills Report
+            {t("tabs.bills")}
           </TabsTrigger>
 
           <TabsTrigger value="overdue">
-            Overdue Report
+            {t("tabs.overdue")}
           </TabsTrigger>
         </TabsList>
 

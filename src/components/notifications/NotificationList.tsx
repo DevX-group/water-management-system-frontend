@@ -46,7 +46,7 @@ export const NotificationList: React.FC<NotificationListProps> = ({
                 <h3 className={`font-bold text-lg ${styles.textColor}`}>{alert.title}</h3>
                 <p className="text-muted-foreground text-sm mb-1">{alert.description}</p>
                 <div className="flex items-center gap-4 text-xs font-medium text-muted-foreground/80">
-                  {alert.usage && <span>Usage: {alert.usage}</span>}
+                  {alert.usage && <span>{t('actions.usage')}: {alert.usage}</span>}
                   <span>{new Date(alert.time).toLocaleString()}</span>
                 </div>
               </div>

@@ -18,9 +18,9 @@ type TemplateEditorProps = {
   onTabChange: (tab: 'SMS' | 'Email') => void;
   placeholders: string[];
   onInsertPlaceholder: (placeholder: string) => void;
-  onUpdateTemplate: (type: 'sms' | 'email', updates: Partial<MessageTemplate>) => void;
-  onMoveSection: (type: 'sms' | 'email', fromIndex: number, toIndex: number) => void;
-  onFocusSection: (payload: { sectionId: string | null; templateType: 'sms' | 'email' }) => void;
+  onUpdateTemplate: (type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail', updates: Partial<MessageTemplate>) => void;
+  onMoveSection: (type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail', fromIndex: number, toIndex: number) => void;
+  onFocusSection: (payload: { sectionId: string | null; templateType: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail' }) => void;
 };
 
 export const TemplateEditor: React.FC<TemplateEditorProps> = ({
@@ -34,21 +34,11 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
   onFocusSection,
 }) => {
   const { t } = useTranslation('messaging');
+  const isCombinedMessage = formData.name === 'Monthly Bill + Outstanding Alert';
 
-  const renderEditor = (type: 'sms' | 'email') => {
+  const renderSections = (type: 'sms' | 'email' | 'overdueAlertSms' | 'overdueAlertEmail') => {
     const template = formData.templates[type];
     if (!template) return null;
-    if (template.isCustom) {
-      return (
-        <Textarea
-          placeholder={t('templateEditor.contentPlaceholder')}
-          value={template.content}
-          onChange={(event) => onUpdateTemplate(type, { content: event.target.value })}
-          className="min-h-[200px]"
-          onFocus={() => onFocusSection({ sectionId: null, templateType: type })}
-        />
-      );
-    }
 
     return (
       <div className="space-y-4">
@@ -125,6 +115,68 @@ export const TemplateEditor: React.FC<TemplateEditorProps> = ({
         >
           <PlusCircle className="mr-2 h-3 w-3" /> {t('templateEditor.addSection')}
         </Button>
+      </div>
+    );
+  };
+
+  const renderEditor = (type: 'sms' | 'email') => {
+    const template = formData.templates[type];
+    if (!template) return null;
+    if (template.isCustom) {
+      if (isCombinedMessage) {
+        const alertType = type === 'sms' ? 'overdueAlertSms' : 'overdueAlertEmail';
+        const alertTemplate = formData.templates[alertType];
+        return (
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <h3 className="text-xl font-semibold text-sky-600">Monthly Bill</h3>
+              <Textarea
+                placeholder={t('templateEditor.contentPlaceholder')}
+                value={template.content}
+                onChange={(event) => onUpdateTemplate(type, { content: event.target.value })}
+                className="min-h-[120px]"
+                onFocus={() => onFocusSection({ sectionId: null, templateType: type })}
+              />
+            </div>
+            <div className="space-y-3 border-t pt-4">
+              <h3 className="text-xl font-semibold text-red-500">Outstanding Alert</h3>
+              {alertTemplate && (
+                <Textarea
+                  placeholder={t('templateEditor.contentPlaceholder')}
+                  value={alertTemplate.content}
+                  onChange={(event) => onUpdateTemplate(alertType, { content: event.target.value })}
+                  className="min-h-[120px]"
+                  onFocus={() => onFocusSection({ sectionId: null, templateType: alertType })}
+                />
+              )}
+            </div>
+          </div>
+        );
+      }
+      return (
+        <Textarea
+          placeholder={t('templateEditor.contentPlaceholder')}
+          value={template.content}
+          onChange={(event) => onUpdateTemplate(type, { content: event.target.value })}
+          className="min-h-[200px]"
+          onFocus={() => onFocusSection({ sectionId: null, templateType: type })}
+        />
+      );
+    }
+
+    const alertType = type === 'sms' ? 'overdueAlertSms' : 'overdueAlertEmail';
+    return (
+      <div className="space-y-6">
+        {isCombinedMessage && (
+          <h3 className="text-xl font-semibold text-sky-600">Monthly Bill</h3>
+        )}
+        {renderSections(type)}
+        {isCombinedMessage && (
+          <div className="space-y-3 border-t pt-4">
+            <h3 className="text-xl font-semibold text-red-500">Outstanding Alert</h3>
+            {renderSections(alertType)}
+          </div>
+        )}
       </div>
     );
   };

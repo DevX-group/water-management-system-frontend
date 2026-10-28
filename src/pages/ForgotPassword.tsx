@@ -13,11 +13,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { authService } from '@/services/authService';
 import { validateNIC } from '@/validations/userValidations';
+import { useTranslation } from 'react-i18next';
 
 const getErrorStatus = (error: unknown) =>
   (error as { response?: { status?: number } })?.response?.status;
 
 const ForgotPassword = () => {
+  const { t } = useTranslation('auth');
   const navigate = useNavigate();
 
   const [nic, setNic] = useState('');
@@ -32,13 +34,13 @@ const ForgotPassword = () => {
     const normalizedNic = nic.trim().toUpperCase();
 
     if (!normalizedNic) {
-      setError('Please enter your NIC number.');
+      setError(t('forgotPassword.errors.nicRequired', 'Please enter your NIC number.'));
       return;
     }
 
     if (!validateNIC(normalizedNic)) {
       setError(
-        'Please enter a valid NIC (e.g., 123456789V or 200012345678).'
+        t('forgotPassword.errors.nicInvalid', 'Please enter a valid NIC (e.g., 123456789V or 200012345678).')
       );
       return;
     }
@@ -62,11 +64,11 @@ const ForgotPassword = () => {
 
       if (status === 429) {
         setError(
-          'Too many requests. Please try again later.'
+          t('forgotPassword.errors.rateLimit', 'Too many requests. Please try again later.')
         );
       } else {
         setError(
-          'We could not process your request. Please try again.'
+          t('forgotPassword.errors.generic', 'We could not process your request. Please try again.')
         );
       }
     } finally {
@@ -90,7 +92,7 @@ const ForgotPassword = () => {
               className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to sign in
+              {t('forgotPassword.backToSignIn', 'Back to sign in')}
             </Link>
 
             <div className="flex items-center gap-3 mb-8">
@@ -103,13 +105,12 @@ const ForgotPassword = () => {
               </span>
             </div>
 
-            <h1 className="text-3xl font-bold mb-3">
-              Forgot your password?
+            <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-foreground tracking-tight">
+              {t('forgotPassword.title', 'Forgot your password?')}
             </h1>
 
-            <p className="text-muted-foreground mb-8">
-              Enter your NIC and we will send a verification
-              code if an account is eligible for recovery.
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed mb-6">
+              {t('forgotPassword.subtitle', 'Enter your NIC and we will send a verification code if an account is eligible for recovery.')}
             </p>
 
             <form
@@ -119,7 +120,7 @@ const ForgotPassword = () => {
             >
               <div className="space-y-2">
                 <Label htmlFor="forgot-password-nic">
-                  NIC Number
+                  {t('forgotPassword.nicLabel', 'NIC Number')}
                 </Label>
 
                 <div className="relative">
@@ -135,7 +136,7 @@ const ForgotPassword = () => {
                       setNic(event.target.value);
                       setError('');
                     }}
-                    placeholder="Enter your NIC"
+                    placeholder={t('forgotPassword.nicPlaceholder', 'Enter your NIC')}
                     autoComplete="off"
                     autoCapitalize="characters"
                     aria-invalid={Boolean(error)}
@@ -165,8 +166,8 @@ const ForgotPassword = () => {
                 className="w-full h-14 gradient-primary rounded-xl text-base"
               >
                 {isSubmitting
-                  ? 'Sending code...'
-                  : 'Send verification code'}
+                  ? t('forgotPassword.sending', 'Sending code...')
+                  : t('forgotPassword.sendCode', 'Send verification code')}
 
                 {!isSubmitting && (
                   <ArrowRight className="w-5 h-5" />
@@ -184,13 +185,12 @@ const ForgotPassword = () => {
             aria-hidden="true"
           />
 
-          <h2 className="text-4xl font-bold mb-4">
-            Secure account recovery
+          <h2 className="text-2xl sm:text-3xl font-bold mb-3">
+            {t('forgotPassword.sidePanelTitle', 'Secure account recovery')}
           </h2>
 
-          <p className="text-white/70 text-lg">
-            Verify your identity to continue managing your
-            water services.
+          <p className="text-white/70 text-base leading-relaxed">
+            {t('forgotPassword.sidePanelSubtitle', 'Verify your identity to continue managing your water services.')}
           </p>
         </div>
       </div>

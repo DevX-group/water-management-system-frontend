@@ -15,7 +15,8 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children, activeSectio
   const { i18n } = useTranslation();
 
   useEffect(() => {
-    const adminLanguage = localStorage.getItem("admin_language") || "en";
+    const adminLanguage = localStorage.getItem("language") || localStorage.getItem("admin_language") || "en";
+    localStorage.setItem("admin_language", adminLanguage);
     if (i18n.language !== adminLanguage) {
       i18n.changeLanguage(adminLanguage);
     }

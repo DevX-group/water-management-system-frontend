@@ -52,4 +52,8 @@ export const internalChatService = {
   async markAsRead(conversationId: string) {
     await api.post(`/internal-chat/conversations/${conversationId}/read`);
   },
+
+  async deleteConversation(conversationId: string) {
+    await api.delete(`/internal-chat/conversations/${conversationId}`);
+  },
 };

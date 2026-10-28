@@ -7,12 +7,14 @@ import { Calendar, User, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from '@/services/api';
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 export const Blog = () => {
   const [selectedPost, setSelectedPost] = useState<any>(null);
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation('info');
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -50,7 +52,7 @@ export const Blog = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
             >
-              <h1 className="text-4xl font-bold mb-10 text-center text-gradient">HydroPay Blog</h1>
+              <h1 className="text-4xl font-bold mb-10 text-center text-gradient">{t('blog.title')}</h1>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {posts.map(post => (
                   <Card 
@@ -74,7 +76,7 @@ export const Blog = () => {
                         {post.title}
                       </h3>
                       <Button variant="link" className="p-0 text-primary flex items-center">
-                        Read More <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        {t('blog.readMore')} <ArrowRight size={16} className="ml-2 group-hover:translate-x-1 transition-transform" />
                       </Button>
                     </CardContent>
                   </Card>
@@ -95,7 +97,7 @@ export const Blog = () => {
                 onClick={() => setSelectedPost(null)}
                 className="mb-8 hover:bg-secondary/50 rounded-xl"
               >
-                <ArrowLeft size={18} className="mr-2" /> Back to Blog
+                <ArrowLeft size={18} className="mr-2" /> {t('blog.back')}
               </Button>
 
               <img 
@@ -125,7 +127,7 @@ export const Blog = () => {
                   {selectedPost.content}
                 </p>
                 <div className="mt-12 p-6 bg-primary/5 border-l-4 border-primary rounded-r-xl italic text-slate-600">
-                    Join HydroPay in our mission to conserve water and protect our natural resources for future generations.
+                    {t('blog.joinMission')}
                 </div>
               </div>
             </motion.div>

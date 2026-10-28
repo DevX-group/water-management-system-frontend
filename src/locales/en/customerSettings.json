@@ -1,0 +1,40 @@
+{
+  "title": "Settings",
+  "subtitle": "Customize the look and feel of your application.",
+  "appearance": {
+    "title": "Appearance",
+    "description": "Customize the look and feel of the application.",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "typography": {
+    "title": "Typography",
+    "description": "Adjust the global font size for better readability.",
+    "small": "Small",
+    "smallDescription": "Compact view, more information.",
+    "medium": "Medium",
+    "mediumDescription": "Standard comfortable reading size.",
+    "large": "Large",
+    "largeDescription": "Enhanced readability."
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "View and update your personal information.",
+    "personalDetails": "Personal Details",
+    "description": "Update your contact details and account holder name.",
+    "accountHolderName": "Account Holder Name",
+    "accountHolderPlaceholder": "Enter your full name",
+    "email": "Email Address",
+    "emailPlaceholder": "Enter your email address",
+    "mobileNumber": "Mobile Number",
+    "readOnlyInformation": "Read-only Information",
+    "nic": "NIC",
+    "connectionType": "Connection Type",
+    "region": "Region",
+    "metered": "Metered",
+    "nonMetered": "Non-Metered",
+    "saving": "Saving...",
+    "saveChanges": "Save Changes"
+  }
+}

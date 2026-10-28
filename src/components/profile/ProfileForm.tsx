@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { User, Loader2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { EditableProfileFields } from './EditableProfileFields';
 import { ReadOnlyProfileFields } from './ReadOnlyProfileFields';
 
@@ -26,6 +27,8 @@ interface ProfileFormProps {
 
 export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProfileUpdated }) => {
   const { toast } = useToast();
+  const { t: toastT } = useTranslation('toasts');
+  const { t } = useTranslation('customerSettings');
   
   // Editable fields state
   const [name, setName] = useState(initialProfile.accountHolderName || '');
@@ -37,7 +40,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !phone.trim()) {
-      toast({ title: 'Error', description: 'Please fill out all editable fields.', variant: 'destructive' });
+      toast({ title: toastT('error'), description: toastT('fillEditableFields'), variant: 'destructive' });
       return;
     }
     
@@ -48,13 +51,13 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
         email: email,
         phoneNumber: phone
       });
-      toast({ title: 'Success', description: 'Your profile has been updated successfully.' });
+      toast({ title: toastT('success'), description: toastT('profileUpdated') });
       onProfileUpdated(res.data);
     } catch (err: any) {
       console.error(err);
       toast({ 
-        title: 'Error', 
-        description: err.response?.data?.message || 'Failed to update profile.', 
+        title: toastT('error'),
+        description: err.response?.data?.message || toastT('profileUpdateFailed'),
         variant: 'destructive' 
       });
     } finally {
@@ -69,10 +72,10 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
           <div className="p-2 rounded-lg bg-primary/10 text-primary">
             <User className="h-5 w-5" />
           </div>
-          Personal Details
+          {t('profile.personalDetails')}
         </CardTitle>
         <CardDescription>
-          Update your contact details and account holder name.
+          {t('profile.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -90,7 +93,7 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({ initialProfile, onProf
           <div className="flex justify-end pt-4">
             <Button type="submit" disabled={loading}>
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? 'Saving...' : 'Save Changes'}
+              {loading ? t('profile.saving') : t('profile.saveChanges')}
             </Button>
           </div>
         </form>

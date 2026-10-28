@@ -20,14 +20,31 @@
     "billing": "பில்லிங்",
     "payments": "கொடுப்பனவுகள்",
     "messaging": "செய்தியிடல்",
-    "internal-chat": "Internal Chat",
-    "inquiry": "விசாரணை",
+    "internal-chat": "உள் அரட்டை",
+    "inquiry": "விசாரணைகள்",
     "reports": "அறிக்கைகள்",
     "predictions": "கணிப்புகள்",
     "blog": "வலைப்பதிவு",
+    "activity-logs": "செயல்பாட்டு பதிவுகள்",
+    "widget-management": "விட்ஜெட் மேலாண்மை",
     "system-settings": "கணினி அமைப்புகள்",
     "myAccount": "என் கணக்கு",
     "profileSettings": "சுயவிவர அமைப்புகள்",
-    "logout": "வெளியேறு"
+    "logout": "வெளியேறு",
+    "installApp": "செயலியை நிறுவுக",
+    "finance": "நிதி",
+    "communications": "தொடர்பாடல்கள்",
+    "analytics": "பகுப்பாய்வு",
+    "settings": "அமைப்புகள்",
+    "roles": {
+      "SUPER_ADMIN": "சூப்பர் நிர்வாகி",
+      "SYSTEM_ADMIN": "கணினி நிர்வாகி",
+      "CUSTOMER_HANDLER": "வாடிக்கையாளர் உதவியாளர்",
+      "PAYMENT_HANDLER": "வாடிக்கையாளர் உதவியாளர்",
+      "METER_READER": "மீட்டர் வாசிப்பாளர்",
+      "main_admin": "முதன்மை நிர்வாகி",
+      "meter_reader": "மீட்டர் வாசிப்பாளர்",
+      "payment_handler": "வாடிக்கையாளர் உதவியாளர்"
+    }
   }
 }

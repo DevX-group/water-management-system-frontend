@@ -4,8 +4,10 @@ import { motion } from "framer-motion";
 import { Droplets } from "lucide-react";
 import { LoginRightPanel, LoginForm } from "@/components/auth/LoginPanels";
 import { useLogin } from "@/hooks/useLogin";
+import { useTranslation } from "react-i18next";
 
 const Login = () => {
+  const { t } = useTranslation('auth');
   const {
     formData,
     showPassword,
@@ -31,9 +33,10 @@ const Login = () => {
               </motion.div>
               <span className="text-2xl font-bold text-gradient">Hydro Pay</span>
             </Link>
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-8">
-              <h1 className="text-4xl font-bold mb-3">Welcome back</h1>
-              <p className="text-muted-foreground text-lg">Sign in to your account to continue</p>
+
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="mb-6">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2 text-foreground tracking-tight">{t('login.title', 'Welcome back')}</h1>
+              <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">{t('login.subtitle', 'Sign in to your account to continue')}</p>
             </motion.div>
             <LoginForm
               formData={formData} showPassword={showPassword} loginError={loginError}
@@ -45,8 +48,8 @@ const Login = () => {
             />
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
               className="text-center mt-8 text-muted-foreground">
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-primary font-semibold hover:underline">Create one</Link>
+              {t('login.noAccount', "Don't have an account?")}{" "}
+              <Link to="/signup" className="text-primary font-semibold hover:underline">{t('login.createOne', 'Create one')}</Link>
             </motion.p>
           </div>
         </div>
@@ -57,4 +60,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Login;

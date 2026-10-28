@@ -13,15 +13,15 @@ export const WaterBillTemplate: React.FC<WaterBillTemplateProps> = ({ bill, prof
   const { systemDetails } = useSystemDetails();
   const companyName = systemDetails?.companyName || 'Galle Pradeshiya Sabha';
   const address = (profile as any)?.address || (profile?.region?.regionName ? `${profile.region.regionName}, Sri Lanka` : 'N/A');
-  const name = profile?.accountHolderName || 'N/A';
-  const accountNo = (profile as any)?.subscriptionNumber || profile?.nic || 'N/A';
-  const meterCurrent = 1234 + (bill.usageUnits || 0); // mock current reading
-  const meterPrev = 1234; // mock previous reading
-  const rate = bill.usageUnits > 0 ? ((bill.totalAmount || 0) / bill.usageUnits).toFixed(2) : '0.00';
+  const name = profile?.accountHolderName || bill.customerName || 'N/A';
+  const accountNo = (profile as any)?.subscriptionNumber || bill.subscriptionNumber || profile?.nic || bill.nic || 'N/A';
+  const meterCurrent = bill.currentReading !== undefined ? bill.currentReading : 0;
+  const meterPrev = bill.previousReading !== undefined ? bill.previousReading : 0;
+  const rate = bill.usageUnits > 0 && bill.usageCharge !== undefined ? (bill.usageCharge / bill.usageUnits).toFixed(2) : '0.00';
   const total = bill.totalAmount || 0;
-  const waterCharge = (total * 0.8).toFixed(2);
-  const serviceCharge = (total * 0.1).toFixed(2);
-  const vat = (total * 0.1).toFixed(2);
+  const waterCharge = bill.usageCharge !== undefined ? bill.usageCharge.toFixed(2) : '0.00';
+  const serviceCharge = bill.baseCharge !== undefined ? bill.baseCharge.toFixed(2) : '0.00';
+  const vat = bill.taxAmount !== undefined ? bill.taxAmount.toFixed(2) : '0.00';
 
   return (
     <div id="water-bill-template" className="w-[850px] bg-[#f8fafc] p-6 font-sans">

@@ -3,26 +3,28 @@ import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Droplets, Mail, Phone, MapPin, ArrowUpRight } from "lucide-react";
 import { useSystemDetails } from '@/context/SystemDetailsContext';
+import { useTranslation } from 'react-i18next';
 
 const footerLinks = {
   product: [
-    { name: "Dashboard", path: "/customer/dashboard" },
-    { name: "Bills", path: "/customer/bills" },
-    { name: "Payments", path: "/customer/payments" },
+    { nameKey: "customer.dashboard", path: "/customer/dashboard" },
+    { nameKey: "customer.bills", path: "/customer/bills" },
+    { nameKey: "customer.payments", path: "/customer/payments" },
   ],
   company: [
-    { name: "About Us", path: "/about" },
-    { name: "Blog", path: "/blog" },
+    { nameKey: "footer.about", path: "/about" },
+    { nameKey: "footer.blog", path: "/blog" },
   ],
   legal: [
-    { name: "Privacy Policy", path: "/privacy" },
-    { name: "Terms of Service", path: "/terms" },
-    { name: "Cookie Policy", path: "/cookies" },
+    { nameKey: "footer.privacy", path: "/privacy" },
+    { nameKey: "footer.terms", path: "/terms" },
+    { nameKey: "footer.cookies", path: "/cookies" },
   ],
 };
 
 export const Footer = () => {
   const { systemDetails } = useSystemDetails();
+  const { t } = useTranslation();
 
   const companyName = systemDetails?.companyName || 'HydroPay';
   const email = systemDetails?.officeEmail || 'support@hydropay.com';
@@ -46,8 +48,7 @@ export const Footer = () => {
                 <span className="text-2xl font-bold text-white">HydroPay</span>
               </Link>
               <p className="text-white/60 max-w-sm leading-relaxed">
-                The modern way to manage your water bills. Track consumption, 
-                pay instantly, and get intelligent insights.
+                {t('landing:footer.description')}
               </p>
               
               <div className="space-y-3">
@@ -74,7 +75,7 @@ export const Footer = () => {
 
             {/* Product Links */}
             <div>
-              <h4 className="font-semibold text-white mb-5">Product</h4>
+              <h4 className="font-semibold text-white mb-5">{t('landing:footer.product')}</h4>
               <ul className="space-y-3">
                 {footerLinks.product.map((link) => (
                   <li key={link.path}>
@@ -82,7 +83,7 @@ export const Footer = () => {
                       to={link.path} 
                       className="text-white/60 hover:text-white transition-colors text-sm flex items-center gap-1 group"
                     >
-                      {link.name}
+                      {t(`navbar:${link.nameKey}`)}
                       <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </li>
@@ -92,7 +93,7 @@ export const Footer = () => {
 
             {/* Company Links */}
             <div>
-              <h4 className="font-semibold text-white mb-5">Company</h4>
+              <h4 className="font-semibold text-white mb-5">{t('landing:footer.company')}</h4>
               <ul className="space-y-3">
                 {footerLinks.company.map((link) => (
                   <li key={link.path}>
@@ -100,7 +101,7 @@ export const Footer = () => {
                       to={link.path} 
                       className="text-white/60 hover:text-white transition-colors text-sm flex items-center gap-1 group"
                     >
-                      {link.name}
+                      {t(`landing:${link.nameKey}`)}
                       <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </li>
@@ -110,7 +111,7 @@ export const Footer = () => {
 
             {/* Legal Links */}
             <div>
-              <h4 className="font-semibold text-white mb-5">Legal</h4>
+              <h4 className="font-semibold text-white mb-5">{t('landing:footer.legal')}</h4>
               <ul className="space-y-3">
                 {footerLinks.legal.map((link) => (
                   <li key={link.path}>
@@ -118,7 +119,7 @@ export const Footer = () => {
                       to={link.path} 
                       className="text-white/60 hover:text-white transition-colors text-sm flex items-center gap-1 group"
                     >
-                      {link.name}
+                      {t(`landing:${link.nameKey}`)}
                       <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
                   </li>
@@ -134,7 +135,7 @@ export const Footer = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-white/50 text-sm text-center">
-          © 2026 WaterFlow. All rights reserved.
+          © 2026 WaterFlow. {t('landing:footer.rights')}
         </p>
         
            

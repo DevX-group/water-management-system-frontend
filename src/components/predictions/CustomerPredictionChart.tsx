@@ -26,6 +26,7 @@ import {
 
 import { Input } from "@/components/ui/input";
 import { api } from "@/services/api";
+import { useTranslation } from "react-i18next";
 
 interface CustomerPredictionRow {
   month: string;
@@ -46,6 +47,8 @@ const CustomerTooltip = ({
   active,
   payload,
 }: CustomerTooltipProps) => {
+  const { t } = useTranslation("predictions");
+
   if (!active || !payload?.length) {
     return null;
   }
@@ -64,34 +67,25 @@ const CustomerTooltip = ({
 
       {data.usage != null && (
         <p>
-          Actual Usage:{" "}
-          {Number(data.usage).toLocaleString()} L
+          {t("customer.tooltipActualUsage", { value: Number(data.usage).toLocaleString() })}
         </p>
       )}
 
       {data.revenue != null && (
         <p>
-          Actual Revenue: LKR{" "}
-          {Number(data.revenue).toLocaleString()}
+          {t("customer.tooltipActualRevenue", { value: Number(data.revenue).toLocaleString() })}
         </p>
       )}
 
       {data.predictedUsage != null && (
         <p className="text-orange-500">
-          Predicted Usage:{" "}
-          {Number(
-            data.predictedUsage
-          ).toLocaleString()}{" "}
-          L
+          {t("customer.tooltipPredictedUsage", { value: Number(data.predictedUsage).toLocaleString() })}
         </p>
       )}
 
       {data.predictedRevenue != null && (
         <p className="text-orange-500">
-          Predicted Revenue: LKR{" "}
-          {Number(
-            data.predictedRevenue
-          ).toLocaleString()}
+          {t("customer.tooltipPredictedRevenue", { value: Number(data.predictedRevenue).toLocaleString() })}
         </p>
       )}
     </div>
@@ -111,6 +105,8 @@ export const CustomerPredictionChart: React.FC<
   setSearchId,
   selectedYear,
 }) => {
+    const { t } = useTranslation("predictions");
+
     const [
       customerPredictionData,
       setCustomerPredictionData,
@@ -163,7 +159,7 @@ export const CustomerPredictionChart: React.FC<
               );
 
               setError(
-                "Failed to load customer prediction data."
+                t("customer.error", "Failed to load customer prediction data.")
               );
             }
           })
@@ -178,7 +174,7 @@ export const CustomerPredictionChart: React.FC<
         window.clearTimeout(timer);
         controller.abort();
       };
-    }, [searchId, selectedYear]);
+    }, [searchId, selectedYear, t]);
 
     /*
      * Find the first predicted month dynamically.
@@ -197,18 +193,16 @@ export const CustomerPredictionChart: React.FC<
           <div className="flex items-center justify-between">
             <div>
               <CardTitle>
-                Customer Usage Prediction -{" "}
-                {selectedYear}
+                {t("customer.title")}
               </CardTitle>
 
               <CardDescription>
-                Forecasted usage for the selected
-                customer up to 3 months
+                {t("customer.description")}
               </CardDescription>
             </div>
 
             <Input
-              placeholder="Customer ID (e.g., C001)"
+              placeholder={t("customer.searchPlaceholder")}
               value={searchId}
               onChange={(event) =>
                 setSearchId(
@@ -223,7 +217,7 @@ export const CustomerPredictionChart: React.FC<
         <CardContent>
           {isLoading ? (
             <div className="h-80 flex items-center justify-center text-muted-foreground">
-              Loading customer predictions...
+              {t("customer.loading", "Loading customer predictions...")}
             </div>
           ) : error ? (
             <div className="h-80 flex items-center justify-center text-destructive">
@@ -231,7 +225,7 @@ export const CustomerPredictionChart: React.FC<
             </div>
           ) : customerPredictionData.length === 0 ? (
             <div className="h-80 flex items-center justify-center text-muted-foreground">
-              No prediction data found for this customer.
+              {t("customer.noData", "No prediction data found for this customer.")}
             </div>
           ) : (
             <div className="h-80">
@@ -247,7 +241,7 @@ export const CustomerPredictionChart: React.FC<
                       x={firstPredictionMonth}
                       stroke="gray"
                       strokeDasharray="3 3"
-                      label="Prediction Start"
+                      label={t("customer.predictionStart")}
                     />
                   )}
 
@@ -259,7 +253,7 @@ export const CustomerPredictionChart: React.FC<
 
                   <YAxis
                     label={{
-                      value: "Usage (L)",
+                      value: t("customer.usageLabel"),
                       angle: -90,
                       position: "insideLeft",
                     }}
@@ -274,7 +268,7 @@ export const CustomerPredictionChart: React.FC<
                     dataKey="usage"
                     stroke="#2563eb"
                     strokeWidth={2}
-                    name="Actual Usage"
+                    name={t("customer.actualUsage")}
                     connectNulls
                   />
 
@@ -284,7 +278,7 @@ export const CustomerPredictionChart: React.FC<
                     stroke="#f97316"
                     strokeWidth={2}
                     strokeDasharray="5 5"
-                    name="Predicted Usage"
+                    name={t("customer.predictedUsage")}
                     connectNulls
                   />
                 </LineChart>

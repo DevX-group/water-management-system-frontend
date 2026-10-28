@@ -20,6 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { exportPDF } from "@/util/exportPDF";
+import { useTranslation } from "react-i18next";
 
 export interface OverdueReportRow {
   id: string;
@@ -43,6 +44,8 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
   overdueTableData,
   totalOverdueAmount,
 }) => {
+  const { t } = useTranslation("reports");
+
   const pdfData = overdueTableData.map((bill) => ({
     month: bill.dueDate,
     usage: Number(bill.daysOverdue ?? 0),
@@ -52,10 +55,9 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Overdue Payments Report</CardTitle>
+        <CardTitle>{t("overdue.title")}</CardTitle>
         <CardDescription>
-          Unpaid bills that have passed their due dates with financial risk
-          analysis
+          {t("overdue.description")}
         </CardDescription>
       </CardHeader>
 
@@ -63,7 +65,7 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
             <p className="text-sm text-muted-foreground mb-2">
-              Total Overdue Amount
+              {t("overdue.totalAmount")}
             </p>
 
             <p className="text-3xl font-bold text-destructive">
@@ -73,7 +75,7 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
 
           <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6">
             <p className="text-sm text-muted-foreground mb-2">
-              Number of Overdue Bills
+              {t("overdue.numberOfBills")}
             </p>
 
             <p className="text-3xl font-bold text-destructive">
@@ -84,7 +86,7 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
 
         <div className="flex justify-end">
           <Input
-            placeholder="Search Customer ID"
+            placeholder={t("overdue.searchPlaceholder")}
             value={overdueBill}
             onChange={(event) =>
               setOverdueBill(event.target.value.toUpperCase())
@@ -97,12 +99,12 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Bill ID</TableHead>
-                <TableHead>Customer ID</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Amount</TableHead>
-                <TableHead>Due Date</TableHead>
-                <TableHead>Days Overdue</TableHead>
+                <TableHead>{t("overdue.table.billId")}</TableHead>
+                <TableHead>{t("overdue.table.customerId")}</TableHead>
+                <TableHead>{t("overdue.table.customer")}</TableHead>
+                <TableHead>{t("overdue.table.amount")}</TableHead>
+                <TableHead>{t("overdue.table.dueDate")}</TableHead>
+                <TableHead>{t("overdue.table.daysOverdue")}</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -122,7 +124,7 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
 
                     <TableCell>
                       <span className="px-3 py-1 rounded-full text-xs font-medium bg-destructive/10 text-destructive">
-                        {bill.daysOverdue} days
+                        {bill.daysOverdue} {t("overdue.days")}
                       </span>
                     </TableCell>
                   </TableRow>
@@ -130,7 +132,7 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center">
-                    No results found
+                    {t("overdue.table.noResults")}
                   </TableCell>
                 </TableRow>
               )}
@@ -140,64 +142,64 @@ export const OverdueReportTab: React.FC<OverdueReportTabProps> = ({
 
         <div className="flex justify-end">
           <Button
-  disabled={overdueTableData.length === 0}
-  onClick={() =>
-    exportPDF(
-      overdueTableData,
-      `Overdue Payments Report${
-        overdueBill
-          ? ` - ${overdueBill}`
-          : ""
-      }`,
-      `OverdueReport${
-        overdueBill
-          ? `-${overdueBill}`
-          : ""
-      }.pdf`,
-      [
-        {
-          header: "Bill ID",
-          value: (bill) => bill.id,
-          width: 1,
-        },
-        {
-          header: "Customer ID",
-          value: (bill) => bill.customerid,
-          width: 1.2,
-        },
-        {
-          header: "Customer",
-          value: (bill) => bill.customer,
-          width: 1.5,
-        },
-        {
-          header: "Amount",
-          value: (bill) =>
-            `LKR ${Number(
-              bill.amount ?? 0
-            ).toLocaleString()}`,
-          width: 1.3,
-          align: "right",
-        },
-        {
-          header: "Due Date",
-          value: (bill) => bill.dueDate,
-          width: 1.2,
-        },
-        {
-          header: "Days Overdue",
-          value: (bill) =>
-            `${bill.daysOverdue} days`,
-          width: 1.1,
-          align: "center",
-        },
-      ]
-    )
-  }
->
-  <Download className="w-4 h-4 mr-2" />
-  Export as PDF
-</Button>
+            disabled={overdueTableData.length === 0}
+            onClick={() =>
+              exportPDF(
+                overdueTableData,
+                `${t("overdue.title")}${
+                  overdueBill
+                    ? ` - ${overdueBill}`
+                    : ""
+                }`,
+                `OverdueReport${
+                  overdueBill
+                    ? `-${overdueBill}`
+                    : ""
+                }.pdf`,
+                [
+                  {
+                    header: t("overdue.table.billId"),
+                    value: (bill) => bill.id,
+                    width: 1,
+                  },
+                  {
+                    header: t("overdue.table.customerId"),
+                    value: (bill) => bill.customerid,
+                    width: 1.2,
+                  },
+                  {
+                    header: t("overdue.table.customer"),
+                    value: (bill) => bill.customer,
+                    width: 1.5,
+                  },
+                  {
+                    header: t("overdue.table.amount"),
+                    value: (bill) =>
+                      `LKR ${Number(
+                        bill.amount ?? 0
+                      ).toLocaleString()}`,
+                    width: 1.3,
+                    align: "right",
+                  },
+                  {
+                    header: t("overdue.table.dueDate"),
+                    value: (bill) => bill.dueDate,
+                    width: 1.2,
+                  },
+                  {
+                    header: t("overdue.table.daysOverdue"),
+                    value: (bill) =>
+                      `${bill.daysOverdue} ${t("overdue.days")}`,
+                    width: 1.1,
+                    align: "center",
+                  },
+                ]
+              )
+            }
+          >
+            <Download className="w-4 h-4 mr-2" />
+            {t("common.exportPdf")}
+          </Button>
         </div>
       </CardContent>
     </Card>

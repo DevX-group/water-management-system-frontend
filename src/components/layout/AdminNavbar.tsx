@@ -50,14 +50,22 @@ const languages = [
   { code: "ta", name: "தமிழ்" },
 ];
 
-const GROUP_CONFIG = [
+interface GroupItemConfig {
+  id: string;
+  labelKey?: string;
+  fallbackLabel?: string;
+  icon?: any;
+  items: string[];
+}
+
+const GROUP_CONFIG: GroupItemConfig[] = [
   { id: 'dashboard', items: ['dashboard'] },
   { id: 'users', items: ['users'] },
   { id: 'meter', items: ['meter'] },
-  { id: 'finance', label: 'Finance', icon: Receipt, items: ['billing', 'payments'] },
-  { id: 'communications', label: 'Communications', icon: MessageSquare, items: ['messaging', 'internal-chat', 'inquiry', 'blog'] },
-  { id: 'analytics', label: 'Analytics', icon: BarChart3, items: ['reports', 'predictions'] },
-  { id: 'settings', label: 'Settings', icon: Settings, items: ['activity-logs', 'widget-management', 'system-settings'] }
+  { id: 'finance', labelKey: 'finance', fallbackLabel: 'Finance', icon: Receipt, items: ['billing', 'payments'] },
+  { id: 'communications', labelKey: 'communications', fallbackLabel: 'Communications', icon: MessageSquare, items: ['messaging', 'internal-chat', 'inquiry', 'blog'] },
+  { id: 'analytics', labelKey: 'analytics', fallbackLabel: 'Analytics', icon: BarChart3, items: ['reports', 'predictions'] },
+  { id: 'settings', labelKey: 'settings', fallbackLabel: 'Settings', icon: Settings, items: ['activity-logs', 'widget-management', 'system-settings'] }
 ];
 
 export const AdminNavbar: React.FC = () => {
@@ -71,7 +79,9 @@ export const AdminNavbar: React.FC = () => {
   const displayName = user?.nic ?? currentAdmin.name;
   const displayNic = user?.nic ?? '';
   const backendRole = user?.role ?? '';
-  const roleLabel = ROLE_LABELS[backendRole] ?? ROLE_LABELS[currentAdmin.role] ?? backendRole ?? 'Unknown Role';
+  const rawRole = backendRole || currentAdmin.role;
+  const roleFallback = ROLE_LABELS[backendRole] ?? ROLE_LABELS[currentAdmin.role] ?? backendRole ?? 'Unknown Role';
+  const roleLabel = t(`navbar:admin.roles.${rawRole}`, roleFallback);
   const roleColor = ROLE_COLORS[backendRole] ?? ROLE_COLORS[currentAdmin.role] ?? 'bg-slate-100 text-slate-700';
 
   const getSectionFromPath = (pathname: string) => {
@@ -82,10 +92,11 @@ export const AdminNavbar: React.FC = () => {
   const activeSection = getSectionFromPath(location.pathname);
   const filteredNavItems = NAV_ITEMS.filter(item => item.roles.includes(currentAdmin.role));
 
-  const adminLanguage = localStorage.getItem("admin_language") || "en";
+  const adminLanguage = localStorage.getItem("admin_language") || i18n.language || "en";
   const changeAdminLanguage = (lang: string) => {
     i18n.changeLanguage(lang);
     localStorage.setItem("admin_language", lang);
+    localStorage.setItem("language", lang);
   };
 
   const renderSingleItem = (item: NavItem) => {
@@ -96,7 +107,7 @@ export const AdminNavbar: React.FC = () => {
         <button
           onClick={() => navigate(SECTION_PATH_MAP[item.id] ?? '/admin/dashboard')}
           className={cn(
-            "inline-flex items-center justify-center gap-2 h-9 px-3 text-sm font-medium rounded-lg relative transition-all duration-300 outline-none",
+            "inline-flex shrink-0 items-center justify-center gap-2 min-h-9 h-auto py-1 px-3 text-sm font-medium leading-tight text-center rounded-lg relative transition-all duration-300 outline-none whitespace-normal",
             isActive
               ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
               : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/50"
@@ -161,7 +172,7 @@ export const AdminNavbar: React.FC = () => {
                             )}
                           >
                             <Icon className="w-5 h-5" />
-                            <span className="font-medium text-sm">{t(`navbar:admin.${item.id}`, item.label)}</span>
+                            <span className="font-medium text-sm whitespace-nowrap">{t(`navbar:admin.${item.id}`, item.label)}</span>
                           </button>
                         );
                       })}
@@ -199,12 +210,15 @@ export const AdminNavbar: React.FC = () => {
               const accessibleItems = filteredNavItems.filter(nav => group.items.includes(nav.id));
               if (accessibleItems.length === 0) return null;
 
-              if (accessibleItems.length === 1 && !group.label) {
+              if (accessibleItems.length === 1 && !group.labelKey) {
                 return renderSingleItem(accessibleItems[0]);
               }
 
               const isGroupActive = accessibleItems.some(nav => nav.id === activeSection);
               const GroupIcon = group.icon || accessibleItems[0].icon;
+              const groupDisplayTitle = group.labelKey
+                ? t(`navbar:admin.${group.labelKey}`, group.fallbackLabel)
+                : t(`navbar:admin.${accessibleItems[0].id}`, accessibleItems[0].label);
 
               return (
                 <DropdownMenu key={group.id}>
@@ -212,14 +226,14 @@ export const AdminNavbar: React.FC = () => {
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <button
                         className={cn(
-                          "inline-flex items-center justify-center gap-1 h-9 px-2.5 text-sm font-medium rounded-lg relative transition-all duration-300 outline-none",
+                          "inline-flex shrink-0 items-center justify-center gap-1 min-h-9 h-auto py-1 px-2.5 text-sm font-medium leading-tight text-center rounded-lg relative transition-all duration-300 outline-none whitespace-normal",
                           isGroupActive
                             ? "bg-white text-slate-900 shadow-sm dark:bg-slate-800 dark:text-white"
                             : "text-slate-600 hover:text-slate-900 hover:bg-slate-200/50 dark:text-slate-400 dark:hover:text-white dark:hover:bg-slate-700/50"
                         )}
                       >
                         <GroupIcon className="w-4 h-4 mr-1" />
-                        {group.label || t(`navbar:admin.${accessibleItems[0].id}`, accessibleItems[0].label)}
+                        {groupDisplayTitle}
                         <ChevronDown className="w-3 h-3 ml-1 opacity-70" />
                       </button>
                     </motion.div>

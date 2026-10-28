@@ -3,6 +3,15 @@
     "title": "ගෙවීම්",
     "subtitle": "ඔබේ ජල බිල් ගෙවීම් කළමනාකරණය කරන්න",
     "adminSubtitle": "පාරිභෝගික ගෙවීම් හා එකතු කිරීම් කළමනාකරණය කරන්න",
+    "paymentMethods": {
+      "ONLINE": "මාර්ගගත",
+      "BANK_TRANSFER": "බැංකු හුවමාරුව",
+      "MANUAL": "අතින්"
+    },
+    "paymentTypes": {
+      "MONTHLY": "මාසික",
+      "OUTSTANDING": "හිඟ"
+    },
     "billPayment": {
       "title": "බිල් ගෙවීම",
       "makePayment": "ගෙවීමක් කරන්න",

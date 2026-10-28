@@ -25,6 +25,7 @@ const defaultForm = (): MeterReadingFormData => ({
 
 export const useMeterReading = () => {
   const { t } = useTranslation('meterReading');
+  const { t: toastT } = useTranslation('toasts');
   const { toast } = useToast();
   const [formData, setFormData] = useState<MeterReadingFormData>(defaultForm());
   const [todaysReadings, setTodaysReadings] = useState<MeterReading[]>([]);
@@ -171,18 +172,18 @@ export const useMeterReading = () => {
       const res = await api.get(`/meter-readings/previous/${meterNumber}`);
       if (res.data) {
         if (formData.subscriptionNumber && res.data.subscriptionNumber && res.data.subscriptionNumber.toLowerCase() !== formData.subscriptionNumber.toLowerCase()) {
-          toast({ title: 'Mismatch Error', description: `Meter ${meterNumber} belongs to subscription ${res.data.subscriptionNumber}, not ${formData.subscriptionNumber}.`, variant: 'destructive' });
+          toast({ title: toastT('mismatchError'), description: toastT('mismatchMeterSubscription', { meter: meterNumber, actual: res.data.subscriptionNumber, expected: formData.subscriptionNumber }), variant: 'destructive' });
           return;
         }
 
         if (res.data.currentReading) {
           setFormData(prev => ({ ...prev, previousReading: res.data.currentReading.toString() }));
-          toast({ title: 'Previous Reading Found', description: `Auto-filled with last month's reading: ${res.data.currentReading}` });
+          toast({ title: toastT('previousReadingFound'), description: toastT('previousReadingFilled', { reading: res.data.currentReading }) });
         }
       }
     } catch (err: any) {
       if (err.response && err.response.status === 404) {
-        toast({ title: 'Invalid Meter Number', description: `Meter number ${meterNumber} does not exist in the database.`, variant: 'destructive' });
+        toast({ title: toastT('invalidMeter'), description: toastT('invalidMeterDesc', { meter: meterNumber }), variant: 'destructive' });
       } else {
         console.log('Error fetching previous reading:', err);
       }
@@ -197,17 +198,17 @@ export const useMeterReading = () => {
         try {
           const res = await api.get(`/meter-readings/previous/${formData.meterNumber}`);
           if (res.data && res.data.subscriptionNumber && res.data.subscriptionNumber.toLowerCase() !== subNumber.toLowerCase()) {
-            toast({ title: 'Mismatch Error', description: `Meter ${formData.meterNumber} does not belong to ${subNumber}. It belongs to ${res.data.subscriptionNumber}.`, variant: 'destructive' });
+            toast({ title: toastT('mismatchError'), description: toastT('mismatchMeterCustomer', { meter: formData.meterNumber, subscription: subNumber, actual: res.data.subscriptionNumber }), variant: 'destructive' });
           }
         } catch (e: any) {
           if (e.response && e.response.status === 404) {
-            toast({ title: 'Invalid Meter Number', description: `Meter number ${formData.meterNumber} does not exist in the database.`, variant: 'destructive' });
+            toast({ title: toastT('invalidMeter'), description: toastT('invalidMeterDesc', { meter: formData.meterNumber }), variant: 'destructive' });
           }
         }
       }
     } catch (err: any) {
       if (err.response && err.response.status === 404) {
-        toast({ title: 'Invalid Customer', description: `Customer with subscription number ${subNumber} does not exist in the database.`, variant: 'destructive' });
+        toast({ title: toastT('invalidCustomer'), description: toastT('invalidCustomerDesc', { subscription: subNumber }), variant: 'destructive' });
       }
     }
   };
@@ -215,7 +216,7 @@ export const useMeterReading = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.readingDate) {
-      toast({ title: 'Validation Error', description: 'Reading date cannot be empty.', variant: 'destructive' });
+      toast({ title: toastT('validationError'), description: toastT('readingDateRequired'), variant: 'destructive' });
       return;
     }
 
@@ -223,17 +224,17 @@ export const useMeterReading = () => {
     const curr = Number(formData.currentReading);
 
     if (prev < 0) {
-      toast({ title: 'Validation Error', description: 'Previous reading cannot be negative.', variant: 'destructive' });
+      toast({ title: toastT('validationError'), description: toastT('previousReadingNegative'), variant: 'destructive' });
       return;
     }
 
     if (curr <= 0) {
-      toast({ title: 'Validation Error', description: 'Current reading must be greater than 0.', variant: 'destructive' });
+      toast({ title: toastT('validationError'), description: toastT('currentReadingPositive'), variant: 'destructive' });
       return;
     }
 
     if (curr < prev) {
-      toast({ title: 'Validation Error', description: 'Current reading cannot be less than the previous reading.', variant: 'destructive' });
+      toast({ title: toastT('validationError'), description: toastT('currentReadingLessThanPrevious'), variant: 'destructive' });
       return;
     }
 
@@ -295,7 +296,7 @@ export const useMeterReading = () => {
         await api.get(`/customers/${formData.subscriptionNumber}`);
       } catch (validationErr: any) {
         if (validationErr.response && validationErr.response.status === 404) {
-          toast({ title: 'Invalid Customer', description: `Customer with subscription number ${formData.subscriptionNumber} does not exist.`, variant: 'destructive' });
+          toast({ title: toastT('invalidCustomer'), description: toastT('invalidCustomerDesc', { subscription: formData.subscriptionNumber }), variant: 'destructive' });
           setSubmitting(false);
           return;
         }
@@ -304,7 +305,7 @@ export const useMeterReading = () => {
         await api.get(`/meter-readings/previous/${formData.meterNumber}`);
       } catch (validationErr: any) {
         if (validationErr.response && validationErr.response.status === 404) {
-          toast({ title: 'Invalid Meter Number', description: `Meter number ${formData.meterNumber} does not exist in the database.`, variant: 'destructive' });
+          toast({ title: toastT('invalidMeter'), description: toastT('invalidMeterDesc', { meter: formData.meterNumber }), variant: 'destructive' });
           setSubmitting(false);
           return;
         }
@@ -320,14 +321,14 @@ export const useMeterReading = () => {
 
       const result = res.data;
       toast({
-        title: (editingId && !isOfflineId) ? 'Reading Updated' : t('toasts.submittedTitle'),
+        title: (editingId && !isOfflineId) ? toastT('readingUpdated') : t('toasts.submittedTitle'),
         description: t('toasts.submittedDesc', { meterNo: formData.meterNumber, usage: result.usageUnits, billId: result.billId, total: Number(result.totalAmount).toFixed(2) })
       });
       clearForm();
       fetchTodaysReadings();
     } catch (err: any) {
       if (!err.response || err.code === 'ERR_NETWORK') {
-        toast({ title: t('toasts.submissionFailedTitle', { defaultValue: 'Submission Failed' }), description: 'Network error. Saving offline.', variant: 'destructive' });
+        toast({ title: t('toasts.submissionFailedTitle', { defaultValue: toastT('submissionFailed') }), description: toastT('networkErrorSavingOffline'), variant: 'destructive' });
 
         let offlineReadings = getOfflineReadings();
         const usageUnits = payload.currentReading - payload.previousReading;
@@ -360,7 +361,7 @@ export const useMeterReading = () => {
         }
         clearForm();
       } else {
-        toast({ title: 'Submission Failed', description: err.response.data?.message || 'Failed to submit meter reading.', variant: 'destructive' });
+        toast({ title: toastT('submissionFailed'), description: err.response.data?.message || toastT('submissionFailedDesc'), variant: 'destructive' });
       }
     } finally {
       setSubmitting(false);

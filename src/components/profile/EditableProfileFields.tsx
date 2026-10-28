@@ -2,6 +2,7 @@ import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { User, Mail, Phone } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface EditableProfileFieldsProps {
   name: string;
@@ -19,18 +20,20 @@ export const EditableProfileFields: React.FC<EditableProfileFieldsProps> = ({
   phone, setPhone,
   loading
 }) => {
+  const { t } = useTranslation('customerSettings');
+
   return (
     <div className="grid gap-4 md:grid-cols-2">
       <div className="space-y-2">
         <Label htmlFor="name" className="flex items-center gap-2">
           <User className="w-4 h-4 text-muted-foreground" />
-          Account Holder Name
+          {t('profile.accountHolderName')}
         </Label>
         <Input 
           id="name" 
           value={name} 
           onChange={(e) => setName(e.target.value)} 
-          placeholder="Enter your full name"
+          placeholder={t('profile.accountHolderPlaceholder')}
           disabled={loading}
           required
         />
@@ -39,14 +42,14 @@ export const EditableProfileFields: React.FC<EditableProfileFieldsProps> = ({
       <div className="space-y-2">
         <Label htmlFor="email" className="flex items-center gap-2">
           <Mail className="w-4 h-4 text-muted-foreground" />
-          Email Address
+          {t('profile.email')}
         </Label>
         <Input 
           id="email" 
           type="email"
           value={email} 
           onChange={(e) => setEmail(e.target.value)} 
-          placeholder="Enter your email address"
+          placeholder={t('profile.emailPlaceholder')}
           disabled={loading}
           required
         />
@@ -55,7 +58,7 @@ export const EditableProfileFields: React.FC<EditableProfileFieldsProps> = ({
       <div className="space-y-2">
         <Label htmlFor="phone" className="flex items-center gap-2">
           <Phone className="w-4 h-4 text-muted-foreground" />
-          Mobile Number
+          {t('profile.mobileNumber')}
         </Label>
         <Input 
           id="phone" 

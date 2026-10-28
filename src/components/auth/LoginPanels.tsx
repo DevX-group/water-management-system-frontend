@@ -7,45 +7,50 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { useTranslation } from 'react-i18next';
 
-const features = [
-  { icon: Shield, text: 'Secure & encrypted' },
-  { icon: Zap,    text: 'Instant payments' },
-  { icon: Bell,   text: 'Smart alerts' },
-];
+export const LoginRightPanel: React.FC = () => {
+  const { t } = useTranslation('auth');
 
-export const LoginRightPanel: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }}
-    className="hidden lg:flex w-[45%] fixed right-0 top-0 h-screen gradient-dark items-center justify-center p-12 overflow-hidden"
-  >
-    <div className="absolute inset-0 gradient-mesh opacity-30" />
+  const features = [
+    { icon: Shield, text: t('login.features.secure', 'Secure & encrypted') },
+    { icon: Zap,    text: t('login.features.instant', 'Instant payments') },
+    { icon: Bell,   text: t('login.features.alerts', 'Smart alerts') },
+  ];
 
-    <div className="relative text-center text-white max-w-md">
-      <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        className="w-28 h-28 rounded-3xl bg-white/10 backdrop-blur-xl flex items-center justify-center mx-auto mb-10">
-        <Droplets className="w-14 h-14" />
-      </motion.div>
-      <h2 className="text-4xl font-bold mb-4">Manage Your Water Bills</h2>
-      <p className="text-white/70 text-lg mb-10 leading-relaxed">
-        Track consumption, pay instantly, and get smart insights all in one place.
-      </p>
-      <div className="space-y-4">
-        {features.map((f, i) => (
-          <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 + i * 0.1 }}
-            className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/10">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/40 to-accent/40 backdrop-blur flex items-center justify-center border border-white/20">
-              <f.icon className="w-5 h-5 text-accent" />
-            </div>
-            <span className="font-medium text-white/80">{f.text}</span>
-          </motion.div>
-        ))}
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }}
+      className="hidden lg:flex w-[45%] fixed right-0 top-0 h-screen gradient-dark items-center justify-center p-12 overflow-hidden"
+    >
+      <div className="absolute inset-0 gradient-mesh opacity-30" />
+
+      <div className="relative text-center text-white max-w-md">
+        <motion.div animate={{ y: [0, -15, 0], rotate: [0, 5, 0] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-24 h-24 rounded-3xl bg-white/10 backdrop-blur-xl flex items-center justify-center mx-auto mb-8">
+          <Droplets className="w-12 h-12" />
+        </motion.div>
+        <h2 className="text-2xl sm:text-3xl font-bold mb-3">{t('login.sidePanelTitle', 'Manage Your Water Bills')}</h2>
+        <p className="text-white/70 text-base mb-8 leading-relaxed">
+          {t('login.sidePanelSubtitle', 'Track consumption, pay instantly, and get smart insights all in one place.')}
+        </p>
+        <div className="space-y-4">
+          {features.map((f, i) => (
+            <motion.div key={i} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 + i * 0.1 }}
+              className="flex items-center gap-4 bg-white/10 backdrop-blur-lg rounded-xl p-4 border border-white/10">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/40 to-accent/40 backdrop-blur flex items-center justify-center border border-white/20">
+                <f.icon className="w-5 h-5 text-accent" />
+              </div>
+              <span className="font-medium text-white/80">{f.text}</span>
+            </motion.div>
+          ))}
+        </div>
       </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 interface LoginFormProps {
   formData:     { nic: string; password: string; rememberMe: boolean };
@@ -62,25 +67,25 @@ export const LoginForm: React.FC<LoginFormProps> = ({
   formData, showPassword, loginError,
   onNicChange, onPasswordChange, onTogglePassword, onRememberChange, onSubmit,
 }) => {
-
+  const { t } = useTranslation('auth');
 
   return (
     <motion.form initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.2 }} onSubmit={onSubmit} className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="nic" className="text-sm font-medium">NIC Number</Label>
+        <Label htmlFor="nic" className="text-sm font-medium">{t('login.nicLabel', 'NIC Number')}</Label>
         <div className="relative">
           <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-          <Input id="nic" type="text" placeholder="Enter your NIC" value={formData.nic}
+          <Input id="nic" type="text" placeholder={t('login.nicPlaceholder', 'Enter your NIC')} value={formData.nic}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onNicChange(e.target.value); }}
             className="h-14 rounded-xl pl-12 input-premium text-base bg-background border-input text-foreground placeholder:text-muted-foreground" />
         </div>
       </div>
       <div className="space-y-2">
-        <Label htmlFor="password" className="text-sm font-medium">Password</Label>
+        <Label htmlFor="password" className="text-sm font-medium">{t('login.passwordLabel', 'Password')}</Label>
         <div className="relative">
           <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-primary z-10" />
-          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Enter your password"
+          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder={t('login.passwordPlaceholder', 'Enter your password')}
             value={formData.password}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => { onPasswordChange(e.target.value); }}
             className="h-14 rounded-xl pl-12 pr-14 input-premium text-base bg-background border-input text-foreground placeholder:text-muted-foreground" />
@@ -100,13 +105,13 @@ export const LoginForm: React.FC<LoginFormProps> = ({
         <div className="flex items-center space-x-3">
           <Checkbox id="rememberMe" checked={formData.rememberMe}
             onCheckedChange={(c: boolean) => onRememberChange(c)} className="rounded-md" />
-          <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">Remember me</Label>
+          <Label htmlFor="rememberMe" className="text-sm font-normal cursor-pointer">{t('login.rememberMe', 'Remember me')}</Label>
         </div>
-        <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">Forgot password?</Link>
+        <Link to="/forgot-password" className="text-sm text-primary font-medium hover:underline">{t('login.forgotPassword', 'Forgot password?')}</Link>
       </div>
       <motion.div whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}>
         <Button type="submit" className="w-full h-14 gradient-primary shadow-soft rounded-xl text-base gap-2 btn-shine">
-          Sign In <ArrowRight className="w-5 h-5" />
+          {t('login.signInButton', 'Sign In')} <ArrowRight className="w-5 h-5" />
         </Button>
       </motion.div>
     </motion.form>
